@@ -1,0 +1,47 @@
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import fatcathi from "../../../assets/fatcathi.png";
+
+export function Hero() {
+  return (
+    <section className="py-20 text-center">
+      <div className="flex flex-col items-center gap-6">
+        <img
+          src={fatcathi}
+          className="w-32 h-32 rounded-full"
+          alt="Fat Cat Cartel"
+        />
+        <div>
+          <h1 className="text-5xl font-bold tracking-tight font-serif sm:text-6xl">
+            Fat Cat Cartel
+          </h1>
+          <p className="mt-3 text-xl font-medium text-primary">
+            The Meowfia of Eorzea
+          </p>
+        </div>
+        <p className="max-w-xl text-lg text-muted-foreground leading-relaxed">
+          A small, relaxed Free Company on FFXIV made up mostly of adults who
+          log in after work to unwind, chat, and play without pressure. All
+          welcome — fresh sprouts, returning veterans, and everyone in between.
+        </p>
+        <p className="text-sm text-muted-foreground/70 italic">
+          18+ only · No alts · Mostly active evenings
+        </p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg">
+            <a
+              href="http://discord.gg/TDdhZgQyCR"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Join the Discord
+            </a>
+          </Button>
+          <Button variant="outline" size="lg" asChild>
+            <Link to="/easter2026">Easter 2026 Event</Link>
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
