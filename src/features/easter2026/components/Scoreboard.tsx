@@ -5,7 +5,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ParticipantRow } from "./ParticipantRow";
 import { useScoreboard } from "../api/useScoreboard";
 import { Loader2, Wifi } from "lucide-react";
