@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// Change this password to whatever you like.
 const ADMIN_PASSWORD = "meowfia2026";
 
 export function useAdminAuth() {
