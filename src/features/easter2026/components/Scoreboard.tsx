@@ -17,11 +17,6 @@ export function Scoreboard() {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl font-serif">
-              Live Scoreboard
-            </CardTitle>
-          </div>
           <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
             <Wifi className="h-3.5 w-3.5" />
             Live
@@ -56,8 +51,8 @@ export function Scoreboard() {
                 <TableHead className="text-center w-12">#</TableHead>
                 <TableHead>Player</TableHead>
                 <TableHead className="text-center">Hide &amp; Seek</TableHead>
-                <TableHead className="text-center">Trivia</TableHead>
                 <TableHead className="text-center">Eorzea Guessr</TableHead>
+                <TableHead className="text-center">Trivia</TableHead>
                 <TableHead className="text-center">Total</TableHead>
               </TableRow>
             </TableHeader>

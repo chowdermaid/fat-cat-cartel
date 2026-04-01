@@ -1,16 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import fatcathi from "../../../assets/fatcathi.png";
+import fatcatthrone from "../../../assets/fatcatthrone.png";
 
 export function Hero() {
   return (
     <section className="py-20 text-center">
       <div className="flex flex-col items-center gap-6">
-        <img
-          src={fatcathi}
-          className="w-32 h-32 rounded-full"
-          alt="Fat Cat Cartel"
-        />
         <div>
           <h1 className="text-5xl font-bold tracking-tight font-serif sm:text-6xl">
             Fat Cat Cartel
@@ -19,10 +14,17 @@ export function Hero() {
             The Meowfia of Eorzea
           </p>
         </div>
+        <div className="flex flex-col items-center gap-0">
+          <img src={fatcatthrone} className="w-80 h-110" alt="Fat Cat Cartel" />
+          <p className="text-xs text-muted-foreground/70 italic -mt-10">
+            drawn by our Dull Hafnir
+          </p>
+        </div>
+
         <p className="max-w-xl text-lg text-muted-foreground leading-relaxed">
           A small, relaxed Free Company on FFXIV made up mostly of adults who
           log in after work to unwind, chat, and play without pressure. All
-          welcome — fresh sprouts, returning veterans, and everyone in between.
+          welcome! Fresh sprouts, returning veterans, and everyone in between.
         </p>
         <p className="text-sm text-muted-foreground/70 italic">
           18+ only · No alts · Mostly active evenings

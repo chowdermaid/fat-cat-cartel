@@ -1,5 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PointRule {
@@ -17,6 +19,7 @@ interface EventCardProps {
   rules?: string[];
   pointRules?: PointRule[];
   notes?: string;
+  link?: string;
   className?: string;
 }
 
@@ -30,6 +33,7 @@ export function EventCard({
   rules,
   pointRules,
   notes,
+  link,
   className,
 }: EventCardProps) {
   return (
@@ -101,6 +105,16 @@ export function EventCard({
           </p>
         )}
       </CardContent>
+      {link && (
+        <CardFooter className="pt-0">
+          <Button variant="outline" size="sm" className="w-full" asChild>
+            <a href={link} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="h-3.5 w-3.5" />
+              Play
+            </a>
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }

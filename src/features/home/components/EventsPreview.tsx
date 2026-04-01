@@ -24,10 +24,10 @@ export function EventsPreview() {
         <Card className="flex flex-col">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <Badge>Live Now</Badge>
+              <Badge>Upcoming</Badge>
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <CalendarDays className="h-3 w-3" />
-                April 2026
+                26 April 2026
               </div>
             </div>
             <CardTitle className="mt-2 font-serif">

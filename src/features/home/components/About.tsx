@@ -1,5 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Home, Zap, Calendar, Users } from "lucide-react";
+
+const carouselImages = Object.values(
+  import.meta.glob("../../../assets/carousel/*", {
+    eager: true,
+    import: "default",
+  }) as Record<string, string>
+);
 
 const perks = [
   {
@@ -39,28 +53,25 @@ const perks = [
 export function About() {
   return (
     <section id="about" className="space-y-12">
-      {/* Who we are */}
-      <div className="max-w-2xl text-center mx-auto">
-        <h2 className="text-3xl font-bold font-serif">
-          Welcome to the Meowfia
-        </h2>
-        <div className="mt-4 space-y-3 text-muted-foreground leading-relaxed">
-          <p>
-            We're a small, relaxed FC made up mostly of adults who enjoy logging
-            in after work to unwind, chat a bit, and play the game without
-            pressure. Whether you're a fresh sprout, a returning player, or
-            someone who's been around the block a few times, you're welcome here
-            if you're looking for a calm, friendly space and people to enjoy the
-            game with.
-          </p>
-          <p>
-            Some nights we're running content together, other nights we're just
-            hanging out while everyone does their own thing. If you want a crew
-            to hang out with, seek some guidance, chat when you feel like it,
-            and participate at your own pace, you'll fit right in. We're most
-            active in the evenings.
-          </p>
-        </div>
+      {/* Photo carousel */}
+      <div className="relative px-8">
+        <Carousel opts={{ loop: true }}>
+          <CarouselContent>
+            {carouselImages.map((src, i) => (
+              <CarouselItem key={i}>
+                <div className="overflow-hidden rounded-xl aspect-video">
+                  <img
+                    src={src}
+                    alt={`FC screenshot ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
 
       {/* What we offer */}
