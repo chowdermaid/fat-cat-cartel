@@ -10,7 +10,7 @@ export function RootLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+        <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4">
           <Link
             to="/"
             className="flex items-center gap-2 font-bold text-lg font-serif"
@@ -59,12 +59,12 @@ export function RootLayout() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <main className="mx-auto max-w-screen-2xl px-4 py-8">
         <Outlet />
       </main>
 
       <footer className="border-t mt-16">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-muted-foreground">
+        <div className="mx-auto max-w-screen-2xl px-4 py-6 text-center text-sm text-muted-foreground">
           © 2026 Fat Cat Cartel · chow is an amazing sage ·{" "}
           <a
             href="http://discord.gg/TDdhZgQyCR"

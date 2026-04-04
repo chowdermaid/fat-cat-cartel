@@ -14,12 +14,14 @@ const rankStyles: Record<number, string> = {
   1: "bg-yellow-50 dark:bg-yellow-950/30",
   2: "bg-gray-50 dark:bg-gray-900/30",
   3: "bg-orange-50 dark:bg-orange-950/30",
+  4: "bg-emerald-50 dark:bg-emerald-950/30",
 };
 
 const rankLabels: Record<number, string> = {
   1: "🥇",
   2: "🥈",
   3: "🥉",
+  4: "4th",
 };
 
 export function ParticipantRow({ participant, rank }: ParticipantRowProps) {
