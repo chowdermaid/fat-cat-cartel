@@ -4,7 +4,7 @@ import fatcatthrone from "../../../assets/fatcatthrone.png";
 
 export function Hero() {
   return (
-    <section className="py-20 text-center">
+    <section className="py-10 text-center">
       <div className="flex flex-col items-center gap-6">
         <div>
           <h1 className="text-5xl font-bold tracking-tight font-serif sm:text-6xl">
@@ -21,14 +21,6 @@ export function Hero() {
           </p>
         </div>
 
-        <p className="max-w-xl text-lg text-muted-foreground leading-relaxed">
-          A small, relaxed Free Company on FFXIV made up mostly of adults who
-          log in after work to unwind, chat, and play without pressure. All
-          welcome! Fresh sprouts, returning veterans, and everyone in between.
-        </p>
-        <p className="text-sm text-muted-foreground/70 italic">
-          18+ only · No alts · Mostly active evenings
-        </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Button asChild size="lg">
             <a
@@ -40,7 +32,7 @@ export function Hero() {
             </a>
           </Button>
           <Button variant="outline" size="lg" asChild>
-            <Link to="/easter2026">Easter 2026 Event</Link>
+            <Link to="/pastevents/easter2026">Easter 2026 Event</Link>
           </Button>
         </div>
       </div>

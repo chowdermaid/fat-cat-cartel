@@ -6,6 +6,11 @@ import {
 import { RootLayout } from "@/components/layouts/RootLayout";
 import { HomePage } from "@/features/home";
 import { Easter2026Page } from "@/features/easter2026";
+import { PastEventsPage } from "@/features/pastevents";
+import { FCCollectionPage } from "@/features/fc-collection";
+import { MountsPage } from "@/features/fc-collection/pages/MountsPage";
+import { LeaderboardPage } from "@/features/fc-collection/pages/LeaderboardPage";
+import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
 
 const rootRoute = createRootRoute({
@@ -18,10 +23,40 @@ const indexRoute = createRoute({
   component: HomePage,
 });
 
+const pastEventsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/pastevents",
+  component: PastEventsPage,
+});
+
 const easter2026Route = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/easter2026",
+  path: "/pastevents/easter2026",
   component: Easter2026Page,
+});
+
+const recruitmentRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jointhemeowfia",
+  component: RecruitmentPage,
+});
+
+const fcCollectionRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/fc-collection",
+  component: FCCollectionPage,
+});
+
+const fcMountsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/fc-collection/mounts",
+  component: MountsPage,
+});
+
+const fcLeaderboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/fc-collection/leaderboard",
+  component: LeaderboardPage,
 });
 
 const adminRoute = createRoute({
@@ -32,7 +67,12 @@ const adminRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  pastEventsRoute,
   easter2026Route,
+  recruitmentRoute,
+  fcCollectionRoute,
+  fcMountsRoute,
+  fcLeaderboardRoute,
   adminRoute,
 ]);
 

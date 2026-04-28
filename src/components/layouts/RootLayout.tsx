@@ -11,17 +11,25 @@ export function RootLayout() {
     <div className="min-h-screen bg-background text-foreground font-sans">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4">
-          <Link
-            to="/"
-            className="flex items-center gap-2 font-bold text-lg font-serif"
-          >
-            <img
-              src={fatcathi}
-              className="w-5 h-5 rounded-full"
-              alt="Fat Cat Cartel"
-            />
-            Fat Cat Cartel
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="flex items-center gap-2 font-bold text-lg font-serif"
+            >
+              <img
+                src={fatcathi}
+                className="w-5 h-5 rounded-full"
+                alt="Fat Cat Cartel"
+              />
+              Fat Cat Cartel
+            </Link>
+            <Link
+              to="/jointhemeowfia"
+              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
+            >
+              Join
+            </Link>
+          </div>
 
           <nav className="flex items-center gap-1">
             <Link
@@ -31,10 +39,16 @@ export function RootLayout() {
               Home
             </Link>
             <Link
-              to="/easter2026"
+              to="/pastevents"
               className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
             >
-              Easter 2026
+              Past Events
+            </Link>
+            <Link
+              to="/fc-collection"
+              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
+            >
+              FC Collection
             </Link>
             <Link
               to="/admin"
