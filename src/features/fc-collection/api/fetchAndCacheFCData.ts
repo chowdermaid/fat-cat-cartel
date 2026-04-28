@@ -29,7 +29,6 @@ export async function fetchAndCacheFCData(
           ? ownedJson
           : (ownedJson?.results ?? []);
         const ownedMountIds: number[] = ownedList.map((m) => m.id);
-        console.log(`[fetch] ${member.name}: ${ownedMountIds.length} mounts, first ids:`, ownedMountIds.slice(0, 5));
 
         const data: MemberCacheData = {
           avatar,
