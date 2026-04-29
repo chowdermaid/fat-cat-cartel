@@ -8,7 +8,7 @@ import { HomePage } from "@/features/home";
 import { Easter2026Page } from "@/features/easter2026";
 import { PastEventsPage } from "@/features/pastevents";
 import { FCCollectionPage } from "@/features/fc-collection";
-import { MountsPage } from "@/features/fc-collection/pages/MountsPage";
+import { CollectiblePage } from "@/features/fc-collection/pages/CollectiblePage";
 import { LeaderboardPage } from "@/features/fc-collection/pages/LeaderboardPage";
 import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
@@ -47,10 +47,10 @@ const fcCollectionRoute = createRoute({
   component: FCCollectionPage,
 });
 
-const fcMountsRoute = createRoute({
+const fcTypeRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/fc-collection/mounts",
-  component: MountsPage,
+  path: "/fc-collection/$type",
+  component: CollectiblePage,
 });
 
 const fcLeaderboardRoute = createRoute({
@@ -71,7 +71,7 @@ const routeTree = rootRoute.addChildren([
   easter2026Route,
   recruitmentRoute,
   fcCollectionRoute,
-  fcMountsRoute,
+  fcTypeRoute,
   fcLeaderboardRoute,
   adminRoute,
 ]);

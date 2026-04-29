@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+import { animate } from "animejs";
 import {
   Card,
   CardContent,
@@ -9,8 +11,20 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function EventsPreview() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    animate(sectionRef.current, {
+      opacity: [0, 1],
+      translateY: [12, 0],
+      duration: 400,
+      easing: "easeOutQuart",
+    });
+  }, []);
+
   return (
-    <section className="py-16">
+    <section ref={sectionRef} className="py-16">
       <div className="mb-8">
         <h2 className="text-3xl font-bold font-serif">Upcoming Events</h2>
         <p className="mt-2 text-muted-foreground">

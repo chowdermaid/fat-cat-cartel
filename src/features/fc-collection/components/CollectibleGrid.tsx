@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Minus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,12 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
+import { animate, stagger } from "animejs";
 import { cn } from "@/lib/utils";
 import { MemberHeader } from "./MemberHeader";
-import { MountDetailDialog } from "./MountDetailDialog";
-import type { Mount, MemberWithMounts } from "../types";
+import { CollectibleDetailDialog } from "./CollectibleDetailDialog";
+import type { Collectible, MemberWithMounts } from "../types";
+import type { CollectibleConfig } from "../collectibleConfig";
 
 const EXPANSIONS = [
   { key: "all", label: "All" },
@@ -29,50 +31,39 @@ type ExpansionKey = (typeof EXPANSIONS)[number]["key"];
 type SortKey = "patch" | "name";
 type QuickFilter = "all" | "fc-complete" | "fc-missing";
 
-const ALL_SOURCE_TYPES = [
-  "Achievement",
-  "Chaotic Raid",
-  "Cosmic Exploration",
-  "Deep Dungeon",
-  "Event",
-  "FATE",
-  "Gathering",
-  "Hunts",
-  "Island Sanctuary",
-  "Premium",
-  "Purchase",
-  "PvP",
-  "Quest",
-  "Raid",
-  "Treasure Hunt",
-  "Tribal",
-  "Trial",
-  "V&C Dungeon",
-  "Wondrous Tails",
-];
-
-interface MountGridProps {
-  mounts: Mount[];
+interface CollectibleGridProps {
+  items: Collectible[];
   members: MemberWithMounts[];
+  config: CollectibleConfig;
+}
+
+function AnimatedBar({ pct }: { pct: number }) {
+  const barRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!barRef.current) return;
+    animate(barRef.current, { width: `${pct}%`, duration: 600, easing: "easeOutQuart" });
+  }, [pct]);
+  return (
+    <div className="flex-1 bg-muted rounded-full h-1.5">
+      <div ref={barRef} className="bg-primary h-1.5 rounded-full" style={{ width: "0%" }} />
+    </div>
+  );
 }
 
 function FCOwnerBar({
-  mount,
+  item,
   members,
+  config,
 }: {
-  mount: Mount;
+  item: Collectible;
   members: MemberWithMounts[];
+  config: CollectibleConfig;
 }) {
-  const count = members.filter((m) => m.ownedMountIds.has(mount.id)).length;
+  const count = members.filter((m) => m.owned[config.key].has(item.id)).length;
   const pct = members.length > 0 ? (count / members.length) * 100 : 0;
   return (
     <div className="flex items-center gap-2 w-24">
-      <div className="flex-1 bg-muted rounded-full h-1.5">
-        <div
-          className="bg-primary h-1.5 rounded-full"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+      <AnimatedBar pct={pct} />
       <span className="text-xs text-muted-foreground tabular-nums shrink-0">
         {count}/{members.length}
       </span>
@@ -80,7 +71,15 @@ function FCOwnerBar({
   );
 }
 
-export function MountGrid({ mounts, members }: MountGridProps) {
+function animateFilterClick(target: HTMLElement) {
+  animate(target, { scale: [0.93, 1], duration: 200, easing: "easeOutCubic" });
+}
+
+export function CollectibleGrid({
+  items,
+  members,
+  config,
+}: CollectibleGridProps) {
   const [search, setSearch] = useState("");
   const [expansion, setExpansion] = useState<ExpansionKey>("all");
   const [selectedSources, setSelectedSources] = useState<Set<string>>(
@@ -88,6 +87,18 @@ export function MountGrid({ mounts, members }: MountGridProps) {
   );
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const [sortBy, setSortBy] = useState<SortKey>("patch");
+
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const countRef = useRef<HTMLParagraphElement>(null);
+
+  const allSourceTypes = useMemo(
+    () =>
+      [
+        ...new Set(items.flatMap((item) => item.sources?.map((s) => s.type) ?? [])),
+      ].sort(),
+    [items],
+  );
+
   function toggleSource(type: string) {
     setSelectedSources((prev) => {
       const next = new Set(prev);
@@ -97,30 +108,31 @@ export function MountGrid({ mounts, members }: MountGridProps) {
   }
 
   const filtered = useMemo(() => {
-    return mounts
-      .filter((mount) => {
-        if (search && !mount.name.toLowerCase().includes(search.toLowerCase()))
+    return items
+      .filter((item) => {
+        if (search && !item.name.toLowerCase().includes(search.toLowerCase()))
           return false;
 
         if (expansion !== "all") {
           const exp = EXPANSIONS.find((e) => e.key === expansion);
           if (exp && "min" in exp) {
-            const patch = parseFloat(mount.patch);
+            const patch = parseFloat(item.patch);
             if (patch < exp.min || patch >= exp.max) return false;
           }
         }
 
         if (selectedSources.size > 0) {
-          const types = new Set(mount.sources.map((s) => s.type));
+          const types = new Set(item.sources?.map((s) => s.type));
           if (![...selectedSources].some((t) => types.has(t))) return false;
         }
 
         if (quickFilter === "fc-complete") {
-          if (!members.every((m) => m.ownedMountIds.has(mount.id)))
+          if (!members.every((m) => m.owned[config.key].has(item.id)))
             return false;
         }
         if (quickFilter === "fc-missing") {
-          if (members.some((m) => m.ownedMountIds.has(mount.id))) return false;
+          if (members.some((m) => m.owned[config.key].has(item.id)))
+            return false;
         }
 
         return true;
@@ -130,14 +142,34 @@ export function MountGrid({ mounts, members }: MountGridProps) {
         return parseFloat(a.patch) - parseFloat(b.patch);
       });
   }, [
-    mounts,
+    items,
     search,
     expansion,
     selectedSources,
     quickFilter,
     sortBy,
     members,
+    config.key,
   ]);
+
+  useEffect(() => {
+    const body = tableBodyRef.current;
+    if (!body) return;
+    const rows = Array.from(body.querySelectorAll(".collectible-row")).slice(0, 80);
+    if (!rows.length) return;
+    animate(rows, {
+      opacity: [0, 1],
+      translateY: [5, 0],
+      delay: stagger(6),
+      duration: 160,
+      easing: "easeOutQuad",
+    });
+  }, [filtered]);
+
+  useEffect(() => {
+    if (!countRef.current) return;
+    animate(countRef.current, { opacity: [0, 1], duration: 200, easing: "easeOutQuad" });
+  }, [filtered.length]);
 
   return (
     <div className="space-y-4">
@@ -145,7 +177,7 @@ export function MountGrid({ mounts, members }: MountGridProps) {
       <div className="space-y-3">
         <div className="flex flex-wrap gap-3 items-center">
           <Input
-            placeholder="Search mounts…"
+            placeholder={`Search ${config.label.toLowerCase()}…`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-56"
@@ -162,7 +194,7 @@ export function MountGrid({ mounts, members }: MountGridProps) {
                 key={s.key}
                 variant={sortBy === s.key ? "secondary" : "ghost"}
                 size="sm"
-                onClick={() => setSortBy(s.key)}
+                onClick={(e) => { animateFilterClick(e.currentTarget); setSortBy(s.key); }}
                 className="h-7 text-xs"
               >
                 {s.label}
@@ -178,7 +210,7 @@ export function MountGrid({ mounts, members }: MountGridProps) {
               key={exp.key}
               variant={expansion === exp.key ? "default" : "outline"}
               size="sm"
-              onClick={() => setExpansion(exp.key)}
+              onClick={(e) => { animateFilterClick(e.currentTarget); setExpansion(exp.key); }}
               className="h-7 text-xs"
             >
               {exp.label}
@@ -199,7 +231,7 @@ export function MountGrid({ mounts, members }: MountGridProps) {
               key={q.key}
               variant={quickFilter === q.key ? "default" : "outline"}
               size="sm"
-              onClick={() => setQuickFilter(q.key)}
+              onClick={(e) => { animateFilterClick(e.currentTarget); setQuickFilter(q.key); }}
               className="h-7 text-xs"
             >
               {q.label}
@@ -208,80 +240,84 @@ export function MountGrid({ mounts, members }: MountGridProps) {
         </div>
 
         {/* Source type chips */}
-        <div className="flex flex-wrap gap-1.5">
-          {ALL_SOURCE_TYPES.map((type) => (
-            <button
-              key={type}
-              onClick={() => toggleSource(type)}
-              className={cn(
-                "text-xs px-2 py-0.5 rounded-full border transition-colors",
-                selectedSources.has(type)
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground",
-              )}
-            >
-              {type}
-            </button>
-          ))}
-          {selectedSources.size > 0 && (
-            <button
-              onClick={() => setSelectedSources(new Set())}
-              className="text-xs px-2 py-0.5 text-muted-foreground hover:text-foreground"
-            >
-              Clear
-            </button>
-          )}
-        </div>
+        {allSourceTypes.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {allSourceTypes.map((type) => (
+              <button
+                key={type}
+                onClick={(e) => { animateFilterClick(e.currentTarget); toggleSource(type); }}
+                className={cn(
+                  "text-xs px-2 py-0.5 rounded-full border transition-colors",
+                  selectedSources.has(type)
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground",
+                )}
+              >
+                {type}
+              </button>
+            ))}
+            {selectedSources.size > 0 && (
+              <button
+                onClick={() => setSelectedSources(new Set())}
+                className="text-xs px-2 py-0.5 text-muted-foreground hover:text-foreground"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        )}
 
-        <p className="text-xs text-muted-foreground">
-          {filtered.length} of {mounts.length} mounts
+        <p ref={countRef} className="text-xs text-muted-foreground">
+          {filtered.length} of {items.length} {config.label.toLowerCase()}
         </p>
       </div>
 
       {/* Table */}
-      <ScrollArea className="rounded-lg border h-[calc(100vh-22rem)]">
+      <ScrollArea className="rounded-lg border h-[calc(100vh-22rem)] z-1">
         <table className="text-sm w-full">
           <TableHeader>
             <TableRow className="bg-background hover:bg-background border-b">
               <TableHead className="sticky left-0 top-0 bg-background z-30 min-w-[200px] border-r font-semibold text-foreground px-3 py-2 h-auto">
-                Mount
+                {config.label}
               </TableHead>
               {members.map((m) => (
                 <TableHead
                   key={m.id}
-                  className="sticky top-0 bg-background z-20 border-r last:border-r-0 p-0 h-auto"
+                  className="sticky top-0 bg-background border-r last:border-r-0 p-0 h-auto"
                 >
-                  <MemberHeader member={m} totalMounts={mounts.length} />
+                  <MemberHeader
+                    member={m}
+                    total={items.length}
+                    count={m.owned[config.key].size}
+                  />
                 </TableHead>
               ))}
-              <TableHead className="sticky top-0 bg-background z-20 px-3 h-auto text-xs font-semibold text-muted-foreground whitespace-nowrap text-center">
+              <TableHead className="sticky top-0 bg-background px-3 h-auto text-xs font-semibold text-muted-foreground whitespace-nowrap text-center">
                 Owned
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {filtered.map((mount) => (
-              <TableRow key={mount.id} className="group border-b last:border-0">
+          <TableBody ref={tableBodyRef}>
+            {filtered.map((item) => (
+              <TableRow key={item.id} className="collectible-row group border-b last:border-0">
                 <TableCell className="sticky left-0 bg-background group-hover:bg-muted/50 z-10 px-3 py-1.5 border-r">
-                  <MountDetailDialog mount={mount}>
+                  <CollectibleDetailDialog item={item}>
                     <button className="flex items-center gap-2 text-left hover:text-primary transition-colors w-full">
                       <img
-                        src={mount.icon}
+                        src={item.icon}
                         alt=""
                         className="h-6 w-6 shrink-0 rounded"
                       />
-                      <span className="text-sm leading-tight">
-                        {mount.name}
-                      </span>
+                      <span className="text-sm leading-tight">{item.name}</span>
                     </button>
-                  </MountDetailDialog>
+                  </CollectibleDetailDialog>
                 </TableCell>
                 {members.map((m) => (
                   <TableCell
                     key={m.id}
                     className="text-center px-3 py-1.5 border-r last:border-r-0"
                   >
-                    {m.ownedMountIds.has(mount.id) ? (
+                    {m.owned[config.key].has(item.id) ? (
                       <Check className="h-4 w-4 text-green-500 mx-auto" />
                     ) : (
                       <Minus className="h-3 w-3 text-muted-foreground/30 mx-auto" />
@@ -289,7 +325,7 @@ export function MountGrid({ mounts, members }: MountGridProps) {
                   </TableCell>
                 ))}
                 <TableCell className="px-3 py-1.5">
-                  <FCOwnerBar mount={mount} members={members} />
+                  <FCOwnerBar item={item} members={members} config={config} />
                 </TableCell>
               </TableRow>
             ))}
@@ -299,7 +335,7 @@ export function MountGrid({ mounts, members }: MountGridProps) {
                   colSpan={members.length + 2}
                   className="text-center text-sm text-muted-foreground py-12"
                 >
-                  No mounts match the current filters.
+                  No {config.label.toLowerCase()} match the current filters.
                 </TableCell>
               </TableRow>
             )}

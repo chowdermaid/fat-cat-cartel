@@ -1,5 +1,7 @@
+import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Archive, LayoutGrid, Swords } from "lucide-react";
+import { animate, stagger } from "animejs";
 import {
   Card,
   CardContent,
@@ -32,11 +34,24 @@ const quickLinks = [
 ] as const;
 
 export function About() {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!gridRef.current) return;
+    animate(gridRef.current.querySelectorAll(".about-card"), {
+      opacity: [0, 1],
+      translateY: [16, 0],
+      delay: stagger(80),
+      duration: 350,
+      easing: "easeOutQuad",
+    });
+  }, []);
+
   return (
     <section>
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div ref={gridRef} className="grid gap-5 sm:grid-cols-3">
         {quickLinks.map(({ to, icon: Icon, title, description }) => (
-          <Card key={to} className="flex flex-col">
+          <Card key={to} className="about-card flex flex-col">
             <CardHeader className="pb-3">
               <CardTitle className="font-serif flex items-center gap-2">
                 <Icon className="h-5 w-5 text-muted-foreground shrink-0" />

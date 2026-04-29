@@ -1,19 +1,25 @@
-export interface MountSource {
+import type { CollectibleKey } from "./collectibleConfig";
+
+export interface CollectibleSource {
   type: string;
   text: string;
 }
 
-export interface Mount {
+export interface Collectible {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   icon: string;
-  image: string;
+  image?: string;
   patch: string;
-  seats: number;
   owned: string;
+  sources?: CollectibleSource[];
+}
+
+export interface Mount extends Collectible {
+  seats: number;
   movement: string;
-  sources: MountSource[];
+  image: string;
 }
 
 export interface FCMember {
@@ -24,8 +30,8 @@ export interface FCMember {
 
 export interface MemberCacheData {
   avatar: string;
-  ownedMountIds: number[];
-  previousCount: number;
+  owned: Record<CollectibleKey, number[]>;
+  previousOwned: Record<CollectibleKey, number>;
   lastFetched: number;
 }
 
@@ -34,6 +40,6 @@ export interface MemberWithMounts {
   name: string;
   lodestoneId: string;
   avatar: string;
-  ownedMountIds: Set<number>;
-  previousCount: number;
+  owned: Record<CollectibleKey, Set<number>>;
+  previousOwned: Record<CollectibleKey, number>;
 }

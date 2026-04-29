@@ -93,6 +93,82 @@ npm run build && firebase deploy
 
 ---
 
+## Animation patterns (animejs v4)
+
+Import from `animejs`: `import { animate, stagger } from "animejs";`
+
+### Page / section entrance
+Stagger top-level sections or hero blocks in on mount. Add a shared class to the elements, query them from a ref, run once in `useEffect([], [])`.
+```tsx
+const ref = useRef<HTMLDivElement>(null);
+useEffect(() => {
+  if (!ref.current) return;
+  animate(ref.current.querySelectorAll(".anim-section"), {
+    opacity: [0, 1], translateY: [20, 0],
+    delay: stagger(100), duration: 450, easing: "easeOutQuart",
+  });
+}, []);
+```
+Typical class names: `.anim-section` (page sections), `.hero-item` (hero blocks), `.about-card` / `.collectible-card` / `.perk-card` (card grids).
+
+### Card / list stagger
+Same pattern with tighter timing for grids of cards or list items:
+```tsx
+animate(ref.current.querySelectorAll(".card"), {
+  opacity: [0, 1], translateY: [16, 0],
+  delay: stagger(80), duration: 350, easing: "easeOutQuad",
+});
+```
+For list items sliding in from the side: `translateX: [-10, 0]`.
+
+### Table row stagger on data/filter change
+Fire on the dependency that changes the rows. Cap at 80 rows so long lists don't drag.
+```tsx
+useEffect(() => {
+  const rows = Array.from(tableBodyRef.current.querySelectorAll(".data-row")).slice(0, 80);
+  animate(rows, { opacity: [0, 1], translateY: [5, 0], delay: stagger(6), duration: 160, easing: "easeOutQuad" });
+}, [filteredData]);
+```
+
+### Progress bar (width)
+Keep bar width at `0%` in JSX; drive it via animate on mount or value change:
+```tsx
+animate(barRef.current, { width: `${pct}%`, duration: 600, easing: "easeOutQuart" });
+```
+
+### Count / label crossfade
+```tsx
+useEffect(() => {
+  animate(labelRef.current, { opacity: [0, 1], duration: 200, easing: "easeOutQuad" });
+}, [value]);
+```
+
+### Filter button micro-feedback
+```tsx
+function animateFilterClick(target: HTMLElement) {
+  animate(target, { scale: [0.93, 1], duration: 200, easing: "easeOutCubic" });
+}
+// Usage: onClick={(e) => { animateFilterClick(e.currentTarget); setState(val); }}
+```
+
+### Loading skeleton
+Replace plain loading text with stagger-in skeleton rows:
+```tsx
+function LoadingSkeleton() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    animate(ref.current.querySelectorAll(".sk"), {
+      opacity: [0, 1], translateY: [8, 0],
+      delay: stagger(35), duration: 260, easing: "easeOutQuad",
+    });
+  }, []);
+  return <div ref={ref}>...</div>;
+}
+```
+Use `animate-pulse` on skeleton divs for the shimmer. Add `.sk` only to the elements that should individually cascade — don't nest `.sk` inside `.sk`.
+
+---
+
 ## Key architectural notes
 - Layout container is `max-w-screen-2xl` in `RootLayout` — needed to fit 3-column Easter layout with side images
 - Side decorative images use a 3-column flex with `sticky bottom-0 self-end`, not fixed positioning

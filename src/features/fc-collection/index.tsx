@@ -1,5 +1,7 @@
+import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { Mountain, Trophy, ArrowRight } from "lucide-react";
+import { Trophy, ArrowRight } from "lucide-react";
+import { animate, stagger } from "animejs";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,60 +11,76 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useFCCollection } from "./api/useFCCollection";
+import { COLLECTIBLE_CONFIG } from "./collectibleConfig";
 
 export function FCCollectionPage() {
-  const {
-    members,
-    allMounts,
-    membersWithMounts,
-  } = useFCCollection();
+  const { allCollectibles, membersWithMounts } = useFCCollection();
+  const memberCount = membersWithMounts.length;
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const totalOwned = membersWithMounts.reduce(
-    (sum, m) => sum + m.ownedMountIds.size,
-    0,
-  );
-  const avgOwned =
-    membersWithMounts.length > 0
-      ? Math.round(totalOwned / membersWithMounts.length)
-      : 0;
+  useEffect(() => {
+    if (!gridRef.current) return;
+    animate(gridRef.current.querySelectorAll(".collectible-card"), {
+      opacity: [0, 1],
+      translateY: [16, 0],
+      delay: stagger(80),
+      duration: 350,
+      easing: "easeOutQuad",
+    });
+  }, []);
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold font-serif">FC Collection</h1>
-        <p className="mt-1 text-muted-foreground">
-          What we have as an FC — or a wall of shame.
-        </p>
+        <p className="mt-1 text-muted-foreground">I love data</p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Card className="flex flex-col">
-          <CardHeader className="pb-3">
-            <CardTitle className="font-serif flex items-center gap-2">
-              <Mountain className="h-5 w-5 text-muted-foreground shrink-0" />
-              Mounts
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 text-sm text-muted-foreground space-y-0.5">
-            <p>{allMounts.length} mounts tracked</p>
-            {members.length > 0 && (
-              <p>
-                Avg owned: {avgOwned} / {allMounts.length}
-              </p>
-            )}
-            <p>{members.length} members</p>
-          </CardContent>
-          <CardFooter className="pt-0">
-            <Button asChild variant="outline" size="sm" className="w-full">
-              <Link to="/fc-collection/mounts">
-                View Mounts
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
+      <div ref={gridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {COLLECTIBLE_CONFIG.map((cfg) => {
+          const items = allCollectibles[cfg.key];
+          const avgOwned =
+            memberCount > 0
+              ? Math.round(
+                  membersWithMounts.reduce(
+                    (s, m) => s + m.owned[cfg.key].size,
+                    0,
+                  ) / memberCount,
+                )
+              : 0;
+          const Icon = cfg.icon;
+          return (
+            <Card key={cfg.key} className="collectible-card flex flex-col">
+              <CardHeader className="pb-3">
+                <CardTitle className="font-serif flex items-center gap-2">
+                  <Icon className="h-5 w-5 text-muted-foreground shrink-0" />
+                  {cfg.label}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 text-sm text-muted-foreground space-y-0.5">
+                <p>
+                  {items.length} {cfg.singular.toLowerCase()}s
+                </p>
+                {memberCount > 0 && (
+                  <p>
+                    Avg owned: {avgOwned} / {items.length}
+                  </p>
+                )}
+                <p>{memberCount} members</p>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/fc-collection/$type" params={{ type: cfg.key }}>
+                    View {cfg.label}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          );
+        })}
 
-        <Card className="flex flex-col">
+        <Card className="collectible-card flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="font-serif flex items-center gap-2">
               <Trophy className="h-5 w-5 text-muted-foreground shrink-0" />
@@ -70,8 +88,10 @@ export function FCCollectionPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex-1 text-sm text-muted-foreground space-y-0.5">
-            <p>Ranked by collection progress</p>
-            <p>{members.length} members competing</p>
+            <p>
+              Place for axo to flex her collection (aka carbon date how old she
+              is)
+            </p>
           </CardContent>
           <CardFooter className="pt-0">
             <Button asChild variant="outline" size="sm" className="w-full">

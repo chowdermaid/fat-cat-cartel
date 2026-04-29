@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+import { animate, stagger } from "animejs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Carousel,
@@ -51,9 +53,46 @@ const perks = [
 ];
 
 export function RecruitmentPage() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const perksGridRef = useRef<HTMLDivElement>(null);
+  const activityListRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (!pageRef.current) return;
+    animate(pageRef.current.querySelectorAll(".anim-section"), {
+      opacity: [0, 1],
+      translateY: [20, 0],
+      delay: stagger(100),
+      duration: 450,
+      easing: "easeOutQuart",
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!perksGridRef.current) return;
+    animate(perksGridRef.current.querySelectorAll(".perk-card"), {
+      opacity: [0, 1],
+      translateY: [12, 0],
+      delay: stagger(70, { start: 200 }),
+      duration: 300,
+      easing: "easeOutQuad",
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!activityListRef.current) return;
+    animate(activityListRef.current.querySelectorAll("li"), {
+      opacity: [0, 1],
+      translateX: [-10, 0],
+      delay: stagger(50, { start: 300 }),
+      duration: 280,
+      easing: "easeOutQuad",
+    });
+  }, []);
+
   return (
-    <div className="space-y-12">
-      <div>
+    <div ref={pageRef} className="space-y-12">
+      <div className="anim-section">
         <h1 className="text-3xl font-bold font-serif">Join the Meowfia</h1>
         <p className="mt-2 text-lg text-muted-foreground leading-relaxed max-w-2xl">
           A small, relaxed Free Company on FFXIV made up mostly of adults who
@@ -65,8 +104,7 @@ export function RecruitmentPage() {
         </p>
       </div>
 
-      {/* Photo carousel */}
-      <div className="relative px-8">
+      <div className="anim-section relative px-8">
         <Carousel opts={{ loop: true }}>
           <CarouselContent>
             {carouselImages.map((src, i) => (
@@ -86,14 +124,13 @@ export function RecruitmentPage() {
         </Carousel>
       </div>
 
-      {/* What we offer */}
-      <div>
+      <div className="anim-section">
         <h2 className="text-xl font-semibold font-serif mb-6">
           What the Meowfia Offers
         </h2>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div ref={perksGridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {perks.map(({ icon: Icon, title, items }) => (
-            <Card key={title}>
+            <Card key={title} className="perk-card">
               <CardHeader className="pb-2">
                 <Icon className="h-6 w-6 mb-1 text-primary" />
                 <CardTitle className="text-sm font-semibold">{title}</CardTitle>
@@ -116,13 +153,12 @@ export function RecruitmentPage() {
         </div>
       </div>
 
-      {/* What we get up to + join */}
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="anim-section grid gap-6 sm:grid-cols-2">
         <div>
           <h2 className="text-xl font-semibold font-serif mb-3">
             What We Get Up To
           </h2>
-          <ul className="space-y-2 text-sm text-muted-foreground">
+          <ul ref={activityListRef} className="space-y-2 text-sm text-muted-foreground">
             {[
               "Mount farms, treasure hunts, and PvP",
               "Casual runs of older content for mounts, glam & achievements",

@@ -2,7 +2,7 @@ import { useFCCollection } from "../api/useFCCollection";
 import { LeaderboardTable } from "../components/LeaderboardTable";
 
 export function LeaderboardPage() {
-  const { allMounts, membersWithMounts, loading } = useFCCollection();
+  const { allCollectibles, membersWithMounts, loading } = useFCCollection();
 
   if (loading) {
     return (
@@ -20,7 +20,7 @@ export function LeaderboardPage() {
           Ranked by collection progress across the FC.
         </p>
       </div>
-      <LeaderboardTable members={membersWithMounts} allMounts={allMounts} />
+      <LeaderboardTable members={membersWithMounts} allCollectibles={allCollectibles} />
     </div>
   );
 }

@@ -2,12 +2,12 @@ import type { MemberWithMounts } from "../types";
 
 interface MemberHeaderProps {
   member: MemberWithMounts;
-  totalMounts: number;
+  total: number;
+  count: number;
 }
 
-export function MemberHeader({ member, totalMounts }: MemberHeaderProps) {
-  const count = member.ownedMountIds.size;
-  const pct = totalMounts > 0 ? (count / totalMounts) * 100 : 0;
+export function MemberHeader({ member, total, count }: MemberHeaderProps) {
+  const pct = total > 0 ? (count / total) * 100 : 0;
 
   return (
     <div className="flex flex-col items-center gap-1.5 px-3 py-2 min-w-[88px]">
@@ -26,7 +26,7 @@ export function MemberHeader({ member, totalMounts }: MemberHeaderProps) {
         {member.name}
       </p>
       <p className="text-xs text-muted-foreground tabular-nums">
-        {count}/{totalMounts}
+        {count}/{total}
       </p>
       <div className="w-full bg-muted rounded-full h-1">
         <div

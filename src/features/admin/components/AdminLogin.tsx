@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -24,7 +30,7 @@ export function AdminLogin({ error, onLogin }: AdminLoginProps) {
         <CardHeader className="text-center">
           <Lock className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
           <CardTitle>Admin Panel</CardTitle>
-          <CardDescription>Meowfia members only.</CardDescription>
+          <CardDescription>Meowfia heads only.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -39,9 +45,7 @@ export function AdminLogin({ error, onLogin }: AdminLoginProps) {
                 autoFocus
               />
             </div>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full">
               Enter
             </Button>
