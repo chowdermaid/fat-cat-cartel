@@ -11,12 +11,29 @@ function parseOwned(json: unknown): number[] {
   return (arr as Collectible[]).map((item) => item.id);
 }
 
+function buildListUrl(apiPath: string, fetchLimit?: number): string {
+  return fetchLimit ? `${BASE}/${apiPath}?limit=${fetchLimit}` : `${BASE}/${apiPath}`;
+}
+
+function transformItems(rawItems: any[], categoryFilter?: string[]): Collectible[] {
+  const filtered = categoryFilter?.length
+    ? rawItems.filter((item) => categoryFilter.includes(item.category?.name))
+    : rawItems;
+
+  return filtered.map((item) => ({
+    ...item,
+    sources: item.category
+      ? [{ type: item.category.name, text: item.type?.name ?? "" }]
+      : (item.sources ?? []),
+  }));
+}
+
 export async function fetchAndCacheFCData(
   members: FCMember[],
   previousMemberData: Record<string, MemberCacheData> = {},
 ): Promise<void> {
   const listResults = await Promise.all(
-    COLLECTIBLE_CONFIG.map((cfg) => fetch(`${BASE}/${cfg.apiPath}`)),
+    COLLECTIBLE_CONFIG.map((cfg) => fetch(buildListUrl(cfg.apiPath, cfg.fetchLimit))),
   );
 
   for (let i = 0; i < listResults.length; i++) {
@@ -29,7 +46,8 @@ export async function fetchAndCacheFCData(
   const lists: Record<string, string> = {};
   for (let i = 0; i < COLLECTIBLE_CONFIG.length; i++) {
     const cfg = COLLECTIBLE_CONFIG[i];
-    const items: Collectible[] = listJsons[i]?.results ?? [];
+    const rawItems: any[] = listJsons[i]?.results ?? [];
+    const items = transformItems(rawItems, cfg.categoryFilter);
     lists[cfg.apiPath] = JSON.stringify(items);
   }
 
@@ -61,7 +79,7 @@ export async function fetchAndCacheFCData(
         const owned = {} as Record<CollectibleKey, number[]>;
         const previousOwned = {} as Record<CollectibleKey, number>;
         for (let i = 0; i < COLLECTIBLE_CONFIG.length; i++) {
-          const key = COLLECTIBLE_CONFIG[i].key; // always use cfg.key, never rely on index sync with COLLECTIBLE_KEYS
+          const key = COLLECTIBLE_CONFIG[i].key;
           owned[key] = parseOwned(ownedJsons[i]);
           previousOwned[key] = prev?.owned?.[key]?.length ?? 0;
           console.log(`[fetchAndCacheFCData] ${member.lodestoneId} ${key}: ${owned[key].length} owned`);

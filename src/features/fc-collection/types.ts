@@ -13,6 +13,7 @@ export interface Collectible {
   image?: string;
   patch: string;
   owned: string;
+  points?: number;
   sources?: CollectibleSource[];
 }
 

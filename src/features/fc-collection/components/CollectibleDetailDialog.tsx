@@ -51,6 +51,9 @@ export function CollectibleDetailDialog({ item, children }: CollectibleDetailDia
                   </Badge>
                 </>
               )}
+              {item.points != null && (
+                <Badge variant="secondary">{item.points} pts</Badge>
+              )}
               <Badge variant="secondary">{item.owned} own this</Badge>
             </div>
             {(item.sources?.length ?? 0) > 0 && (

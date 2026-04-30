@@ -47,9 +47,16 @@ function LoadingSkeleton() {
   );
 }
 
+function formatSynced(ts: number | null): string | null {
+  if (!ts) return null;
+  return new Date(ts).toLocaleString(undefined, {
+    month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+  });
+}
+
 export function CollectiblePage() {
   const { type } = useParams({ strict: false });
-  const { allCollectibles, membersWithMounts, loading } = useFCCollection();
+  const { allCollectibles, membersWithMounts, loading, lastFetched } = useFCCollection();
 
   const config = COLLECTIBLE_CONFIG.find((c) => c.key === type);
 
@@ -81,9 +88,16 @@ export function CollectiblePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold font-serif">{config.label}</h1>
-        <p className="mt-1 text-muted-foreground">
-          {items.length} {config.label.toLowerCase()} · {membersWithMounts.length} members tracked
-        </p>
+        <div className="flex items-baseline gap-3 mt-1">
+          <p className="text-muted-foreground">
+            {items.length} {config.label.toLowerCase()} · {membersWithMounts.length} members tracked
+          </p>
+          {formatSynced(lastFetched) && (
+            <span className="text-xs text-muted-foreground/60 shrink-0">
+              Synced {formatSynced(lastFetched)}
+            </span>
+          )}
+        </div>
       </div>
       <CollectibleGrid items={items} members={membersWithMounts} config={config} />
     </div>

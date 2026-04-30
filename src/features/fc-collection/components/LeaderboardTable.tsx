@@ -20,6 +20,18 @@ const rankLabels: Record<number, string> = {
   3: "🥉",
 };
 
+const ACHIEVEMENT_GROUPS = {
+  All: null,
+  Battle: ["Trials", "Raids", "Dungeons", "Duty", "Deep Dungeon Weapons", "Phantom Weapons"],
+  PvP: ["Frontline", "The Wolves' Den"],
+  Exploration: ["Field Operations", "Treasure Hunt", "Gold Saucer"],
+  Crafting: ["Carpenter", "Blacksmith", "Armorer", "Goldsmith", "Leatherworker", "Weaver", "Alchemist", "Culinarian", "Cosmic Tools", "All Disciplines"],
+  Gathering: ["Miner", "Botanist", "Fisher"],
+  Story: ["Main Scenario", "Allied Society Quests", "General"],
+} as const;
+
+type AchievementGroup = keyof typeof ACHIEVEMENT_GROUPS;
+
 interface LeaderboardTableProps {
   members: MemberWithMounts[];
   allCollectibles: Record<CollectibleKey, Collectible[]>;
@@ -54,26 +66,64 @@ function AnimatedBar({ pct }: { pct: number }) {
 
 export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>(COLLECTIBLE_CONFIG[0].key);
+  const [achievementGroup, setAchievementGroup] = useState<AchievementGroup>("All");
   const listRef = useRef<HTMLDivElement>(null);
 
   const activeConfig = COLLECTIBLE_CONFIG.find((c) => c.key === activeTab) ?? COLLECTIBLE_CONFIG[0];
-  const allItems = allCollectibles[activeConfig.key];
-  const total = allItems.length;
+  const isPoints = activeConfig.rankBy === "points";
+  const isAchievements = activeTab === "achievements";
+
+  const allItems = useMemo(() => {
+    const items = allCollectibles[activeConfig.key];
+    if (!isAchievements || achievementGroup === "All") return items;
+    const allowed = ACHIEVEMENT_GROUPS[achievementGroup];
+    return items.filter((item) =>
+      item.sources?.some((s) => (allowed as readonly string[]).includes(s.type)),
+    );
+  }, [allCollectibles, activeConfig.key, isAchievements, achievementGroup]);
+
+  const total = useMemo(() => {
+    if (isPoints) return allItems.reduce((s, i) => s + (i.points ?? 0), 0);
+    return allItems.length;
+  }, [allItems, isPoints]);
 
   const ranked = useMemo(() => {
     const key = activeTab;
+    const pointsMap = isPoints
+      ? new Map(allItems.map((i) => [i.id, i.points ?? 0]))
+      : null;
+    const itemIdSet = isPoints || isAchievements
+      ? new Set(allItems.map((i) => i.id))
+      : null;
+
     return [...members]
-      .sort((a, b) => b.owned[key].size - a.owned[key].size)
+      .sort((a, b) => {
+        if (pointsMap) {
+          const ownedA = itemIdSet ? [...a.owned[key]].filter((id) => itemIdSet.has(id)) : [...a.owned[key]];
+          const ownedB = itemIdSet ? [...b.owned[key]].filter((id) => itemIdSet.has(id)) : [...b.owned[key]];
+          const ptsA = ownedA.reduce((s, id) => s + (pointsMap.get(id) ?? 0), 0);
+          const ptsB = ownedB.reduce((s, id) => s + (pointsMap.get(id) ?? 0), 0);
+          return ptsB - ptsA;
+        }
+        return b.owned[key].size - a.owned[key].size;
+      })
       .map((m, i) => {
-        const count = m.owned[key].size;
-        const delta = count - (m.previousOwned[key] ?? 0);
+        const ownedFiltered = itemIdSet
+          ? [...m.owned[key]].filter((id) => itemIdSet.has(id))
+          : null;
+        const count = pointsMap
+          ? (ownedFiltered ?? [...m.owned[key]]).reduce((s, id) => s + (pointsMap.get(id) ?? 0), 0)
+          : ownedFiltered
+            ? ownedFiltered.length
+            : m.owned[key].size;
+        const delta = m.owned[key].size - (m.previousOwned[key] ?? 0);
         const rarestOwned =
           allItems
             .filter((item) => m.owned[key].has(item.id))
             .sort((a, b) => parseFloat(a.owned) - parseFloat(b.owned))[0] ?? null;
         return { ...m, rank: i + 1, count, delta, rarestOwned };
       });
-  }, [members, allCollectibles, activeTab, allItems]);
+  }, [members, allCollectibles, activeTab, allItems, isPoints, isAchievements]);
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -84,15 +134,16 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
       duration: 250,
       easing: "easeOutQuad",
     });
-  }, [activeTab]);
+  }, [activeTab, achievementGroup]);
 
   return (
     <div className="space-y-4">
+      {/* Tab row */}
       <div className="flex gap-1.5 flex-wrap">
         {COLLECTIBLE_CONFIG.map((cfg) => (
           <button
             key={cfg.key}
-            onClick={() => setActiveTab(cfg.key)}
+            onClick={() => { setActiveTab(cfg.key); setAchievementGroup("All"); }}
             className={cn(
               "px-3 py-1 rounded-full text-sm font-medium border transition-colors",
               activeTab === cfg.key
@@ -104,6 +155,26 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
           </button>
         ))}
       </div>
+
+      {/* Achievement sub-category filter */}
+      {isAchievements && (
+        <div className="flex gap-1 flex-wrap">
+          {(Object.keys(ACHIEVEMENT_GROUPS) as AchievementGroup[]).map((group) => (
+            <button
+              key={group}
+              onClick={() => setAchievementGroup(group)}
+              className={cn(
+                "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                achievementGroup === group
+                  ? "bg-secondary text-secondary-foreground border-secondary"
+                  : "bg-background text-muted-foreground border-border hover:text-foreground",
+              )}
+            >
+              {group}
+            </button>
+          ))}
+        </div>
+      )}
 
       {members.length === 0 ? (
         <p className="text-center text-sm text-muted-foreground py-12">
@@ -126,8 +197,17 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
                   <div className="flex-1 space-y-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-semibold tabular-nums">
-                        {m.count}
-                        <span className="text-muted-foreground font-normal">/{total}</span>
+                        {isPoints ? (
+                          <>
+                            {m.count.toLocaleString()}
+                            <span className="text-muted-foreground font-normal text-xs ml-0.5">pts</span>
+                          </>
+                        ) : (
+                          <>
+                            {m.count}
+                            <span className="text-muted-foreground font-normal">/{total}</span>
+                          </>
+                        )}
                       </span>
                       <span className="text-xs text-muted-foreground tabular-nums">
                         {pct.toFixed(1)}%
