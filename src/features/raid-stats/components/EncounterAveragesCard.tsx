@@ -38,11 +38,14 @@ export function EncounterAveragesCard({ members, encounters, contentType }: Prop
 
   useEffect(() => {
     if (!listRef.current) return;
-    animate(listRef.current.querySelectorAll(".ea-bar"), {
-      width: ["0%", (el: Element) => (el as HTMLElement).dataset.width ?? "0%"],
-      duration: 550,
-      delay: stagger(60),
-      easing: "easeOutQuart",
+    const bars = Array.from(listRef.current.querySelectorAll<HTMLElement>(".ea-bar"));
+    bars.forEach((el, i) => {
+      animate(el, {
+        width: ["0%", el.dataset.width ?? "0%"],
+        duration: 550,
+        delay: i * 60,
+        easing: "easeOutQuart",
+      });
     });
   }, []);
 
