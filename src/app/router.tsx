@@ -12,6 +12,7 @@ import { CollectiblePage } from "@/features/fc-collection/pages/CollectiblePage"
 import { LeaderboardPage } from "@/features/fc-collection/pages/LeaderboardPage";
 import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
+import { RaidStatsPage } from "@/features/raid-stats";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -59,6 +60,12 @@ const fcLeaderboardRoute = createRoute({
   component: LeaderboardPage,
 });
 
+const raidStatsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/raid-stats",
+  component: RaidStatsPage,
+});
+
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
@@ -73,6 +80,7 @@ const routeTree = rootRoute.addChildren([
   fcCollectionRoute,
   fcTypeRoute,
   fcLeaderboardRoute,
+  raidStatsRoute,
   adminRoute,
 ]);
 
