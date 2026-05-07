@@ -158,20 +158,12 @@ export function RaidStatsPage() {
         </div>
       )}
 
-      {activeTab === "ultimate" ? (
-        <div className="rounded-lg border bg-muted/30 px-6 py-10 text-center space-y-2">
-          <p className="text-sm font-medium">Ultimate stats coming soon</p>
-          <p className="text-sm text-muted-foreground">
-            i cant for the life of me figure out where the ult stats r hidden
-            hang with me
-          </p>
-        </div>
-      ) : loading ? (
+      {loading ? (
         <LoadingSkeleton />
       ) : !data ? (
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            No data yet for this zone — the hourly sync hasn't run. Check back
+            No data yet for this zone. The hourly sync hasn't run. Check back
             soon.
           </p>
         </div>
@@ -261,7 +253,7 @@ export function RaidStatsPage() {
             </div>
           </div>
 
-          {/* Parse distribution — full width, savage only */}
+          {/* Parse distribution, full width, savage only */}
           {contentType === "savage" && (
             <div className="anim-section">
               <ParseHistogramCard

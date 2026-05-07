@@ -57,10 +57,12 @@ export const GUILD_MEMBERS_QUERY = `
 /**
  * Builds a combined per-character zone rankings query using GraphQL aliases.
  * Savage zones fetch both savage (diff 101) and normal (diff 100).
- * All other zones fetch diff 100 only.
- * This lets us fetch all zones for a member in a single API call.
+ * All other zones fetch without explicit difficulty.
+ * Zones with fflogsZoneId use that for the API call; multiple zones sharing the
+ * same fflogsZoneId are deduplicated to a single query alias (z{fflogsZoneId}).
  */
-export function buildCharacterZonesQuery(zones: Array<{ id: number; contentType: string }>): string {
+export function buildCharacterZonesQuery(zones: Array<{ id: number; fflogsZoneId?: number; contentType: string }>): string {
+  const seen = new Set<number>();
   const fields = zones.flatMap((z) => {
     if (z.contentType === "savage") {
       return [
@@ -68,7 +70,10 @@ export function buildCharacterZonesQuery(zones: Array<{ id: number; contentType:
         `z${z.id}_n: zoneRankings(zoneID: ${z.id}, difficulty: 100, metric: rdps)`,
       ];
     }
-    return [`z${z.id}: zoneRankings(zoneID: ${z.id})`];
+    const fflogsId = z.fflogsZoneId ?? z.id;
+    if (seen.has(fflogsId)) return [];
+    seen.add(fflogsId);
+    return [`z${fflogsId}: zoneRankings(zoneID: ${fflogsId})`];
   });
   return `
   query($charID: Int!) {

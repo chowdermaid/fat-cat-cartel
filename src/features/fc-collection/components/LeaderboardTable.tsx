@@ -221,7 +221,7 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
                         +{m.delta}
                       </Badge>
                     ) : (
-                      <span className="text-xs text-muted-foreground/40">—</span>
+                      <span className="text-xs text-muted-foreground/40">-</span>
                     )}
                   </div>
                   {m.rarestOwned && (

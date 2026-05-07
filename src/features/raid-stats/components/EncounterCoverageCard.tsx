@@ -105,7 +105,7 @@ export function EncounterCoverageCard({ members, encounters, contentType }: Prop
                               {Math.round(pct)}
                             </span>
                           ) : (
-                            <span className="text-muted-foreground/30 text-xs">—</span>
+                            <span className="text-muted-foreground/30 text-xs">-</span>
                           )}
                         </td>
                       );

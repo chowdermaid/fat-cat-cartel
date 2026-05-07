@@ -116,7 +116,7 @@ export function ParseLeaderboard({ members, encounters, contentType }: Props) {
                           <span className="text-xs text-muted-foreground">{jobForSort}</span>
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground/40">—</span>
+                        <span className="text-xs text-muted-foreground/40">-</span>
                       )}
                     </td>
                     {cols.map((c) => {
@@ -128,7 +128,7 @@ export function ParseLeaderboard({ members, encounters, contentType }: Props) {
                               {Math.round(pct)}
                             </span>
                           ) : (
-                            <span className="text-muted-foreground/40">—</span>
+                            <span className="text-muted-foreground/40">-</span>
                           )}
                         </td>
                       );

@@ -40,7 +40,7 @@ export function Scoreboard() {
 
         {!loading && !error && participants.length === 0 && (
           <div className="py-16 text-center text-muted-foreground">
-            <p>No participants yet — check back when the event starts!</p>
+            <p>No participants yet. Check back when the event starts!</p>
           </div>
         )}
 

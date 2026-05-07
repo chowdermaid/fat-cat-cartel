@@ -18,6 +18,7 @@ function timeAgo(ms: number): string {
 const DIFFICULTY_BADGE: Record<string, string> = {
   Savage: "bg-orange-400/15 text-orange-400",
   Normal: "bg-blue-400/15 text-blue-400",
+  Ultimate: "bg-purple-400/15 text-purple-400",
 };
 
 export function RecentKillCard({ kill }: Props) {

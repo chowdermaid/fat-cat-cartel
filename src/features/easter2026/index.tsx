@@ -20,7 +20,7 @@ const events = [
     host: "Chow, Potato, Zalka",
     scoreboard: true,
     description:
-      "Played over 3 rounds. A different admin acts as the initial seeker each round. Everyone starts as a hider — last ones standing earn the most points. Watch out for Golden Chickens!",
+      "Played over 3 rounds. A different admin acts as the initial seeker each round. Everyone starts as a hider. Last ones standing earn the most points. Watch out for Golden Chickens!",
     rulesContent: <HideAndSeekDialog />,
     pointRules: hideAndSeekPointRules,
   },
@@ -101,7 +101,7 @@ const events = [
 export function Easter2026Page() {
   return (
     <div className="flex items-end">
-      {/* Left image — sticky to bottom as user scrolls */}
+      {/* Left image, sticky to bottom as user scrolls */}
       <div className="hidden 2xl:block w-56 shrink-0 self-end sticky bottom-0">
         <img
           src={leftEaster}
@@ -185,7 +185,7 @@ export function Easter2026Page() {
         </div>
       </div>
 
-      {/* Right image — sticky to bottom as user scrolls */}
+      {/* Right image, sticky to bottom as user scrolls */}
       <div className="hidden 2xl:block w-56 shrink-0 self-end sticky bottom-0">
         <img
           src={rightEaster}

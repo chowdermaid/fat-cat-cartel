@@ -1,18 +1,18 @@
-# Fat Cat Cartel — Claude Instructions
+# Fat Cat Cartel: Claude Instructions
 
 ## Project overview
 Website for the FFXIV Free Company "Fat Cat Cartel" (The Meowfia). Hosts FC event pages (e.g. Easter 2026 social with live scoreboard), an admin panel for managing scores, and a home page.
 
-Live data comes from Firebase Realtime Database. Local dev uses an in-memory stub — no credentials required.
+Live data comes from Firebase Realtime Database. Local dev uses an in-memory stub; no credentials required.
 
 ---
 
 ## Tech stack
 - **React 19 + TypeScript**, Vite 8
-- **Tailwind CSS v4** via `@tailwindcss/vite` — `@theme inline` + oklch color tokens in `src/index.css`
-- **TanStack Router** — code-based routing, no file-based routing
+- **Tailwind CSS v4** via `@tailwindcss/vite`: `@theme inline` + oklch color tokens in `src/index.css`
+- **TanStack Router**: code-based routing, no file-based routing
 - **Firebase Realtime Database v12**
-- **shadcn/ui pattern** — Radix UI primitives + CVA + tailwind-merge, components live in `src/components/ui/`
+- **shadcn/ui pattern**: Radix UI primitives + CVA + tailwind-merge, components live in `src/components/ui/`
 - **Lucide React** for icons, **Embla Carousel** for carousels
 - **Google Fonts**: Nunito Sans (body), Nunito (`font-serif` headings), JetBrains Mono (mono)
 - **Dark mode**: `.dark` class on `<html>`, persisted in `localStorage` via `useDarkMode` hook
@@ -24,12 +24,12 @@ Live data comes from Firebase Realtime Database. Local dev uses an in-memory stu
 ```
 src/
 ├── app/
-│   └── router.tsx            # All route definitions — add new routes here
+│   └── router.tsx            # All route definitions; add new routes here
 ├── assets/                   # Static images organised by feature (carousel/, easter26/, hidenseek/)
 ├── components/
 │   ├── layouts/
 │   │   └── RootLayout.tsx    # App shell: nav, dark mode toggle, footer
-│   └── ui/                   # shadcn components — do not edit directly
+│   └── ui/                   # shadcn components; do not edit directly
 ├── features/                 # One folder per page / feature
 │   ├── home/
 │   │   ├── components/       # Components private to this feature
@@ -44,7 +44,7 @@ src/
 │       └── index.tsx
 ├── hooks/                    # Global reusable hooks (useDarkMode.ts)
 ├── lib/
-│   ├── db.ts                 # DB abstraction — always import from here
+│   ├── db.ts                 # DB abstraction; always import from here
 │   ├── db.stub.ts            # In-memory stub for local dev
 │   ├── firebase.ts           # Firebase app init (skipped when VITE_USE_STUBS=true)
 │   └── utils.ts              # cn() helper
@@ -55,12 +55,13 @@ src/
 ---
 
 ## Coding conventions
-- **No comments** unless the WHY is non-obvious — a hidden constraint, subtle invariant, or workaround for a specific bug
-- **No premature abstraction** — three similar lines beat an early helper
-- **No error handling for impossible cases** — trust internal guarantees; only validate at system boundaries (user input, external APIs)
-- **No extra features** — don't add things beyond what's asked; no cleanup or refactors alongside a bug fix
-- **Tailwind only** for styling — no CSS modules, no inline styles
-- **shadcn components** from `src/components/ui/` — don't reinvent what's already there
+- **No em dashes** in code, comments, or strings; use a colon, comma, semicolon, or period instead
+- **No comments** unless the WHY is non-obvious: a hidden constraint, subtle invariant, or workaround for a specific bug
+- **No premature abstraction**: three similar lines beat an early helper
+- **No error handling for impossible cases**: trust internal guarantees; only validate at system boundaries (user input, external APIs)
+- **No extra features**: don't add things beyond what's asked; no cleanup or refactors alongside a bug fix
+- **Tailwind only** for styling: no CSS modules, no inline styles
+- **shadcn components** from `src/components/ui/`: don't reinvent what's already there
 - Use **relative imports within a feature**, `@/` alias for cross-feature imports
 - Prefer editing existing files over creating new ones
 
@@ -77,11 +78,26 @@ src/
 
 ---
 
+## Firebase cost sensitivity
+The project is on the Blaze plan but usage must stay within free-tier limits. **Always optimise for minimal reads, writes, downloads, and function invocations.**
+
+- Prefer `once` / `get` reads over persistent `onValue` listeners unless real-time sync is genuinely needed
+- Cache data in React state or `localStorage` rather than re-fetching on every render or navigation
+- Avoid polling; use listeners only where live updates are a core feature (e.g. the scoreboard)
+- Keep Realtime Database payloads small: never store redundant or derived data that can be computed client-side
+- Avoid triggering Cloud Functions unnecessarily; batch writes where possible
+- Static assets (images, fonts) go through Firebase Hosting CDN; no extra cost concern there
+- When suggesting new features that touch Firebase, flag the read/write/function cost implications
+
+Current free-tier headroom (as of 2026-05-07): Realtime DB storage 0.3% used, downloads 0.8% used; Functions invocations 0% used; Hosting storage 4.1% used.
+
+---
+
 ## Database / Firebase pattern
-- **Always** import db functions from `src/lib/db.ts` — never directly from `firebase/database`
+- **Always** import db functions from `src/lib/db.ts`: never directly from `firebase/database`
 - `.env` controls the mode: `VITE_USE_STUBS=true` (stub) or `false` (real Firebase)
 - The stub ships with seeded test participants; real DB uses Firebase Realtime Database
-- Firebase config lives in `.env` (gitignored) — never commit credentials
+- Firebase config lives in `.env` (gitignored); never commit credentials
 
 ---
 
@@ -165,12 +181,12 @@ function LoadingSkeleton() {
   return <div ref={ref}>...</div>;
 }
 ```
-Use `animate-pulse` on skeleton divs for the shimmer. Add `.sk` only to the elements that should individually cascade — don't nest `.sk` inside `.sk`.
+Use `animate-pulse` on skeleton divs for the shimmer. Add `.sk` only to the elements that should individually cascade; don't nest `.sk` inside `.sk`.
 
 ---
 
 ## Key architectural notes
-- Layout container is `max-w-screen-2xl` in `RootLayout` — needed to fit 3-column Easter layout with side images
+- Layout container is `max-w-screen-2xl` in `RootLayout`: needed to fit 3-column Easter layout with side images
 - Side decorative images use a 3-column flex with `sticky bottom-0 self-end`, not fixed positioning
 - Dynamic asset arrays use `import.meta.glob` with `eager: true` (carousel images, hide & seek instruction images)
 - Dark mode flash prevention: inline `<script>` in `index.html` sets `.dark` on `<html>` before React mounts

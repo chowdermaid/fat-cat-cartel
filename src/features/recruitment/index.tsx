@@ -182,11 +182,11 @@ export function RecruitmentPage() {
             </p>
             <div className="mt-3 space-y-1 text-sm text-muted-foreground">
               <p>
-                <span className="text-foreground font-medium">Chow Chow</span> —
+                <span className="text-foreground font-medium">Chow Chow</span>:
                 Discord: @chowdermaid
               </p>
               <p>
-                <span className="text-foreground font-medium">Axo Lotl</span> —
+                <span className="text-foreground font-medium">Axo Lotl</span>:
                 Discord: @fazzrar
               </p>
             </div>

@@ -55,7 +55,7 @@ export interface ParseBuckets {
 export interface RecentKill {
   encounterName: string;
   encounterKey: string | null;
-  difficulty: "Savage" | "Normal";
+  difficulty: "Savage" | "Normal" | "Ultimate";
   date: number;
   reportCode: string;
 }

@@ -59,8 +59,7 @@ export function FCCollectionPage() {
           and set <span className="font-medium">Achievements</span>,{" "}
           <span className="font-medium">Mounts</span>, and{" "}
           <span className="font-medium">Minions</span> to{" "}
-          <span className="font-medium">Everyone</span>, and ask chow to refresh
-          the data. (i'll automate this eventually bear with me q.q)
+          <span className="font-medium">"Everyone".</span>
         </p>
       </div>
 

@@ -45,12 +45,12 @@ export const ZONE_TABS: ZoneTab[] = [
     type: "ultimate",
     label: "Ultimates",
     zones: [
-      { id: 65, name: "Futures Rewritten",            shortName: "FRU",  contentType: "ultimate" },
-      { id: 53, name: "The Omega Protocol",           shortName: "TOP",  contentType: "ultimate" },
-      { id: 45, name: "Dragonsong's Reprise",         shortName: "DSR",  contentType: "ultimate" },
-      { id: 32, name: "The Epic of Alexander",        shortName: "TEA",  contentType: "ultimate" },
-      { id: 23, name: "The Weapon's Refrain",         shortName: "UWU",  contentType: "ultimate" },
       { id: 19, name: "The Unending Coil of Bahamut", shortName: "UCOB", contentType: "ultimate" },
+      { id: 23, name: "The Weapon's Refrain",          shortName: "UWU",  contentType: "ultimate" },
+      { id: 32, name: "The Epic of Alexander",         shortName: "TEA",  contentType: "ultimate" },
+      { id: 45, name: "Dragonsong's Reprise",          shortName: "DSR",  contentType: "ultimate" },
+      { id: 53, name: "The Omega Protocol",            shortName: "TOP",  contentType: "ultimate" },
+      { id: 65, name: "Futures Rewritten",             shortName: "FRU",  contentType: "ultimate" },
     ],
   },
 ];

@@ -62,7 +62,7 @@ function EncounterChart({ enc, buckets }: { enc: ZoneEncounter; buckets: ParseBu
                 className="flex-1 text-center text-[9px] tabular-nums"
                 style={{ color: buckets[k] > 0 ? BUCKET_COLORS[k] : undefined }}
               >
-                {buckets[k] > 0 ? buckets[k] : <span className="text-muted-foreground/25">—</span>}
+                {buckets[k] > 0 ? buckets[k] : <span className="text-muted-foreground/25">-</span>}
               </div>
             ))}
           </div>

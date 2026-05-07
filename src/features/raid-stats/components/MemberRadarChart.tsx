@@ -79,7 +79,7 @@ export function MemberRadarChart({ member, encounters, contentType }: Props) {
                     {Math.round(pct)}
                   </span>
                 ) : (
-                  <span className="text-xs text-muted-foreground/40">—</span>
+                  <span className="text-xs text-muted-foreground/40">-</span>
                 )}
               </div>
             ))}

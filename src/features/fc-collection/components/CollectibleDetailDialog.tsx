@@ -67,7 +67,7 @@ export function CollectibleDetailDialog({ item, children }: CollectibleDetailDia
                         <span className="font-medium text-foreground">
                           {s.type}
                         </span>
-                        {s.text ? ` — ${s.text}` : ""}
+                        {s.text ? `: ${s.text}` : ""}
                       </span>
                     </li>
                   ))}

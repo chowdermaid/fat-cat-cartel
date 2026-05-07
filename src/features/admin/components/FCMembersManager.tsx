@@ -192,7 +192,7 @@ export function FCMembersManager() {
           </div>
           <p className="text-xs text-muted-foreground">
             FFLogs members are auto-matched to Lodestone portraits on each refresh via XIVAPI.
-            Enter a Lodestone ID manually for unmatched members — takes effect after the next Refresh Logs.
+            Enter a Lodestone ID manually for unmatched members. Takes effect after the next Refresh Logs.
           </p>
           <div className="rounded-lg border divide-y">
             {raidMembers.map((m) => (

@@ -141,7 +141,7 @@ export function MemberBoard({ members, encounters, contentType, selectedId, onSe
                           <span className="text-xs text-muted-foreground">{formatJobName(jobForDisplay)}</span>
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground/40">—</span>
+                        <span className="text-xs text-muted-foreground/40">-</span>
                       )}
                     </td>
                     {encounters.map((enc) => {
@@ -153,7 +153,7 @@ export function MemberBoard({ members, encounters, contentType, selectedId, onSe
                               {Math.round(pct)}
                             </span>
                           ) : (
-                            <span className="text-muted-foreground/30 text-xs">—</span>
+                            <span className="text-muted-foreground/30 text-xs">-</span>
                           )}
                         </td>
                       );

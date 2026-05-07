@@ -106,7 +106,7 @@ interface ParseBuckets {
 interface RecentKillData {
   encounterName: string;
   encounterKey: string | null;
-  difficulty: "Savage" | "Normal";
+  difficulty: "Savage" | "Normal" | "Ultimate";
   date: number;
   reportCode: string;
 }
@@ -250,6 +250,7 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
       };
 
       if (char) {
+        const fflogsId = zone.fflogsZoneId ?? zone.id;
         if (zone.contentType === "savage") {
           const savageRankings = char[`z${zone.id}_s`];
           const normalRankings = char[`z${zone.id}_n`];
@@ -289,11 +290,8 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
           }
         } else {
           // Trials, alliance, ultimates
-          const rankings = char[`z${zone.id}`];
+          const rankings = char[`z${fflogsId}`];
           const rankingsList = rankings?.rankings ?? [];
-          if (zone.contentType === "ultimate") {
-            console.log(`[fflogs-dbg] ${member.name} zone=${zone.id} rankings=${JSON.stringify(rankingsList.map((r) => ({ encId: r.encounter.id, pct: r.rankPercent, spec: r.spec, amount: r.bestAmount })))} allStars=${JSON.stringify((rankings?.allStars ?? []).map((a) => ({ partition: a.partition, spec: a.spec, rank: a.rank, pts: a.points })))}`);
-          }
           for (const r of rankingsList) {
             const enc = zone.encounters.find((e) => e.id === r.encounter.id);
             if (!enc) {
@@ -366,7 +364,7 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
     try {
       const payload = (await queryFFLogs(token, GUILD_REPORTS_QUERY, {
         guildID: GUILD_ID,
-        zoneID: zone.id,
+        zoneID: zone.fflogsZoneId ?? zone.id,
       })) as { reportData: { reports: { data: RawReport[] } } };
 
       let recentFound = false;
@@ -380,7 +378,7 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             recentKills[zone.id] = {
               encounterName: fight.name,
               encounterKey: enc?.key ?? null,
-              difficulty: fight.difficulty === DIFFICULTY.savage ? "Savage" : "Normal",
+              difficulty: zone.contentType === "ultimate" ? "Ultimate" : fight.difficulty === DIFFICULTY.savage ? "Savage" : "Normal",
               date: killDate,
               reportCode: report.code,
             };

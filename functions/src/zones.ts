@@ -9,6 +9,7 @@ export interface ZoneEncounter {
 
 export interface ZoneConfig {
   id: number;
+  fflogsZoneId?: number; // if set, API queries use this instead of id; id is still the Firebase path key
   name: string;
   shortName: string;
   expansion: "dawntrail";
@@ -111,35 +112,37 @@ export const ZONES: ZoneConfig[] = [
   },
 
   // ── Ultimates ─────────────────────────────────────────────────────────────
+  // FRU has its own FFLogs zone. All pre-Dawntrail ultimates live under zone 59 "Ultimates (Legacy)"
+  // on FFLogs but are stored in separate Firebase paths using their original zone IDs as virtual keys.
+  {
+    id: 19, fflogsZoneId: 59, name: "The Unending Coil of Bahamut", shortName: "UCOB",
+    expansion: "dawntrail", contentType: "ultimate",
+    encounters: [{ id: 1073, key: "ucob", label: "UCOB", name: "The Unending Coil of Bahamut" }],
+  },
+  {
+    id: 23, fflogsZoneId: 59, name: "The Weapon's Refrain", shortName: "UWU",
+    expansion: "dawntrail", contentType: "ultimate",
+    encounters: [{ id: 1074, key: "uwu",  label: "UWU",  name: "The Weapon's Refrain"         }],
+  },
+  {
+    id: 32, fflogsZoneId: 59, name: "The Epic of Alexander", shortName: "TEA",
+    expansion: "dawntrail", contentType: "ultimate",
+    encounters: [{ id: 1075, key: "tea",  label: "TEA",  name: "The Epic of Alexander"        }],
+  },
+  {
+    id: 45, fflogsZoneId: 59, name: "Dragonsong's Reprise", shortName: "DSR",
+    expansion: "dawntrail", contentType: "ultimate",
+    encounters: [{ id: 1076, key: "dsr",  label: "DSR",  name: "Dragonsong's Reprise"         }],
+  },
+  {
+    id: 53, fflogsZoneId: 59, name: "The Omega Protocol", shortName: "TOP",
+    expansion: "dawntrail", contentType: "ultimate",
+    encounters: [{ id: 1077, key: "top",  label: "TOP",  name: "The Omega Protocol"           }],
+  },
   {
     id: 65, name: "Futures Rewritten", shortName: "FRU",
     expansion: "dawntrail", contentType: "ultimate",
-    encounters: [{ id: 1079, key: "fru",  label: "FRU",  name: "Futures Rewritten"             }],
-  },
-  {
-    id: 53, name: "The Omega Protocol", shortName: "TOP",
-    expansion: "dawntrail", contentType: "ultimate",
-    encounters: [{ id: 1068, key: "top",  label: "TOP",  name: "The Omega Protocol"            }],
-  },
-  {
-    id: 45, name: "Dragonsong's Reprise", shortName: "DSR",
-    expansion: "dawntrail", contentType: "ultimate",
-    encounters: [{ id: 1065, key: "dsr",  label: "DSR",  name: "Dragonsong's Reprise"          }],
-  },
-  {
-    id: 32, name: "The Epic of Alexander", shortName: "TEA",
-    expansion: "dawntrail", contentType: "ultimate",
-    encounters: [{ id: 1050, key: "tea",  label: "TEA",  name: "The Epic of Alexander"         }],
-  },
-  {
-    id: 23, name: "The Weapon's Refrain", shortName: "UWU",
-    expansion: "dawntrail", contentType: "ultimate",
-    encounters: [{ id: 1042, key: "uwu",  label: "UWU",  name: "The Weapon's Refrain"          }],
-  },
-  {
-    id: 19, name: "The Unending Coil of Bahamut", shortName: "UCOB",
-    expansion: "dawntrail", contentType: "ultimate",
-    encounters: [{ id: 1039, key: "ucob", label: "UCOB", name: "The Unending Coil of Bahamut"  }],
+    encounters: [{ id: 1079, key: "fru",  label: "FRU",  name: "Futures Rewritten"            }],
   },
 ];
 

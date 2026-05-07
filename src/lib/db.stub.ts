@@ -16,7 +16,7 @@ type Unsubscribe = () => void;
 type Callback = (snap: StubSnapshot) => void;
 
 // ---------------------------------------------------------------------------
-// Seeded data — edit freely for local testing
+// Seeded data; edit freely for local testing
 // ---------------------------------------------------------------------------
 const NOW = Date.now();
 const DAY = 86_400_000;
