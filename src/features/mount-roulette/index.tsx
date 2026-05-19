@@ -7,6 +7,7 @@ import { MemberPicker } from "@/features/fc-collection/components/MemberPicker";
 import type { Collectible } from "@/features/fc-collection/types";
 import { SpinWheel } from "./components/SpinWheel";
 import { MountResultDialog } from "./components/MountResultDialog";
+import fcDizzy from "@/assets/fatcat/fc_dizzy.png";
 
 const EXPANSIONS = [
   { key: "ARR", label: "ARR", min: 2, max: 3 },
@@ -21,6 +22,31 @@ type ExpansionKey = (typeof EXPANSIONS)[number]["key"];
 type OwnershipFilter = "nobody" | "incomplete";
 
 const RAID_TYPES = new Set(["Raid", "Chaotic Raid"]);
+
+type DizzyCat = { id: number; top: number; left: number; rotation: number };
+
+// Positions around the wheel perimeter (R=234, canvas center at ~240,292 within SpinWheel).
+// Each entry is the top-left of a h-20 (80px) cat image placed just outside the wheel edge.
+// 300-60 degrees (top arc) is excluded to avoid covering the spotlight label.
+const CAT_POSITIONS = [
+  { top: 252, left: 464 }, // 3 o'clock
+  { top: 439, left: 387 }, // 4:30
+  { top: 516, left: 200 }, // 6 o'clock
+  { top: 439, left: 13 }, // 7:30
+  { top: 252, left: -64 }, // 9 o'clock
+];
+
+function generateDizzyCats(): DizzyCat[] {
+  const count = Math.floor(Math.random() * 5) + 1;
+  return [...CAT_POSITIONS]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count)
+    .map((pos, i) => ({
+      id: i,
+      ...pos,
+      rotation: Math.floor(Math.random() * 80) - 40,
+    }));
+}
 
 function LoadingSkeleton() {
   const ref = useRef<HTMLDivElement>(null);
@@ -65,6 +91,25 @@ export function MountRoulettePage() {
   const [spinning, setSpinning] = useState(false);
   const [resultMount, setResultMount] = useState<Collectible | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dizzyCats, setDizzyCats] = useState<DizzyCat[]>([]);
+  const catContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!catContainerRef.current || dizzyCats.length === 0) return;
+    const catEls =
+      catContainerRef.current.querySelectorAll<HTMLImageElement>(".dizzy-cat");
+    catEls.forEach((el, i) => {
+      const rotation = dizzyCats[i]?.rotation ?? 0;
+      animate(el, {
+        opacity: [0, 1],
+        scale: [0.5, 1],
+        rotate: [rotation - 15, rotation],
+        delay: i * 60,
+        duration: 280,
+        easing: "easeOutCubic",
+      });
+    });
+  }, [dizzyCats]);
 
   const activeMembers = useMemo(
     () =>
@@ -99,7 +144,14 @@ export function MountRoulettePage() {
 
       return true;
     });
-  }, [allCollectibles.mounts, selectedExpansions, ownershipFilter, trialsOn, raidsOn, activeMembers]);
+  }, [
+    allCollectibles.mounts,
+    selectedExpansions,
+    ownershipFilter,
+    trialsOn,
+    raidsOn,
+    activeMembers,
+  ]);
 
   function toggleExpansion(key: ExpansionKey) {
     setSelectedExpansions((prev) => {
@@ -124,6 +176,7 @@ export function MountRoulettePage() {
   function handleSpin() {
     if (spinning || filteredMounts.length === 0) return;
     setSpinning(true);
+    setDizzyCats(generateDizzyCats());
     setSpinTrigger((t) => t + 1);
   }
 
@@ -131,6 +184,7 @@ export function MountRoulettePage() {
     setResultMount(mount);
     setDialogOpen(true);
     setSpinning(false);
+    setDizzyCats([]);
   }
 
   return (
@@ -243,11 +297,22 @@ export function MountRoulettePage() {
           </div>
 
           <div className="flex-1 flex flex-col items-center">
-            <SpinWheel
-              mounts={filteredMounts}
-              spinTrigger={spinTrigger}
-              onSpinComplete={handleSpinComplete}
-            />
+            <div ref={catContainerRef} className="relative">
+              <SpinWheel
+                mounts={filteredMounts}
+                spinTrigger={spinTrigger}
+                onSpinComplete={handleSpinComplete}
+              />
+              {dizzyCats.map((cat) => (
+                <img
+                  key={cat.id}
+                  src={fcDizzy}
+                  alt=""
+                  className="dizzy-cat absolute h-20 pointer-events-none"
+                  style={{ top: cat.top, left: cat.left }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -257,7 +322,10 @@ export function MountRoulettePage() {
         members={activeMembers}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        onSpinAgain={() => { setDialogOpen(false); handleSpin(); }}
+        onSpinAgain={() => {
+          setDialogOpen(false);
+          handleSpin();
+        }}
       />
     </div>
   );
