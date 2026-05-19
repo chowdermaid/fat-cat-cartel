@@ -66,7 +66,7 @@ interface RawReport {
   fights: RawFight[];
 }
 
-// ─── RTDB output types ────────────────────────────────────────────────────────
+// ─── DB output types ──────────────────────────────────────────────────────────
 
 interface ParseData {
   percentile: number;
@@ -83,14 +83,17 @@ interface AllStars {
   spec: string;
 }
 
-interface MemberData {
+interface ParseEntry {
+  savage: Partial<Record<string, ParseData>>;
+  normal: Partial<Record<string, ParseData>>;
+  allStars: AllStars | null;
+}
+
+interface MemberNode {
   name: string;
   server: string;
   lodestoneId: string | null;
   avatarUrl: string | null;
-  savage: Partial<Record<string, ParseData>>;
-  normal: Partial<Record<string, ParseData>>;
-  allStars: AllStars | null;
 }
 
 interface ParseBuckets {
@@ -150,10 +153,6 @@ async function batchRun<T, R>(items: T[], fn: (item: T, index: number) => Promis
   return results;
 }
 
-// ─── XIVAPI portrait helpers ──────────────────────────────────────────────────
-
-interface PortraitResult { lodestoneId: string | null; avatarUrl: string | null }
-
 async function fetchAvatarById(lodestoneId: string): Promise<string | null> {
   try {
     const res = await fetch(`https://xivapi.com/character/${lodestoneId}?columns=Character.Avatar`);
@@ -163,60 +162,27 @@ async function fetchAvatarById(lodestoneId: string): Promise<string | null> {
   } catch { return null; }
 }
 
-async function autoMatchPortrait(name: string, server: string): Promise<PortraitResult> {
-  try {
-    const serverName = server.charAt(0).toUpperCase() + server.slice(1).toLowerCase();
-    const res = await fetch(
-      `https://xivapi.com/character/search?name=${encodeURIComponent(name)}&server=${serverName}`,
-    );
-    if (!res.ok) return { lodestoneId: null, avatarUrl: null };
-    const data = await res.json() as { Results?: Array<{ ID: number; Name: string; Avatar: string }> };
-    const match = data.Results?.find((r) => r.Name.toLowerCase() === name.toLowerCase());
-    if (!match) return { lodestoneId: null, avatarUrl: null };
-    return { lodestoneId: String(match.ID), avatarUrl: match.Avatar ?? null };
-  } catch { return { lodestoneId: null, avatarUrl: null }; }
-}
-
-async function resolvePortrait(
-  member: { name: string; server: string },
-  override: string | null,
-  existing: { lodestoneId?: string | null; avatarUrl?: string | null } | null,
-): Promise<PortraitResult> {
-  if (override) {
-    const avatarUrl = existing?.lodestoneId === override && existing?.avatarUrl
-      ? existing.avatarUrl
-      : await fetchAvatarById(override);
-    return { lodestoneId: override, avatarUrl };
-  }
-  if (existing?.lodestoneId) {
-    // Retry fetching avatar if it was null on a previous refresh (XIVAPI caches lazily)
-    const avatarUrl = existing.avatarUrl ?? await fetchAvatarById(existing.lodestoneId);
-    return { lodestoneId: existing.lodestoneId, avatarUrl };
-  }
-  return autoMatchPortrait(member.name, member.server);
-}
-
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export async function runRefreshFFLogs(clientId: string, clientSecret: string): Promise<void> {
   const token = await getFFLogsToken(clientId, clientSecret);
   const db = admin.database();
 
-  // 1. Guild members
+  // 1. Guild members (lodestoneID now included in query)
   const membersPayload = (await queryFFLogs(token, GUILD_MEMBERS_QUERY, { guildID: GUILD_ID })) as {
     guildData: { guild: { members: { data: RawMember[] } } };
   };
   const rawMembers = membersPayload.guildData.guild.members.data;
   console.log(`[fflogs] ${rawMembers.length} guild members`);
 
-  // 2. Build combined query — fetches all zones per member in one API call
+  // 2. Build combined query
   const CHARACTER_QUERY = buildCharacterZonesQuery(ZONES);
 
-  const zoneMembers: Record<number, Record<string, MemberData>> = {};
+  const zoneParses: Record<number, Record<string, ParseEntry>> = {};
   const zoneHistograms: Record<number, Record<string, { savage: ParseBuckets; normal: ParseBuckets }>> = {};
 
   for (const zone of ZONES) {
-    zoneMembers[zone.id] = {};
+    zoneParses[zone.id] = {};
     zoneHistograms[zone.id] = {};
     for (const enc of zone.encounters) {
       zoneHistograms[zone.id][enc.key] = { savage: emptyBuckets(), normal: emptyBuckets() };
@@ -227,27 +193,21 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
     console.log(`[fflogs] fetching ${member.name} (${(i ?? 0) + 1}/${rawMembers.length})`);
     try {
       const data = (await queryFFLogs(token, CHARACTER_QUERY, { charID: member.id })) as {
-        characterData: { character: Record<string, RawZoneRankings | null> | null };
+        characterData: { character: ({ lodestoneID?: string | null } & Record<string, RawZoneRankings | null>) | null };
       };
-      return { member, char: data.characterData.character };
+      const char = data.characterData.character;
+      const lodestoneID = char?.lodestoneID ?? null;
+      return { member, char, lodestoneID };
     } catch (err) {
       console.warn(`[fflogs] Failed rankings for ${member.name}:`, err);
-      return { member, char: null };
+      return { member, char: null, lodestoneID: null };
     }
   }, 1);
 
-  // 3. Build per-zone member data and histograms
+  // 3. Build per-zone parse entries and histograms (no identity fields here)
   for (const { member, char } of memberRankings) {
     for (const zone of ZONES) {
-      const memberData: MemberData = {
-        name: member.name,
-        server: member.server.slug,
-        lodestoneId: null,
-        avatarUrl: null,
-        savage: {},
-        normal: {},
-        allStars: null,
-      };
+      const entry: ParseEntry = { savage: {}, normal: {}, allStars: null };
 
       if (char) {
         const fflogsId = zone.fflogsZoneId ?? zone.id;
@@ -260,7 +220,7 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             if (!enc) continue;
             const pd = toParseData(r);
             if (pd) {
-              memberData.savage[enc.key] = pd;
+              entry.savage[enc.key] = pd;
               zoneHistograms[zone.id][enc.key].savage[percentileBucket(pd.percentile)]++;
             }
           }
@@ -270,16 +230,15 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             if (!enc) continue;
             const pd = toParseData(r);
             if (pd) {
-              memberData.normal[enc.key] = pd;
+              entry.normal[enc.key] = pd;
               zoneHistograms[zone.id][enc.key].normal[percentileBucket(pd.percentile)]++;
             }
           }
 
-          // All-stars from savage partition 1, best spec by points
           const asEntries = (savageRankings?.allStars ?? []).filter((a) => a.partition === 1);
           if (asEntries.length > 0) {
             const best = asEntries.sort((a, b) => b.points - a.points)[0];
-            memberData.allStars = {
+            entry.allStars = {
               points: best.points,
               worldRank: best.rank,
               regionRank: best.regionRank,
@@ -289,7 +248,6 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             };
           }
         } else {
-          // Trials, alliance, ultimates
           const rankings = char[`z${fflogsId}`];
           const rankingsList = rankings?.rankings ?? [];
           for (const r of rankingsList) {
@@ -300,14 +258,14 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             }
             const pd = toParseData(r);
             if (pd) {
-              memberData.normal[enc.key] = pd;
+              entry.normal[enc.key] = pd;
               zoneHistograms[zone.id][enc.key].normal[percentileBucket(pd.percentile)]++;
             }
           }
           const asEntries = (rankings?.allStars ?? []).filter((a) => a.partition === 1);
           if (asEntries.length > 0) {
             const best = asEntries.sort((a, b) => b.points - a.points)[0];
-            memberData.allStars = {
+            entry.allStars = {
               points: best.points,
               worldRank: best.rank,
               regionRank: best.regionRank,
@@ -319,44 +277,35 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
         }
       }
 
-      zoneMembers[zone.id][String(member.id)] = memberData;
+      zoneParses[zone.id][String(member.id)] = entry;
     }
   }
 
-  // 4. Portrait resolution — reads from portraitCache, writes back after resolution
-  const [overridesSnap, portraitCacheSnap] = await Promise.all([
-    db.ref("portraitOverrides").get(),
-    db.ref("portraitCache").get(),
-  ]);
-  const overrides = (overridesSnap.val() ?? {}) as Record<string, { lodestoneId?: string }>;
-  const portraitCache = (portraitCacheSnap.val() ?? {}) as Record<
-    string, { lodestoneId?: string | null; avatarUrl?: string | null }
-  >;
+  // 4. Resolve avatarUrls using lodestoneID from FFLogs character data; reuse cached avatarUrl if lodestoneId unchanged
+  const lodestoneIdByMember = new Map(
+    memberRankings.map(({ member, lodestoneID }) => [String(member.id), lodestoneID ?? null]),
+  );
 
-  const portraits: Record<string, PortraitResult> = {};
+  const existingMembersSnap = await db.ref("members").get();
+  const existingMembers = (existingMembersSnap.val() ?? {}) as Record<string, MemberNode>;
+
+  const membersNode: Record<string, MemberNode> = {};
   await batchRun(rawMembers, async (member) => {
     const id = String(member.id);
-    const override = overrides[id]?.lodestoneId ?? null;
-    const existing = portraitCache[id] ?? null;
-    portraits[id] = await resolvePortrait(
-      { name: member.name, server: member.server.slug },
-      override,
-      existing,
-    );
+    const lodestoneId = lodestoneIdByMember.get(id) ?? null;
+    const existing = existingMembers[id] ?? null;
+
+    let avatarUrl: string | null = null;
+    if (lodestoneId) {
+      avatarUrl = existing?.lodestoneId === lodestoneId && existing?.avatarUrl
+        ? existing.avatarUrl
+        : await fetchAvatarById(lodestoneId);
+    }
+
+    membersNode[id] = { name: member.name, server: member.server.slug, lodestoneId, avatarUrl };
   }, 3);
 
-  // Inject portraits into all per-zone member records
-  for (const zone of ZONES) {
-    for (const fflogsId of Object.keys(zoneMembers[zone.id])) {
-      const p = portraits[fflogsId];
-      if (p) {
-        zoneMembers[zone.id][fflogsId].lodestoneId = p.lodestoneId;
-        zoneMembers[zone.id][fflogsId].avatarUrl = p.avatarUrl;
-      }
-    }
-  }
-
-  // 5. Recent kills + first kills — one report query per zone, batched at concurrency 5
+  // 5. Recent kills + first kills
   const recentKills: Record<number, RecentKillData | null> = {};
   const firstKills: Record<number, Record<string, FirstKillEntry>> = {};
   await batchRun(ZONES, async (zone) => {
@@ -403,14 +352,11 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
     }
   }, 5);
 
-  // 6. Write everything atomically via multi-path update
+  // 6. Atomic multi-path update with new schema
   const now = Date.now();
   const updates: Record<string, unknown> = {
     "raidStats/lastUpdated": now,
-    "portraitCache": portraits,
-    "guildMembers": Object.fromEntries(
-      rawMembers.map((m) => [String(m.id), { name: m.name, server: m.server.slug }]),
-    ),
+    "members": membersNode,
   };
 
   for (const zone of ZONES) {
@@ -423,8 +369,8 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
       encounters: zone.encounters.map((e) => ({ id: e.id, key: e.key, label: e.label, name: e.name })),
     };
     updates[`${prefix}/lastUpdated`] = now;
-    updates[`${prefix}/members`] = zoneMembers[zone.id];
-    updates[`${prefix}/parseHistogram`] = zoneHistograms[zone.id];
+    updates[`${prefix}/parses`] = zoneParses[zone.id];
+    updates[`${prefix}/histogram`] = zoneHistograms[zone.id];
     updates[`${prefix}/recentKill`] = recentKills[zone.id] ?? null;
     updates[`${prefix}/firstKills`] = Object.keys(firstKills[zone.id] ?? {}).length > 0 ? firstKills[zone.id] : null;
   }

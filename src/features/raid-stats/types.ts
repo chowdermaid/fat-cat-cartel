@@ -32,14 +32,17 @@ export interface ZoneMeta {
   encounters: ZoneEncounter[];
 }
 
-export interface MemberData {
+export interface ParseEntry {
+  savage: Partial<Record<string, ParseData>>;
+  normal: Partial<Record<string, ParseData>>;
+  allStars: AllStars | null;
+}
+
+export interface MemberData extends ParseEntry {
   name: string;
   server: string;
   lodestoneId: string | null;
   avatarUrl: string | null;
-  savage: Partial<Record<string, ParseData>>;
-  normal: Partial<Record<string, ParseData>>;
-  allStars: AllStars | null;
 }
 
 export interface ParseBuckets {
@@ -69,8 +72,8 @@ export interface FirstKillData {
 export interface ZoneData {
   meta: ZoneMeta;
   lastUpdated: number;
-  members: Record<string, MemberData>;
-  parseHistogram: Record<string, { savage: ParseBuckets; normal: ParseBuckets }>;
+  parses: Record<string, ParseEntry>;
+  histogram: Record<string, { savage: ParseBuckets; normal: ParseBuckets }>;
   recentKill: RecentKill | null;
   firstKills: Record<string, FirstKillData> | null;
 }

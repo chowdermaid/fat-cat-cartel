@@ -14,7 +14,7 @@ export function useScoreboard(): UseScoreboardResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const participantsRef = ref(db, "participants");
+    const participantsRef = ref(db, "events/easter2026/participants");
 
     const unsubscribe = onValue(
       participantsRef,

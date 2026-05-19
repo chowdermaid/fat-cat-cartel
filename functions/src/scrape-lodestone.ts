@@ -78,17 +78,17 @@ export async function runScrapeLodestone(): Promise<{
     }
   }
 
-  // Match to FFLogs guildMembers by name, write portrait overrides and cache
-  const guildSnap = await db.ref("guildMembers").get();
-  const guildMembers = (guildSnap.val() ?? {}) as Record<string, { name: string; server: string }>;
+  // Match to members/ by name, write lodestoneId and avatarUrl directly
+  const membersSnap = await db.ref("members").get();
+  const membersNode = (membersSnap.val() ?? {}) as Record<string, { name: string }>;
 
   const updates: Record<string, unknown> = {};
   let portraitLinked = 0;
-  for (const [fflogsId, gm] of Object.entries(guildMembers)) {
+  for (const [fflogsId, gm] of Object.entries(membersNode)) {
     const match = allMembers.find((m) => m.name.toLowerCase() === gm.name.toLowerCase());
     if (!match) continue;
-    updates[`portraitOverrides/${fflogsId}`] = { lodestoneId: match.lodestoneId };
-    updates[`portraitCache/${fflogsId}`] = { lodestoneId: match.lodestoneId, avatarUrl: match.avatarUrl };
+    updates[`members/${fflogsId}/lodestoneId`] = match.lodestoneId;
+    updates[`members/${fflogsId}/avatarUrl`] = match.avatarUrl;
     portraitLinked++;
   }
   if (Object.keys(updates).length > 0) {

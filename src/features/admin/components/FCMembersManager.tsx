@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db, ref, onValue, push, remove, set } from "@/lib/db";
+import { db, ref, onValue, push, remove } from "@/lib/db";
 import { firebaseApp } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useFCCollection } from "@/features/fc-collection/api/useFCCollection";
 import { fetchAndCacheFCData } from "@/features/fc-collection/api/fetchAndCacheFCData";
 import type { FCMember } from "@/features/fc-collection/types";
+import type { Member } from "@/types";
 
 function formatTimeAgo(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
@@ -19,14 +20,6 @@ function formatTimeAgo(timestamp: number): string {
   if (hours < 24) return `${hours}h ago`;
   return `${Math.floor(hours / 24)}d ago`;
 }
-
-type RaidMember = {
-  id: string;
-  name: string;
-  server: string;
-  lodestoneId: string | null;
-  avatarUrl: string | null;
-};
 
 export function FCMembersManager() {
   const [members, setMembers] = useState<FCMember[]>([]);
@@ -41,10 +34,11 @@ export function FCMembersManager() {
   const [fetchingLogs, setFetchingLogs] = useState(false);
   const [logsError, setLogsError] = useState<string | null>(null);
 
-  const [guildMembers, setGuildMembers] = useState<Record<string, { name: string; server: string }> | null>(null);
-  const [portraitCache, setPortraitCache] = useState<Record<string, { lodestoneId?: string | null; avatarUrl?: string | null }> | null>(null);
-  const [overrideInputs, setOverrideInputs] = useState<Record<string, string>>({});
-  const [savingOverrides, setSavingOverrides] = useState<Set<string>>(new Set());
+  const [fetchingLodestone, setFetchingLodestone] = useState(false);
+  const [lodestoneResult, setLodestoneResult] = useState<string | null>(null);
+  const [lodestoneError, setLodestoneError] = useState<string | null>(null);
+
+  const [raidMembers, setRaidMembers] = useState<Array<Member & { id: string }>>([]);
 
   async function handleRefreshCollection() {
     if (members.length === 0) { setCollectionError("No members added yet."); return; }
@@ -96,13 +90,15 @@ export function FCMembersManager() {
   }, []);
 
   useEffect(() => {
-    const unsubGM = onValue(ref(db, "guildMembers"), (snap: any) => {
-      setGuildMembers(snap.val() ?? null);
+    return onValue(ref(db, "members"), (snap: any) => {
+      const val = snap.val() as Record<string, Member> | null;
+      if (!val) { setRaidMembers([]); return; }
+      setRaidMembers(
+        Object.entries(val)
+          .map(([id, m]) => ({ id, ...m }))
+          .sort((a, b) => a.name.localeCompare(b.name)),
+      );
     });
-    const unsubPC = onValue(ref(db, "portraitCache"), (snap: any) => {
-      setPortraitCache(snap.val() ?? null);
-    });
-    return () => { unsubGM(); unsubPC(); };
   }, []);
 
   function handleAdd() {
@@ -119,33 +115,30 @@ export function FCMembersManager() {
     if (e.key === "Enter") handleAdd();
   }
 
-  async function handleSaveOverride(fflogsId: string) {
-    const val = overrideInputs[fflogsId]?.trim();
-    if (!val) return;
-    setSavingOverrides((prev) => new Set([...prev, fflogsId]));
+  async function handleImportLodestone() {
+    if (!firebaseApp) {
+      setLodestoneError("Not available in local dev mode.");
+      return;
+    }
+    setFetchingLodestone(true);
+    setLodestoneResult(null);
+    setLodestoneError(null);
     try {
-      await set(ref(db, `portraitOverrides/${fflogsId}`), { lodestoneId: val });
-      setOverrideInputs((prev) => ({ ...prev, [fflogsId]: "" }));
+      const { getFunctions, httpsCallable } = await import("firebase/functions");
+      const fn = httpsCallable<unknown, { total: number; collectionAdded: number; portraitLinked: number }>(
+        getFunctions(firebaseApp),
+        "importLodestoneMembers",
+        { timeout: 120_000 },
+      );
+      const res = await fn();
+      const { total, collectionAdded, portraitLinked } = res.data;
+      setLodestoneResult(`${portraitLinked}/${total} portraits linked, ${collectionAdded} new members added`);
+    } catch (e) {
+      setLodestoneError(e instanceof Error ? e.message : "Import failed");
     } finally {
-      setSavingOverrides((prev) => {
-        const s = new Set(prev);
-        s.delete(fflogsId);
-        return s;
-      });
+      setFetchingLodestone(false);
     }
   }
-
-  const raidMembers: RaidMember[] = guildMembers
-    ? Object.entries(guildMembers)
-        .map(([id, gm]) => ({
-          id,
-          name: gm.name,
-          server: gm.server,
-          lodestoneId: portraitCache?.[id]?.lodestoneId ?? null,
-          avatarUrl: portraitCache?.[id]?.avatarUrl ?? null,
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name))
-    : [];
 
   const matchedCount = raidMembers.filter((m) => m.lodestoneId).length;
 
@@ -162,7 +155,7 @@ export function FCMembersManager() {
         </div>
         <Button size="sm" onClick={handleRefreshCollection} disabled={fetchingCollection || loading}>
           <RefreshCw className={cn("h-4 w-4", fetchingCollection && "animate-spin")} />
-          {fetchingCollection ? "Fetching…" : "Refresh Data"}
+          {fetchingCollection ? "Fetching..." : "Refresh Data"}
         </Button>
       </div>
 
@@ -177,11 +170,26 @@ export function FCMembersManager() {
         </div>
         <Button size="sm" onClick={handleRefreshLogs} disabled={fetchingLogs}>
           <RefreshCw className={cn("h-4 w-4", fetchingLogs && "animate-spin")} />
-          {fetchingLogs ? "Fetching…" : "Refresh Logs"}
+          {fetchingLogs ? "Fetching..." : "Refresh Logs"}
         </Button>
       </div>
 
-      {/* Portrait links */}
+      {/* Lodestone import */}
+      <div className="flex items-center justify-between rounded-lg border px-4 py-3">
+        <div>
+          <p className="text-sm font-medium">Portrait Sync</p>
+          <p className="text-xs text-muted-foreground">
+            {lodestoneResult ?? "Scrapes Lodestone FC page to link portraits"}
+          </p>
+          {lodestoneError && <p className="text-xs text-destructive mt-0.5">{lodestoneError}</p>}
+        </div>
+        <Button size="sm" onClick={handleImportLodestone} disabled={fetchingLodestone}>
+          <RefreshCw className={cn("h-4 w-4", fetchingLodestone && "animate-spin")} />
+          {fetchingLodestone ? "Syncing..." : "Sync Lodestone"}
+        </Button>
+      </div>
+
+      {/* Portrait status */}
       {raidMembers.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -191,8 +199,7 @@ export function FCMembersManager() {
             </p>
           </div>
           <p className="text-xs text-muted-foreground">
-            FFLogs members are auto-matched to Lodestone portraits on each refresh via XIVAPI.
-            Enter a Lodestone ID manually for unmatched members. Takes effect after the next Refresh Logs.
+            Lodestone IDs are resolved automatically from FFLogs on each refresh.
           </p>
           <div className="rounded-lg border divide-y">
             {raidMembers.map((m) => (
@@ -218,29 +225,7 @@ export function FCMembersManager() {
                     <div className="w-2 h-2 rounded-full bg-green-500" />
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Input
-                      className="h-7 w-28 text-xs font-mono"
-                      placeholder="Lodestone ID"
-                      value={overrideInputs[m.id] ?? ""}
-                      onChange={(e) =>
-                        setOverrideInputs((prev) => ({ ...prev, [m.id]: e.target.value }))
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleSaveOverride(m.id);
-                      }}
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 px-2 text-xs"
-                      onClick={() => handleSaveOverride(m.id)}
-                      disabled={!overrideInputs[m.id]?.trim() || savingOverrides.has(m.id)}
-                    >
-                      Link
-                    </Button>
-                    <div className="w-2 h-2 rounded-full bg-destructive" />
-                  </div>
+                  <div className="w-2 h-2 rounded-full bg-destructive shrink-0" />
                 )}
               </div>
             ))}

@@ -1,3 +1,10 @@
+export interface Member {
+  name: string;
+  server: string;
+  lodestoneId: string | null;
+  avatarUrl: string | null;
+}
+
 export interface Scores {
   hideAndSeek: number;
   trivia: number;

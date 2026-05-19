@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
 import { Info } from "lucide-react";
 import { useRaidStats } from "./api/useRaidStats";
+import { useMembers } from "@/hooks/useMembers";
 import { MemberBoard } from "./components/MemberBoard";
 import { MemberRadarChart } from "./components/MemberRadarChart";
 import { AllStarsCard } from "./components/AllStarsCard";
@@ -13,7 +14,7 @@ import { BestPerJobCarousel } from "./components/BestPerJobCarousel";
 import { GuildSummaryStrip } from "./components/GuildSummaryStrip";
 import { EncounterAveragesCard } from "./components/EncounterAveragesCard";
 import { ZONE_TABS, DEFAULT_ZONE_ID, DEFAULT_TAB } from "./zones";
-import type { ContentType } from "./types";
+import type { ContentType, MemberData } from "./types";
 
 function LoadingSkeleton() {
   const ref = useRef<HTMLDivElement>(null);
@@ -90,7 +91,27 @@ export function RaidStatsPage() {
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
   const { data, loading } = useRaidStats(activeZoneId);
+  const members = useMembers();
   const pageRef = useRef<HTMLDivElement>(null);
+
+  const joinedMembers = useMemo((): Record<string, MemberData> => {
+    if (!data?.parses) return {};
+    return Object.fromEntries(
+      Object.entries(data.parses).map(([id, parse]) => {
+        const identity = members[id];
+        return [
+          id,
+          {
+            ...parse,
+            name: identity?.name ?? "Unknown",
+            server: identity?.server ?? "",
+            lodestoneId: identity?.lodestoneId ?? null,
+            avatarUrl: identity?.avatarUrl ?? null,
+          },
+        ];
+      }),
+    );
+  }, [data, members]);
 
   function handleTabChange(type: ContentType) {
     setActiveTab(type);
@@ -113,11 +134,10 @@ export function RaidStatsPage() {
   const currentTab = ZONE_TABS.find((t) => t.type === activeTab)!;
   const encounters = data?.meta.encounters ?? [];
   const contentType = data?.meta.contentType ?? activeTab;
-  const memberCount = data ? Object.keys(data.members).length : 0;
-  const selectedMember =
-    selectedMemberId && data?.members[selectedMemberId]
-      ? data.members[selectedMemberId]
-      : null;
+  const memberCount = Object.keys(data?.parses ?? {}).length;
+  const selectedMember = selectedMemberId
+    ? (joinedMembers[selectedMemberId] ?? null)
+    : null;
 
   return (
     <div className="space-y-4">
@@ -125,7 +145,7 @@ export function RaidStatsPage() {
       <div>
         <h1 className="text-3xl font-bold font-serif">Raid Stats</h1>
         <p className="mt-1 text-muted-foreground text-sm">
-          Parsed from FFLogs free company rankings · refreshes hourly
+          Parsed from FFLogs free company rankings · refreshes every 3 hours
         </p>
       </div>
 
@@ -163,11 +183,11 @@ export function RaidStatsPage() {
       ) : !data ? (
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            No data yet for this zone. The hourly sync hasn't run. Check back
+            No data yet for this zone. The sync hasn't run yet. Check back
             soon.
           </p>
         </div>
-      ) : Object.values(data.members).every(
+      ) : Object.values(joinedMembers).every(
           (m) =>
             Object.keys(
               contentType === "savage" ? (m.savage ?? {}) : (m.normal ?? {}),
@@ -193,7 +213,7 @@ export function RaidStatsPage() {
           {/* Summary strip */}
           <div className="anim-section">
             <GuildSummaryStrip
-              members={data.members}
+              members={joinedMembers}
               encounters={encounters}
               contentType={contentType}
             />
@@ -212,14 +232,14 @@ export function RaidStatsPage() {
               >
                 our FFLogs free company page
               </a>{" "}
-              and refreshes every hour.
+              and refreshes every 3 hours.
             </p>
           </div>
 
           {/* Best parse carousel */}
           <div className="anim-section">
             <BestParseCarousel
-              members={data.members}
+              members={joinedMembers}
               encounters={encounters}
               contentType={contentType}
             />
@@ -228,7 +248,7 @@ export function RaidStatsPage() {
           {/* Best per job carousel */}
           <div className="anim-section">
             <BestPerJobCarousel
-              members={data.members}
+              members={joinedMembers}
               contentType={contentType}
             />
           </div>
@@ -237,7 +257,7 @@ export function RaidStatsPage() {
           <div className="anim-section grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <MemberBoard
-                members={data.members}
+                members={joinedMembers}
                 encounters={encounters}
                 contentType={contentType}
                 selectedId={selectedMemberId}
@@ -253,11 +273,11 @@ export function RaidStatsPage() {
             </div>
           </div>
 
-          {/* Parse distribution, full width, savage only */}
+          {/* Parse distribution, savage only */}
           {contentType === "savage" && (
             <div className="anim-section">
               <ParseHistogramCard
-                histogram={data.parseHistogram}
+                histogram={data.histogram}
                 encounters={encounters}
                 contentType={contentType}
               />
@@ -266,14 +286,14 @@ export function RaidStatsPage() {
 
           {/* Cards grid */}
           <div className="anim-section grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AllStarsCard members={data.members} />
+            <AllStarsCard members={joinedMembers} />
             <EncounterAveragesCard
-              members={data.members}
+              members={joinedMembers}
               encounters={encounters}
               contentType={contentType}
             />
             <JobDistributionCard
-              members={data.members}
+              members={joinedMembers}
               contentType={contentType}
             />
             {data.recentKill && <RecentKillCard kill={data.recentKill} />}

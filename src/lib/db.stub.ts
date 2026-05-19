@@ -1,6 +1,6 @@
 /**
  * In-memory stub that mirrors the Firebase Realtime Database API surface
- * used in this app. Seeded with fake participants for local development.
+ * used in this app. Seeded with fake data for local development.
  */
 
 export interface StubRef {
@@ -36,9 +36,18 @@ const ZONE_73_META = {
 };
 
 const STUB_MEMBERS = {
+  "20385598": { name: "Chow Chow",       server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "19133850": { name: "Axo Lotl",        server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "20806122": { name: "Sweet Potatoes",  server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "19039587": { name: "Zalka Tohka",     server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "19746452": { name: "Astrid Gertrud",  server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "20962142": { name: "Blue Belladonna", server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "18468313": { name: "Hane Miko",       server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "20739994": { name: "Jellyfish Cat",   server: "Sophia", lodestoneId: null, avatarUrl: null },
+};
+
+const STUB_PARSES = {
   "20385598": {
-    name: "Chow Chow", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 93.9, rdps: 38434, job: "Dragoon" },
       m10: { percentile: 82.8, rdps: 40483, job: "Dragoon" },
@@ -52,8 +61,6 @@ const STUB_MEMBERS = {
     allStars: { points: 403.5, worldRank: 5095, regionRank: 72, serverRank: 15, rankPercent: 53.5, spec: "Dragoon" },
   },
   "19133850": {
-    name: "Axo Lotl", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 67.2, rdps: 31020, job: "Black Mage" },
       m10: { percentile: 71.5, rdps: 33100, job: "Black Mage" },
@@ -66,8 +73,6 @@ const STUB_MEMBERS = {
     allStars: { points: 280.0, worldRank: 8200, regionRank: 115, serverRank: 22, rankPercent: 40.2, spec: "Black Mage" },
   },
   "20806122": {
-    name: "Sweet Potatoes", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 99.1, rdps: 19800, job: "White Mage" },
       m10: { percentile: 97.3, rdps: 20100, job: "White Mage" },
@@ -79,8 +84,6 @@ const STUB_MEMBERS = {
     allStars: { points: 512.0, worldRank: 1840, regionRank: 28, serverRank: 5, rankPercent: 84.1, spec: "White Mage" },
   },
   "19039587": {
-    name: "Zalka Tohka", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 78.4, rdps: 22100, job: "Dark Knight" },
       m11: { percentile: 61.2, rdps: 20800, job: "Dark Knight" },
@@ -90,8 +93,6 @@ const STUB_MEMBERS = {
     allStars: { points: 330.0, worldRank: 6800, regionRank: 98, serverRank: 18, rankPercent: 46.0, spec: "Dark Knight" },
   },
   "19746452": {
-    name: "Astrid Gertrud", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 55.6, rdps: 29500, job: "Reaper" },
       m10: { percentile: 48.2, rdps: 28100, job: "Reaper" },
@@ -103,8 +104,6 @@ const STUB_MEMBERS = {
     allStars: null,
   },
   "20962142": {
-    name: "Blue Belladonna", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 100,  rdps: 45200, job: "Samurai" },
       m10: { percentile: 98.5, rdps: 47300, job: "Samurai" },
@@ -117,8 +116,6 @@ const STUB_MEMBERS = {
     allStars: { points: 580.0, worldRank: 420, regionRank: 8, serverRank: 1, rankPercent: 96.2, spec: "Samurai" },
   },
   "18468313": {
-    name: "Hane Miko", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {
       m9:  { percentile: 82.3, rdps: 18900, job: "Scholar" },
       m10: { percentile: 76.5, rdps: 19400, job: "Scholar" },
@@ -128,8 +125,6 @@ const STUB_MEMBERS = {
     allStars: { points: 350.0, worldRank: 5500, regionRank: 80, serverRank: 14, rankPercent: 50.3, spec: "Scholar" },
   },
   "20739994": {
-    name: "Jellyfish Cat", server: "Sophia",
-    lodestoneId: null, avatarUrl: null,
     savage: {},
     normal: {
       m9:  { percentile: 44.1, rdps: 17200, job: "Summoner" },
@@ -140,11 +135,7 @@ const STUB_MEMBERS = {
 };
 
 let store: Record<string, unknown> = {
-  portraitOverrides: {},
-  portraitCache: {},
-  guildMembers: Object.fromEntries(
-    Object.entries(STUB_MEMBERS).map(([id, m]) => [id, { name: m.name, server: m.server }]),
-  ),
+  members: STUB_MEMBERS,
   raidStats: {
     lastUpdated: NOW - 15 * 60_000,
     zones: {
@@ -165,37 +156,41 @@ let store: Record<string, unknown> = {
           m12:   { encounterName: "Lindwurm",              date: NOW - 41 * DAY, reportCode: "fk4abc" },
           m12s2: { encounterName: "Lindwurm II",           date: NOW - 14 * DAY, reportCode: "fk5abc" },
         },
-        parseHistogram: {
+        histogram: {
           m9:    { savage: { grey:1, green:3, blue:5, purple:8, orange:3, pink:1, gold:0 }, normal: { grey:2, green:6, blue:5, purple:4, orange:2, pink:1, gold:0 } },
           m10:   { savage: { grey:2, green:4, blue:4, purple:6, orange:2, pink:1, gold:0 }, normal: { grey:3, green:5, blue:5, purple:3, orange:2, pink:0, gold:0 } },
           m11:   { savage: { grey:3, green:5, blue:4, purple:4, orange:1, pink:1, gold:0 }, normal: { grey:4, green:6, blue:4, purple:3, orange:1, pink:0, gold:0 } },
           m12:   { savage: { grey:2, green:3, blue:3, purple:4, orange:2, pink:1, gold:0 }, normal: { grey:2, green:4, blue:5, purple:3, orange:2, pink:1, gold:0 } },
           m12s2: { savage: { grey:5, green:3, blue:2, purple:1, orange:0, pink:0, gold:0 }, normal: { grey:0, green:0, blue:0, purple:0, orange:0, pink:0, gold:0 } },
         },
-        members: STUB_MEMBERS,
+        parses: STUB_PARSES,
       },
     },
   },
-  participants: {
-    "stub-alice": {
-      name: "Chow Chow",
-      scores: { hideAndSeek: 10, trivia: 7, eorzoaGuessr: 9 },
-      total: 26,
-    },
-    "stub-bob": {
-      name: "Axo Lotl",
-      scores: { hideAndSeek: 6, trivia: 9, eorzoaGuessr: 7 },
-      total: 22,
-    },
-    "stub-charlie": {
-      name: "Sweet Potatoes",
-      scores: { hideAndSeek: 8, trivia: 10, eorzoaGuessr: 6 },
-      total: 24,
-    },
-    "stub-david": {
-      name: "Zalka Tohka",
-      scores: { hideAndSeek: 8, trivia: 10, eorzoaGuessr: 6 },
-      total: 24,
+  events: {
+    easter2026: {
+      participants: {
+        "stub-alice": {
+          name: "Chow Chow",
+          scores: { hideAndSeek: 10, trivia: 7, eorzoaGuessr: 9 },
+          total: 26,
+        },
+        "stub-bob": {
+          name: "Axo Lotl",
+          scores: { hideAndSeek: 6, trivia: 9, eorzoaGuessr: 7 },
+          total: 22,
+        },
+        "stub-charlie": {
+          name: "Sweet Potatoes",
+          scores: { hideAndSeek: 8, trivia: 10, eorzoaGuessr: 6 },
+          total: 24,
+        },
+        "stub-david": {
+          name: "Zalka Tohka",
+          scores: { hideAndSeek: 8, trivia: 10, eorzoaGuessr: 6 },
+          total: 24,
+        },
+      },
     },
   },
 };

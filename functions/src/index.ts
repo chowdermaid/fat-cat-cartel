@@ -13,7 +13,7 @@ const fflogsClientSecret = defineSecret("FFLOGS_CLIENT_SECRET");
 
 // Runs every hour — fetches guild rankings from FFLogs → writes to /raidStats/
 export const refreshFFLogs = onSchedule(
-  { schedule: "0 * * * *", secrets: [fflogsClientId, fflogsClientSecret], timeoutSeconds: 300, region: "us-central1" },
+  { schedule: "0 */3 * * *", secrets: [fflogsClientId, fflogsClientSecret], timeoutSeconds: 300, region: "us-central1" },
   async () => {
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
   },
@@ -39,7 +39,7 @@ export const importLodestoneMembers = onCall(
 
 // Runs daily at 06:00 UTC — fetches ffxivcollect data → writes to /fcCollection/cache
 export const refreshFCCollection = onSchedule(
-  { schedule: "0 6 * * *", timeoutSeconds: 300, region: "us-central1" },
+  { schedule: "0 */3 * * *", timeoutSeconds: 300, region: "us-central1" },
   async () => {
     await runRefreshFCCollection();
   },

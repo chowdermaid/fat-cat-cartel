@@ -79,6 +79,7 @@ export function buildCharacterZonesQuery(zones: Array<{ id: number; fflogsZoneId
   query($charID: Int!) {
     characterData {
       character(id: $charID) {
+        lodestoneID
         ${fields.join("\n        ")}
       }
     }

@@ -54,8 +54,16 @@ function transformItems(rawItems: Record<string, unknown>[], categoryFilter?: re
   }));
 }
 
+const FC_ID = "9235616198341716868";
+
 export async function runRefreshFCCollection(): Promise<void> {
   const db = admin.database();
+
+  try {
+    await fetch(`https://ffxivcollect.com/api/v1/free_companies/${FC_ID}/refresh`, { method: "POST" });
+  } catch {
+    // Non-fatal: proceed with potentially stale ffxivcollect data
+  }
 
   // 1. Read members and previous cache from RTDB
   const [membersSnap, cacheSnap] = await Promise.all([

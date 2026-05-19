@@ -29,7 +29,7 @@ export function ParticipantManager() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    const participantsRef = ref(db, "participants");
+    const participantsRef = ref(db, "events/easter2026/participants");
     const unsubscribe = onValue(
       participantsRef,
       (snapshot: { val(): unknown }) => {
@@ -104,7 +104,7 @@ export function ParticipantManager() {
       trivia: 0,
       eorzoaGuessr: 0,
     };
-    await push(ref(db, "participants"), {
+    await push(ref(db, "events/easter2026/participants"), {
       name,
       scores: defaultScores,
       total: 0,
