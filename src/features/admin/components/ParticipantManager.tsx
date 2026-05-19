@@ -80,7 +80,7 @@ export function ParticipantManager() {
     setParticipants((prev) =>
       prev.map((p) => (p.id === id ? { ...p, saving: true } : p))
     );
-    await set(ref(db, `participants/${id}`), {
+    await set(ref(db, `events/easter2026/participants/${id}`), {
       name: participant.name,
       scores: participant.scores,
       total: participant.total,
@@ -92,7 +92,7 @@ export function ParticipantManager() {
 
   async function deleteParticipant(id: string) {
     if (!confirm("Remove this participant?")) return;
-    await remove(ref(db, `participants/${id}`));
+    await remove(ref(db, `events/easter2026/participants/${id}`));
   }
 
   async function addParticipant() {
