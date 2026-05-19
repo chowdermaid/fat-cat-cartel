@@ -145,7 +145,7 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
             key={cfg.key}
             onClick={() => { setActiveTab(cfg.key); setAchievementGroup("All"); }}
             className={cn(
-              "px-3 py-1 rounded-full text-sm font-medium border transition-colors",
+              "cursor-pointer px-3 py-1 rounded-full text-sm font-medium border transition-colors",
               activeTab === cfg.key
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-background text-muted-foreground border-border hover:text-foreground",
@@ -164,7 +164,7 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
               key={group}
               onClick={() => setAchievementGroup(group)}
               className={cn(
-                "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                "cursor-pointer px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
                 achievementGroup === group
                   ? "bg-secondary text-secondary-foreground border-secondary"
                   : "bg-background text-muted-foreground border-border hover:text-foreground",
@@ -190,7 +190,7 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
                   <span className="w-8 text-center text-lg shrink-0">
                     {rankLabels[m.rank] ?? m.rank}
                   </span>
-                  <div className="flex items-center gap-3 w-40 shrink-0">
+                  <div className="flex items-center gap-3 w-32 sm:w-40 shrink-0">
                     <MemberAvatar member={m} />
                     <span className="font-semibold text-sm truncate">{m.name}</span>
                   </div>

@@ -37,7 +37,7 @@ const CAT_POSITIONS = [
 ];
 
 function generateDizzyCats(): DizzyCat[] {
-  const count = Math.floor(Math.random() * 5) + 1;
+  const count = Math.floor(Math.random() * 1) + 1;
   return [...CAT_POSITIONS]
     .sort(() => Math.random() - 0.5)
     .slice(0, count)
@@ -191,7 +191,7 @@ export function MountRoulettePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold font-serif">Mount Roulette</h1>
-        <p className="mt-1 text-muted-foreground">GOTTA CATCH EM ALL</p>
+        <p className="mt-1 text-muted-foreground">WAT ARE WE FARMING</p>
       </div>
 
       {loading ? (

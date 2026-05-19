@@ -72,7 +72,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`rounded-md font-medium transition-colors ${
+      className={`cursor-pointer rounded-md font-medium transition-colors ${
         size === "sm" ? "px-3 py-1 text-xs" : "px-4 py-2 text-sm"
       } ${
         active
@@ -150,7 +150,7 @@ export function RaidStatsPage() {
       </div>
 
       {/* Main tab bar */}
-      <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
+      <div className="flex flex-wrap gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
         {ZONE_TABS.map((tab) => (
           <TabButton
             key={tab.type}

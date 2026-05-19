@@ -45,6 +45,7 @@ export function Scoreboard() {
         )}
 
         {!loading && !error && participants.length > 0 && (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -62,6 +63,7 @@ export function Scoreboard() {
               ))}
             </TableBody>
           </Table>
+          </div>
         )}
       </CardContent>
     </Card>

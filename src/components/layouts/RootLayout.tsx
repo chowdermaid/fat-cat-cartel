@@ -1,11 +1,23 @@
+import { useState } from "react";
 import { Link, Outlet } from "@tanstack/react-router";
-import { Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import fatcathi from "../../assets/fatcathi.png";
 
+const navLinkClass =
+  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50";
+
+const mobileNavLinkClass =
+  "block px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50";
+
 export function RootLayout() {
   const { isDark, toggle } = useDarkMode();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
@@ -23,43 +35,26 @@ export function RootLayout() {
               />
               Fat Cat Cartel
             </Link>
-            <Link
-              to="/jointhemeowfia"
-              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
-            >
+            <Link to="/jointhemeowfia" className={navLinkClass}>
               Join
             </Link>
           </div>
 
-          <nav className="flex items-center gap-1">
-            <Link
-              to="/"
-              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
-            >
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            <Link to="/" className={navLinkClass}>
               Home
             </Link>
-            <Link
-              to="/pastevents"
-              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
-            >
+            <Link to="/pastevents" className={navLinkClass}>
               Past Events
             </Link>
-            <Link
-              to="/fc-collection"
-              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
-            >
+            <Link to="/fc-collection" className={navLinkClass}>
               FC Collection
             </Link>
-            <Link
-              to="/mount-roulette"
-              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
-            >
+            <Link to="/mount-roulette" className={navLinkClass}>
               Mount Roulette
             </Link>
-            <Link
-              to="/raid-stats"
-              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
-            >
+            <Link to="/raid-stats" className={navLinkClass}>
               Raid Stats
             </Link>
             <Link
@@ -82,7 +77,79 @@ export function RootLayout() {
               )}
             </Button>
           </nav>
+
+          {/* Mobile controls */}
+          <div className="flex items-center gap-1 md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggle}
+              aria-label="Toggle theme"
+            >
+              {isDark ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile dropdown */}
+        {menuOpen && (
+          <div className="md:hidden border-t bg-background/95 backdrop-blur px-4 py-3 space-y-1">
+            <Link to="/" onClick={closeMenu} className={mobileNavLinkClass}>
+              Home
+            </Link>
+            <Link
+              to="/pastevents"
+              onClick={closeMenu}
+              className={mobileNavLinkClass}
+            >
+              Past Events
+            </Link>
+            <Link
+              to="/fc-collection"
+              onClick={closeMenu}
+              className={mobileNavLinkClass}
+            >
+              FC Collection
+            </Link>
+            <Link
+              to="/mount-roulette"
+              onClick={closeMenu}
+              className={mobileNavLinkClass}
+            >
+              Mount Roulette
+            </Link>
+            <Link
+              to="/raid-stats"
+              onClick={closeMenu}
+              className={mobileNavLinkClass}
+            >
+              Raid Stats
+            </Link>
+            <Link
+              to="/admin"
+              onClick={closeMenu}
+              className="block px-3 py-2 rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground/60 [&.active]:text-foreground"
+            >
+              Admin
+            </Link>
+          </div>
+        )}
       </header>
 
       <main className="mx-auto max-w-screen-2xl px-4 py-8">

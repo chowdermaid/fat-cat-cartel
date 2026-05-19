@@ -75,14 +75,14 @@ export function MemberPicker({ members, selected, onChange, defaultToAll = true 
         <div className="flex gap-2">
           <button
             onClick={selectAll}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Select all
           </button>
           <span className="text-xs text-muted-foreground">·</span>
           <button
             onClick={clearAll}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Clear all
           </button>
@@ -97,7 +97,7 @@ export function MemberPicker({ members, selected, onChange, defaultToAll = true 
                   key={m.id}
                   onClick={() => toggleMember(m.id)}
                   className={cn(
-                    "flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm transition-colors",
+                    "cursor-pointer flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm transition-colors",
                     checked
                       ? "bg-primary/10 border-primary text-foreground"
                       : "bg-background border-border text-muted-foreground hover:border-foreground hover:text-foreground",

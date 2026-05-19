@@ -30,7 +30,7 @@ export function Hero() {
           </p>
         </div>
         <div className="hero-item flex flex-col items-center gap-0">
-          <img src={fatcatthrone} className="w-80 h-110" alt="Fat Cat Cartel" />
+          <img src={fatcatthrone} className="w-full max-w-80 h-auto" alt="Fat Cat Cartel" />
           <p className="text-xs text-muted-foreground/70 italic -mt-10">
             drawn by our Dull Hafnir
           </p>

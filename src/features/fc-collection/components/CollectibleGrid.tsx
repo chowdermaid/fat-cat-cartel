@@ -275,7 +275,7 @@ export function CollectibleGrid({
                 key={type}
                 onClick={(e) => { animateFilterClick(e.currentTarget); toggleSource(type); }}
                 className={cn(
-                  "text-xs px-2 py-0.5 rounded-full border transition-colors",
+                  "cursor-pointer text-xs px-2 py-0.5 rounded-full border transition-colors",
                   selectedSources.has(type)
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground",
@@ -287,7 +287,7 @@ export function CollectibleGrid({
             {selectedSources.size > 0 && (
               <button
                 onClick={() => setSelectedSources(new Set())}
-                className="text-xs px-2 py-0.5 text-muted-foreground hover:text-foreground"
+                className="cursor-pointer text-xs px-2 py-0.5 text-muted-foreground hover:text-foreground"
               >
                 Clear
               </button>
@@ -331,7 +331,7 @@ export function CollectibleGrid({
               <TableRow key={item.id} className="collectible-row group border-b last:border-0">
                 <TableCell className="sticky left-0 bg-background group-hover:bg-muted/50 z-10 px-3 py-1.5 border-r">
                   <CollectibleDetailDialog item={item}>
-                    <button className="flex items-center gap-2 text-left hover:text-primary transition-colors w-full">
+                    <button className="cursor-pointer flex items-center gap-2 text-left hover:text-primary transition-colors w-full">
                       <img
                         src={item.icon}
                         alt=""
