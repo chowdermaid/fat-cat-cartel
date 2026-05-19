@@ -295,14 +295,15 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
     const lodestoneId = lodestoneIdByMember.get(id) ?? null;
     const existing = existingMembers[id] ?? null;
 
-    let avatarUrl: string | null = null;
+    const effectiveLodestoneId = lodestoneId ?? existing?.lodestoneId ?? null;
+    let avatarUrl: string | null = existing?.avatarUrl ?? null;
     if (lodestoneId) {
       avatarUrl = existing?.lodestoneId === lodestoneId && existing?.avatarUrl
         ? existing.avatarUrl
         : await fetchAvatarById(lodestoneId);
     }
 
-    membersNode[id] = { name: member.name, server: member.server.slug, lodestoneId, avatarUrl };
+    membersNode[id] = { name: member.name, server: member.server.slug, lodestoneId: effectiveLodestoneId, avatarUrl };
   }, 3);
 
   // 5. Recent kills + first kills
