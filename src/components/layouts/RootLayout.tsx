@@ -51,6 +51,12 @@ export function RootLayout() {
               FC Collection
             </Link>
             <Link
+              to="/mount-roulette"
+              className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
+            >
+              Mount Roulette
+            </Link>
+            <Link
               to="/raid-stats"
               className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground [&.active]:text-foreground [&.active]:bg-accent/50"
             >

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Minus } from "lucide-react";
+import { MemberPicker } from "./MemberPicker";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -87,6 +88,28 @@ export function CollectibleGrid({
   );
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const [sortBy, setSortBy] = useState<SortKey>("patch");
+  const storageKey = `fc-member-filter-${config.key}`;
+  const [selectedMemberIds, setSelectedMemberIds] = useState<Set<string>>(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return new Set();
+      return new Set(JSON.parse(raw) as string[]);
+    } catch {
+      return new Set();
+    }
+  });
+
+  function updateSelectedMemberIds(ids: Set<string>) {
+    setSelectedMemberIds(ids);
+    try {
+      if (ids.size === 0) localStorage.removeItem(storageKey);
+      else localStorage.setItem(storageKey, JSON.stringify([...ids]));
+    } catch { /* storage unavailable */ }
+  }
+
+  const visibleMembers = selectedMemberIds.size === 0
+    ? members
+    : members.filter((m) => selectedMemberIds.has(m.id));
 
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const countRef = useRef<HTMLParagraphElement>(null);
@@ -127,11 +150,11 @@ export function CollectibleGrid({
         }
 
         if (quickFilter === "fc-complete") {
-          if (!members.every((m) => m.owned[config.key].has(item.id)))
+          if (!visibleMembers.every((m) => m.owned[config.key].has(item.id)))
             return false;
         }
         if (quickFilter === "fc-missing") {
-          if (members.some((m) => m.owned[config.key].has(item.id)))
+          if (visibleMembers.some((m) => m.owned[config.key].has(item.id)))
             return false;
         }
 
@@ -148,7 +171,7 @@ export function CollectibleGrid({
     selectedSources,
     quickFilter,
     sortBy,
-    members,
+    visibleMembers,
     config.key,
   ]);
 
@@ -181,6 +204,11 @@ export function CollectibleGrid({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-56"
+          />
+          <MemberPicker
+            members={members}
+            selected={selectedMemberIds}
+            onChange={updateSelectedMemberIds}
           />
           <div className="flex items-center gap-1 text-sm text-muted-foreground ml-auto">
             <span>Sort:</span>
@@ -269,6 +297,7 @@ export function CollectibleGrid({
 
         <p ref={countRef} className="text-xs text-muted-foreground">
           {filtered.length} of {items.length} {config.label.toLowerCase()}
+          {selectedMemberIds.size > 0 && ` · ${visibleMembers.length} of ${members.length} members`}
         </p>
       </div>
 
@@ -280,7 +309,7 @@ export function CollectibleGrid({
               <TableHead className="sticky left-0 top-0 bg-background z-30 min-w-[200px] border-r font-semibold text-foreground px-3 py-2 h-auto">
                 {config.label}
               </TableHead>
-              {members.map((m) => (
+              {visibleMembers.map((m) => (
                 <TableHead
                   key={m.id}
                   className="sticky top-0 bg-background border-r last:border-r-0 p-0 h-auto"
@@ -312,7 +341,7 @@ export function CollectibleGrid({
                     </button>
                   </CollectibleDetailDialog>
                 </TableCell>
-                {members.map((m) => (
+                {visibleMembers.map((m) => (
                   <TableCell
                     key={m.id}
                     className="text-center px-3 py-1.5 border-r last:border-r-0"
@@ -325,14 +354,14 @@ export function CollectibleGrid({
                   </TableCell>
                 ))}
                 <TableCell className="px-3 py-1.5">
-                  <FCOwnerBar item={item} members={members} config={config} />
+                  <FCOwnerBar item={item} members={visibleMembers} config={config} />
                 </TableCell>
               </TableRow>
             ))}
             {filtered.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={members.length + 2}
+                  colSpan={visibleMembers.length + 2}
                   className="text-center text-sm text-muted-foreground py-12"
                 >
                   No {config.label.toLowerCase()} match the current filters.
