@@ -12,7 +12,9 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-router": "^1.168.8",
     "animejs": "^4.3.6",
     "class-variance-authority": "^0.7.1",
@@ -21,7 +23,7 @@
     "echarts-for-react": "^3.0.6",
     "embla-carousel-react": "^8.6.0",
     "firebase": "^12.11.0",
-    "lucide-react": "^1.7.0",
+    "lucide-react": "^1.16.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwind-merge": "^3.5.0"

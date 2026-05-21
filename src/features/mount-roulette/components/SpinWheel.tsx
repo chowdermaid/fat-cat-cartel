@@ -209,8 +209,8 @@ export function SpinWheel({ mounts, spinTrigger, onSpinComplete }: SpinWheelProp
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-center gap-3 h-12 mb-1 px-4 py-2 rounded-xl border bg-muted/50 min-w-0 max-w-xs w-full">
+    <div className="flex flex-col items-center w-full max-w-2xl">
+      <div className="flex items-center gap-3 h-12 mb-1 px-4 py-2 rounded-xl border bg-muted/50 min-w-0 w-full">
         <img
           ref={spotlightIconRef}
           src=""
@@ -220,7 +220,7 @@ export function SpinWheel({ mounts, spinTrigger, onSpinComplete }: SpinWheelProp
         <span ref={spotlightNameRef} className="text-sm font-medium truncate" />
       </div>
 
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center w-full">
         <svg
           width="24"
           height="20"
@@ -230,15 +230,17 @@ export function SpinWheel({ mounts, spinTrigger, onSpinComplete }: SpinWheelProp
         >
           <polygon points="12,18 3,2 21,2" fill="currentColor" />
         </svg>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
-          className="max-w-full rounded-full cursor-crosshair"
-          style={{ transformOrigin: "center" }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setTooltip(null)}
-        />
+        <div className="w-full aspect-square">
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_SIZE}
+            height={CANVAS_SIZE}
+            className="w-full h-full rounded-full cursor-crosshair"
+            style={{ transformOrigin: "center" }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setTooltip(null)}
+          />
+        </div>
       </div>
 
       {tooltip && (

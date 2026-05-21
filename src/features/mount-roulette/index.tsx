@@ -68,7 +68,7 @@ function LoadingSkeleton() {
         ))}
       </div>
       <div className="flex-1 flex items-center justify-center">
-        <div className="sk h-[480px] w-[480px] max-w-full rounded-full bg-muted animate-pulse" />
+        <div className="sk w-full max-w-2xl aspect-square rounded-full bg-muted animate-pulse" />
       </div>
     </div>
   );
@@ -296,8 +296,8 @@ export function MountRoulettePage() {
             </Button>
           </div>
 
-          <div className="flex-1 flex flex-col items-center">
-            <div ref={catContainerRef} className="relative">
+          <div className="flex-1 flex flex-col items-center min-w-0">
+            <div ref={catContainerRef} className="relative w-full max-w-2xl">
               <SpinWheel
                 mounts={filteredMounts}
                 spinTrigger={spinTrigger}
