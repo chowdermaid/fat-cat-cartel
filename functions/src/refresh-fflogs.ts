@@ -93,7 +93,6 @@ interface MemberNode {
   name: string;
   server: string;
   lodestoneId: string | null;
-  avatarUrl: string | null;
 }
 
 interface ParseBuckets {
@@ -124,11 +123,11 @@ interface FirstKillEntry {
 
 function percentileBucket(p: number): keyof ParseBuckets {
   if (p >= 100) return "gold";
-  if (p >= 99)  return "pink";
-  if (p >= 95)  return "orange";
-  if (p >= 75)  return "purple";
-  if (p >= 50)  return "blue";
-  if (p >= 25)  return "green";
+  if (p >= 99) return "pink";
+  if (p >= 95) return "orange";
+  if (p >= 75) return "purple";
+  if (p >= 50) return "blue";
+  if (p >= 25) return "green";
   return "grey";
 }
 
@@ -141,11 +140,18 @@ function toParseData(r: RawEncounterRanking): ParseData | null {
   return { percentile: r.rankPercent, rdps: r.bestAmount, job: r.spec };
 }
 
-async function batchRun<T, R>(items: T[], fn: (item: T, index: number) => Promise<R>, concurrency = 5, delayMs = 0): Promise<R[]> {
+async function batchRun<T, R>(
+  items: T[],
+  fn: (item: T, index: number) => Promise<R>,
+  concurrency = 5,
+  delayMs = 0,
+): Promise<R[]> {
   const results: R[] = [];
   for (let i = 0; i < items.length; i += concurrency) {
     const batch = items.slice(i, i + concurrency);
-    results.push(...(await Promise.all(batch.map((item, j) => fn(item, i + j)))));
+    results.push(
+      ...(await Promise.all(batch.map((item, j) => fn(item, i + j)))),
+    );
     if (delayMs > 0 && i + concurrency < items.length) {
       await new Promise((r) => setTimeout(r, delayMs));
     }
@@ -153,23 +159,19 @@ async function batchRun<T, R>(items: T[], fn: (item: T, index: number) => Promis
   return results;
 }
 
-async function fetchAvatarById(lodestoneId: string): Promise<string | null> {
-  try {
-    const res = await fetch(`https://xivapi.com/character/${lodestoneId}?columns=Character.Avatar`);
-    if (!res.ok) return null;
-    const data = await res.json() as { Character?: { Avatar?: string } };
-    return data.Character?.Avatar ?? null;
-  } catch { return null; }
-}
-
 // ─── Main export ──────────────────────────────────────────────────────────────
 
-export async function runRefreshFFLogs(clientId: string, clientSecret: string): Promise<void> {
+export async function runRefreshFFLogs(
+  clientId: string,
+  clientSecret: string,
+): Promise<void> {
   const token = await getFFLogsToken(clientId, clientSecret);
   const db = admin.database();
 
   // 1. Guild members (lodestoneID now included in query)
-  const membersPayload = (await queryFFLogs(token, GUILD_MEMBERS_QUERY, { guildID: GUILD_ID })) as {
+  const membersPayload = (await queryFFLogs(token, GUILD_MEMBERS_QUERY, {
+    guildID: GUILD_ID,
+  })) as {
     guildData: { guild: { members: { data: RawMember[] } } };
   };
   const rawMembers = membersPayload.guildData.guild.members.data;
@@ -179,30 +181,51 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
   const CHARACTER_QUERY = buildCharacterZonesQuery(ZONES);
 
   const zoneParses: Record<number, Record<string, ParseEntry>> = {};
-  const zoneHistograms: Record<number, Record<string, { savage: ParseBuckets; normal: ParseBuckets }>> = {};
+  const zoneHistograms: Record<
+    number,
+    Record<string, { savage: ParseBuckets; normal: ParseBuckets }>
+  > = {};
 
   for (const zone of ZONES) {
     zoneParses[zone.id] = {};
     zoneHistograms[zone.id] = {};
     for (const enc of zone.encounters) {
-      zoneHistograms[zone.id][enc.key] = { savage: emptyBuckets(), normal: emptyBuckets() };
+      zoneHistograms[zone.id][enc.key] = {
+        savage: emptyBuckets(),
+        normal: emptyBuckets(),
+      };
     }
   }
 
-  const memberRankings = await batchRun(rawMembers, async (member, i) => {
-    console.log(`[fflogs] fetching ${member.name} (${(i ?? 0) + 1}/${rawMembers.length})`);
-    try {
-      const data = (await queryFFLogs(token, CHARACTER_QUERY, { charID: member.id })) as {
-        characterData: { character: ({ lodestoneID?: string | null } & Record<string, RawZoneRankings | null>) | null };
-      };
-      const char = data.characterData.character;
-      const lodestoneID = char?.lodestoneID ?? null;
-      return { member, char, lodestoneID };
-    } catch (err) {
-      console.warn(`[fflogs] Failed rankings for ${member.name}:`, err);
-      return { member, char: null, lodestoneID: null };
-    }
-  }, 1);
+  const memberRankings = await batchRun(
+    rawMembers,
+    async (member, i) => {
+      console.log(
+        `[fflogs] fetching ${member.name} (${(i ?? 0) + 1}/${rawMembers.length})`,
+      );
+      try {
+        const data = (await queryFFLogs(token, CHARACTER_QUERY, {
+          charID: member.id,
+        })) as {
+          characterData: {
+            character:
+              | ({ lodestoneID?: string | null } & Record<
+                  string,
+                  RawZoneRankings | null
+                >)
+              | null;
+          };
+        };
+        const char = data.characterData.character;
+        const lodestoneID = char?.lodestoneID ?? null;
+        return { member, char, lodestoneID };
+      } catch (err) {
+        console.warn(`[fflogs] Failed rankings for ${member.name}:`, err);
+        return { member, char: null, lodestoneID: null };
+      }
+    },
+    1,
+  );
 
   // 3. Build per-zone parse entries and histograms (no identity fields here)
   for (const { member, char } of memberRankings) {
@@ -221,7 +244,9 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             const pd = toParseData(r);
             if (pd) {
               entry.savage[enc.key] = pd;
-              zoneHistograms[zone.id][enc.key].savage[percentileBucket(pd.percentile)]++;
+              zoneHistograms[zone.id][enc.key].savage[
+                percentileBucket(pd.percentile)
+              ]++;
             }
           }
 
@@ -231,11 +256,15 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
             const pd = toParseData(r);
             if (pd) {
               entry.normal[enc.key] = pd;
-              zoneHistograms[zone.id][enc.key].normal[percentileBucket(pd.percentile)]++;
+              zoneHistograms[zone.id][enc.key].normal[
+                percentileBucket(pd.percentile)
+              ]++;
             }
           }
 
-          const asEntries = (savageRankings?.allStars ?? []).filter((a) => a.partition === 1);
+          const asEntries = (savageRankings?.allStars ?? []).filter(
+            (a) => a.partition === 1,
+          );
           if (asEntries.length > 0) {
             const best = asEntries.sort((a, b) => b.points - a.points)[0];
             entry.allStars = {
@@ -253,16 +282,22 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
           for (const r of rankingsList) {
             const enc = zone.encounters.find((e) => e.id === r.encounter.id);
             if (!enc) {
-              console.log(`[fflogs-dbg] Unknown encID ${r.encounter.id} (${r.encounter.name}) in zone ${zone.id} for ${member.name}`);
+              console.log(
+                `[fflogs-dbg] Unknown encID ${r.encounter.id} (${r.encounter.name}) in zone ${zone.id} for ${member.name}`,
+              );
               continue;
             }
             const pd = toParseData(r);
             if (pd) {
               entry.normal[enc.key] = pd;
-              zoneHistograms[zone.id][enc.key].normal[percentileBucket(pd.percentile)]++;
+              zoneHistograms[zone.id][enc.key].normal[
+                percentileBucket(pd.percentile)
+              ]++;
             }
           }
-          const asEntries = (rankings?.allStars ?? []).filter((a) => a.partition === 1);
+          const asEntries = (rankings?.allStars ?? []).filter(
+            (a) => a.partition === 1,
+          );
           if (asEntries.length > 0) {
             const best = asEntries.sort((a, b) => b.points - a.points)[0];
             entry.allStars = {
@@ -281,84 +316,105 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
     }
   }
 
-  // 4. Resolve avatarUrls using lodestoneID from FFLogs character data; reuse cached avatarUrl if lodestoneId unchanged
+  // 4. Build members node (name, server, lodestoneId only; avatarUrl is managed exclusively by scrape-lodestone)
   const lodestoneIdByMember = new Map(
-    memberRankings.map(({ member, lodestoneID }) => [String(member.id), lodestoneID ?? null]),
+    memberRankings.map(({ member, lodestoneID }) => [
+      String(member.id),
+      lodestoneID ?? null,
+    ]),
   );
 
   const existingMembersSnap = await db.ref("members").get();
-  const existingMembers = (existingMembersSnap.val() ?? {}) as Record<string, MemberNode>;
+  const existingMembers = (existingMembersSnap.val() ?? {}) as Record<
+    string,
+    MemberNode
+  >;
 
   const membersNode: Record<string, MemberNode> = {};
-  await batchRun(rawMembers, async (member) => {
+  for (const member of rawMembers) {
     const id = String(member.id);
     const lodestoneId = lodestoneIdByMember.get(id) ?? null;
     const existing = existingMembers[id] ?? null;
-
     const effectiveLodestoneId = lodestoneId ?? existing?.lodestoneId ?? null;
-    let avatarUrl: string | null = existing?.avatarUrl ?? null;
-    if (lodestoneId) {
-      avatarUrl = existing?.lodestoneId === lodestoneId && existing?.avatarUrl
-        ? existing.avatarUrl
-        : await fetchAvatarById(lodestoneId);
-    }
-
-    membersNode[id] = { name: member.name, server: member.server.slug, lodestoneId: effectiveLodestoneId, avatarUrl };
-  }, 3);
+    membersNode[id] = { name: member.name, server: member.server.slug, lodestoneId: effectiveLodestoneId };
+  }
 
   // 5. Recent kills + first kills
   const recentKills: Record<number, RecentKillData | null> = {};
   const firstKills: Record<number, Record<string, FirstKillEntry>> = {};
-  await batchRun(ZONES, async (zone) => {
-    firstKills[zone.id] = {};
-    try {
-      const payload = (await queryFFLogs(token, GUILD_REPORTS_QUERY, {
-        guildID: GUILD_ID,
-        zoneID: zone.fflogsZoneId ?? zone.id,
-      })) as { reportData: { reports: { data: RawReport[] } } };
+  await batchRun(
+    ZONES,
+    async (zone) => {
+      firstKills[zone.id] = {};
+      try {
+        const payload = (await queryFFLogs(token, GUILD_REPORTS_QUERY, {
+          guildID: GUILD_ID,
+          zoneID: zone.fflogsZoneId ?? zone.id,
+        })) as { reportData: { reports: { data: RawReport[] } } };
 
-      let recentFound = false;
-      for (const report of payload.reportData.reports.data) {
-        for (const fight of report.fights ?? []) {
-          if (!fight.kill) continue;
-          const enc = zone.encounters.find((e) => e.id === fight.encounterID);
-          const killDate = report.startTime + fight.startTime;
+        let recentFound = false;
+        for (const report of payload.reportData.reports.data) {
+          for (const fight of report.fights ?? []) {
+            if (!fight.kill) continue;
+            const enc = zone.encounters.find((e) => e.id === fight.encounterID);
+            const killDate = report.startTime + fight.startTime;
 
-          if (!recentFound) {
-            recentKills[zone.id] = {
-              encounterName: fight.name,
-              encounterKey: enc?.key ?? null,
-              difficulty: zone.contentType === "ultimate" ? "Ultimate" : fight.difficulty === DIFFICULTY.savage ? "Savage" : "Normal",
-              date: killDate,
-              reportCode: report.code,
-            };
-            recentFound = true;
-          }
-
-          if (enc) {
-            const existing = firstKills[zone.id][enc.key];
-            if (!existing || killDate < existing.date) {
-              firstKills[zone.id][enc.key] = {
+            if (!recentFound) {
+              recentKills[zone.id] = {
                 encounterName: fight.name,
+                encounterKey: enc?.key ?? null,
+                difficulty:
+                  zone.contentType === "ultimate"
+                    ? "Ultimate"
+                    : fight.difficulty === DIFFICULTY.savage
+                      ? "Savage"
+                      : "Normal",
                 date: killDate,
                 reportCode: report.code,
               };
+              recentFound = true;
+            }
+
+            if (enc) {
+              const existing = firstKills[zone.id][enc.key];
+              if (!existing || killDate < existing.date) {
+                firstKills[zone.id][enc.key] = {
+                  encounterName: fight.name,
+                  date: killDate,
+                  reportCode: report.code,
+                };
+              }
             }
           }
         }
+        if (!recentFound) recentKills[zone.id] = null;
+      } catch {
+        recentKills[zone.id] = null;
       }
-      if (!recentFound) recentKills[zone.id] = null;
-    } catch {
-      recentKills[zone.id] = null;
-    }
-  }, 5);
+    },
+    5,
+  );
 
   // 6. Atomic multi-path update with new schema
   const now = Date.now();
   const updates: Record<string, unknown> = {
     "raidStats/lastUpdated": now,
-    "members": membersNode,
   };
+
+  // Per-field member writes: never delete avatarUrl or lodestoneId set by the Lodestone scraper.
+  // Writing the whole membersNode object would replace the subtree and clobber null fields.
+  const activeIds = new Set(rawMembers.map((m) => String(m.id)));
+  for (const existingId of Object.keys(existingMembers)) {
+    if (!activeIds.has(existingId)) {
+      updates[`members/${existingId}`] = null;
+    }
+  }
+  for (const [id, node] of Object.entries(membersNode)) {
+    updates[`members/${id}/name`] = node.name;
+    updates[`members/${id}/server`] = node.server;
+    if (node.lodestoneId != null)
+      updates[`members/${id}/lodestoneId`] = node.lodestoneId;
+  }
 
   for (const zone of ZONES) {
     const prefix = `raidStats/zones/${zone.id}`;
@@ -367,15 +423,25 @@ export async function runRefreshFFLogs(clientId: string, clientSecret: string): 
       name: zone.name,
       shortName: zone.shortName,
       contentType: zone.contentType,
-      encounters: zone.encounters.map((e) => ({ id: e.id, key: e.key, label: e.label, name: e.name })),
+      encounters: zone.encounters.map((e) => ({
+        id: e.id,
+        key: e.key,
+        label: e.label,
+        name: e.name,
+      })),
     };
     updates[`${prefix}/lastUpdated`] = now;
     updates[`${prefix}/parses`] = zoneParses[zone.id];
     updates[`${prefix}/histogram`] = zoneHistograms[zone.id];
     updates[`${prefix}/recentKill`] = recentKills[zone.id] ?? null;
-    updates[`${prefix}/firstKills`] = Object.keys(firstKills[zone.id] ?? {}).length > 0 ? firstKills[zone.id] : null;
+    updates[`${prefix}/firstKills`] =
+      Object.keys(firstKills[zone.id] ?? {}).length > 0
+        ? firstKills[zone.id]
+        : null;
   }
 
   await db.ref("/").update(updates);
-  console.log(`[fflogs] Wrote ${ZONES.length} zones for ${rawMembers.length} members`);
+  console.log(
+    `[fflogs] Wrote ${ZONES.length} zones for ${rawMembers.length} members`,
+  );
 }
