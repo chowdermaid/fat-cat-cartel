@@ -2,11 +2,10 @@ import * as admin from "firebase-admin";
 
 const BASE = "https://ffxivcollect.com/api";
 
-// Stripped-down collectible config (no LucideIcon — UI only)
 const COLLECTIBLE_CONFIG = [
-  { key: "mounts",       apiPath: "mounts",       fetchLimit: undefined as number | undefined, categoryFilter: undefined as string[] | undefined },
-  { key: "minions",      apiPath: "minions",       fetchLimit: undefined,                        categoryFilter: undefined },
-  { key: "titles",       apiPath: "titles",        fetchLimit: undefined,                        categoryFilter: undefined },
+  { key: "mounts",       apiPath: "mounts",        fetchLimit: undefined as number | undefined, categoryFilter: undefined as string[] | undefined },
+  { key: "minions",      apiPath: "minions",        fetchLimit: undefined,                        categoryFilter: undefined },
+  { key: "titles",       apiPath: "titles",         fetchLimit: undefined,                        categoryFilter: undefined },
   {
     key: "achievements",
     apiPath: "achievements",
@@ -24,15 +23,15 @@ const COLLECTIBLE_CONFIG = [
 
 type CollectibleKey = typeof COLLECTIBLE_CONFIG[number]["key"];
 
-interface FCMember {
-  name: string;
-  lodestoneId: string;
+interface PreviousOwnedEntry {
+  count: number;
+  asOf: number;
 }
 
 interface MemberCacheData {
   avatar: string;
   owned: Record<CollectibleKey, number[]>;
-  previousOwned: Record<CollectibleKey, number>;
+  previousOwned: Record<CollectibleKey, PreviousOwnedEntry>;
   lastFetched: number;
 }
 
@@ -65,25 +64,23 @@ export async function runRefreshFCCollection(): Promise<void> {
     // Non-fatal: proceed with potentially stale ffxivcollect data
   }
 
-  // 1. Read members and previous cache from RTDB
-  const [membersSnap, cacheSnap] = await Promise.all([
-    db.ref("fcCollection/members").get(),
-    db.ref("fcCollection/cache").get(),
+  // 1. Read members from /members (canonical source) and previous member data
+  const [membersSnap, prevMemberDataSnap] = await Promise.all([
+    db.ref("members").get(),
+    db.ref("fcCollection/memberData").get(),
   ]);
 
-  const membersVal = membersSnap.val() as Record<string, Omit<FCMember, "lodestoneId"> & { lodestoneId: string }> | null;
-  const members: FCMember[] = membersVal
-    ? Object.values(membersVal).map((m) => ({ name: m.name, lodestoneId: m.lodestoneId }))
-    : [];
+  const membersVal = (membersSnap.val() ?? {}) as Record<string, { name: string; lodestoneId?: string }>;
+  // members/ is keyed by lodestoneId
+  const lodestoneIds = Object.keys(membersVal);
 
-  const prevCache = (cacheSnap.val() ?? {}) as Record<string, unknown>;
-  const prevMemberData = (prevCache.memberData ?? {}) as Record<string, MemberCacheData>;
+  const prevMemberData = (prevMemberDataSnap.val() ?? {}) as Record<string, MemberCacheData>;
 
-  if (members.length === 0) {
+  if (lodestoneIds.length === 0) {
     console.log("[fccollect] No members found in RTDB — skipping");
     return;
   }
-  console.log(`[fccollect] ${members.length} members`);
+  console.log(`[fccollect] ${lodestoneIds.length} members`);
 
   // 2. Fetch collectible lists
   const listResponses = await Promise.all(
@@ -95,61 +92,70 @@ export async function runRefreshFCCollection(): Promise<void> {
     if (!listResponses[i].ok) throw new Error(`Failed to fetch ${COLLECTIBLE_CONFIG[i].key} list`);
   }
   const listJsons = await Promise.all(listResponses.map((r) => r.json() as Promise<{ results?: Record<string, unknown>[] }>));
-  const lists: Record<string, string> = {};
+
+  // Store collectibles as real objects keyed by item id (not JSON strings)
+  const collectiblesUpdate: Record<string, unknown> = {
+    "fcCollection/collectibles/lastFetched": Date.now(),
+  };
   for (let i = 0; i < COLLECTIBLE_CONFIG.length; i++) {
     const cfg = COLLECTIBLE_CONFIG[i];
     const items = transformItems(listJsons[i]?.results ?? [], cfg.categoryFilter);
-    lists[cfg.apiPath] = JSON.stringify(items);
+    const byId: Record<string, unknown> = {};
+    for (const item of items) {
+      byId[String((item as { id: number }).id)] = item;
+    }
+    collectiblesUpdate[`fcCollection/collectibles/${cfg.key}`] = byId;
   }
 
-  // 3. Fetch per-member owned items (5 concurrent)
+  // 3. Fetch per-member owned items (all concurrent)
   const memberResults = await Promise.all(
-    members.map(async (member) => {
-      const prev = prevMemberData[member.lodestoneId];
+    lodestoneIds.map(async (lodestoneId) => {
+      const prev = prevMemberData[lodestoneId];
+      const now = Date.now();
       try {
         const [charRes, ...ownedResponses] = await Promise.all([
-          fetch(`${BASE}/characters/${member.lodestoneId}`),
+          fetch(`${BASE}/characters/${lodestoneId}`),
           ...COLLECTIBLE_CONFIG.map((cfg) =>
-            fetch(`${BASE}/characters/${member.lodestoneId}/${cfg.apiPath}/owned`),
+            fetch(`${BASE}/characters/${lodestoneId}/${cfg.apiPath}/owned`),
           ),
         ]);
         const avatar = charRes.ok ? (((await charRes.json()) as { avatar?: string }).avatar ?? "") : (prev?.avatar ?? "");
         const ownedJsons = await Promise.all(
           ownedResponses.map((r, i) => {
             if (!r.ok) {
-              console.warn(`[fccollect] ${member.lodestoneId} ${COLLECTIBLE_CONFIG[i].apiPath}/owned → ${r.status}`);
+              console.warn(`[fccollect] ${lodestoneId} ${COLLECTIBLE_CONFIG[i].apiPath}/owned -> ${r.status}`);
               return Promise.resolve(null);
             }
             return r.json() as Promise<unknown>;
           }),
         );
         const owned = {} as Record<CollectibleKey, number[]>;
-        const previousOwned = {} as Record<CollectibleKey, number>;
+        const previousOwned = {} as Record<CollectibleKey, PreviousOwnedEntry>;
         for (let i = 0; i < COLLECTIBLE_CONFIG.length; i++) {
           const key = COLLECTIBLE_CONFIG[i].key;
           owned[key] = parseOwned(ownedJsons[i]);
-          previousOwned[key] = prev?.owned?.[key]?.length ?? 0;
+          previousOwned[key] = { count: prev?.owned?.[key]?.length ?? 0, asOf: prev?.lastFetched ?? now };
         }
-        return { lodestoneId: member.lodestoneId, data: { avatar, owned, previousOwned, lastFetched: Date.now() } as MemberCacheData };
+        return { lodestoneId, data: { avatar, owned, previousOwned, lastFetched: now } as MemberCacheData };
       } catch (err) {
-        console.error(`[fccollect] ${member.lodestoneId} fetch failed:`, err);
+        console.error(`[fccollect] ${lodestoneId} fetch failed:`, err);
         const owned = {} as Record<CollectibleKey, number[]>;
-        const previousOwned = {} as Record<CollectibleKey, number>;
+        const previousOwned = {} as Record<CollectibleKey, PreviousOwnedEntry>;
         for (const cfg of COLLECTIBLE_CONFIG) {
           owned[cfg.key] = prev?.owned?.[cfg.key] ?? [];
-          previousOwned[cfg.key] = prev?.previousOwned?.[cfg.key] ?? 0;
+          previousOwned[cfg.key] = prev?.previousOwned?.[cfg.key] ?? { count: 0, asOf: now };
         }
-        return { lodestoneId: member.lodestoneId, data: { avatar: prev?.avatar ?? "", owned, previousOwned, lastFetched: prev?.lastFetched ?? 0 } as MemberCacheData };
+        return { lodestoneId, data: { avatar: prev?.avatar ?? "", owned, previousOwned, lastFetched: prev?.lastFetched ?? 0 } as MemberCacheData };
       }
     }),
   );
 
-  // 4. Write to RTDB
-  const memberData: Record<string, MemberCacheData> = {};
+  // 4. Write collectibles and member data atomically
+  const memberDataUpdate: Record<string, unknown> = { ...collectiblesUpdate };
   for (const { lodestoneId, data } of memberResults) {
-    memberData[lodestoneId] = data;
+    memberDataUpdate[`fcCollection/memberData/${lodestoneId}`] = data;
   }
 
-  await db.ref("fcCollection/cache").set({ lastFetched: Date.now(), ...lists, memberData });
-  console.log(`[fccollect] cache written — ${members.length} members`);
+  await db.ref("/").update(memberDataUpdate);
+  console.log(`[fccollect] written collectibles + ${lodestoneIds.length} members`);
 }

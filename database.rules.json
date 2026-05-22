@@ -1,0 +1,33 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+
+    "members": {
+      ".write": true
+    },
+
+    "raidStats": {
+      ".write": false
+    },
+
+    "fcCollection": {
+      "collectibles": { ".write": false },
+      "memberData":   { ".write": false }
+    },
+
+    "memberProfiles": {
+      "$lodestoneId": {
+        ".write": true
+      }
+    },
+
+    "events": {
+      "easter2026": {
+        "participants": {
+          ".write": true
+        }
+      }
+    }
+  }
+}

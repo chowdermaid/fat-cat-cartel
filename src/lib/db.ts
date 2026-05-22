@@ -12,6 +12,7 @@ import { db as realDb } from "./firebase";
 import {
   ref as fbRef,
   onValue as fbOnValue,
+  get as fbGet,
   set as fbSet,
   push as fbPush,
   remove as fbRemove,
@@ -21,6 +22,7 @@ import {
   stubDb,
   stubRef,
   stubOnValue,
+  stubGet,
   stubSet,
   stubPush,
   stubRemove,
@@ -33,6 +35,7 @@ const USE_STUBS = import.meta.env.VITE_USE_STUBS === "true";
 export const db: unknown = USE_STUBS ? stubDb : realDb;
 export const ref: AnyFn = USE_STUBS ? stubRef : fbRef;
 export const onValue: AnyFn = USE_STUBS ? stubOnValue : fbOnValue;
+export const get: AnyFn = USE_STUBS ? stubGet : fbGet;
 export const set: AnyFn = USE_STUBS ? stubSet : fbSet;
 export const push: AnyFn = USE_STUBS ? stubPush : fbPush;
 export const remove: AnyFn = USE_STUBS ? stubRemove : fbRemove;

@@ -92,7 +92,8 @@ interface ParseEntry {
 interface MemberNode {
   name: string;
   server: string;
-  lodestoneId: string | null;
+  fflogsId: string | null;
+  avatarUrl?: string | null;
 }
 
 interface ParseBuckets {
@@ -227,8 +228,27 @@ export async function runRefreshFFLogs(
     1,
   );
 
-  // 3. Build per-zone parse entries and histograms (no identity fields here)
+  // 3. Resolve effective lodestoneId per member (FFLogs API value preferred, DB fallback)
+  const existingMembersSnap = await db.ref("members").get();
+  const existingMembers = (existingMembersSnap.val() ?? {}) as Record<string, MemberNode>;
+
+  // Build fflogsId -> lodestoneId lookup from members already in the DB
+  const lodestoneByFflogsId = new Map<string, string>();
+  for (const [lodestoneId, m] of Object.entries(existingMembers)) {
+    if (m.fflogsId) lodestoneByFflogsId.set(m.fflogsId, lodestoneId);
+  }
+
+  const effectiveLodestoneId = new Map<string, string | null>();
+  for (const { member, lodestoneID } of memberRankings) {
+    const fflogsId = String(member.id);
+    effectiveLodestoneId.set(fflogsId, lodestoneID ?? lodestoneByFflogsId.get(fflogsId) ?? null);
+  }
+
+  // 4. Build per-zone parse entries and histograms, keyed by lodestoneId
   for (const { member, char } of memberRankings) {
+    const lodestoneId = effectiveLodestoneId.get(String(member.id));
+    if (!lodestoneId) continue;
+
     for (const zone of ZONES) {
       const entry: ParseEntry = { savage: {}, normal: {}, allStars: null };
 
@@ -312,34 +332,25 @@ export async function runRefreshFFLogs(
         }
       }
 
-      zoneParses[zone.id][String(member.id)] = entry;
+      zoneParses[zone.id][lodestoneId] = entry;
     }
   }
 
-  // 4. Build members node (name, server, lodestoneId only; avatarUrl is managed exclusively by scrape-lodestone)
-  const lodestoneIdByMember = new Map(
-    memberRankings.map(({ member, lodestoneID }) => [
-      String(member.id),
-      lodestoneID ?? null,
-    ]),
-  );
-
-  const existingMembersSnap = await db.ref("members").get();
-  const existingMembers = (existingMembersSnap.val() ?? {}) as Record<
-    string,
-    MemberNode
-  >;
-
+  // 5. Build members node keyed by lodestoneId (avatarUrl managed exclusively by scrape-lodestone)
   const membersNode: Record<string, MemberNode> = {};
-  for (const member of rawMembers) {
-    const id = String(member.id);
-    const lodestoneId = lodestoneIdByMember.get(id) ?? null;
-    const existing = existingMembers[id] ?? null;
-    const effectiveLodestoneId = lodestoneId ?? existing?.lodestoneId ?? null;
-    membersNode[id] = { name: member.name, server: member.server.slug, lodestoneId: effectiveLodestoneId };
+  for (const { member, lodestoneID } of memberRankings) {
+    const fflogsId = String(member.id);
+    const lodestoneId = lodestoneID ?? lodestoneByFflogsId.get(fflogsId) ?? null;
+    if (!lodestoneId) continue;
+    membersNode[lodestoneId] = {
+      name: member.name,
+      server: member.server.slug,
+      fflogsId,
+      avatarUrl: existingMembers[lodestoneId]?.avatarUrl ?? null,
+    };
   }
 
-  // 5. Recent kills + first kills
+  // 6. Recent kills + first kills
   const recentKills: Record<number, RecentKillData | null> = {};
   const firstKills: Record<number, Record<string, FirstKillEntry>> = {};
   await batchRun(
@@ -395,25 +406,23 @@ export async function runRefreshFFLogs(
     5,
   );
 
-  // 6. Atomic multi-path update with new schema
+  // 7. Atomic multi-path update
   const now = Date.now();
   const updates: Record<string, unknown> = {
     "raidStats/lastUpdated": now,
   };
 
-  // Per-field member writes: never delete avatarUrl or lodestoneId set by the Lodestone scraper.
-  // Writing the whole membersNode object would replace the subtree and clobber null fields.
-  const activeIds = new Set(rawMembers.map((m) => String(m.id)));
-  for (const existingId of Object.keys(existingMembers)) {
-    if (!activeIds.has(existingId)) {
-      updates[`members/${existingId}`] = null;
+  // Per-field member writes keyed by lodestoneId; never clobber avatarUrl set by the Lodestone scraper.
+  const activeFflogsIds = new Set(rawMembers.map((m) => String(m.id)));
+  for (const [lodestoneId, m] of Object.entries(existingMembers)) {
+    if (m.fflogsId && !activeFflogsIds.has(m.fflogsId)) {
+      updates[`members/${lodestoneId}`] = null;
     }
   }
-  for (const [id, node] of Object.entries(membersNode)) {
-    updates[`members/${id}/name`] = node.name;
-    updates[`members/${id}/server`] = node.server;
-    if (node.lodestoneId != null)
-      updates[`members/${id}/lodestoneId`] = node.lodestoneId;
+  for (const [lodestoneId, node] of Object.entries(membersNode)) {
+    updates[`members/${lodestoneId}/name`] = node.name;
+    updates[`members/${lodestoneId}/server`] = node.server;
+    updates[`members/${lodestoneId}/fflogsId`] = node.fflogsId;
   }
 
   for (const zone of ZONES) {

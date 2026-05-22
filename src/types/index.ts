@@ -1,8 +1,9 @@
 export interface Member {
   name: string;
   server: string;
-  lodestoneId: string | null;
+  fflogsId: string | null;
   avatarUrl: string | null;
+  fcRank: string | null;
 }
 
 export interface Scores {

@@ -48,8 +48,7 @@ async function fetchMemberPage(page: number): Promise<string> {
 
 export async function runScrapeLodestone(): Promise<{
   total: number;
-  collectionAdded: number;
-  portraitLinked: number;
+  written: number;
 }> {
   const db = admin.database();
 
@@ -65,35 +64,14 @@ export async function runScrapeLodestone(): Promise<{
 
   console.log(`[lodestone] Scraped ${allMembers.length} FC members`);
 
-  // Add missing members to fcCollection
-  const collectionSnap = await db.ref("fcCollection/members").get();
-  const existing = (collectionSnap.val() ?? {}) as Record<string, { name: string }>;
-  const existingNames = new Set(Object.values(existing).map((m) => m.name.toLowerCase()));
-
-  let collectionAdded = 0;
-  for (const m of allMembers) {
-    if (!existingNames.has(m.name.toLowerCase())) {
-      await db.ref("fcCollection/members").push({ name: m.name, lodestoneId: m.lodestoneId });
-      collectionAdded++;
-    }
-  }
-
-  // Match to members/ by name, write lodestoneId and avatarUrl directly
-  const membersSnap = await db.ref("members").get();
-  const membersNode = (membersSnap.val() ?? {}) as Record<string, { name: string }>;
-
   const updates: Record<string, unknown> = {};
-  let portraitLinked = 0;
-  for (const [fflogsId, gm] of Object.entries(membersNode)) {
-    const match = allMembers.find((m) => m.name.toLowerCase() === gm.name.toLowerCase());
-    if (!match) continue;
-    updates[`members/${fflogsId}/lodestoneId`] = match.lodestoneId;
-    updates[`members/${fflogsId}/avatarUrl`] = match.avatarUrl;
-    portraitLinked++;
+  for (const m of allMembers) {
+    updates[`members/${m.lodestoneId}/name`] = m.name;
+    if (m.avatarUrl) updates[`members/${m.lodestoneId}/avatarUrl`] = m.avatarUrl;
   }
   if (Object.keys(updates).length > 0) {
     await db.ref("/").update(updates);
   }
 
-  return { total: allMembers.length, collectionAdded, portraitLinked };
+  return { total: allMembers.length, written: allMembers.length };
 }

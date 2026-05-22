@@ -8,6 +8,7 @@ import {
   Moon,
   ShieldUser,
   Sun,
+  Users,
   UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import fatcathi from "../../assets/fatcathi.png";
 
 const navItems = [
   { label: "Home", to: "/", icon: Home },
+  { label: "Members", to: "/members", icon: Users },
   { label: "Past Events", to: "/pastevents", icon: CalendarDays },
   { label: "FC Collection", to: "/fc-collection", icon: Library },
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },

@@ -105,7 +105,7 @@ export function RaidStatsPage() {
             ...parse,
             name: identity?.name ?? "Unknown",
             server: identity?.server ?? "",
-            lodestoneId: identity?.lodestoneId ?? null,
+            lodestoneId: id,
             avatarUrl: identity?.avatarUrl ?? null,
           },
         ];

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { db, ref, onValue, push, set, remove } from "@/lib/db";
 import type { Participant, Scores, ScoreCategory } from "@/types";
 import { SCORE_CATEGORIES } from "@/types";
@@ -50,7 +51,6 @@ export function ParticipantManager() {
 
         parsed.sort((a, b) => b.total - a.total);
 
-        // Preserve locally-edited values for dirty rows
         setParticipants((prev) =>
           parsed.map((incoming) => {
             const existing = prev.find((p) => p.id === incoming.id);
@@ -80,19 +80,32 @@ export function ParticipantManager() {
     setParticipants((prev) =>
       prev.map((p) => (p.id === id ? { ...p, saving: true } : p))
     );
-    await set(ref(db, `events/easter2026/participants/${id}`), {
-      name: participant.name,
-      scores: participant.scores,
-      total: participant.total,
-    });
-    setParticipants((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, dirty: false, saving: false } : p))
-    );
+    try {
+      await set(ref(db, `events/easter2026/participants/${id}`), {
+        name: participant.name,
+        scores: participant.scores,
+        total: participant.total,
+      });
+      setParticipants((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, dirty: false, saving: false } : p))
+      );
+      toast.success(`Saved scores for ${participant.name}.`);
+    } catch (e) {
+      setParticipants((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, saving: false } : p))
+      );
+      toast.error(e instanceof Error ? e.message : "Failed to save scores.");
+    }
   }
 
-  async function deleteParticipant(id: string) {
-    if (!confirm("Remove this participant?")) return;
-    await remove(ref(db, `events/easter2026/participants/${id}`));
+  async function deleteParticipant(id: string, participantName: string) {
+    if (!confirm(`Remove ${participantName}?`)) return;
+    try {
+      await remove(ref(db, `events/easter2026/participants/${id}`));
+      toast.success(`${participantName} removed.`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to remove participant.");
+    }
   }
 
   async function addParticipant() {
@@ -104,13 +117,19 @@ export function ParticipantManager() {
       trivia: 0,
       eorzoaGuessr: 0,
     };
-    await push(ref(db, "events/easter2026/participants"), {
-      name,
-      scores: defaultScores,
-      total: 0,
-    });
-    setNewName("");
-    setAdding(false);
+    try {
+      await push(ref(db, "events/easter2026/participants"), {
+        name,
+        scores: defaultScores,
+        total: 0,
+      });
+      setNewName("");
+      toast.success(`${name} added.`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to add participant.");
+    } finally {
+      setAdding(false);
+    }
   }
 
   if (loading) {
@@ -183,7 +202,7 @@ export function ParticipantManager() {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => deleteParticipant(p.id)}
+                  onClick={() => deleteParticipant(p.id, p.name)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>

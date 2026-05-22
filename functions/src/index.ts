@@ -28,7 +28,7 @@ export const triggerFFLogsRefresh = onCall(
   },
 );
 
-// Admin-triggered: scrapes Lodestone FC member list → populates fcCollection/members + portrait links
+// Admin-triggered: scrapes Lodestone FC member list → writes to /members/{lodestoneId}
 export const importLodestoneMembers = onCall(
   { timeoutSeconds: 120, region: "us-central1" },
   async () => {
@@ -37,10 +37,19 @@ export const importLodestoneMembers = onCall(
   },
 );
 
-// Runs daily at 06:00 UTC — fetches ffxivcollect data → writes to /fcCollection/cache
+// Runs every 3 hours — fetches ffxivcollect data → writes to /fcCollection/collectibles + /fcCollection/memberData
 export const refreshFCCollection = onSchedule(
   { schedule: "0 */3 * * *", timeoutSeconds: 300, region: "us-central1" },
   async () => {
     await runRefreshFCCollection();
+  },
+);
+
+// Admin-triggered manual FC collection refresh
+export const triggerFCCollectionRefresh = onCall(
+  { timeoutSeconds: 300, region: "us-central1" },
+  async () => {
+    await runRefreshFCCollection();
+    return { ok: true };
   },
 );

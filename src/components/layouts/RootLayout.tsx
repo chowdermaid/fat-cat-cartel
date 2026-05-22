@@ -4,6 +4,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Toaster } from "sonner";
+import { useDarkMode } from "@/hooks/useDarkMode";
 import { AppSidebar } from "./AppSidebar";
 import omgpeets from "../../assets/fatcat/omgpeets.png";
 
@@ -39,6 +41,7 @@ const BANNER_CATS: { deg: number; y: number }[] = [
 ] as const;
 
 export function RootLayout() {
+  const { isDark } = useDarkMode();
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -64,6 +67,7 @@ export function RootLayout() {
         <main className="flex-1 px-6 py-8">
           <Outlet />
         </main>
+        <Toaster richColors position="bottom-right" theme={isDark ? "dark" : "light"} />
         <footer className="border-t">
           <div className="px-6 py-6 text-center text-sm text-muted-foreground">
             © 2026 Fat Cat Cartel · chow is an amazing sage ·{" "}

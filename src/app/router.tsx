@@ -14,6 +14,8 @@ import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
 import { RaidStatsPage } from "@/features/raid-stats";
 import { MountRoulettePage } from "@/features/mount-roulette";
+import { MembersPage } from "@/features/members";
+import { MemberProfilePage } from "@/features/member-profile";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -79,6 +81,18 @@ const adminRoute = createRoute({
   component: AdminPage,
 });
 
+const membersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/members",
+  component: MembersPage,
+});
+
+const memberProfileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/members/$lodestoneId",
+  component: MemberProfilePage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   pastEventsRoute,
@@ -90,6 +104,8 @@ const routeTree = rootRoute.addChildren([
   raidStatsRoute,
   mountRouletteRoute,
   adminRoute,
+  membersRoute,
+  memberProfileRoute,
 ]);
 
 export const router = createRouter({ routeTree });

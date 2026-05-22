@@ -29,10 +29,15 @@ export interface FCMember {
   lodestoneId: string;
 }
 
+export interface PreviousOwnedEntry {
+  count: number;
+  asOf: number;
+}
+
 export interface MemberCacheData {
   avatar: string;
   owned: Record<CollectibleKey, number[]>;
-  previousOwned: Record<CollectibleKey, number>;
+  previousOwned: Record<CollectibleKey, PreviousOwnedEntry>;
   lastFetched: number;
 }
 

@@ -35,19 +35,21 @@ const ZONE_73_META = {
   ],
 };
 
+// Stub members keyed by lodestoneId (new canonical key)
 const STUB_MEMBERS = {
-  "20385598": { name: "Chow Chow",       server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "19133850": { name: "Axo Lotl",        server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "20806122": { name: "Sweet Potatoes",  server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "19039587": { name: "Zalka Tohka",     server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "19746452": { name: "Astrid Gertrud",  server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "20962142": { name: "Blue Belladonna", server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "18468313": { name: "Hane Miko",       server: "Sophia", lodestoneId: null, avatarUrl: null },
-  "20739994": { name: "Jellyfish Cat",   server: "Sophia", lodestoneId: null, avatarUrl: null },
+  "11111001": { name: "Chow Chow",       server: "Sophia", fflogsId: "20385598", avatarUrl: null, fcRank: "Boss"     },
+  "11111002": { name: "Axo Lotl",        server: "Sophia", fflogsId: "19133850", avatarUrl: null, fcRank: "Underpaw" },
+  "11111003": { name: "Sweet Potatoes",  server: "Sophia", fflogsId: "20806122", avatarUrl: null, fcRank: "Underpaw" },
+  "11111004": { name: "Zalka Tohka",     server: "Sophia", fflogsId: "19039587", avatarUrl: null, fcRank: "Housecat" },
+  "11111005": { name: "Astrid Gertrud",  server: "Sophia", fflogsId: "19746452", avatarUrl: null, fcRank: "Housecat" },
+  "11111006": { name: "Blue Belladonna", server: "Sophia", fflogsId: "20962142", avatarUrl: null, fcRank: "Stray"    },
+  "11111007": { name: "Hane Miko",       server: "Sophia", fflogsId: "18468313", avatarUrl: null, fcRank: "Stray"    },
+  "11111008": { name: "Jellyfish Cat",   server: "Sophia", fflogsId: "20739994", avatarUrl: null, fcRank: "Friend"   },
 };
 
+// Parses keyed by lodestoneId (matching STUB_MEMBERS keys)
 const STUB_PARSES = {
-  "20385598": {
+  "11111001": {
     savage: {
       m9:  { percentile: 93.9, rdps: 38434, job: "Dragoon" },
       m10: { percentile: 82.8, rdps: 40483, job: "Dragoon" },
@@ -60,7 +62,7 @@ const STUB_PARSES = {
     },
     allStars: { points: 403.5, worldRank: 5095, regionRank: 72, serverRank: 15, rankPercent: 53.5, spec: "Dragoon" },
   },
-  "19133850": {
+  "11111002": {
     savage: {
       m9:  { percentile: 67.2, rdps: 31020, job: "Black Mage" },
       m10: { percentile: 71.5, rdps: 33100, job: "Black Mage" },
@@ -72,7 +74,7 @@ const STUB_PARSES = {
     },
     allStars: { points: 280.0, worldRank: 8200, regionRank: 115, serverRank: 22, rankPercent: 40.2, spec: "Black Mage" },
   },
-  "20806122": {
+  "11111003": {
     savage: {
       m9:  { percentile: 99.1, rdps: 19800, job: "White Mage" },
       m10: { percentile: 97.3, rdps: 20100, job: "White Mage" },
@@ -83,7 +85,7 @@ const STUB_PARSES = {
     },
     allStars: { points: 512.0, worldRank: 1840, regionRank: 28, serverRank: 5, rankPercent: 84.1, spec: "White Mage" },
   },
-  "19039587": {
+  "11111004": {
     savage: {
       m9:  { percentile: 78.4, rdps: 22100, job: "Dark Knight" },
       m11: { percentile: 61.2, rdps: 20800, job: "Dark Knight" },
@@ -92,7 +94,7 @@ const STUB_PARSES = {
     normal: {},
     allStars: { points: 330.0, worldRank: 6800, regionRank: 98, serverRank: 18, rankPercent: 46.0, spec: "Dark Knight" },
   },
-  "19746452": {
+  "11111005": {
     savage: {
       m9:  { percentile: 55.6, rdps: 29500, job: "Reaper" },
       m10: { percentile: 48.2, rdps: 28100, job: "Reaper" },
@@ -103,7 +105,7 @@ const STUB_PARSES = {
     },
     allStars: null,
   },
-  "20962142": {
+  "11111006": {
     savage: {
       m9:  { percentile: 100,  rdps: 45200, job: "Samurai" },
       m10: { percentile: 98.5, rdps: 47300, job: "Samurai" },
@@ -115,7 +117,7 @@ const STUB_PARSES = {
     },
     allStars: { points: 580.0, worldRank: 420, regionRank: 8, serverRank: 1, rankPercent: 96.2, spec: "Samurai" },
   },
-  "18468313": {
+  "11111007": {
     savage: {
       m9:  { percentile: 82.3, rdps: 18900, job: "Scholar" },
       m10: { percentile: 76.5, rdps: 19400, job: "Scholar" },
@@ -124,7 +126,7 @@ const STUB_PARSES = {
     normal: {},
     allStars: { points: 350.0, worldRank: 5500, regionRank: 80, serverRank: 14, rankPercent: 50.3, spec: "Scholar" },
   },
-  "20739994": {
+  "11111008": {
     savage: {},
     normal: {
       m9:  { percentile: 44.1, rdps: 17200, job: "Summoner" },
@@ -134,8 +136,72 @@ const STUB_PARSES = {
   },
 };
 
+const STUB_COLLECTIBLES_MOUNTS = {
+  "1":  { id: 1,  name: "Company Chocobo",    icon: "", patch: "2.0", owned: "10000", sources: [{ type: "Quest",       text: "" }] },
+  "2":  { id: 2,  name: "Nightmare",           icon: "", patch: "2.0", owned: "5000",  sources: [{ type: "Trial",       text: "" }] },
+  "3":  { id: 3,  name: "Aithon",              icon: "", patch: "2.2", owned: "4000",  sources: [{ type: "Trial",       text: "" }] },
+  "4":  { id: 4,  name: "Xanthos",             icon: "", patch: "2.2", owned: "3800",  sources: [{ type: "Trial",       text: "" }] },
+  "5":  { id: 5,  name: "Enbarr",              icon: "", patch: "2.3", owned: "3500",  sources: [{ type: "Trial",       text: "" }] },
+  "6":  { id: 6,  name: "Markab",              icon: "", patch: "2.4", owned: "3200",  sources: [{ type: "Trial",       text: "" }] },
+  "7":  { id: 7,  name: "Boreas",              icon: "", patch: "2.5", owned: "3000",  sources: [{ type: "Trial",       text: "" }] },
+  "8":  { id: 8,  name: "Ravana",              icon: "", patch: "3.1", owned: "2800",  sources: [{ type: "Trial",       text: "" }] },
+  "9":  { id: 9,  name: "Bismarck",            icon: "", patch: "3.2", owned: "2600",  sources: [{ type: "Trial",       text: "" }] },
+  "10": { id: 10, name: "Sephirot",            icon: "", patch: "3.3", owned: "2400",  sources: [{ type: "Trial",       text: "" }] },
+  "11": { id: 11, name: "Faust",               icon: "", patch: "3.4", owned: "900",   sources: [{ type: "Raid",        text: "" }] },
+  "12": { id: 12, name: "Alte Roite",          icon: "", patch: "4.0", owned: "800",   sources: [{ type: "Raid",        text: "" }] },
+};
+
+const STUB_COLLECTIBLES_MINIONS = {
+  "1":  { id: 1,  name: "Slime",            icon: "", patch: "2.0", owned: "9000" },
+  "2":  { id: 2,  name: "Cait Sith Doll",   icon: "", patch: "2.0", owned: "7000" },
+  "3":  { id: 3,  name: "Poro Roggo",       icon: "", patch: "2.1", owned: "4500" },
+  "4":  { id: 4,  name: "Wind-up Edvya",    icon: "", patch: "2.2", owned: "1200" },
+  "5":  { id: 5,  name: "Wind-up Scathach", icon: "", patch: "4.1", owned: "320"  },
+  "6":  { id: 6,  name: "Accompaniment Node", icon: "", patch: "3.0", owned: "850" },
+};
+
+const STUB_MEMBER_DATA: Record<string, unknown> = {
+  "11111001": {
+    avatar: "",
+    owned: { mounts: [1, 2, 3], minions: [1, 2, 4], titles: [], achievements: [] },
+    previousOwned: { mounts: { count: 2, asOf: Date.now() - 86_400_000 }, minions: { count: 0, asOf: 0 }, titles: { count: 0, asOf: 0 }, achievements: { count: 0, asOf: 0 } },
+    lastFetched: Date.now() - 900_000,
+  },
+  "11111002": {
+    avatar: "",
+    owned: { mounts: [1, 2, 4, 11], minions: [1, 3, 5], titles: [], achievements: [] },
+    previousOwned: { mounts: { count: 3, asOf: Date.now() - 86_400_000 }, minions: { count: 0, asOf: 0 }, titles: { count: 0, asOf: 0 }, achievements: { count: 0, asOf: 0 } },
+    lastFetched: Date.now() - 900_000,
+  },
+  "11111003": {
+    avatar: "",
+    owned: { mounts: [1, 2, 3, 4, 5, 6, 7, 8, 11, 12], minions: [1, 2, 3, 4, 5, 6], titles: [], achievements: [] },
+    previousOwned: { mounts: { count: 9, asOf: Date.now() - 86_400_000 }, minions: { count: 0, asOf: 0 }, titles: { count: 0, asOf: 0 }, achievements: { count: 0, asOf: 0 } },
+    lastFetched: Date.now() - 900_000,
+  },
+};
+
 let store: Record<string, unknown> = {
   members: STUB_MEMBERS,
+  fcCollection: {
+    collectibles: {
+      lastFetched: Date.now() - 900_000,
+      mounts: STUB_COLLECTIBLES_MOUNTS,
+      minions: STUB_COLLECTIBLES_MINIONS,
+      titles: {},
+      achievements: {},
+    },
+    memberData: STUB_MEMBER_DATA,
+  },
+  memberProfiles: {
+    "11111001": {
+      bio: "Main tank of the FC. Chow is basically holding the group together with their bare hands.",
+      birthday: "03-15",
+      quote: "git gud",
+      mainJobs: ["Dark Knight", "Paladin"],
+      pronouns: "they/them",
+    },
+  },
   raidStats: {
     lastUpdated: NOW - 15 * 60_000,
     zones: {
@@ -264,6 +330,10 @@ export function stubOnValue(
   listeners.get(r.path)!.add(callback);
   setTimeout(() => callback(makeSnapshot(r.path)), 0);
   return () => listeners.get(r.path)?.delete(callback);
+}
+
+export function stubGet(r: StubRef): Promise<StubSnapshot> {
+  return Promise.resolve(makeSnapshot(r.path));
 }
 
 export function stubSet(r: StubRef, value: unknown): Promise<void> {
