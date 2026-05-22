@@ -30,7 +30,6 @@ import fatcathi from "../../assets/fatcathi.png";
 const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Members", to: "/members", icon: Users },
-  { label: "Past Events", to: "/pastevents", icon: CalendarDays },
   { label: "FC Collection", to: "/fc-collection", icon: Library },
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
   { label: "Raid Stats", to: "/raid-stats", icon: BarChart2 },
@@ -38,6 +37,7 @@ const navItems = [
 
 const bottomItems = [
   { label: "Join the Meowfia", to: "/jointhemeowfia", icon: UserPlus },
+  { label: "Past Events", to: "/pastevents", icon: CalendarDays },
   { label: "Admin", to: "/admin", icon: ShieldUser },
 ] as const;
 
