@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch"
+    "build:watch": "tsc --watch",
+    "register:discord": "node scripts/register-discord-commands.js"
   },
   "main": "lib/index.js",
   "dependencies": {

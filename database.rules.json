@@ -7,6 +7,10 @@
       ".write": true
     },
 
+    "discordLinks": {
+      ".indexOn": ["lodestoneId"]
+    },
+
     "raidStats": {
       ".write": false
     },

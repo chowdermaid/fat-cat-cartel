@@ -1,77 +1,80 @@
 import * as admin from "firebase-admin";
 
-const FC_LODESTONE_ID = "9235616198341716868";
-
-interface LodestoneEntry {
+export interface LodestoneEntry {
   lodestoneId: string;
   name: string;
+  server: string | null;
   avatarUrl: string | null;
 }
 
-function parseMemberPage(html: string): LodestoneEntry[] {
-  const results: LodestoneEntry[] = [];
-  const seen = new Set<string>();
-
-  const segments = html.split('href="/lodestone/character/');
-  for (let i = 1; i < segments.length; i++) {
-    const seg = segments[i];
-
-    const idMatch = seg.match(/^(\d+)\//);
-    if (!idMatch) continue;
-    const lodestoneId = idMatch[1];
-    if (seen.has(lodestoneId)) continue;
-    seen.add(lodestoneId);
-
-    const block = seg.slice(0, 2000);
-
-    const nameMatch = block.match(/class="entry__name"[^>]*>([\s\S]*?)<\//);
-    const name = nameMatch?.[1]?.replace(/<[^>]+>/g, "").trim();
-    if (!name) continue;
-
-    const imgMatch = block.match(/src="(https:\/\/img\d*\.finalfantasyxiv\.com\/[^"]+)"/);
-    const avatarUrl = imgMatch?.[1] ?? null;
-
-    results.push({ lodestoneId, name, avatarUrl });
-  }
-
-  return results;
+interface SyncResult {
+  total: number;
+  written: number;
+  failed: number;
 }
 
-async function fetchMemberPage(page: number): Promise<string> {
-  const url = `https://na.finalfantasyxiv.com/lodestone/freecompany/${FC_LODESTONE_ID}/member/?page=${page}`;
+function srcFromImgTag(tag: string | undefined): string | null {
+  return tag?.match(/src="([^"]+)"/)?.[1] ?? null;
+}
+
+function parseCharacterPage(lodestoneId: string, html: string): LodestoneEntry | null {
+  const nameMatch = html.match(/<p class="frame__chara__name">([\s\S]*?)<\/p>/);
+  const name = nameMatch?.[1]?.replace(/<[^>]+>/g, "").trim();
+  const worldMatch = html.match(/<p class="frame__chara__world">([\s\S]*?)<\/p>/);
+  const world = worldMatch?.[1]?.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  const server = world ? world.split("[")[0].trim() || null : null;
+
+  const faceTag = html.match(/<img[^>]*class="[^"]*frame__chara__face[^"]*"[^>]*>/)?.[0];
+  const avatarUrl = srcFromImgTag(faceTag)
+    ?? html.match(/src="(https:\/\/img\d*\.finalfantasyxiv\.com\/[^"]+)"/)?.[1]
+    ?? null;
+
+  if (!name && !avatarUrl) return null;
+  return { lodestoneId, name: name ?? "", server, avatarUrl };
+}
+
+export async function fetchLodestoneCharacter(lodestoneId: string): Promise<LodestoneEntry | null> {
+  const url = `https://na.finalfantasyxiv.com/lodestone/character/${lodestoneId}/`;
   const res = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; FCCBot/1.0)" },
   });
   if (!res.ok) throw new Error(`Lodestone responded with ${res.status}`);
-  return res.text();
+  return parseCharacterPage(lodestoneId, await res.text());
 }
 
-export async function runScrapeLodestone(): Promise<{
-  total: number;
-  written: number;
-}> {
+export async function runScrapeLodestone(): Promise<SyncResult> {
   const db = admin.database();
-
-  const allMembers: LodestoneEntry[] = [];
-  for (let page = 1; page <= 20; page++) {
-    const html = await fetchMemberPage(page);
-    const entries = parseMemberPage(html);
-    if (entries.length === 0) break;
-    allMembers.push(...entries);
-    if (!html.includes("btn__pager__next--on")) break;
-    await new Promise((r) => setTimeout(r, 600));
-  }
-
-  console.log(`[lodestone] Scraped ${allMembers.length} FC members`);
+  const membersSnap = await db.ref("members").get();
+  const members = (membersSnap.val() ?? {}) as Record<string, unknown>;
+  const lodestoneIds = Object.keys(members);
 
   const updates: Record<string, unknown> = {};
-  for (const m of allMembers) {
-    updates[`members/${m.lodestoneId}/name`] = m.name;
-    if (m.avatarUrl) updates[`members/${m.lodestoneId}/avatarUrl`] = m.avatarUrl;
+  let written = 0;
+  let failed = 0;
+
+  for (const lodestoneId of lodestoneIds) {
+    try {
+      const entry = await fetchLodestoneCharacter(lodestoneId);
+      if (!entry) {
+        failed++;
+        continue;
+      }
+      if (entry.name) updates[`members/${lodestoneId}/name`] = entry.name;
+      if (entry.server) updates[`members/${lodestoneId}/server`] = entry.server;
+      if (entry.avatarUrl) updates[`members/${lodestoneId}/avatarUrl`] = entry.avatarUrl;
+      written++;
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    } catch (err) {
+      failed++;
+      console.warn(`[lodestone] Failed to sync ${lodestoneId}:`, err);
+    }
   }
+
   if (Object.keys(updates).length > 0) {
     await db.ref("/").update(updates);
   }
 
-  return { total: allMembers.length, written: allMembers.length };
+  console.log(`[lodestone] Synced ${written}/${lodestoneIds.length} tracked members`);
+
+  return { total: lodestoneIds.length, written, failed };
 }
