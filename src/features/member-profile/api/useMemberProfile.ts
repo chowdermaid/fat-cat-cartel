@@ -35,6 +35,18 @@ function loadCollectiblesCache(): CollectiblesData | null {
   return null;
 }
 
+function normalizeCollectibles(
+  raw: Record<string, Collectible | null> | Array<Collectible | null> | null,
+): Record<string, Collectible> {
+  const result: Record<string, Collectible> = {};
+  for (const item of Object.values(raw ?? {})) {
+    if (item != null && typeof item === "object" && "id" in item) {
+      result[String(item.id)] = item;
+    }
+  }
+  return result;
+}
+
 export function useMemberProfile(lodestoneId: string): MemberProfileState {
   const [member, setMember] = useState<Member | null>(null);
   const [profile, setProfile] = useState<MemberProfile | null>(null);
@@ -63,8 +75,8 @@ export function useMemberProfile(lodestoneId: string): MemberProfileState {
           get(ref(db, "fcCollection/collectibles/minions")),
         ]).then(([mountsSnap, minionsSnap]: any[]) => {
           const data: CollectiblesData = {
-            mounts: (mountsSnap.val() as Record<string, Collectible> | null) ?? {},
-            minions: (minionsSnap.val() as Record<string, Collectible> | null) ?? {},
+            mounts: normalizeCollectibles(mountsSnap.val()),
+            minions: normalizeCollectibles(minionsSnap.val()),
           };
           try {
             localStorage.setItem(COLLECTIBLES_CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));

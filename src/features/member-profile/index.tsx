@@ -43,12 +43,16 @@ const COLLECTIBLE_META: Record<CollectibleKey, { label: string; icon: React.Elem
   achievements: { label: "Achievements", icon: Award    },
 };
 
+function isCollectible(value: unknown): value is Collectible {
+  return value != null && typeof value === "object" && "owned" in value;
+}
+
 function findRarest(ownedIds: number[], collectiblesById: Record<string, Collectible>): Collectible | null {
   let rarest: Collectible | null = null;
   let lowestOwned = Infinity;
   for (const id of ownedIds) {
     const c = collectiblesById[String(id)];
-    if (!c) continue;
+    if (!isCollectible(c)) continue;
     const n = parseInt(c.owned, 10);
     if (!isNaN(n) && n < lowestOwned) {
       lowestOwned = n;
@@ -60,10 +64,10 @@ function findRarest(ownedIds: number[], collectiblesById: Record<string, Collect
 
 function ownedPct(c: Collectible, allById: Record<string, Collectible>): number {
   const maxOwned = Math.max(
-    ...Object.values(allById).map((x) => parseInt(x.owned, 10)).filter((n) => !isNaN(n) && n > 0),
+    ...Object.values(allById).filter(isCollectible).map((x) => parseInt(x.owned, 10)).filter((n) => !isNaN(n) && n > 0),
   );
   const n = parseInt(c.owned, 10);
-  if (isNaN(n) || maxOwned === 0) return 0;
+  if (isNaN(n) || !isFinite(maxOwned) || maxOwned === 0) return 0;
   return Math.round((n / maxOwned) * 100);
 }
 

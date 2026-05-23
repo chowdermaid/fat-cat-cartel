@@ -43,6 +43,23 @@ function toSet(raw: unknown): Set<number> {
   return new Set(arr);
 }
 
+function isCollectible(value: unknown): value is Collectible {
+  return value != null && typeof value === "object" && "id" in value;
+}
+
+function normalizeAllCollectibles(
+  raw: Partial<Record<CollectibleKey, unknown>>,
+): AllCollectibles {
+  const result = emptyAllCollectibles();
+  for (const key of COLLECTIBLE_KEYS) {
+    const value = raw[key];
+    if (Array.isArray(value) || (value != null && typeof value === "object")) {
+      result[key] = Object.values(value).filter(isCollectible);
+    }
+  }
+  return result;
+}
+
 function buildMembersWithMounts(
   members: FCMember[],
   memberData: Record<string, MemberCacheData>,
@@ -87,7 +104,7 @@ export function useFCCollection(): FCCollectionState {
         const cached = JSON.parse(raw) as CachePayload;
         if (Date.now() - cached.timestamp < CACHE_TTL) {
           setMembers(cached.members);
-          setAllCollectibles(cached.allCollectibles);
+          setAllCollectibles(normalizeAllCollectibles(cached.allCollectibles));
           setMemberData(cached.memberData);
           setLastFetched(cached.lastFetched);
           setLoading(false);
@@ -117,15 +134,9 @@ export function useFCCollection(): FCCollectionState {
       // collectibles stored as real objects keyed by item id
       const collectiblesVal = (collectiblesSnap.val() ?? {}) as Record<
         string,
-        Record<string, Collectible>
+        Record<string, Collectible | null> | Array<Collectible | null>
       >;
-      const newCollectibles = emptyAllCollectibles();
-      for (const key of COLLECTIBLE_KEYS) {
-        const byId = collectiblesVal[key];
-        newCollectibles[key] = byId
-          ? (Object.values(byId) as Collectible[])
-          : [];
-      }
+      const newCollectibles = normalizeAllCollectibles(collectiblesVal);
 
       const newMemberData = (memberDataSnap.val() ?? {}) as Record<
         string,
