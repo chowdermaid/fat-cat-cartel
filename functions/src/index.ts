@@ -1,21 +1,26 @@
 import { onSchedule } from "firebase-functions/v2/scheduler";
-import { onCall, onRequest } from "firebase-functions/v2/https";
+import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { runRefreshFFLogs } from "./refresh-fflogs";
 import { runRefreshFCCollection } from "./refresh-fc-collection";
 import { runScrapeLodestone } from "./scrape-lodestone";
 import { handleDiscordInteraction } from "./discord/interactions";
+import {
+  fetchTomestoneProgressionGraph,
+  runRefreshTomestoneRaidStats,
+} from "./refresh-tomestone-raid-stats";
 
 admin.initializeApp();
 
 const fflogsClientId = defineSecret("FFLOGS_CLIENT_ID");
 const fflogsClientSecret = defineSecret("FFLOGS_CLIENT_SECRET");
+const tomestoneBearerToken = defineSecret("TOMESTONE_BEARER_TOKEN");
 const discordPublicKey = defineSecret("DISCORD_PUBLIC_KEY");
 
-// Runs every 3 hours: fetches guild rankings from FFLogs and writes to /raidStats.
+// Runs daily: fetches historical parse rankings from FFLogs and writes parse data to /raidStats.
 export const refreshFFLogs = onSchedule(
-  { schedule: "0 */3 * * *", secrets: [fflogsClientId, fflogsClientSecret], timeoutSeconds: 300, region: "us-central1" },
+  { schedule: "0 11 * * *", secrets: [fflogsClientId, fflogsClientSecret], timeoutSeconds: 300, region: "us-central1" },
   async () => {
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
   },
@@ -26,6 +31,37 @@ export const triggerFFLogsRefresh = onCall(
   async () => {
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
     return { ok: true };
+  },
+);
+
+// Runs hourly: fetches tracked character raid activity from Tomestone and writes to /raidStats.
+export const refreshTomestoneRaidStats = onSchedule(
+  { schedule: "0 * * * *", secrets: [tomestoneBearerToken], timeoutSeconds: 300, region: "us-central1" },
+  async () => {
+    await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
+  },
+);
+
+export const triggerTomestoneRaidStatsRefresh = onCall(
+  { secrets: [tomestoneBearerToken], timeoutSeconds: 300, region: "us-central1" },
+  async () => {
+    await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
+    return { ok: true };
+  },
+);
+
+export const getTomestoneProgressionGraph = onCall(
+  { secrets: [tomestoneBearerToken], timeoutSeconds: 60, region: "us-central1" },
+  async (request) => {
+    try {
+      return await fetchTomestoneProgressionGraph(tomestoneBearerToken.value(), request.data);
+    } catch (error) {
+      if (error instanceof HttpsError) throw error;
+      throw new HttpsError(
+        "unavailable",
+        error instanceof Error ? error.message : "Failed to fetch Tomestone progression graph.",
+      );
+    }
   },
 );
 

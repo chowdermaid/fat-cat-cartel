@@ -3,9 +3,12 @@ import { db, ref, get } from "@/lib/db";
 import type { Member } from "@/types";
 import type { MemberProfile } from "../types";
 import type { Collectible, MemberCacheData } from "@/features/fc-collection/types";
-import type { ParseEntry, ZoneMeta } from "@/features/raid-stats/types";
+import { ZONE_TABS } from "@/features/raid-stats/zones";
+import type { ParseEntry, TomestoneActivity, ZoneData, ZoneMeta } from "@/features/raid-stats/types";
 
-const ZONE_ID = 73;
+const PROFILE_ZONE_IDS = ZONE_TABS
+  .filter((tab) => tab.type === "savage" || tab.type === "trial" || tab.type === "alliance")
+  .flatMap((tab) => tab.zones.map((zone) => zone.id));
 const COLLECTIBLES_CACHE_KEY = "fcc_collectibles_v1";
 const COLLECTIBLES_TTL = 24 * 60 * 60 * 1000;
 
@@ -21,6 +24,8 @@ interface MemberProfileState {
   collectibles: CollectiblesData | null;
   parseEntry: ParseEntry | null;
   zoneMeta: ZoneMeta | null;
+  raidZones: ZoneData[];
+  recentActivity: TomestoneActivity[];
   loading: boolean;
   notFound: boolean;
 }
@@ -54,6 +59,8 @@ export function useMemberProfile(lodestoneId: string): MemberProfileState {
   const [collectibles, setCollectibles] = useState<CollectiblesData | null>(null);
   const [parseEntry, setParseEntry] = useState<ParseEntry | null>(null);
   const [zoneMeta, setZoneMeta] = useState<ZoneMeta | null>(null);
+  const [raidZones, setRaidZones] = useState<ZoneData[]>([]);
+  const [recentActivity, setRecentActivity] = useState<TomestoneActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -66,6 +73,8 @@ export function useMemberProfile(lodestoneId: string): MemberProfileState {
     setCollectibles(null);
     setParseEntry(null);
     setZoneMeta(null);
+    setRaidZones([]);
+    setRecentActivity([]);
 
     const cachedCollectibles = loadCollectiblesCache();
     const collectiblesPromise: Promise<CollectiblesData | null> = cachedCollectibles
@@ -84,14 +93,18 @@ export function useMemberProfile(lodestoneId: string): MemberProfileState {
           return data;
         }).catch(() => null);
 
+    const raidZonesPromise = Promise.all(
+      PROFILE_ZONE_IDS.map((zoneId) => get(ref(db, `raidStats/zones/${zoneId}`))),
+    ).then((snaps: any[]) => snaps.map((snap) => snap.val()).filter(Boolean) as ZoneData[]);
+
     Promise.all([
       get(ref(db, `members/${lodestoneId}`)),
       get(ref(db, `memberProfiles/${lodestoneId}`)),
       get(ref(db, `fcCollection/memberData/${lodestoneId}`)),
-      get(ref(db, `raidStats/zones/${ZONE_ID}/parses/${lodestoneId}`)),
-      get(ref(db, `raidStats/zones/${ZONE_ID}/meta`)),
+      get(ref(db, `memberActivity/${lodestoneId}/tomestone/recent`)),
       collectiblesPromise,
-    ]).then(([memberSnap, profileSnap, collectionSnap, parseSnap, metaSnap, collectiblesData]: any[]) => {
+      raidZonesPromise,
+    ]).then(([memberSnap, profileSnap, collectionSnap, activitySnap, collectiblesData, zonesData]: any[]) => {
       const memberVal = memberSnap.val() as Member | null;
       if (!memberVal) {
         setNotFound(true);
@@ -102,8 +115,12 @@ export function useMemberProfile(lodestoneId: string): MemberProfileState {
       setProfile(profileSnap.val() as MemberProfile | null);
       setCollectionData(collectionSnap.val() as MemberCacheData | null);
       setCollectibles(collectiblesData as CollectiblesData | null);
-      setParseEntry(parseSnap.val() as ParseEntry | null);
-      setZoneMeta(metaSnap.val() as ZoneMeta | null);
+      const zones = zonesData as ZoneData[];
+      setRaidZones(zones);
+      const defaultZone = zones.find((zone) => zone.meta.id === 73) ?? zones[0] ?? null;
+      setParseEntry(defaultZone?.parses?.[lodestoneId] ?? null);
+      setZoneMeta(defaultZone?.meta ?? null);
+      setRecentActivity(Object.values((activitySnap.val() ?? {}) as Record<string, TomestoneActivity>));
       setLoading(false);
     }).catch(() => {
       setNotFound(true);
@@ -111,5 +128,5 @@ export function useMemberProfile(lodestoneId: string): MemberProfileState {
     });
   }, [lodestoneId]);
 
-  return { member, profile, collectionData, collectibles, parseEntry, zoneMeta, loading, notFound };
+  return { member, profile, collectionData, collectibles, parseEntry, zoneMeta, raidZones, recentActivity, loading, notFound };
 }

@@ -1,13 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  BarChart2,
-  Dices,
-  LayoutGrid,
-  Swords,
-  Users,
-} from "lucide-react";
+import { ArrowRight, BarChart2, Dices, LayoutGrid, Users } from "lucide-react";
 import { animate, stagger } from "animejs";
 import {
   Card,
@@ -23,7 +16,8 @@ const quickLinks = [
     to: "/members",
     icon: Users,
     title: "Members",
-    description: "Browse FC members, profiles, birthdays, main jobs, and collection highlights.",
+    description:
+      "Browse FC members, profiles, birthdays, main jobs, and collection highlights.",
   },
   {
     to: "/fc-collection",
@@ -32,24 +26,17 @@ const quickLinks = [
     description: "Track mounts and collection progress across FC members.",
   },
   {
+    to: "/mount-roulette",
+    icon: Dices,
+    title: "Mount Roulette",
+    description: "Necessary because everyone is indecisive",
+  },
+  {
     to: "/raid-stats",
     icon: BarChart2,
     title: "Raid Stats",
     description:
       "Parse history, kill timelines, and performance breakdowns for FC raid teams.",
-  },
-  {
-    to: "/jointhemeowfia",
-    icon: Swords,
-    title: "Join the Meowfia",
-    description:
-      "Find out what we're about, what we offer, and how to get in touch with a recruiter.",
-  },
-  {
-    to: "/mount-roulette",
-    icon: Dices,
-    title: "Mount Roulette",
-    description: "Necessary because everyone is indecisive",
   },
 ] as const;
 

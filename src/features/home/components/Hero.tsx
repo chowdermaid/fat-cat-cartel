@@ -46,7 +46,7 @@ export function Hero() {
             </a>
           </Button>
           <Button variant="outline" size="lg" asChild>
-            <Link to="/pastevents/easter2026">Easter 2026 Event</Link>
+            <Link to="/jointhemeowfia">Join the Meowfia</Link>
           </Button>
         </div>
       </div>

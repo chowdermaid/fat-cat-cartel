@@ -1,32 +1,54 @@
 {
   "rules": {
-    ".read": true,
+    ".read": false,
     ".write": false,
 
     "members": {
+      ".read": true,
       ".write": true
     },
 
     "discordLinks": {
+      ".read": false,
+      ".write": false,
       ".indexOn": ["lodestoneId"]
     },
 
+    "discordLinksByLodestone": {
+      ".read": false,
+      ".write": false
+    },
+
+    "discordSignupIssues": {
+      ".read": false,
+      ".write": false
+    },
+
     "raidStats": {
+      ".read": true,
       ".write": false
     },
 
     "fcCollection": {
+      ".read": true,
       "collectibles": { ".write": false },
       "memberData":   { ".write": false }
     },
 
     "memberProfiles": {
+      ".read": true,
       "$lodestoneId": {
         ".write": true
       }
     },
 
+    "memberActivity": {
+      ".read": true,
+      ".write": false
+    },
+
     "events": {
+      ".read": true,
       "easter2026": {
         "participants": {
           ".write": true

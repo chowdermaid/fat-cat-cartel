@@ -20,7 +20,7 @@ import viper from "@/assets/jobs/viper.png";
 import warrior from "@/assets/jobs/warrior.png";
 import whitemage from "@/assets/jobs/whitemage.png";
 
-// Keys match the job name strings returned by FFLogs (e.g. "Dark Knight", "White Mage")
+// Keys match canonical job name strings returned by Tomestone.
 export const JOB_ICONS: Record<string, string> = {
   Astrologian: astrologian,
   Bard: bard,

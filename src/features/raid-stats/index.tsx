@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
-import { Info } from "lucide-react";
 import { useRaidStats } from "./api/useRaidStats";
 import { useMembers } from "@/hooks/useMembers";
 import { CollectionScopeToggle } from "@/features/fc-collection/components/CollectionScopeToggle";
@@ -19,7 +18,13 @@ import { BestPerJobCarousel } from "./components/BestPerJobCarousel";
 import { GuildSummaryStrip } from "./components/GuildSummaryStrip";
 import { EncounterAveragesCard } from "./components/EncounterAveragesCard";
 import { ZONE_TABS, DEFAULT_ZONE_ID, DEFAULT_TAB } from "./zones";
-import type { ContentType, MemberData, ParseBuckets, ZoneEncounter } from "./types";
+import type {
+  ContentType,
+  MemberData,
+  ParseBuckets,
+  TomestoneActivity,
+  ZoneEncounter,
+} from "./types";
 
 const EMPTY_ENCOUNTERS: ZoneEncounter[] = [];
 
@@ -131,6 +136,68 @@ function TabButton({
   );
 }
 
+function TomestoneActivitySection({
+  activities,
+  members,
+}: {
+  activities: TomestoneActivity[];
+  members: Record<string, MemberData>;
+}) {
+  if (activities.length === 0) return null;
+  return (
+    <div className="rounded-lg border bg-card">
+      <div className="border-b px-4 py-3">
+        <h2 className="text-sm font-semibold">Recent Activity</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Activity from the last 30 days.
+        </p>
+      </div>
+      <div className="divide-y">
+        {activities.slice(0, 16).map((activity) => {
+          const member = members[activity.lodestoneId];
+          const result =
+            activity.clearCount > 0
+              ? `${activity.clearCount} clear${activity.clearCount === 1 ? "" : "s"}`
+              : activity.bestProgress != null
+                ? `${activity.bestProgress.toFixed(1)}% best pull`
+                : "activity";
+          return (
+            <div
+              key={`${activity.lodestoneId}-${activity.id}`}
+              className="flex items-center gap-3 px-4 py-3"
+            >
+              {member?.avatarUrl ? (
+                <img
+                  src={member.avatarUrl}
+                  alt={member.name}
+                  className="h-9 w-9 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-9 w-9 rounded-full bg-muted" />
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {member?.name ?? "Unknown"} - {activity.encounterName}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {activity.jobAbbr ?? activity.job ?? "Unknown job"} - {result}
+                  {activity.wipeCount > 0
+                    ? `, ${activity.wipeCount} wipes`
+                    : ""}
+                  {activity.killDuration ? `, ${activity.killDuration}` : ""}
+                </p>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {timeAgoShort(activity.startedAt)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function RaidStatsPage() {
   const [activeTab, setActiveTab] = useState<ContentType>(DEFAULT_TAB);
   const [activeZoneId, setActiveZoneId] = useState(DEFAULT_ZONE_ID);
@@ -156,6 +223,7 @@ export function RaidStatsPage() {
             avatarUrl: identity?.avatarUrl ?? null,
             fcRank: identity?.fcRank ?? null,
             isFriend: identity?.fcRank === "Friend",
+            tomestone: data.members?.[id] ?? null,
           },
         ];
       }),
@@ -198,15 +266,23 @@ export function RaidStatsPage() {
     () => buildScopedHistogram(scopedJoinedMembers, encounters),
     [scopedJoinedMembers, encounters],
   );
+  const scopedActivity = useMemo(
+    () =>
+      (data?.recentActivity ?? []).filter(
+        (activity) =>
+          includeFriends || members[activity.lodestoneId]?.fcRank !== "Friend",
+      ),
+    [data?.recentActivity, includeFriends, members],
+  );
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 max-w-full overflow-x-hidden space-y-4">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold font-serif">Raid Stats</h1>
           <p className="mt-1 text-muted-foreground text-sm">
-            Parsed from available FFLogs rankings · refreshes every 3 hours
+            Historical parse performance from fflogs
           </p>
         </div>
         <CollectionScopeToggle scope={scope} onChange={setScope} />
@@ -246,8 +322,7 @@ export function RaidStatsPage() {
       ) : !data ? (
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            No data yet for this zone. The sync hasn't run yet. Check back
-            soon.
+            No data yet for this zone. The sync hasn't run yet. Check back soon.
           </p>
         </div>
       ) : Object.values(scopedJoinedMembers).every(
@@ -259,11 +334,12 @@ export function RaidStatsPage() {
         <div className="rounded-lg border bg-muted/30 px-6 py-10 text-center space-y-2">
           <p className="text-sm font-medium">No logs found for this zone</p>
           <p className="text-sm text-muted-foreground">
-            {includeFriends ? "Tracked characters" : "Free company members"} haven't uploaded logs to FFLogs for this content yet.
+            {includeFriends ? "Tracked characters" : "Free company members"}{" "}
+            haven't uploaded logs to FFLogs for this content yet.
           </p>
         </div>
       ) : (
-        <div ref={pageRef} className="space-y-6">
+        <div ref={pageRef} className="min-w-0 max-w-full space-y-6">
           {/* Zone info bar */}
           <div className="anim-section flex items-end justify-between gap-4 flex-wrap">
             <p className="text-sm text-muted-foreground">
@@ -281,25 +357,8 @@ export function RaidStatsPage() {
             />
           </div>
 
-          {/* FFLogs notice */}
-          <div className="anim-section flex gap-3 rounded-lg border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
-            <Info className="h-4 w-4 shrink-0 mt-0.5" />
-            <p>
-              Data is pulled from{" "}
-              <a
-                href="https://www.fflogs.com/guild/id/139556"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-foreground transition-colors"
-              >
-                our FFLogs free company page
-              </a>{" "}
-              and refreshes every 3 hours.
-            </p>
-          </div>
-
           {/* Best parse carousel */}
-          <div className="anim-section">
+          <div className="anim-section min-w-0 max-w-full overflow-hidden">
             <BestParseCarousel
               members={scopedJoinedMembers}
               encounters={encounters}
@@ -309,7 +368,7 @@ export function RaidStatsPage() {
           </div>
 
           {/* Best per job carousel */}
-          <div className="anim-section">
+          <div className="anim-section min-w-0 max-w-full overflow-hidden">
             <BestPerJobCarousel
               members={scopedJoinedMembers}
               contentType={contentType}
@@ -318,8 +377,8 @@ export function RaidStatsPage() {
           </div>
 
           {/* Member board + radar chart */}
-          <div className="anim-section grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
+          <div className="anim-section grid min-w-0 gap-6 lg:grid-cols-3">
+            <div className="min-w-0 lg:col-span-2">
               <MemberBoard
                 members={scopedJoinedMembers}
                 encounters={encounters}
@@ -329,7 +388,7 @@ export function RaidStatsPage() {
                 showFriendBadges={includeFriends}
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <MemberRadarChart
                 member={selectedMember}
                 encounters={encounters}
@@ -366,6 +425,13 @@ export function RaidStatsPage() {
               contentType={contentType}
             />
             {data.recentKill && <RecentKillCard kill={data.recentKill} />}
+          </div>
+
+          <div className="anim-section">
+            <TomestoneActivitySection
+              activities={scopedActivity}
+              members={scopedJoinedMembers}
+            />
           </div>
         </div>
       )}

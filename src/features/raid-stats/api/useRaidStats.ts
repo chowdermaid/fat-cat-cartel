@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { db, ref, get } from "@/lib/db";
 import type { ZoneData } from "../types";
 
-const CACHE_TTL = 3 * 60 * 60 * 1000;
+const CACHE_TTL = 60 * 60 * 1000;
 
 function cacheKey(zoneId: number) {
-  return `fcc_raidstats_v2_${zoneId}`;
+  return `fcc_raidstats_v3_${zoneId}`;
 }
 
 function loadCachedZone(zoneId: number): ZoneData | null {

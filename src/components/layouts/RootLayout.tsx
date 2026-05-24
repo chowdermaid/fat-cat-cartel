@@ -45,7 +45,7 @@ export function RootLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0 overflow-x-hidden">
         <header className="relative flex h-12 items-center border-b overflow-hidden bg-sidebar/30">
           <div className="absolute inset-0 flex items-center justify-around pointer-events-none select-none px-8">
             {BANNER_CATS.map((cat, i) => (
@@ -64,7 +64,7 @@ export function RootLayout() {
             <SidebarTrigger />
           </div>
         </header>
-        <main className="flex-1 px-6 py-8">
+        <main className="min-w-0 flex-1 overflow-x-hidden px-6 py-8">
           <Outlet />
         </main>
         <Toaster richColors position="bottom-right" theme={isDark ? "dark" : "light"} />

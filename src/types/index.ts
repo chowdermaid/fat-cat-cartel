@@ -1,9 +1,30 @@
 export interface Member {
   name: string;
   server: string;
-  fflogsId: string | null;
+  fflogsId?: string | null;
   avatarUrl: string | null;
   fcRank: string | null;
+  jobLevels?: Record<string, number | null>;
+  jobLevelsLastFetched?: number | null;
+  tomestoneProfile?: {
+    id?: string | number | null;
+    name?: string | null;
+    server?: string | null;
+    datacenter?: string | null;
+    avatar?: string | null;
+    portrait?: string | null;
+    banner?: string | null;
+    freeCompany?: unknown;
+    title?: unknown;
+    race?: string | null;
+    tribe?: string | null;
+    gender?: string | null;
+    achievementPoints?: number | null;
+    totalMounts?: number | null;
+    totalMinions?: number | null;
+    externalUrls?: unknown;
+    lastUpdated?: string | number | null;
+  } | null;
 }
 
 export interface Scores {

@@ -1,11 +1,20 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
-import { percentileBadgeClass, percentileClass, formatJobName } from "../constants";
+import {
+  formatJobName,
+  percentileBadgeClass,
+  percentileClass,
+} from "../constants";
 import { JOB_ICONS } from "../jobIcons";
-import type { MemberData, ZoneEncounter, ContentType, ParseData } from "../types";
+import type {
+  ContentType,
+  MemberData,
+  ParseData,
+  ZoneEncounter,
+} from "../types";
 
 interface Props {
   members: Record<string, MemberData>;
@@ -30,25 +39,38 @@ function getBest(
   encounters: ZoneEncounter[],
   contentType: ContentType,
 ): BestEntry | null {
-  const parses = contentType === "savage" ? (member.savage ?? {}) : (member.normal ?? {});
+  const parses =
+    contentType === "savage" ? (member.savage ?? {}) : (member.normal ?? {});
   let best: (ParseData & { key: string }) | null = null;
+
   for (const [key, parse] of Object.entries(parses)) {
     if (!parse) continue;
     if (best == null || parse.percentile > best.percentile) {
       best = { ...parse, key };
     }
   }
+
   if (!best) return null;
-  const enc = encounters.find((e) => e.key === best!.key);
+  const encounter = encounters.find((entry) => entry.key === best!.key);
+
   return {
     id,
     name: member.name,
     avatarUrl: member.avatarUrl ?? null,
     isFriend: member.isFriend,
     parse: best,
-    encounterLabel: enc?.label ?? best.key,
-    encounterName: enc?.name ?? best.key,
+    encounterLabel: encounter?.label ?? best.key,
+    encounterName: encounter?.name ?? best.key,
   };
+}
+
+function maxWidthForStaticSlides(count: number): string {
+  return `${count * 11 + Math.max(0, count - 1) * 0.75 + 2}rem`;
+}
+
+function encounterDisplayName(entry: BestEntry): string {
+  if (entry.encounterLabel === entry.encounterName) return entry.encounterName;
+  return `${entry.encounterLabel} - ${entry.encounterName}`;
 }
 
 export function BestParseCarousel({
@@ -57,18 +79,22 @@ export function BestParseCarousel({
   contentType,
   showFriendBadges = false,
 }: Props) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  const entries = Object.entries(members)
+    .map(([id, member]) => getBest(id, member, encounters, contentType))
+    .filter((entry): entry is BestEntry => entry != null)
+    .sort((a, b) => b.parse.percentile - a.parse.percentile);
+  const shouldLoop = entries.length > 3;
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: shouldLoop,
+    align: "start",
+  });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const entries = Object.entries(members)
-    .map(([id, m]) => getBest(id, m, encounters, contentType))
-    .filter((e): e is BestEntry => e != null)
-    .sort((a, b) => b.parse.percentile - a.parse.percentile);
-
   const startTimer = useCallback(() => {
+    if (!shouldLoop) return;
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => emblaApi?.scrollNext(), 3000);
-  }, [emblaApi]);
+  }, [emblaApi, shouldLoop]);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -82,65 +108,108 @@ export function BestParseCarousel({
 
   if (entries.length === 0) return null;
 
+  function renderEntry(entry: BestEntry) {
+    return (
+      <div className="w-full rounded-lg border bg-muted/30 p-3 space-y-2">
+        <div className="flex items-center gap-2">
+          {entry.avatarUrl ? (
+            <img
+              src={entry.avatarUrl}
+              alt={entry.name}
+              className="w-8 h-8 rounded-full shrink-0 object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-muted shrink-0" />
+          )}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <p className="font-semibold text-sm leading-tight truncate">
+                {entry.name}
+              </p>
+              {showFriendBadges && entry.isFriend && (
+                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                  Friend
+                </Badge>
+              )}
+            </div>
+            {JOB_ICONS[entry.parse.job] && (
+              <div className="flex min-w-0 items-center gap-1 mt-0.5">
+                <img
+                  src={JOB_ICONS[entry.parse.job]}
+                  alt={entry.parse.job}
+                  className="w-3.5 h-3.5 shrink-0"
+                />
+                <span className="truncate text-xs text-muted-foreground">
+                  {formatJobName(entry.parse.job)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        <p className="truncate text-xs text-muted-foreground">
+          {encounterDisplayName(entry)}
+        </p>
+        <div className="flex items-end justify-between gap-1">
+          <span
+            className={`text-2xl font-bold tabular-nums ${percentileClass(entry.parse.percentile)}`}
+          >
+            {Math.round(entry.parse.percentile)}
+          </span>
+          <span
+            className={`text-xs rounded px-1.5 py-0.5 font-medium ${percentileBadgeClass(entry.parse.percentile)}`}
+          >
+            {entry.encounterLabel}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground tabular-nums">
+          {Math.round(entry.parse.rdps).toLocaleString()} rDPS
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <Card>
+    <Card
+      className="w-full max-w-full min-w-0 overflow-hidden [contain:layout_paint]"
+      style={!shouldLoop ? { maxWidth: maxWidthForStaticSlides(entries.length) } : undefined}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="font-serif flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4 text-muted-foreground" />
           Best Parses
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div
-          ref={emblaRef}
-          className="overflow-hidden"
-          onMouseEnter={stopTimer}
-          onMouseLeave={startTimer}
-        >
-          <div className="flex gap-3">
+      <CardContent className="min-w-0 overflow-hidden">
+        {!shouldLoop ? (
+          <div
+            className="grid max-w-full gap-3"
+            style={{
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(min(100%, 11rem), 11rem))",
+            }}
+          >
             {entries.map((entry) => (
-              <div key={entry.id} className="shrink-0 w-44 rounded-lg border bg-muted/30 p-3 space-y-2">
-                <div className="flex items-center gap-2">
-                  {entry.avatarUrl ? (
-                    <img src={entry.avatarUrl} alt={entry.name} className="w-8 h-8 rounded-full shrink-0 object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-muted shrink-0" />
-                  )}
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="font-semibold text-sm leading-tight truncate">{entry.name}</p>
-                      {showFriendBadges && entry.isFriend && (
-                        <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-                          Friend
-                        </Badge>
-                      )}
-                    </div>
-                    {JOB_ICONS[entry.parse.job] && (
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <img src={JOB_ICONS[entry.parse.job]} alt={entry.parse.job} className="w-3.5 h-3.5" />
-                        <span className="text-xs text-muted-foreground">{formatJobName(entry.parse.job)}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-0.5">
-                  <p className="text-xs text-muted-foreground">{entry.encounterLabel} · {entry.encounterName}</p>
-                </div>
-                <div className="flex items-end justify-between gap-1">
-                  <span className={`text-2xl font-bold tabular-nums ${percentileClass(entry.parse.percentile)}`}>
-                    {Math.round(entry.parse.percentile)}
-                  </span>
-                  <span className={`text-xs rounded px-1.5 py-0.5 font-medium ${percentileBadgeClass(entry.parse.percentile)}`}>
-                    {entry.encounterLabel}
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground tabular-nums">
-                  {Math.round(entry.parse.rdps).toLocaleString()} rDPS
-                </p>
+              <div key={entry.id} className="w-44 min-w-0">
+                {renderEntry(entry)}
               </div>
             ))}
           </div>
-        </div>
+        ) : (
+          <div
+            ref={emblaRef}
+            className="w-full min-w-0 max-w-full overflow-hidden"
+            onMouseEnter={stopTimer}
+            onMouseLeave={startTimer}
+          >
+            <div className="flex gap-3">
+              {entries.map((entry) => (
+                <div key={entry.id} className="min-w-0 basis-44 shrink-0 grow-0">
+                  {renderEntry(entry)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

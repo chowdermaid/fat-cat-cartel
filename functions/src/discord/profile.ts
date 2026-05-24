@@ -18,7 +18,7 @@ type TrackedMember = {
   server?: string | null;
   fcRank?: string | null;
   avatarUrl?: string | null;
-  fflogsId?: string | null;
+  tomestoneProfile?: unknown;
 };
 
 type SignupIssueReason =
@@ -104,7 +104,6 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
       server: character.server,
       fcRank: "Friend",
       avatarUrl: character.avatarUrl,
-      fflogsId: null,
     };
   }
 
@@ -120,7 +119,7 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
   return success([
     `${displayName} is now linked and tracked as ${trackedAs}.`,
     "Collection data appears after the next collection refresh.",
-    "Raid stats appear after the next raid stats refresh if FFLogs can resolve your character.",
+    "Raid stats appear after the next Tomestone raid stats refresh.",
     "For achievements and titles, visit https://ffxivcollect.com/ and manually refresh your character.",
     "Your Lodestone achievement privacy must be set to everyone/public for achievements and titles to load.",
   ].join("\n"));
@@ -144,7 +143,7 @@ export async function viewFriendStatus(discordUserId: string): Promise<CommandRe
     `Lodestone ID: ${linked.lodestoneId}`,
     `Rank: ${member.fcRank ?? "Not set"}`,
     `Collection cache: ${collectionSnapshot.exists() ? "Loaded" : "Waiting for refresh"}`,
-    `Raid stats: ${member.fflogsId ? "FFLogs resolved" : "Waiting for raid stats refresh"}`,
+    `Raid stats: ${member.tomestoneProfile ? "Tomestone loaded" : "Waiting for raid stats refresh"}`,
   ].join("\n"));
 }
 

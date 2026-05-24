@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   ArrowDownUp,
+  Activity,
   Database,
   IdCard,
   Search,
@@ -156,7 +157,7 @@ function clearRaidStatsCache() {
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const key = localStorage.key(i);
-      if (key?.startsWith("fcc_raidstats_v2_")) {
+      if (key?.startsWith("fcc_raidstats_v2_") || key?.startsWith("fcc_raidstats_v3_")) {
         localStorage.removeItem(key);
       }
     }
@@ -178,7 +179,8 @@ export function FCMembersManager() {
     number | null
   >(null);
   const [raidLastUpdated, setRaidLastUpdated] = useState<number | null>(null);
-  const [fetchingLogs, setFetchingLogs] = useState(false);
+  const [fetchingTomestone, setFetchingTomestone] = useState(false);
+  const [fetchingFFLogs, setFetchingFFLogs] = useState(false);
   const [fetchingLodestone, setFetchingLodestone] = useState(false);
 
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
@@ -243,13 +245,36 @@ export function FCMembersManager() {
     }
   }
 
-  async function handleRefreshLogs() {
+  async function handleRefreshTomestone() {
     if (!firebaseApp) {
       toast.error("Not available in local dev mode.");
       return;
     }
-    setFetchingLogs(true);
-    const id = toast.loading("Refreshing raid stats...");
+    setFetchingTomestone(true);
+    const id = toast.loading("Refreshing Tomestone activity...");
+    try {
+      const { getFunctions, httpsCallable } =
+        await import("firebase/functions");
+      await httpsCallable(getFunctions(firebaseApp), "triggerTomestoneRaidStatsRefresh", {
+        timeout: 300_000,
+      })();
+      localStorage.removeItem("fcc_members_v3");
+      clearRaidStatsCache();
+      toast.success("Tomestone activity refreshed.", { id });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
+    } finally {
+      setFetchingTomestone(false);
+    }
+  }
+
+  async function handleRefreshFFLogs() {
+    if (!firebaseApp) {
+      toast.error("Not available in local dev mode.");
+      return;
+    }
+    setFetchingFFLogs(true);
+    const id = toast.loading("Refreshing FFLogs parses...");
     try {
       const { getFunctions, httpsCallable } =
         await import("firebase/functions");
@@ -258,11 +283,11 @@ export function FCMembersManager() {
       })();
       localStorage.removeItem("fcc_members_v3");
       clearRaidStatsCache();
-      toast.success("Raid stats refreshed.", { id });
+      toast.success("FFLogs parses refreshed.", { id });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
     } finally {
-      setFetchingLogs(false);
+      setFetchingFFLogs(false);
     }
   }
 
@@ -296,7 +321,6 @@ export function FCMembersManager() {
     const memberName = name.trim();
     set(ref(db, `members/${lodestoneId.trim()}`), {
       name: memberName,
-      fflogsId: null,
       avatarUrl: null,
     });
     setName("");
@@ -407,7 +431,7 @@ export function FCMembersManager() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
           <div className="min-w-0">
             <p className="flex items-center gap-1.5 text-sm font-medium">
@@ -438,7 +462,31 @@ export function FCMembersManager() {
           <div className="min-w-0">
             <p className="flex items-center gap-1.5 text-sm font-medium">
               <ArrowDownUp className="h-3.5 w-3.5 text-muted-foreground" />
-              Raid Stats
+              Tomestone
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              Activity and profiles
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRefreshTomestone}
+            disabled={fetchingTomestone}
+            className="shrink-0"
+          >
+            <RefreshCw
+              className={cn("h-4 w-4", fetchingTomestone && "animate-spin")}
+            />
+            {fetchingTomestone ? "Fetching" : "Refresh"}
+          </Button>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-sm font-medium">
+              <Activity className="h-3.5 w-3.5 text-muted-foreground" />
+              FFLogs
             </p>
             <p className="truncate text-xs text-muted-foreground">
               {raidLastUpdated ? formatTimeAgo(raidLastUpdated) : "Never fetched"}
@@ -447,14 +495,14 @@ export function FCMembersManager() {
           <Button
             size="sm"
             variant="outline"
-            onClick={handleRefreshLogs}
-            disabled={fetchingLogs}
+            onClick={handleRefreshFFLogs}
+            disabled={fetchingFFLogs}
             className="shrink-0"
           >
             <RefreshCw
-              className={cn("h-4 w-4", fetchingLogs && "animate-spin")}
+              className={cn("h-4 w-4", fetchingFFLogs && "animate-spin")}
             />
-            {fetchingLogs ? "Fetching" : "Refresh"}
+            {fetchingFFLogs ? "Fetching" : "Refresh"}
           </Button>
         </div>
 
@@ -686,18 +734,6 @@ export function FCMembersManager() {
                 ))}
               </select>
             </div>
-
-            {editingMember?.fflogsId && (
-              <div className="space-y-1.5">
-                <Label htmlFor="member-fflogs-id">Resolved FFLogs ID</Label>
-                <Input
-                  id="member-fflogs-id"
-                  value={editingMember.fflogsId}
-                  disabled
-                  className="font-mono text-xs"
-                />
-              </div>
-            )}
 
             {/* Bio */}
             <div className="space-y-1.5">
