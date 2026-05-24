@@ -104,12 +104,12 @@ export function RecruitmentPage() {
         </p>
       </div>
 
-      <div className="anim-section relative px-8">
+      <div className="anim-section relative mx-auto max-w-4xl px-8">
         <Carousel opts={{ loop: true }}>
           <CarouselContent>
             {carouselImages.map((src, i) => (
               <CarouselItem key={i}>
-                <div className="overflow-hidden rounded-xl aspect-video">
+                <div className="overflow-hidden rounded-xl aspect-[16/7]">
                   <img
                     src={src}
                     alt={`FC screenshot ${i + 1}`}
@@ -128,7 +128,10 @@ export function RecruitmentPage() {
         <h2 className="text-xl font-semibold font-serif mb-6">
           What the Meowfia Offers
         </h2>
-        <div ref={perksGridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          ref={perksGridRef}
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {perks.map(({ icon: Icon, title, items }) => (
             <Card key={title} className="perk-card">
               <CardHeader className="pb-2">
@@ -158,7 +161,10 @@ export function RecruitmentPage() {
           <h2 className="text-xl font-semibold font-serif mb-3">
             What We Get Up To
           </h2>
-          <ul ref={activityListRef} className="space-y-2 text-sm text-muted-foreground">
+          <ul
+            ref={activityListRef}
+            className="space-y-2 text-sm text-muted-foreground"
+          >
             {[
               "Mount farms, treasure hunts, and PvP",
               "Casual runs of older content for mounts, glam & achievements",
@@ -188,6 +194,12 @@ export function RecruitmentPage() {
               <p>
                 <span className="text-foreground font-medium">Axo Lotl</span>:
                 Discord: @fazzrar
+              </p>
+              <p>
+                <span className="text-foreground font-medium">
+                  Sweet Potatoes
+                </span>
+                : Discord: @sweetpotatooooo_
               </p>
             </div>
             <p className="mt-3 text-xs text-muted-foreground/70 italic">
