@@ -16,14 +16,13 @@ const quickLinks = [
     to: "/members",
     icon: Users,
     title: "Members",
-    description:
-      "Browse FC members, profiles, birthdays, main jobs, and collection highlights.",
+    description: "Snoop around. 👁️👄👁️",
   },
   {
     to: "/fc-collection",
     icon: LayoutGrid,
     title: "FC Collection",
-    description: "Track mounts and collection progress across FC members.",
+    description: "Track mounts and collection progress.",
   },
   {
     to: "/mount-roulette",
@@ -35,8 +34,7 @@ const quickLinks = [
     to: "/raid-stats",
     icon: BarChart2,
     title: "Raid Stats",
-    description:
-      "Parse history, kill timelines, and performance breakdowns for FC raid teams.",
+    description: "Parse history.",
   },
 ] as const;
 
