@@ -3,7 +3,12 @@ import { animate, stagger } from "animejs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useFCCollection } from "@/features/fc-collection/api/useFCCollection";
+import { CollectionScopeToggle } from "@/features/fc-collection/components/CollectionScopeToggle";
 import { MemberPicker } from "@/features/fc-collection/components/MemberPicker";
+import {
+  filterByCollectionScope,
+  useCollectionScope,
+} from "@/features/fc-collection/hooks/useCollectionScope";
 import type { Collectible } from "@/features/fc-collection/types";
 import { SpinWheel } from "./components/SpinWheel";
 import { MountResultDialog } from "./components/MountResultDialog";
@@ -76,6 +81,8 @@ function LoadingSkeleton() {
 
 export function MountRoulettePage() {
   const { allCollectibles, membersWithMounts, loading } = useFCCollection();
+  const { scope, setScope } = useCollectionScope();
+  const scopedMembers = filterByCollectionScope(membersWithMounts, scope);
 
   const [selectedExpansions, setSelectedExpansions] = useState<
     Set<ExpansionKey>
@@ -111,12 +118,21 @@ export function MountRoulettePage() {
     });
   }, [dizzyCats]);
 
+  useEffect(() => {
+    if (selectedMembers.size === 0) return;
+    const availableIds = new Set(scopedMembers.map((m) => m.id));
+    const pruned = new Set([...selectedMembers].filter((id) => availableIds.has(id)));
+    if (pruned.size === selectedMembers.size) return;
+    const id = window.setTimeout(() => setSelectedMembers(pruned), 0);
+    return () => window.clearTimeout(id);
+  }, [scopedMembers, selectedMembers]);
+
   const activeMembers = useMemo(
     () =>
       selectedMembers.size > 0
-        ? membersWithMounts.filter((m) => selectedMembers.has(m.id))
-        : membersWithMounts,
-    [membersWithMounts, selectedMembers],
+        ? scopedMembers.filter((m) => selectedMembers.has(m.id))
+        : scopedMembers,
+    [scopedMembers, selectedMembers],
   );
 
   const filteredMounts = useMemo(() => {
@@ -273,11 +289,13 @@ export function MountRoulettePage() {
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Members
               </p>
+              <CollectionScopeToggle scope={scope} onChange={setScope} />
               <MemberPicker
-                members={membersWithMounts}
+                members={scopedMembers}
                 selected={selectedMembers}
                 onChange={setSelectedMembers}
                 defaultToAll={false}
+                showFriendBadges={scope === "all"}
               />
             </div>
 
@@ -320,6 +338,7 @@ export function MountRoulettePage() {
       <MountResultDialog
         mount={resultMount}
         members={activeMembers}
+        showFriendBadges={scope === "all"}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSpinAgain={() => {

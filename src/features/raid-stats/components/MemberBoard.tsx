@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { BarChart2 } from "lucide-react";
 import { percentileBadgeClass, formatJobName } from "../constants";
 import { JOB_ICONS } from "../jobIcons";
@@ -12,6 +13,7 @@ interface Props {
   contentType: ContentType;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  showFriendBadges?: boolean;
 }
 
 type SortKey = "best" | string;
@@ -25,7 +27,14 @@ function bestPrimary(member: MemberData, contentType: ContentType): number {
   return vals.length ? Math.max(...vals) : 0;
 }
 
-export function MemberBoard({ members, encounters, contentType, selectedId, onSelect }: Props) {
+export function MemberBoard({
+  members,
+  encounters,
+  contentType,
+  selectedId,
+  onSelect,
+  showFriendBadges = false,
+}: Props) {
   const [sortKey, setSortKey] = useState<SortKey>("best");
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -130,6 +139,11 @@ export function MemberBoard({ members, encounters, contentType, selectedId, onSe
                           <div className="w-6 h-6 rounded-full bg-muted shrink-0" />
                         )}
                         <span className="font-medium">{member.name}</span>
+                        {showFriendBadges && member.isFriend && (
+                          <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                            Friend
+                          </Badge>
+                        )}
                       </div>
                     </td>
                     <td className="px-3 py-2.5">

@@ -8,6 +8,7 @@ import type {
   Collectible,
   MemberWithMounts,
 } from "../types";
+import { isFriendRank } from "../hooks/useCollectionScope";
 
 type AllCollectibles = Record<CollectibleKey, Collectible[]>;
 
@@ -20,8 +21,21 @@ interface FCCollectionState {
   loading: boolean;
 }
 
-const CACHE_KEY = "fcc_collection_v2";
+const CACHE_KEY = "fcc_collection_v3";
 const CACHE_TTL = 3 * 60 * 60 * 1000;
+
+type MembersValue = Record<
+  string,
+  { name: string; avatarUrl?: string; fcRank?: string | null }
+>;
+type CollectiblesValue = Record<
+  string,
+  Record<string, Collectible | null> | Array<Collectible | null>
+>;
+
+interface DbSnapshot<T> {
+  val(): T | null;
+}
 
 interface CachePayload {
   members: FCMember[];
@@ -79,6 +93,8 @@ function buildMembersWithMounts(
       id: m.id,
       name: m.name,
       lodestoneId: m.lodestoneId,
+      fcRank: m.fcRank ?? null,
+      isFriend: isFriendRank(m.fcRank),
       avatar: cache?.avatar ?? "",
       owned,
       previousOwned,
@@ -103,39 +119,41 @@ export function useFCCollection(): FCCollectionState {
       if (raw) {
         const cached = JSON.parse(raw) as CachePayload;
         if (Date.now() - cached.timestamp < CACHE_TTL) {
-          setMembers(cached.members);
-          setAllCollectibles(normalizeAllCollectibles(cached.allCollectibles));
-          setMemberData(cached.memberData);
-          setLastFetched(cached.lastFetched);
-          setLoading(false);
-          return;
+          const id = window.setTimeout(() => {
+            setMembers(cached.members);
+            setAllCollectibles(normalizeAllCollectibles(cached.allCollectibles));
+            setMemberData(cached.memberData);
+            setLastFetched(cached.lastFetched);
+            setLoading(false);
+          }, 0);
+          return () => window.clearTimeout(id);
         }
       }
-    } catch {}
+    } catch {
+      try {
+        localStorage.removeItem(CACHE_KEY);
+      } catch {
+        void CACHE_KEY;
+      }
+    }
 
     Promise.all([
-      get(ref(db, "members")),
-      get(ref(db, "fcCollection/collectibles")),
-      get(ref(db, "fcCollection/memberData")),
-    ]).then(([membersSnap, collectiblesSnap, memberDataSnap]: any[]) => {
-      // members/ is keyed by lodestoneId
-      const membersVal = (membersSnap.val() ?? {}) as Record<
-        string,
-        { name: string; avatarUrl?: string }
-      >;
+      get(ref(db, "members")) as Promise<DbSnapshot<MembersValue>>,
+      get(ref(db, "fcCollection/collectibles")) as Promise<DbSnapshot<CollectiblesValue>>,
+      get(ref(db, "fcCollection/memberData")) as Promise<DbSnapshot<Record<string, MemberCacheData>>>,
+    ]).then(([membersSnap, collectiblesSnap, memberDataSnap]) => {
+      const membersVal = membersSnap.val() ?? {};
       const newMembers: FCMember[] = Object.entries(membersVal).map(
         ([lodestoneId, m]) => ({
           id: lodestoneId,
           name: m.name,
           lodestoneId,
+          fcRank: m.fcRank ?? null,
         }),
       );
 
       // collectibles stored as real objects keyed by item id
-      const collectiblesVal = (collectiblesSnap.val() ?? {}) as Record<
-        string,
-        Record<string, Collectible | null> | Array<Collectible | null>
-      >;
+      const collectiblesVal = collectiblesSnap.val() ?? {};
       const newCollectibles = normalizeAllCollectibles(collectiblesVal);
 
       const newMemberData = (memberDataSnap.val() ?? {}) as Record<
@@ -161,7 +179,9 @@ export function useFCCollection(): FCCollectionState {
       };
       try {
         localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
-      } catch {}
+      } catch {
+        return;
+      }
     });
   }, []);
 

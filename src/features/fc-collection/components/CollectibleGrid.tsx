@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, Minus } from "lucide-react";
 import { MemberPicker } from "./MemberPicker";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,7 @@ interface CollectibleGridProps {
   items: Collectible[];
   members: MemberWithMounts[];
   config: CollectibleConfig;
+  showFriendBadges?: boolean;
 }
 
 function AnimatedBar({ pct }: { pct: number }) {
@@ -80,6 +81,7 @@ export function CollectibleGrid({
   items,
   members,
   config,
+  showFriendBadges = false,
 }: CollectibleGridProps) {
   const [search, setSearch] = useState("");
   const [expansion, setExpansion] = useState<ExpansionKey>("all");
@@ -99,13 +101,24 @@ export function CollectibleGrid({
     }
   });
 
-  function updateSelectedMemberIds(ids: Set<string>) {
+  const updateSelectedMemberIds = useCallback((ids: Set<string>) => {
     setSelectedMemberIds(ids);
     try {
       if (ids.size === 0) localStorage.removeItem(storageKey);
       else localStorage.setItem(storageKey, JSON.stringify([...ids]));
-    } catch { /* storage unavailable */ }
-  }
+    } catch {
+      return;
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (selectedMemberIds.size === 0) return;
+    const availableIds = new Set(members.map((m) => m.id));
+    const pruned = new Set([...selectedMemberIds].filter((id) => availableIds.has(id)));
+    if (pruned.size === selectedMemberIds.size) return;
+    const id = window.setTimeout(() => updateSelectedMemberIds(pruned), 0);
+    return () => window.clearTimeout(id);
+  }, [members, selectedMemberIds, updateSelectedMemberIds]);
 
   const visibleMembers = selectedMemberIds.size === 0
     ? members
@@ -125,7 +138,8 @@ export function CollectibleGrid({
   function toggleSource(type: string) {
     setSelectedSources((prev) => {
       const next = new Set(prev);
-      next.has(type) ? next.delete(type) : next.add(type);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
       return next;
     });
   }
@@ -209,6 +223,7 @@ export function CollectibleGrid({
             members={members}
             selected={selectedMemberIds}
             onChange={updateSelectedMemberIds}
+            showFriendBadges={showFriendBadges}
           />
           <div className="flex items-center gap-1 text-sm text-muted-foreground ml-auto">
             <span>Sort:</span>
@@ -318,6 +333,7 @@ export function CollectibleGrid({
                     member={m}
                     total={items.length}
                     count={m.owned[config.key].size}
+                    showFriendBadge={showFriendBadges}
                   />
                 </TableHead>
               ))}

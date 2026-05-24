@@ -35,6 +35,7 @@ type AchievementGroup = keyof typeof ACHIEVEMENT_GROUPS;
 interface LeaderboardTableProps {
   members: MemberWithMounts[];
   allCollectibles: Record<CollectibleKey, Collectible[]>;
+  showFriendBadges?: boolean;
 }
 
 function MemberAvatar({ member }: { member: MemberWithMounts }) {
@@ -64,7 +65,11 @@ function AnimatedBar({ pct }: { pct: number }) {
   );
 }
 
-export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableProps) {
+export function LeaderboardTable({
+  members,
+  allCollectibles,
+  showFriendBadges = false,
+}: LeaderboardTableProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>(COLLECTIBLE_CONFIG[0].key);
   const [achievementGroup, setAchievementGroup] = useState<AchievementGroup>("All");
   const listRef = useRef<HTMLDivElement>(null);
@@ -123,7 +128,7 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
             .sort((a, b) => parseFloat(a.owned) - parseFloat(b.owned))[0] ?? null;
         return { ...m, rank: i + 1, count, delta, rarestOwned };
       });
-  }, [members, allCollectibles, activeTab, allItems, isPoints, isAchievements]);
+  }, [members, activeTab, allItems, isPoints, isAchievements]);
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -193,6 +198,11 @@ export function LeaderboardTable({ members, allCollectibles }: LeaderboardTableP
                   <div className="flex items-center gap-3 w-32 sm:w-40 shrink-0">
                     <MemberAvatar member={m} />
                     <span className="font-semibold text-sm truncate">{m.name}</span>
+                    {showFriendBadges && m.isFriend && (
+                      <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
+                        Friend
+                      </Badge>
+                    )}
                   </div>
                   <div className="flex-1 space-y-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">

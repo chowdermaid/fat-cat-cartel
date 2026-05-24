@@ -7,6 +7,7 @@ export async function queryFFLogs(
   query: string,
   variables?: Record<string, unknown>,
   maxRetries = 2,
+  stats?: { rateLimitRetries: number },
 ): Promise<unknown> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const res = await fetch("https://www.fflogs.com/api/v2/client", {
@@ -19,6 +20,7 @@ export async function queryFFLogs(
     });
 
     if (res.status === 429) {
+      if (stats) stats.rateLimitRetries++;
       const retryAfterSec = parseInt(res.headers.get("Retry-After") ?? "0") || 0;
       // If FFLogs wants us to wait > 30s, fail immediately — can't hold a cloud function that long
       if (attempt === maxRetries || retryAfterSec > 30) {
@@ -61,7 +63,10 @@ export const GUILD_MEMBERS_QUERY = `
  * Zones with fflogsZoneId use that for the API call; multiple zones sharing the
  * same fflogsZoneId are deduplicated to a single query alias (z{fflogsZoneId}).
  */
-export function buildCharacterZonesQuery(zones: Array<{ id: number; fflogsZoneId?: number; contentType: string }>): string {
+export function buildCharacterZonesQuery(
+  zones: Array<{ id: number; fflogsZoneId?: number; contentType: string }>,
+  lookup: "id" | "lodestoneID" = "id",
+): string {
   const seen = new Set<number>();
   const fields = zones.flatMap((z) => {
     if (z.contentType === "savage") {
@@ -75,11 +80,15 @@ export function buildCharacterZonesQuery(zones: Array<{ id: number; fflogsZoneId
     seen.add(fflogsId);
     return [`z${fflogsId}: zoneRankings(zoneID: ${fflogsId})`];
   });
+  const variableName = lookup === "lodestoneID" ? "lodestoneID" : "charID";
   return `
-  query($charID: Int!) {
+  query($${variableName}: Int!) {
     characterData {
-      character(id: $charID) {
+      character(${lookup}: $${variableName}) {
+        id
+        name
         lodestoneID
+        server { slug }
         ${fields.join("\n        ")}
       }
     }

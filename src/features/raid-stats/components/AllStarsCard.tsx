@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import { percentileClass, formatJobName } from "../constants";
 import { JOB_ICONS } from "../jobIcons";
@@ -8,9 +9,10 @@ import type { MemberData } from "../types";
 
 interface Props {
   members: Record<string, MemberData>;
+  showFriendBadges?: boolean;
 }
 
-export function AllStarsCard({ members }: Props) {
+export function AllStarsCard({ members, showFriendBadges = false }: Props) {
   const listRef = useRef<HTMLDivElement>(null);
 
   const ranked = Object.entries(members)
@@ -66,6 +68,11 @@ export function AllStarsCard({ members }: Props) {
                         <img src={JOB_ICONS[as.spec]} alt={as.spec} className="w-3.5 h-3.5 shrink-0" />
                       )}
                       <span className="font-medium text-sm truncate">{member.name}</span>
+                      {showFriendBadges && member.isFriend && (
+                        <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                          Friend
+                        </Badge>
+                      )}
                       <span className="text-xs text-muted-foreground shrink-0">{formatJobName(as.spec)}</span>
                     </div>
                   </div>

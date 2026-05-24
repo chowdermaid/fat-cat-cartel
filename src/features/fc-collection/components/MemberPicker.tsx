@@ -17,9 +17,16 @@ interface MemberPickerProps {
   selected: Set<string>;
   onChange: (ids: Set<string>) => void;
   defaultToAll?: boolean;
+  showFriendBadges?: boolean;
 }
 
-export function MemberPicker({ members, selected, onChange, defaultToAll = true }: MemberPickerProps) {
+export function MemberPicker({
+  members,
+  selected,
+  onChange,
+  defaultToAll = true,
+  showFriendBadges = false,
+}: MemberPickerProps) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Set<string>>(new Set());
 
@@ -34,7 +41,8 @@ export function MemberPicker({ members, selected, onChange, defaultToAll = true 
   function toggleMember(id: string) {
     setDraft((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   }
@@ -52,8 +60,11 @@ export function MemberPicker({ members, selected, onChange, defaultToAll = true 
     setOpen(false);
   }
 
+  const selectedInScope = [...selected].filter((id) =>
+    members.some((member) => member.id === id),
+  ).length;
   const isFiltered = selected.size > 0;
-  const visibleCount = isFiltered ? selected.size : members.length;
+  const visibleCount = isFiltered ? selectedInScope : members.length;
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
@@ -105,6 +116,11 @@ export function MemberPicker({ members, selected, onChange, defaultToAll = true 
                 >
                   <img src={m.avatar} alt="" className="h-6 w-6 rounded-full shrink-0 object-cover" />
                   <span className="whitespace-nowrap">{m.name}</span>
+                  {showFriendBadges && m.isFriend && (
+                    <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] text-secondary-foreground">
+                      Friend
+                    </span>
+                  )}
                 </button>
               );
             })}

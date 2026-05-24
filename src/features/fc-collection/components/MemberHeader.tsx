@@ -4,9 +4,15 @@ interface MemberHeaderProps {
   member: MemberWithMounts;
   total: number;
   count: number;
+  showFriendBadge?: boolean;
 }
 
-export function MemberHeader({ member, total, count }: MemberHeaderProps) {
+export function MemberHeader({
+  member,
+  total,
+  count,
+  showFriendBadge = false,
+}: MemberHeaderProps) {
   const pct = total > 0 ? (count / total) * 100 : 0;
 
   return (
@@ -25,6 +31,11 @@ export function MemberHeader({ member, total, count }: MemberHeaderProps) {
       <p className="text-xs font-semibold text-center leading-tight">
         {member.name}
       </p>
+      {showFriendBadge && member.isFriend && (
+        <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] leading-none text-secondary-foreground">
+          Friend
+        </span>
+      )}
       <p className="text-xs text-muted-foreground tabular-nums">
         {count}/{total}
       </p>

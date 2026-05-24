@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Archive,
   BarChart2,
   Dices,
   LayoutGrid,
   Swords,
+  Users,
 } from "lucide-react";
 import { animate, stagger } from "animejs";
 import {
@@ -20,6 +20,12 @@ import { Button } from "@/components/ui/button";
 
 const quickLinks = [
   {
+    to: "/members",
+    icon: Users,
+    title: "Members",
+    description: "Browse FC members, profiles, birthdays, main jobs, and collection highlights.",
+  },
+  {
     to: "/fc-collection",
     icon: LayoutGrid,
     title: "FC Collection",
@@ -31,12 +37,6 @@ const quickLinks = [
     title: "Raid Stats",
     description:
       "Parse history, kill timelines, and performance breakdowns for FC raid teams.",
-  },
-  {
-    to: "/pastevents",
-    icon: Archive,
-    title: "Past Events",
-    description: "Archived FC socials.",
   },
   {
     to: "/jointhemeowfia",

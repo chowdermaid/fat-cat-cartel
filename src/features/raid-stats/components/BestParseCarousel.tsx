@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
 import { percentileBadgeClass, percentileClass, formatJobName } from "../constants";
 import { JOB_ICONS } from "../jobIcons";
@@ -10,12 +11,14 @@ interface Props {
   members: Record<string, MemberData>;
   encounters: ZoneEncounter[];
   contentType: ContentType;
+  showFriendBadges?: boolean;
 }
 
 interface BestEntry {
   id: string;
   name: string;
   avatarUrl: string | null;
+  isFriend: boolean;
   parse: ParseData;
   encounterLabel: string;
   encounterName: string;
@@ -41,13 +44,19 @@ function getBest(
     id,
     name: member.name,
     avatarUrl: member.avatarUrl ?? null,
+    isFriend: member.isFriend,
     parse: best,
     encounterLabel: enc?.label ?? best.key,
     encounterName: enc?.name ?? best.key,
   };
 }
 
-export function BestParseCarousel({ members, encounters, contentType }: Props) {
+export function BestParseCarousel({
+  members,
+  encounters,
+  contentType,
+  showFriendBadges = false,
+}: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -98,7 +107,14 @@ export function BestParseCarousel({ members, encounters, contentType }: Props) {
                     <div className="w-8 h-8 rounded-full bg-muted shrink-0" />
                   )}
                   <div className="min-w-0">
-                    <p className="font-semibold text-sm leading-tight truncate">{entry.name}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-semibold text-sm leading-tight truncate">{entry.name}</p>
+                      {showFriendBadges && entry.isFriend && (
+                        <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                          Friend
+                        </Badge>
+                      )}
+                    </div>
                     {JOB_ICONS[entry.parse.job] && (
                       <div className="flex items-center gap-1 mt-0.5">
                         <img src={JOB_ICONS[entry.parse.job]} alt={entry.parse.job} className="w-3.5 h-3.5" />

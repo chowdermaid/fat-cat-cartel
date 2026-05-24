@@ -13,10 +13,17 @@ import {
 import { useFCCollection } from "./api/useFCCollection";
 import { COLLECTIBLE_CONFIG } from "./collectibleConfig";
 import { FCStats } from "./components/FCStats";
+import { CollectionScopeToggle } from "./components/CollectionScopeToggle";
+import {
+  filterByCollectionScope,
+  useCollectionScope,
+} from "./hooks/useCollectionScope";
 
 export function FCCollectionPage() {
   const { allCollectibles, membersWithMounts } = useFCCollection();
-  const memberCount = membersWithMounts.length;
+  const { scope, setScope } = useCollectionScope();
+  const scopedMembers = filterByCollectionScope(membersWithMounts, scope);
+  const memberCount = scopedMembers.length;
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,12 +39,15 @@ export function FCCollectionPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-3xl font-bold font-serif">FC Collection</h1>
-        <p className="mt-1 text-muted-foreground">I love data</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold font-serif">FC Collection</h1>
+          <p className="mt-1 text-muted-foreground">I love data</p>
+        </div>
+        <CollectionScopeToggle scope={scope} onChange={setScope} />
       </div>
 
-      <FCStats allCollectibles={allCollectibles} members={membersWithMounts} />
+      <FCStats allCollectibles={allCollectibles} members={scopedMembers} scope={scope} />
 
       {/* Privacy notice */}
       <div className="flex gap-3 rounded-lg border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
@@ -69,7 +79,7 @@ export function FCCollectionPage() {
           const avgOwned =
             memberCount > 0
               ? Math.round(
-                  membersWithMounts.reduce(
+                  scopedMembers.reduce(
                     (s, m) => s + m.owned[cfg.key].size,
                     0,
                   ) / memberCount,
@@ -93,7 +103,7 @@ export function FCCollectionPage() {
                     Avg owned: {avgOwned} / {items.length}
                   </p>
                 )}
-                <p>{memberCount} members</p>
+                <p>{memberCount} {scope === "all" ? "people" : "members"}</p>
               </CardContent>
               <CardFooter className="pt-0">
                 <Button asChild variant="outline" size="sm" className="w-full">

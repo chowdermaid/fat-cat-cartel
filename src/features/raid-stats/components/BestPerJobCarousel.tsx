@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Medal } from "lucide-react";
 import { percentileClass, formatJobName } from "../constants";
 import { JOB_ICONS } from "../jobIcons";
@@ -9,12 +10,14 @@ import type { MemberData, ContentType, ParseData } from "../types";
 interface Props {
   members: Record<string, MemberData>;
   contentType: ContentType;
+  showFriendBadges?: boolean;
 }
 
 interface JobEntry {
   job: string;
   memberName: string;
   avatarUrl: string | null;
+  isFriend: boolean;
   percentile: number;
   rdps: number;
   encounterKey: string;
@@ -33,6 +36,7 @@ function getBestPerJob(members: Record<string, MemberData>, contentType: Content
           job: parse.job,
           memberName: member.name,
           avatarUrl: member.avatarUrl ?? null,
+          isFriend: member.isFriend,
           percentile: parse.percentile,
           rdps: parse.rdps,
           encounterKey: key,
@@ -44,7 +48,11 @@ function getBestPerJob(members: Record<string, MemberData>, contentType: Content
   return Object.values(best).sort((a, b) => b.percentile - a.percentile);
 }
 
-export function BestPerJobCarousel({ members, contentType }: Props) {
+export function BestPerJobCarousel({
+  members,
+  contentType,
+  showFriendBadges = false,
+}: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -115,7 +123,14 @@ export function BestPerJobCarousel({ members, contentType }: Props) {
                     <div className="w-6 h-6 rounded-full bg-muted shrink-0" />
                   )}
                   <div className="min-w-0">
-                    <p className="text-xs font-medium truncate">{entry.memberName}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-medium truncate">{entry.memberName}</p>
+                      {showFriendBadges && entry.isFriend && (
+                        <Badge variant="secondary" className="px-1 py-0 text-[9px]">
+                          Friend
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground tabular-nums">
                       {Math.round(entry.rdps).toLocaleString()} rDPS
                     </p>

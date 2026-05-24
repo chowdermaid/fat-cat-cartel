@@ -18,8 +18,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Trash2, UserPlus, RefreshCw, User, Pencil } from "lucide-react";
+import {
+  ArrowDownUp,
+  Database,
+  IdCard,
+  Search,
+  Trash2,
+  UserPlus,
+  RefreshCw,
+  User,
+  Pencil,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { Member } from "@/types";
 import type { MemberProfile } from "@/features/member-profile/types";
 
@@ -97,7 +116,6 @@ const MONTHS = [
 ];
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
-
 function parseBirthday(mmdd: string | null): { month: number; day: number } {
   if (!mmdd) return { month: 0, day: 0 };
   const [m, d] = mmdd.split("-").map(Number);
@@ -121,6 +139,12 @@ function formatTimeAgo(timestamp: number): string {
 
 const FC_RANKS = ["Boss", "Underpaw", "Housecat", "Stray", "Friend"] as const;
 type FCRank = (typeof FC_RANKS)[number];
+type SortKey = "name" | "rank" | "lodestoneId";
+type SortDir = "asc" | "desc";
+
+const RANK_ORDER = new Map<string, number>(
+  FC_RANKS.map((rank, index) => [rank, index]),
+);
 
 const EMPTY_PROFILE: MemberProfile = {
   bio: null,
@@ -128,10 +152,26 @@ const EMPTY_PROFILE: MemberProfile = {
   mainJobs: [],
 };
 
+function clearRaidStatsCache() {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("fcc_raidstats_v2_")) {
+        localStorage.removeItem(key);
+      }
+    }
+  } catch {
+    return;
+  }
+}
+
 export function FCMembersManager() {
   const [members, setMembers] = useState<Array<Member & { id: string }>>([]);
   const [name, setName] = useState("");
   const [lodestoneId, setLodestoneId] = useState("");
+  const [memberSearch, setMemberSearch] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const [fetchingCollection, setFetchingCollection] = useState(false);
   const [collectionLastFetched, setCollectionLastFetched] = useState<
@@ -151,7 +191,7 @@ export function FCMembersManager() {
   const [profileSaving, setProfileSaving] = useState(false);
 
   useEffect(() => {
-    return onValue(ref(db, "members"), (snap: any) => {
+    return onValue(ref(db, "members"), (snap: { val(): Record<string, Member> | null }) => {
       const val = snap.val() as Record<string, Member> | null;
       if (!val) {
         setMembers([]);
@@ -166,7 +206,7 @@ export function FCMembersManager() {
   }, []);
 
   useEffect(() => {
-    return onValue(ref(db, "raidStats/lastUpdated"), (snap: any) => {
+    return onValue(ref(db, "raidStats/lastUpdated"), (snap: { val(): number | null }) => {
       setRaidLastUpdated(snap.val() ?? null);
     });
   }, []);
@@ -174,7 +214,7 @@ export function FCMembersManager() {
   useEffect(() => {
     return onValue(
       ref(db, "fcCollection/collectibles/lastFetched"),
-      (snap: any) => {
+      (snap: { val(): number | null }) => {
         setCollectionLastFetched(snap.val() ?? null);
       },
     );
@@ -216,6 +256,8 @@ export function FCMembersManager() {
       await httpsCallable(getFunctions(firebaseApp), "triggerFFLogsRefresh", {
         timeout: 300_000,
       })();
+      localStorage.removeItem("fcc_members_v3");
+      clearRaidStatsCache();
       toast.success("Raid stats refreshed.", { id });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
@@ -230,19 +272,18 @@ export function FCMembersManager() {
       return;
     }
     setFetchingLodestone(true);
-    const id = toast.loading("Syncing Lodestone roster...");
+    const id = toast.loading("Syncing Lodestone portraits...");
     try {
       const { getFunctions, httpsCallable } =
         await import("firebase/functions");
-      const fn = httpsCallable<unknown, { total: number; written: number }>(
+      const fn = httpsCallable<unknown, { total: number; written: number; failed: number }>(
         getFunctions(firebaseApp),
         "importLodestoneMembers",
-        { timeout: 120_000 },
+        { timeout: 300_000 },
       );
       const res = await fn();
-      toast.success(`${res.data.written}/${res.data.total} members synced.`, {
-        id,
-      });
+      const failedText = res.data.failed > 0 ? `, ${res.data.failed} failed` : "";
+      toast.success(`${res.data.written}/${res.data.total} tracked members synced${failedText}.`, { id });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Sync failed.", { id });
     } finally {
@@ -309,6 +350,8 @@ export function FCMembersManager() {
         set(ref(db, `members/${editingMemberId}/fcRank`), rankDraft || null),
       ]);
       localStorage.removeItem("fcc_members_v3");
+      localStorage.removeItem("fcc_collection_v3");
+      clearRaidStatsCache();
       setEditingMemberId(null);
       toast.success("Profile saved.");
     } catch (e) {
@@ -326,129 +369,247 @@ export function FCMembersManager() {
     setProfileDraft((d) => ({ ...d, mainJobs: next }));
   }
 
-  const matchedCount = members.filter((m) => m.fflogsId).length;
   const editingMember = members.find((m) => m.id === editingMemberId);
+  const friendCount = members.filter((m) => m.fcRank === "Friend").length;
+  const filteredMembers = members
+    .filter((m) => {
+      const q = memberSearch.trim().toLowerCase();
+      if (!q) return true;
+      return (
+        m.name.toLowerCase().includes(q) ||
+        m.id.includes(q) ||
+        (m.fcRank ?? "").toLowerCase().includes(q) ||
+        (m.server ?? "").toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      const dir = sortDir === "asc" ? 1 : -1;
+      if (sortKey === "rank") {
+        const rankA = RANK_ORDER.get(a.fcRank ?? "") ?? 999;
+        const rankB = RANK_ORDER.get(b.fcRank ?? "") ?? 999;
+        return (rankA - rankB || a.name.localeCompare(b.name)) * dir;
+      }
+      if (sortKey === "lodestoneId") return a.id.localeCompare(b.id) * dir;
+      return a.name.localeCompare(b.name) * dir;
+    });
+
+  function updateSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      return;
+    }
+    setSortKey(key);
+    setSortDir("asc");
+  }
 
   const selectClass =
     "rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
   return (
     <div className="space-y-6">
-      {/* Collection refresh */}
-      <div className="flex items-center justify-between rounded-lg border px-4 py-3">
-        <div>
-          <p className="text-sm font-medium">Collection Data</p>
-          <p className="text-xs text-muted-foreground">
-            {collectionLastFetched
-              ? `Updated ${formatTimeAgo(collectionLastFetched)}`
-              : "Never fetched"}
-          </p>
+      <div className="grid gap-3 lg:grid-cols-3">
+        <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-sm font-medium">
+              <Database className="h-3.5 w-3.5 text-muted-foreground" />
+              Collection
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {collectionLastFetched
+                ? formatTimeAgo(collectionLastFetched)
+                : "Never fetched"}
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRefreshCollection}
+            disabled={fetchingCollection}
+            className="shrink-0"
+          >
+            <RefreshCw
+              className={cn("h-4 w-4", fetchingCollection && "animate-spin")}
+            />
+            {fetchingCollection ? "Fetching" : "Refresh"}
+          </Button>
         </div>
-        <Button
-          size="sm"
-          onClick={handleRefreshCollection}
-          disabled={fetchingCollection}
-        >
-          <RefreshCw
-            className={cn("h-4 w-4", fetchingCollection && "animate-spin")}
-          />
-          {fetchingCollection ? "Fetching..." : "Refresh Data"}
-        </Button>
-      </div>
 
-      {/* Raid stats refresh */}
-      <div className="flex items-center justify-between rounded-lg border px-4 py-3">
-        <div>
-          <p className="text-sm font-medium">Raid Stats</p>
-          <p className="text-xs text-muted-foreground">
-            {raidLastUpdated
-              ? `Updated ${formatTimeAgo(raidLastUpdated)}`
-              : "Never fetched"}
-          </p>
+        <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-sm font-medium">
+              <ArrowDownUp className="h-3.5 w-3.5 text-muted-foreground" />
+              Raid Stats
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {raidLastUpdated ? formatTimeAgo(raidLastUpdated) : "Never fetched"}
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRefreshLogs}
+            disabled={fetchingLogs}
+            className="shrink-0"
+          >
+            <RefreshCw
+              className={cn("h-4 w-4", fetchingLogs && "animate-spin")}
+            />
+            {fetchingLogs ? "Fetching" : "Refresh"}
+          </Button>
         </div>
-        <Button size="sm" onClick={handleRefreshLogs} disabled={fetchingLogs}>
-          <RefreshCw
-            className={cn("h-4 w-4", fetchingLogs && "animate-spin")}
-          />
-          {fetchingLogs ? "Fetching..." : "Refresh Logs"}
-        </Button>
-      </div>
 
-      {/* Lodestone sync */}
-      <div className="flex items-center justify-between rounded-lg border px-4 py-3">
-        <div>
-          <p className="text-sm font-medium">Portrait Sync</p>
-          <p className="text-xs text-muted-foreground">
-            Scrapes Lodestone FC page to sync member roster and portraits
-          </p>
+        <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-sm font-medium">
+              <IdCard className="h-3.5 w-3.5 text-muted-foreground" />
+              Lodestone
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              Names and portraits
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleImportLodestone}
+            disabled={fetchingLodestone}
+            className="shrink-0"
+          >
+            <RefreshCw
+              className={cn("h-4 w-4", fetchingLodestone && "animate-spin")}
+            />
+            {fetchingLodestone ? "Syncing" : "Sync"}
+          </Button>
         </div>
-        <Button
-          size="sm"
-          onClick={handleImportLodestone}
-          disabled={fetchingLodestone}
-        >
-          <RefreshCw
-            className={cn("h-4 w-4", fetchingLodestone && "animate-spin")}
-          />
-          {fetchingLodestone ? "Syncing..." : "Sync Lodestone"}
-        </Button>
       </div>
 
       {/* Member roster */}
       {members.length > 0 && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Members</p>
-            <p className="text-xs text-muted-foreground">
-              {matchedCount}/{members.length} linked to FFLogs
-            </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium">Members</p>
+              <p className="text-xs text-muted-foreground">
+                {members.length} tracked · {friendCount} friends
+              </p>
+            </div>
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={memberSearch}
+                onChange={(e) => setMemberSearch(e.target.value)}
+                placeholder="Search members..."
+                className="pl-8"
+              />
+            </div>
           </div>
-          <div className="rounded-lg border divide-y">
-            {members.map((m) => (
-              <div key={m.id} className="flex items-center gap-3 px-4 py-2.5">
-                {m.avatarUrl ? (
-                  <img
-                    src={m.avatarUrl}
-                    alt={m.name}
-                    className="w-8 h-8 rounded-full shrink-0 object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-muted shrink-0 flex items-center justify-center">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                  </div>
+          <div className="rounded-lg border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => updateSort("name")}
+                      className="flex items-center gap-1 hover:text-foreground"
+                    >
+                      Name
+                      <ArrowDownUp className="h-3 w-3" />
+                    </button>
+                  </TableHead>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => updateSort("rank")}
+                      className="flex items-center gap-1 hover:text-foreground"
+                    >
+                      Rank
+                      <ArrowDownUp className="h-3 w-3" />
+                    </button>
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    <button
+                      type="button"
+                      onClick={() => updateSort("lodestoneId")}
+                      className="flex items-center gap-1 hover:text-foreground"
+                    >
+                      Lodestone
+                      <ArrowDownUp className="h-3 w-3" />
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-24 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMembers.map((m) => (
+                  <TableRow key={m.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        {m.avatarUrl ? (
+                          <img
+                            src={m.avatarUrl}
+                            alt={m.name}
+                            className="h-8 w-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium">{m.name}</p>
+                          <p className="font-mono text-xs text-muted-foreground md:hidden">
+                            {m.id}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {m.fcRank ? (
+                        <Badge variant={m.fcRank === "Friend" ? "secondary" : "outline"}>
+                          {m.fcRank}
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No rank</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
+                      {m.id}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openProfileEditor(m.id)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteMember(m.id, m.name)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredMembers.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="py-10 text-center text-sm text-muted-foreground"
+                    >
+                      No members match your search.
+                    </TableCell>
+                  </TableRow>
                 )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">{m.name}</p>
-                  <p className="text-xs text-muted-foreground font-mono">
-                    {m.id}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <div
-                    className={cn(
-                      "w-2 h-2 rounded-full mr-1",
-                      m.fflogsId ? "bg-green-500" : "bg-amber-400",
-                    )}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openProfileEditor(m.id)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteMember(m.id, m.name)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}
@@ -462,7 +623,7 @@ export function FCMembersManager() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-            placeholder="Chow Chow"
+            placeholder="Firstname Lastname"
           />
         </div>
         <div className="space-y-1.5">
@@ -485,7 +646,7 @@ export function FCMembersManager() {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Manual adds are overwritten on the next Lodestone sync. Find IDs at{" "}
+        Add tracked characters by Lodestone ID. Find IDs at{" "}
         <a
           href="https://na.finalfantasyxiv.com/lodestone/character/"
           target="_blank"
@@ -526,6 +687,18 @@ export function FCMembersManager() {
               </select>
             </div>
 
+            {editingMember?.fflogsId && (
+              <div className="space-y-1.5">
+                <Label htmlFor="member-fflogs-id">Resolved FFLogs ID</Label>
+                <Input
+                  id="member-fflogs-id"
+                  value={editingMember.fflogsId}
+                  disabled
+                  className="font-mono text-xs"
+                />
+              </div>
+            )}
+
             {/* Bio */}
             <div className="space-y-1.5">
               <Label>Bio</Label>
@@ -556,7 +729,9 @@ export function FCMembersManager() {
                   </SelectTrigger>
                   <SelectContent>
                     {MONTHS.map((label, i) => (
-                      <SelectItem key={i + 1} value={String(i + 1)}>{label}</SelectItem>
+                      <SelectItem key={i + 1} value={String(i + 1)}>
+                        {label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -569,7 +744,9 @@ export function FCMembersManager() {
                   </SelectTrigger>
                   <SelectContent>
                     {DAYS.map((d) => (
-                      <SelectItem key={d} value={String(d)}>{d}</SelectItem>
+                      <SelectItem key={d} value={String(d)}>
+                        {d}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

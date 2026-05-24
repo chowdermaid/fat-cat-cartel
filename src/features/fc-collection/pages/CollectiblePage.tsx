@@ -3,7 +3,12 @@ import { useParams } from "@tanstack/react-router";
 import { animate, stagger } from "animejs";
 import { useFCCollection } from "../api/useFCCollection";
 import { CollectibleGrid } from "../components/CollectibleGrid";
+import { CollectionScopeToggle } from "../components/CollectionScopeToggle";
 import { COLLECTIBLE_CONFIG } from "../collectibleConfig";
+import {
+  filterByCollectionScope,
+  useCollectionScope,
+} from "../hooks/useCollectionScope";
 
 function LoadingSkeleton() {
   const ref = useRef<HTMLDivElement>(null);
@@ -57,6 +62,8 @@ function formatSynced(ts: number | null): string | null {
 export function CollectiblePage() {
   const { type } = useParams({ strict: false });
   const { allCollectibles, membersWithMounts, loading, lastFetched } = useFCCollection();
+  const { scope, setScope } = useCollectionScope();
+  const scopedMembers = filterByCollectionScope(membersWithMounts, scope);
 
   const config = COLLECTIBLE_CONFIG.find((c) => c.key === type);
 
@@ -86,20 +93,24 @@ export function CollectiblePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold font-serif">{config.label}</h1>
-        <div className="flex items-baseline gap-3 mt-1">
-          <p className="text-muted-foreground">
-            {items.length} {config.label.toLowerCase()} · {membersWithMounts.length} members tracked
-          </p>
-          {formatSynced(lastFetched) && (
-            <span className="text-xs text-muted-foreground/60 shrink-0">
-              Synced {formatSynced(lastFetched)}
-            </span>
-          )}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold font-serif">{config.label}</h1>
+          <div className="flex items-baseline gap-3 mt-1">
+            <p className="text-muted-foreground">
+              {items.length} {config.label.toLowerCase()} - {scopedMembers.length} {scope === "all" ? "people" : "members"} tracked
+            </p>
+            {formatSynced(lastFetched) && (
+              <span className="text-xs text-muted-foreground/60 shrink-0">
+                Synced {formatSynced(lastFetched)}
+              </span>
+            )}
+          </div>
         </div>
+        <CollectionScopeToggle scope={scope} onChange={setScope} />
       </div>
-      <CollectibleGrid items={items} members={membersWithMounts} config={config} />
+      <CollectibleGrid items={items} members={scopedMembers} config={config} showFriendBadges={scope === "all"} />
     </div>
   );
 }
+

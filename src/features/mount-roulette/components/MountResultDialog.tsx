@@ -11,6 +11,7 @@ import type { Collectible, MemberWithMounts } from "@/features/fc-collection/typ
 interface MountResultDialogProps {
   mount: Collectible | null;
   members: MemberWithMounts[];
+  showFriendBadges?: boolean;
   open: boolean;
   onClose: () => void;
   onSpinAgain: () => void;
@@ -19,6 +20,7 @@ interface MountResultDialogProps {
 export function MountResultDialog({
   mount,
   members,
+  showFriendBadges = false,
   open,
   onClose,
   onSpinAgain,
@@ -60,6 +62,11 @@ export function MountResultDialog({
                           <img src={m.avatar} alt="" className="h-5 w-5 rounded-full shrink-0" />
                         )}
                         <span className="truncate">{m.name}</span>
+                        {showFriendBadges && m.isFriend && (
+                          <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] text-secondary-foreground">
+                            Friend
+                          </span>
+                        )}
                       </div>
                     ))
                   )}
@@ -75,6 +82,11 @@ export function MountResultDialog({
                           <img src={m.avatar} alt="" className="h-5 w-5 rounded-full shrink-0" />
                         )}
                         <span className="truncate">{m.name}</span>
+                        {showFriendBadges && m.isFriend && (
+                          <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] text-secondary-foreground">
+                            Friend
+                          </span>
+                        )}
                       </div>
                     ))
                   )}

@@ -26,7 +26,7 @@ function EncounterChart({ enc, buckets }: { enc: ZoneEncounter; buckets: ParseBu
   const max = buckets ? Math.max(...BUCKETS.map((k) => buckets[k]), 1) : 1;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 rounded-lg border bg-muted/30 p-3">
       <div className="flex items-baseline gap-2">
         <span className="text-xs font-semibold">{enc.label}</span>
         <span className="text-xs text-muted-foreground truncate flex-1 min-w-0">{enc.name}</span>

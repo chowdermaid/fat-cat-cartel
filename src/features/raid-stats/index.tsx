@@ -3,6 +3,11 @@ import { animate, stagger } from "animejs";
 import { Info } from "lucide-react";
 import { useRaidStats } from "./api/useRaidStats";
 import { useMembers } from "@/hooks/useMembers";
+import { CollectionScopeToggle } from "@/features/fc-collection/components/CollectionScopeToggle";
+import {
+  filterByCollectionScope,
+  useCollectionScope,
+} from "@/features/fc-collection/hooks/useCollectionScope";
 import { MemberBoard } from "./components/MemberBoard";
 import { MemberRadarChart } from "./components/MemberRadarChart";
 import { AllStarsCard } from "./components/AllStarsCard";
@@ -14,7 +19,9 @@ import { BestPerJobCarousel } from "./components/BestPerJobCarousel";
 import { GuildSummaryStrip } from "./components/GuildSummaryStrip";
 import { EncounterAveragesCard } from "./components/EncounterAveragesCard";
 import { ZONE_TABS, DEFAULT_ZONE_ID, DEFAULT_TAB } from "./zones";
-import type { ContentType, MemberData } from "./types";
+import type { ContentType, MemberData, ParseBuckets, ZoneEncounter } from "./types";
+
+const EMPTY_ENCOUNTERS: ZoneEncounter[] = [];
 
 function LoadingSkeleton() {
   const ref = useRef<HTMLDivElement>(null);
@@ -58,6 +65,45 @@ function timeAgoShort(ms: number): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+function emptyBuckets(): ParseBuckets {
+  return { grey: 0, green: 0, blue: 0, purple: 0, orange: 0, pink: 0, gold: 0 };
+}
+
+function percentileBucket(p: number): keyof ParseBuckets {
+  if (p >= 100) return "gold";
+  if (p >= 99) return "pink";
+  if (p >= 95) return "orange";
+  if (p >= 75) return "purple";
+  if (p >= 50) return "blue";
+  if (p >= 25) return "green";
+  return "grey";
+}
+
+function buildScopedHistogram(
+  members: Record<string, MemberData>,
+  encounters: Array<{ key: string }>,
+): Record<string, { savage: ParseBuckets; normal: ParseBuckets }> {
+  const histogram = Object.fromEntries(
+    encounters.map((enc) => [
+      enc.key,
+      { savage: emptyBuckets(), normal: emptyBuckets() },
+    ]),
+  ) as Record<string, { savage: ParseBuckets; normal: ParseBuckets }>;
+
+  for (const member of Object.values(members)) {
+    for (const [key, parse] of Object.entries(member.savage ?? {})) {
+      if (!parse || !histogram[key]) continue;
+      histogram[key].savage[percentileBucket(parse.percentile)]++;
+    }
+    for (const [key, parse] of Object.entries(member.normal ?? {})) {
+      if (!parse || !histogram[key]) continue;
+      histogram[key].normal[percentileBucket(parse.percentile)]++;
+    }
+  }
+
+  return histogram;
+}
+
 function TabButton({
   active,
   onClick,
@@ -89,6 +135,7 @@ export function RaidStatsPage() {
   const [activeTab, setActiveTab] = useState<ContentType>(DEFAULT_TAB);
   const [activeZoneId, setActiveZoneId] = useState(DEFAULT_ZONE_ID);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const { scope, setScope, includeFriends } = useCollectionScope();
 
   const { data, loading } = useRaidStats(activeZoneId);
   const members = useMembers();
@@ -107,11 +154,20 @@ export function RaidStatsPage() {
             server: identity?.server ?? "",
             lodestoneId: id,
             avatarUrl: identity?.avatarUrl ?? null,
+            fcRank: identity?.fcRank ?? null,
+            isFriend: identity?.fcRank === "Friend",
           },
         ];
       }),
     );
   }, [data, members]);
+
+  const scopedJoinedMembers = useMemo((): Record<string, MemberData> => {
+    const scoped = filterByCollectionScope(Object.values(joinedMembers), scope);
+    return Object.fromEntries(
+      scoped.map((member) => [member.lodestoneId ?? member.name, member]),
+    );
+  }, [joinedMembers, scope]);
 
   function handleTabChange(type: ContentType) {
     setActiveTab(type);
@@ -132,21 +188,28 @@ export function RaidStatsPage() {
   }, [data]);
 
   const currentTab = ZONE_TABS.find((t) => t.type === activeTab)!;
-  const encounters = data?.meta.encounters ?? [];
+  const encounters = data?.meta.encounters ?? EMPTY_ENCOUNTERS;
   const contentType = data?.meta.contentType ?? activeTab;
-  const memberCount = Object.keys(data?.parses ?? {}).length;
+  const memberCount = Object.keys(scopedJoinedMembers).length;
   const selectedMember = selectedMemberId
-    ? (joinedMembers[selectedMemberId] ?? null)
+    ? (scopedJoinedMembers[selectedMemberId] ?? null)
     : null;
+  const scopedHistogram = useMemo(
+    () => buildScopedHistogram(scopedJoinedMembers, encounters),
+    [scopedJoinedMembers, encounters],
+  );
 
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold font-serif">Raid Stats</h1>
-        <p className="mt-1 text-muted-foreground text-sm">
-          Parsed from FFLogs free company rankings · refreshes every 3 hours
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold font-serif">Raid Stats</h1>
+          <p className="mt-1 text-muted-foreground text-sm">
+            Parsed from available FFLogs rankings · refreshes every 3 hours
+          </p>
+        </div>
+        <CollectionScopeToggle scope={scope} onChange={setScope} />
       </div>
 
       {/* Main tab bar */}
@@ -187,7 +250,7 @@ export function RaidStatsPage() {
             soon.
           </p>
         </div>
-      ) : Object.values(joinedMembers).every(
+      ) : Object.values(scopedJoinedMembers).every(
           (m) =>
             Object.keys(
               contentType === "savage" ? (m.savage ?? {}) : (m.normal ?? {}),
@@ -196,8 +259,7 @@ export function RaidStatsPage() {
         <div className="rounded-lg border bg-muted/30 px-6 py-10 text-center space-y-2">
           <p className="text-sm font-medium">No logs found for this zone</p>
           <p className="text-sm text-muted-foreground">
-            Free company members haven't uploaded logs to FFLogs for this
-            content yet.
+            {includeFriends ? "Tracked characters" : "Free company members"} haven't uploaded logs to FFLogs for this content yet.
           </p>
         </div>
       ) : (
@@ -213,7 +275,7 @@ export function RaidStatsPage() {
           {/* Summary strip */}
           <div className="anim-section">
             <GuildSummaryStrip
-              members={joinedMembers}
+              members={scopedJoinedMembers}
               encounters={encounters}
               contentType={contentType}
             />
@@ -239,17 +301,19 @@ export function RaidStatsPage() {
           {/* Best parse carousel */}
           <div className="anim-section">
             <BestParseCarousel
-              members={joinedMembers}
+              members={scopedJoinedMembers}
               encounters={encounters}
               contentType={contentType}
+              showFriendBadges={includeFriends}
             />
           </div>
 
           {/* Best per job carousel */}
           <div className="anim-section">
             <BestPerJobCarousel
-              members={joinedMembers}
+              members={scopedJoinedMembers}
               contentType={contentType}
+              showFriendBadges={includeFriends}
             />
           </div>
 
@@ -257,11 +321,12 @@ export function RaidStatsPage() {
           <div className="anim-section grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <MemberBoard
-                members={joinedMembers}
+                members={scopedJoinedMembers}
                 encounters={encounters}
                 contentType={contentType}
                 selectedId={selectedMemberId}
                 onSelect={setSelectedMemberId}
+                showFriendBadges={includeFriends}
               />
             </div>
             <div>
@@ -269,6 +334,7 @@ export function RaidStatsPage() {
                 member={selectedMember}
                 encounters={encounters}
                 contentType={contentType}
+                showFriendBadges={includeFriends}
               />
             </div>
           </div>
@@ -277,7 +343,7 @@ export function RaidStatsPage() {
           {contentType === "savage" && (
             <div className="anim-section">
               <ParseHistogramCard
-                histogram={data.histogram}
+                histogram={scopedHistogram}
                 encounters={encounters}
                 contentType={contentType}
               />
@@ -286,14 +352,17 @@ export function RaidStatsPage() {
 
           {/* Cards grid */}
           <div className="anim-section grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AllStarsCard members={joinedMembers} />
+            <AllStarsCard
+              members={scopedJoinedMembers}
+              showFriendBadges={includeFriends}
+            />
             <EncounterAveragesCard
-              members={joinedMembers}
+              members={scopedJoinedMembers}
               encounters={encounters}
               contentType={contentType}
             />
             <JobDistributionCard
-              members={joinedMembers}
+              members={scopedJoinedMembers}
               contentType={contentType}
             />
             {data.recentKill && <RecentKillCard kill={data.recentKill} />}

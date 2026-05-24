@@ -23,8 +23,19 @@ const JOB_ICON_SLUG: Record<string, string> = {
   "Black Mage": "blackmage", "Summoner": "summoner", "Red Mage": "redmage", "Pictomancer": "pictomancer",
 };
 
+const JOB_NAME_ALIASES: Record<string, string> = {
+  BlackMage: "Black Mage",
+  DarkKnight: "Dark Knight",
+  RedMage: "Red Mage",
+  WhiteMage: "White Mage",
+};
+
+function displayJobName(jobName: string): string {
+  return JOB_NAME_ALIASES[jobName] ?? jobName;
+}
+
 function jobIconSrc(fullName: string): string | null {
-  const slug = JOB_ICON_SLUG[fullName];
+  const slug = JOB_ICON_SLUG[displayJobName(fullName)];
   return slug ? (jobIconMap[`../../assets/jobs/${slug}.png`] ?? null) : null;
 }
 
@@ -78,10 +89,11 @@ function formatBirthday(mmdd: string): string {
 }
 
 function JobIcon({ fullName, size = 20 }: { fullName: string; size?: number }) {
+  const displayName = displayJobName(fullName);
   const src = jobIconSrc(fullName);
-  const abbr = JOB_ABBR[fullName] ?? fullName;
+  const abbr = JOB_ABBR[displayName] ?? displayName;
   if (!src) return <span className="text-xs font-mono">{abbr}</span>;
-  return <img src={src} alt={abbr} title={fullName} width={size} height={size} className="object-contain" />;
+  return <img src={src} alt={abbr} title={displayName} width={size} height={size} className="object-contain" />;
 }
 
 function fmtRdps(rdps: number): string {
@@ -94,7 +106,7 @@ function ParseRow({ label, parse }: { label: string; parse: ParseData }) {
       <span className="text-sm text-muted-foreground w-16 shrink-0">{label}</span>
       <div className="flex items-center gap-1.5 shrink-0">
         <JobIcon fullName={parse.job} size={18} />
-        <span className="text-xs text-muted-foreground font-mono">{JOB_ABBR[parse.job] ?? parse.job}</span>
+        <span className="text-xs text-muted-foreground font-mono">{JOB_ABBR[displayJobName(parse.job)] ?? displayJobName(parse.job)}</span>
       </div>
       <div className="ml-auto flex items-center gap-3">
         <span className="text-xs text-muted-foreground tabular-nums">{fmtRdps(parse.rdps)}</span>
@@ -200,11 +212,11 @@ export function MemberProfilePage() {
                 {mainJobs.map((job) => (
                   <div
                     key={job}
-                    title={job}
+                    title={displayJobName(job)}
                     className="flex items-center gap-1.5 rounded-full border bg-muted/50 px-2.5 py-1"
                   >
                     <JobIcon fullName={job} size={16} />
-                    <span className="text-xs font-mono">{JOB_ABBR[job] ?? job}</span>
+                    <span className="text-xs font-mono">{JOB_ABBR[displayJobName(job)] ?? displayJobName(job)}</span>
                   </div>
                 ))}
               </div>

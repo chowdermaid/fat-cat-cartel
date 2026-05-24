@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { animate } from "animejs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Crosshair } from "lucide-react";
 import { percentileBadgeClass } from "../constants";
 import type { MemberData, ZoneEncounter, ContentType } from "../types";
@@ -9,6 +10,7 @@ interface Props {
   member: MemberData | null;
   encounters: ZoneEncounter[];
   contentType: ContentType;
+  showFriendBadges?: boolean;
 }
 
 const SIZE = 260;
@@ -30,7 +32,12 @@ function polygonPath(radius: number, angles: number[]): string {
     .join(" ") + "Z";
 }
 
-export function MemberRadarChart({ member, encounters, contentType }: Props) {
+export function MemberRadarChart({
+  member,
+  encounters,
+  contentType,
+  showFriendBadges = false,
+}: Props) {
   const groupRef = useRef<SVGGElement>(null);
   const n = encounters.length;
   const angles = encounters.map((_, i) => (i / n) * 2 * Math.PI - Math.PI / 2);
@@ -58,6 +65,11 @@ export function MemberRadarChart({ member, encounters, contentType }: Props) {
                 <img src={member.avatarUrl} alt={member.name} className="w-5 h-5 rounded-full object-cover shrink-0" />
               )}
               <span className="truncate">{member.name}</span>
+              {showFriendBadges && member.isFriend && (
+                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                  Friend
+                </Badge>
+              )}
             </div>
           ) : (
             "Radar Chart"

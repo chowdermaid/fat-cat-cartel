@@ -27,6 +27,7 @@ export interface FCMember {
   id: string;
   name: string;
   lodestoneId: string;
+  fcRank: string | null;
 }
 
 export interface PreviousOwnedEntry {
@@ -45,6 +46,8 @@ export interface MemberWithMounts {
   id: string;
   name: string;
   lodestoneId: string;
+  fcRank: string | null;
+  isFriend: boolean;
   avatar: string;
   owned: Record<CollectibleKey, Set<number>>;
   previousOwned: Record<CollectibleKey, number>;

@@ -43,6 +43,8 @@ export interface MemberData extends ParseEntry {
   server: string;
   lodestoneId: string | null;
   avatarUrl: string | null;
+  fcRank: string | null;
+  isFriend: boolean;
 }
 
 export interface ParseBuckets {

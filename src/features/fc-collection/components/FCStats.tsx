@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { COLLECTIBLE_CONFIG, COLLECTIBLE_KEYS } from "../collectibleConfig";
 import type { CollectibleKey } from "../collectibleConfig";
 import type { Collectible, MemberWithMounts } from "../types";
+import type { CollectionScope } from "../hooks/useCollectionScope";
 
 const NICHES: Array<{
   label: string;
@@ -91,6 +92,7 @@ const NICHES: Array<{
 interface FCStatsProps {
   allCollectibles: Record<CollectibleKey, Collectible[]>;
   members: MemberWithMounts[];
+  scope: CollectionScope;
 }
 
 function MemberAvatar({ member }: { member: MemberWithMounts }) {
@@ -118,7 +120,9 @@ function MiniBar({ pct }: { pct: number }) {
   );
 }
 
-export function FCStats({ allCollectibles, members }: FCStatsProps) {
+export function FCStats({ allCollectibles, members, scope }: FCStatsProps) {
+  const groupLabel = scope === "all" ? "Group" : "FC";
+  const personLabel = scope === "all" ? "tracked person" : "FC member";
   const nicheLeaders = useMemo(() => {
     const achieves = allCollectibles.achievements;
     return NICHES.map(({ label, desc, cats, icon }) => {
@@ -331,7 +335,7 @@ export function FCStats({ allCollectibles, members }: FCStatsProps) {
               <CardHeader className="pb-2">
                 <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
                   <Gem className="h-3.5 w-3.5" />
-                  FC's Rarest Item
+                  {groupLabel}'s Rarest Item
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -361,7 +365,7 @@ export function FCStats({ allCollectibles, members }: FCStatsProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              FC Coverage
+              {groupLabel} Coverage
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2.5">
@@ -386,7 +390,7 @@ export function FCStats({ allCollectibles, members }: FCStatsProps) {
               );
             })}
             <p className="text-xs text-muted-foreground pt-0.5">
-              Items owned by at least one FC member
+              Items owned by at least one {personLabel}
             </p>
           </CardContent>
         </Card>
