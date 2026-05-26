@@ -8,6 +8,11 @@
       ".write": true
     },
 
+    "membersLastUpdated": {
+      ".read": true,
+      ".write": true
+    },
+
     "discordLinks": {
       ".read": false,
       ".write": false,
@@ -20,6 +25,16 @@
     },
 
     "discordSignupIssues": {
+      ".read": false,
+      ".write": false
+    },
+
+    "memberExclusions": {
+      ".read": false,
+      ".write": false
+    },
+
+    "friendRefreshQueue": {
       ".read": false,
       ".write": false
     },
@@ -43,6 +58,11 @@
     },
 
     "memberActivity": {
+      ".read": true,
+      ".write": false
+    },
+
+    "memberSyncStatus": {
       ".read": true,
       ".write": false
     },

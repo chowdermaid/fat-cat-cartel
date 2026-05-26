@@ -5,7 +5,7 @@ import type { ZoneData } from "../types";
 const CACHE_TTL = 60 * 60 * 1000;
 
 function cacheKey(zoneId: number) {
-  return `fcc_raidstats_v3_${zoneId}`;
+  return `fcc_raidstats_v4_${zoneId}`;
 }
 
 function loadCachedZone(zoneId: number): ZoneData | null {

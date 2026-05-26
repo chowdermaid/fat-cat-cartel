@@ -6,6 +6,9 @@ import { runRefreshFFLogs } from "./refresh-fflogs";
 import { runRefreshFCCollection } from "./refresh-fc-collection";
 import { runScrapeLodestone } from "./scrape-lodestone";
 import { handleDiscordInteraction } from "./discord/interactions";
+import { deleteTrackedMember, upsertTrackedMember } from "./delete-member";
+import { processQueuedFriendRefreshJobs } from "./friend-refresh";
+import { refreshMemberSourceForAdmin } from "./member-source-refresh";
 import {
   fetchTomestoneProgressionGraph,
   runRefreshTomestoneRaidStats,
@@ -31,6 +34,36 @@ export const triggerFFLogsRefresh = onCall(
   async () => {
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
     return { ok: true };
+  },
+);
+
+export const deleteMember = onCall(
+  { cors: true, timeoutSeconds: 120, region: "us-central1" },
+  async (request) => {
+    return deleteTrackedMember(request.data);
+  },
+);
+
+export const upsertMember = onCall(
+  { cors: true, timeoutSeconds: 60, region: "us-central1" },
+  async (request) => {
+    return upsertTrackedMember(request.data);
+  },
+);
+
+export const refreshMemberSource = onCall(
+  {
+    cors: true,
+    secrets: [fflogsClientId, fflogsClientSecret, tomestoneBearerToken],
+    timeoutSeconds: 180,
+    region: "us-central1",
+  },
+  async (request) => {
+    return refreshMemberSourceForAdmin(request.data, {
+      fflogsClientId: fflogsClientId.value(),
+      fflogsClientSecret: fflogsClientSecret.value(),
+      tomestoneBearerToken: tomestoneBearerToken.value(),
+    });
   },
 );
 
@@ -70,6 +103,22 @@ export const importLodestoneMembers = onCall(
   async () => {
     const result = await runScrapeLodestone();
     return result;
+  },
+);
+
+export const refreshFriendSignup = onSchedule(
+  {
+    schedule: "*/5 * * * *",
+    secrets: [fflogsClientId, fflogsClientSecret, tomestoneBearerToken],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
+  async () => {
+    await processQueuedFriendRefreshJobs({
+      fflogsClientId: fflogsClientId.value(),
+      fflogsClientSecret: fflogsClientSecret.value(),
+      tomestoneBearerToken: tomestoneBearerToken.value(),
+    });
   },
 );
 

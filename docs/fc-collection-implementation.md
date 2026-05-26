@@ -17,7 +17,14 @@ Collection functions:
 
 - `refreshFCCollection`: scheduled every 3 hours at `0 */3 * * *`.
 - `triggerFCCollectionRefresh`: callable admin refresh.
+- `refreshMemberSource`: callable admin per-member refresh. Use source `collection`.
 - No Firebase Function secrets are required for collection refresh.
+
+Related functions:
+
+- `refreshFriendSignup`: scheduled Discord Friend signup worker. It refreshes collection data for a newly signed-up Friend alongside Lodestone, Tomestone, and FFLogs.
+- `deleteMember`: callable admin deletion. It removes generated collection data for the deleted character and writes a member exclusion to prevent later reimport.
+- `upsertMember`: callable admin add or restore. It clears any existing member exclusion.
 
 Refresh implementation lives in `functions/src/refresh-fc-collection.ts`.
 
@@ -55,6 +62,12 @@ Collection-owned paths:
 - `/fcCollection/collectibles/achievements/{itemId}`
 - `/fcCollection/memberData/{lodestoneId}`
 
+Related coordination paths:
+
+- `/memberExclusions/{lodestoneId}`: deleted members that should not be reimported by Lodestone, FFLogs, or Discord signup.
+- `/friendRefreshQueue/{jobId}`: queued Discord Friend signup refresh jobs.
+- `/memberSyncStatus/{lodestoneId}/collection`: per-member collection refresh metadata.
+
 Member data shape:
 
 ```ts
@@ -79,6 +92,8 @@ Member data shape:
 Collectible catalog items are stored as real objects keyed by item ID, not JSON strings. Item payloads are mostly preserved from FFXIV Collect, with achievement categories normalized into the shared `sources` shape so the UI can filter by source type.
 
 `/fcCollection/members` is legacy. The refresh now reads from canonical `/members` only.
+
+The live database may still contain older `/fcCollection/cache` data from a prior schema. Current collection code does not read it.
 
 Job levels are intentionally stored outside `/fcCollection`:
 
@@ -108,6 +123,12 @@ Scheduled or manual collection refresh:
 - Writes collectibles and all member data through one multipath root update.
 
 On a per-member fetch failure, the function keeps the previous owned arrays and previous avatar if available. `lastFetched` remains the previous timestamp or `0`, which lets the UI continue showing stale but usable data rather than wiping that character.
+
+Single-member collection refresh:
+
+- `runRefreshFCCollectionMember(lodestoneId)` refreshes collection data for one tracked character.
+- It is used by the Discord Friend signup queue worker so new Friends can get collection data without waiting for the next full 3-hour scheduled refresh.
+- It writes `/fcCollection/memberData/{lodestoneId}` only. Catalog refresh remains owned by the full collection refresh.
 
 ## Lodestone Job Levels
 
@@ -200,6 +221,8 @@ The selected scope is stored in localStorage as `fcc_collection_scope_v1`. The d
 
 Friends are normal records under `/members` with `fcRank: "Friend"`. They appear in collection views only when scope is `all`, with Friend badges in member-aware controls.
 
+Admin delete writes `/memberExclusions/{lodestoneId}` and removes `/fcCollection/memberData/{lodestoneId}`. This keeps a deleted character from reappearing in collection scope after the next Lodestone or FFLogs sync.
+
 ## Local UI State
 
 Collection matrix member filters persist per collection type:
@@ -245,6 +268,11 @@ Admin panel:
 - Calls `triggerFCCollectionRefresh` through Firebase Functions.
 - Calls `importLodestoneMembers` for names, portraits, servers, and job levels.
 - Manual member profile saves clear `fcc_collection_v3` because rank changes affect FC or Friend scoping.
+- Shows a Collection sync status column in the member table by reading `/fcCollection/memberData`.
+- Reads `/memberSyncStatus` to identify current, stale, failed, missing, or unknown-age collection states.
+- Lets admins refresh one member's collection data from that member's Collection status cell.
+- Uses `deleteMember` and `upsertMember` callables in real Firebase mode. Stub mode falls back to direct local stub writes.
+- Shows a shadcn confirmation dialog before member deletion.
 
 ## Cache Keys
 
@@ -257,6 +285,10 @@ Admin panel:
 
 Admin collection refresh currently does not clear `fcc_collection_v3` after `triggerFCCollectionRefresh` succeeds. A client with a fresh local cache may continue showing old collection data until the 3-hour TTL expires or another action clears the cache.
 
+Admin single-member collection refresh clears `fcc_collection_v3` and `fcc_collectibles_v1` after `refreshMemberSource` succeeds.
+
+Admin member delete clears `fcc_collectibles_v1`, the legacy `fcc_collection_v2`, and raid stat caches. Admin profile save clears `fcc_collection_v3` because rank edits can change FC or Friend scope.
+
 ## Security Rules
 
 Current Realtime Database rules:
@@ -264,6 +296,9 @@ Current Realtime Database rules:
 - `/fcCollection` is publicly readable.
 - `/fcCollection/collectibles` is not client-writable.
 - `/fcCollection/memberData` is not client-writable.
+- `/memberExclusions` is not publicly readable or writable.
+- `/friendRefreshQueue` is not publicly readable or writable.
+- `/memberSyncStatus` is publicly readable and not client-writable.
 
 Collection writes are expected to come from Firebase Admin SDK in Functions. Public reads are an application choice, not a privacy guarantee.
 

@@ -15,6 +15,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -40,8 +41,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Member } from "@/types";
 import type { MemberProfile } from "@/features/member-profile/types";
+import type { MemberCacheData } from "@/features/fc-collection/types";
+import type { ParseEntry, TomestoneActivity } from "@/features/raid-stats/types";
 
 const jobIconMap = import.meta.glob<string>("../../../assets/jobs/*.png", {
   eager: true,
@@ -142,6 +151,53 @@ const FC_RANKS = ["Boss", "Underpaw", "Housecat", "Stray", "Friend"] as const;
 type FCRank = (typeof FC_RANKS)[number];
 type SortKey = "name" | "rank" | "lodestoneId";
 type SortDir = "asc" | "desc";
+type SyncSource = "collection" | "tomestone" | "fflogs" | "lodestone";
+type SyncState =
+  | "current"
+  | "stale"
+  | "missing"
+  | "no-id"
+  | "no-data"
+  | "no-activity"
+  | "failed"
+  | "unknown-age";
+
+type MemberSyncStatus = {
+  collection: SourceSyncStatus;
+  tomestone: SourceSyncStatus;
+  fflogs: SourceSyncStatus;
+  lodestone: SourceSyncStatus;
+};
+
+type SyncMetadata = {
+  status?: "success" | "error";
+  lastAttemptAt?: number;
+  lastSuccessAt?: number;
+  message?: string;
+  details?: unknown;
+};
+
+type SourceSyncStatus = {
+  source: SyncSource;
+  state: SyncState;
+  label: string;
+  detail: string;
+  actionable: boolean;
+};
+
+const SOURCE_LABEL: Record<SyncSource, string> = {
+  collection: "Collection",
+  tomestone: "Tomestone",
+  fflogs: "FFLogs",
+  lodestone: "Lodestone",
+};
+
+const FRESHNESS_MS: Record<SyncSource, number> = {
+  collection: 4 * 60 * 60 * 1000,
+  tomestone: 3 * 60 * 60 * 1000,
+  fflogs: 30 * 60 * 60 * 1000,
+  lodestone: 7 * 24 * 60 * 60 * 1000,
+};
 
 const RANK_ORDER = new Map<string, number>(
   FC_RANKS.map((rank, index) => [rank, index]),
@@ -157,12 +213,159 @@ function clearRaidStatsCache() {
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const key = localStorage.key(i);
-      if (key?.startsWith("fcc_raidstats_v2_") || key?.startsWith("fcc_raidstats_v3_")) {
+      if (key?.startsWith("fcc_raidstats_")) {
         localStorage.removeItem(key);
       }
     }
   } catch {
     return;
+  }
+}
+
+function clearMembersCache() {
+  localStorage.removeItem("fcc_members_v3");
+}
+
+function clearCollectionCache() {
+  localStorage.removeItem("fcc_collection_v3");
+  localStorage.removeItem("fcc_collectibles_v1");
+}
+
+function statusVariant(status: SyncState): "default" | "secondary" | "outline" | "destructive" {
+  if (status === "current") return "default";
+  if (status === "failed") return "destructive";
+  if (status === "stale" || status === "unknown-age") return "secondary";
+  return "outline";
+}
+
+function statusText(status: SyncState): string {
+  if (status === "current") return "Current";
+  if (status === "stale") return "Stale";
+  if (status === "no-id") return "No ID";
+  if (status === "no-data") return "No data";
+  if (status === "no-activity") return "No activity";
+  if (status === "failed") return "Failed";
+  if (status === "unknown-age") return "Unknown age";
+  return "Missing";
+}
+
+function buildStatus(
+  source: SyncSource,
+  hasData: boolean,
+  missingState: SyncState,
+  missingDetail: string,
+  metadata?: SyncMetadata,
+  dataDetail?: string,
+): SourceSyncStatus {
+  const label = SOURCE_LABEL[source];
+  if (metadata?.status === "error") {
+    return {
+      source,
+      state: "failed",
+      label,
+      detail: metadata.message ?? `${label} refresh failed.`,
+      actionable: true,
+    };
+  }
+  if (!hasData) {
+    return {
+      source,
+      state: missingState,
+      label,
+      detail: missingDetail,
+      actionable: true,
+    };
+  }
+  if (!metadata?.lastSuccessAt) {
+    return {
+      source,
+      state: "unknown-age",
+      label,
+      detail: dataDetail ?? `${label} data exists, but no sync timestamp has been recorded.`,
+      actionable: true,
+    };
+  }
+
+  const age = Date.now() - metadata.lastSuccessAt;
+  const detail = `${dataDetail ?? `${label} data exists`}. Last synced ${formatTimeAgo(metadata.lastSuccessAt)}.`;
+  if (age > FRESHNESS_MS[source]) {
+    return {
+      source,
+      state: "stale",
+      label,
+      detail,
+      actionable: true,
+    };
+  }
+  return {
+    source,
+    state: "current",
+    label,
+    detail,
+    actionable: false,
+  };
+}
+
+function StatusCell({
+  status,
+  loading,
+  onRefresh,
+}: {
+  status: SourceSyncStatus;
+  loading: boolean;
+  onRefresh: () => void;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="inline-flex items-center gap-1.5">
+          <Badge
+            variant={statusVariant(status.state)}
+            className={cn(
+              "whitespace-nowrap text-[10px]",
+              (status.state === "missing" || status.state === "no-id") && "text-muted-foreground",
+            )}
+          >
+            {statusText(status.state)}
+          </Badge>
+          {status.actionable && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={(event) => {
+                event.stopPropagation();
+                onRefresh();
+              }}
+              disabled={loading}
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
+              <span className="sr-only">Refresh {status.label}</span>
+            </Button>
+          )}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-64">
+        <p className="font-medium">{status.label}: {statusText(status.state)}</p>
+        <p className="text-xs text-muted-foreground">{status.detail}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+function hasParseData(parse: ParseEntry | null | undefined): boolean {
+  return Object.keys(parse?.savage ?? {}).length > 0
+    || Object.keys(parse?.normal ?? {}).length > 0
+    || parse?.allStars != null;
+}
+
+async function readValue<T>(path: string, fallback: T): Promise<T> {
+  try {
+    const snap = await get(ref(db, path));
+    return (snap.val() ?? fallback) as T;
+  } catch {
+    return fallback;
   }
 }
 
@@ -173,6 +376,9 @@ export function FCMembersManager() {
   const [memberSearch, setMemberSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [syncStatuses, setSyncStatuses] = useState<Record<string, MemberSyncStatus>>({});
+  const [sourceRefreshing, setSourceRefreshing] = useState<Record<string, boolean>>({});
+  const [syncReloadToken, setSyncReloadToken] = useState(0);
 
   const [fetchingCollection, setFetchingCollection] = useState(false);
   const [collectionLastFetched, setCollectionLastFetched] = useState<
@@ -182,6 +388,8 @@ export function FCMembersManager() {
   const [fetchingTomestone, setFetchingTomestone] = useState(false);
   const [fetchingFFLogs, setFetchingFFLogs] = useState(false);
   const [fetchingLodestone, setFetchingLodestone] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deletingMember, setDeletingMember] = useState(false);
 
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [profileDraft, setProfileDraft] = useState<MemberProfile>({
@@ -222,6 +430,107 @@ export function FCMembersManager() {
     );
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSyncStatuses() {
+      const [
+        collectionData,
+        activityData,
+        parseData,
+        sourceStatusData,
+      ] = await Promise.all([
+        readValue<Record<string, MemberCacheData>>("fcCollection/memberData", {}),
+        readValue<Record<string, { tomestone?: { recent?: TomestoneActivity[] | Record<string, TomestoneActivity> } }>>("memberActivity", {}),
+        readValue<Record<string, ParseEntry>>("raidStats/zones/73/parses", {}),
+        readValue<Record<string, Partial<Record<SyncSource, SyncMetadata>>>>("memberSyncStatus", {}),
+      ]);
+
+      if (cancelled) return;
+
+      const next: Record<string, MemberSyncStatus> = {};
+
+      for (const member of members) {
+        const collection = collectionData[member.id];
+        const tomestoneRecent = activityData[member.id]?.tomestone?.recent;
+        const tomestoneCount = Array.isArray(tomestoneRecent)
+          ? tomestoneRecent.length
+          : Object.keys(tomestoneRecent ?? {}).length;
+        const parse = parseData[member.id];
+        const collectionCount = collection
+          ? Object.values(collection.owned ?? {}).reduce((total, owned) => total + owned.length, 0)
+          : 0;
+        const hasTomestoneProfile = member.tomestoneProfile != null;
+        const hasLodestoneData = Boolean(member.avatarUrl || (member.jobLevels && Object.keys(member.jobLevels).length > 0));
+        const sourceStatus = sourceStatusData[member.id] ?? {};
+
+        next[member.id] = {
+          collection: buildStatus(
+            "collection",
+            Boolean(collection),
+            "missing",
+            "No collection member data.",
+            sourceStatus.collection,
+            collection
+              ? `${collectionCount} tracked collectibles, member data fetched ${formatTimeAgo(collection.lastFetched)}`
+              : undefined,
+          ),
+          tomestone: buildStatus(
+            "tomestone",
+            hasTomestoneProfile && tomestoneCount > 0,
+            hasTomestoneProfile ? "no-activity" : "missing",
+            hasTomestoneProfile
+              ? "Tomestone profile exists, but no recent activity rows are stored."
+              : "No Tomestone profile is stored.",
+            sourceStatus.tomestone,
+            hasTomestoneProfile
+              ? `${tomestoneCount} recent activity rows`
+              : undefined,
+          ),
+          fflogs: buildStatus(
+            "fflogs",
+            hasParseData(parse),
+            member.fflogsId ? "no-data" : "no-id",
+            member.fflogsId
+              ? `Linked FFLogs ID ${member.fflogsId}, but no default-zone parses are stored.`
+              : "No FFLogs ID has been resolved for this character.",
+            sourceStatus.fflogs,
+            hasParseData(parse)
+              ? "Parse data found in the current default zone"
+              : undefined,
+          ),
+          lodestone: buildStatus(
+            "lodestone",
+            hasLodestoneData,
+            "missing",
+            "No Lodestone portrait or job levels are stored.",
+            sourceStatus.lodestone,
+            hasLodestoneData
+              ? member.jobLevelsLastFetched
+                ? `Job levels fetched ${formatTimeAgo(member.jobLevelsLastFetched)}`
+                : "Portrait loaded"
+              : undefined,
+          ),
+        };
+      }
+
+      setSyncStatuses(next);
+    }
+
+    if (members.length === 0) {
+      setSyncStatuses({});
+      return;
+    }
+
+    loadSyncStatuses().catch(() => {
+      if (!cancelled) setSyncStatuses({});
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [members, syncReloadToken]);
+
   async function handleRefreshCollection() {
     if (!firebaseApp) {
       toast.error("Not available in local dev mode.");
@@ -258,7 +567,7 @@ export function FCMembersManager() {
       await httpsCallable(getFunctions(firebaseApp), "triggerTomestoneRaidStatsRefresh", {
         timeout: 300_000,
       })();
-      localStorage.removeItem("fcc_members_v3");
+      clearMembersCache();
       clearRaidStatsCache();
       toast.success("Tomestone activity refreshed.", { id });
     } catch (e) {
@@ -281,13 +590,52 @@ export function FCMembersManager() {
       await httpsCallable(getFunctions(firebaseApp), "triggerFFLogsRefresh", {
         timeout: 300_000,
       })();
-      localStorage.removeItem("fcc_members_v3");
+      clearMembersCache();
       clearRaidStatsCache();
       toast.success("FFLogs parses refreshed.", { id });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
     } finally {
       setFetchingFFLogs(false);
+    }
+  }
+
+  async function handleRefreshMemberSource(member: Member & { id: string }, source: SyncSource) {
+    if (!firebaseApp) {
+      toast.error("Not available in local dev mode.");
+      return;
+    }
+
+    const key = `${member.id}:${source}`;
+    setSourceRefreshing((current) => ({ ...current, [key]: true }));
+    const label = SOURCE_LABEL[source];
+    const id = toast.loading(`Refreshing ${label} for ${member.name}...`);
+    try {
+      const { getFunctions, httpsCallable } =
+        await import("firebase/functions");
+      await httpsCallable(
+        getFunctions(firebaseApp),
+        "refreshMemberSource",
+        { timeout: 300_000 },
+      )({ lodestoneId: member.id, source });
+
+      if (source === "lodestone") clearMembersCache();
+      if (source === "collection") clearCollectionCache();
+      if (source === "tomestone" || source === "fflogs") {
+        clearMembersCache();
+        clearRaidStatsCache();
+      }
+      setSyncReloadToken((value) => value + 1);
+      toast.success(`${label} refreshed for ${member.name}.`, { id });
+    } catch (e) {
+      setSyncReloadToken((value) => value + 1);
+      toast.error(e instanceof Error ? e.message : `${label} refresh failed.`, { id });
+    } finally {
+      setSourceRefreshing((current) => {
+        const next = { ...current };
+        delete next[key];
+        return next;
+      });
     }
   }
 
@@ -307,6 +655,7 @@ export function FCMembersManager() {
         { timeout: 300_000 },
       );
       const res = await fn();
+      clearMembersCache();
       const failedText = res.data.failed > 0 ? `, ${res.data.failed} failed` : "";
       toast.success(`${res.data.written}/${res.data.total} tracked members synced${failedText}.`, { id });
     } catch (e) {
@@ -316,21 +665,64 @@ export function FCMembersManager() {
     }
   }
 
-  function handleAdd() {
+  async function handleAdd() {
     if (!name.trim() || !lodestoneId.trim()) return;
     const memberName = name.trim();
-    set(ref(db, `members/${lodestoneId.trim()}`), {
-      name: memberName,
-      avatarUrl: null,
-    });
+    const memberLodestoneId = lodestoneId.trim();
+    if (firebaseApp) {
+      const { getFunctions, httpsCallable } =
+        await import("firebase/functions");
+      await httpsCallable(
+        getFunctions(firebaseApp),
+        "upsertMember",
+      )({ lodestoneId: memberLodestoneId, name: memberName });
+    } else {
+      await Promise.all([
+        set(ref(db, `members/${memberLodestoneId}`), {
+          name: memberName,
+          avatarUrl: null,
+        }),
+        set(ref(db, "membersLastUpdated"), Date.now()),
+      ]);
+    }
+    clearMembersCache();
     setName("");
     setLodestoneId("");
     toast.success(`${memberName} added to roster.`);
   }
 
-  async function handleDeleteMember(id: string, memberName: string) {
-    await remove(ref(db, `members/${id}`));
-    toast.success(`${memberName} removed from roster.`);
+  function handleDeleteMember(id: string, memberName: string) {
+    setDeleteTarget({ id, name: memberName });
+  }
+
+  async function confirmDeleteMember() {
+    if (!deleteTarget) return;
+    setDeletingMember(true);
+    try {
+      if (firebaseApp) {
+        const { getFunctions, httpsCallable } =
+          await import("firebase/functions");
+        await httpsCallable(
+          getFunctions(firebaseApp),
+          "deleteMember",
+        )({ lodestoneId: deleteTarget.id, name: deleteTarget.name });
+      } else {
+        await Promise.all([
+          remove(ref(db, `members/${deleteTarget.id}`)),
+          set(ref(db, "membersLastUpdated"), Date.now()),
+        ]);
+      }
+      clearMembersCache();
+      localStorage.removeItem("fcc_collection_v2");
+      localStorage.removeItem("fcc_collectibles_v1");
+      clearRaidStatsCache();
+      toast.success(`${deleteTarget.name} removed from roster.`);
+      setDeleteTarget(null);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to remove member.");
+    } finally {
+      setDeletingMember(false);
+    }
   }
 
   async function openProfileEditor(memberId: string) {
@@ -372,8 +764,9 @@ export function FCMembersManager() {
       await Promise.all([
         set(ref(db, `memberProfiles/${editingMemberId}`), profileData),
         set(ref(db, `members/${editingMemberId}/fcRank`), rankDraft || null),
+        set(ref(db, "membersLastUpdated"), Date.now()),
       ]);
-      localStorage.removeItem("fcc_members_v3");
+      clearMembersCache();
       localStorage.removeItem("fcc_collection_v3");
       clearRaidStatsCache();
       setEditingMemberId(null);
@@ -551,8 +944,9 @@ export function FCMembersManager() {
               />
             </div>
           </div>
-          <div className="rounded-lg border">
-            <Table>
+          <TooltipProvider delayDuration={150}>
+            <div className="overflow-x-auto rounded-lg border">
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>
@@ -585,71 +979,122 @@ export function FCMembersManager() {
                       <ArrowDownUp className="h-3 w-3" />
                     </button>
                   </TableHead>
+                  <TableHead className="hidden lg:table-cell">Collection</TableHead>
+                  <TableHead className="hidden lg:table-cell">Tomestone</TableHead>
+                  <TableHead className="hidden lg:table-cell">FFLogs</TableHead>
+                  <TableHead className="hidden lg:table-cell">Lodestone</TableHead>
                   <TableHead className="w-24 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredMembers.map((m) => (
-                  <TableRow key={m.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        {m.avatarUrl ? (
-                          <img
-                            src={m.avatarUrl}
-                            alt={m.name}
-                            className="h-8 w-8 rounded-full object-cover"
+                {filteredMembers.map((m) => {
+                  const status = syncStatuses[m.id];
+                  return (
+                    <TableRow key={m.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {m.avatarUrl ? (
+                            <img
+                              src={m.avatarUrl}
+                              alt={m.name}
+                              className="h-8 w-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                              <User className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium">{m.name}</p>
+                            <p className="font-mono text-xs text-muted-foreground md:hidden">
+                              {m.id}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {m.fcRank ? (
+                          <Badge variant={m.fcRank === "Friend" ? "secondary" : "outline"}>
+                            {m.fcRank}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No rank</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
+                        {m.id}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {status ? (
+                          <StatusCell
+                            status={status.collection}
+                            loading={Boolean(sourceRefreshing[`${m.id}:collection`])}
+                            onRefresh={() => handleRefreshMemberSource(m, "collection")}
                           />
                         ) : (
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                          </div>
+                          <span className="text-xs text-muted-foreground">...</span>
                         )}
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-medium">{m.name}</p>
-                          <p className="font-mono text-xs text-muted-foreground md:hidden">
-                            {m.id}
-                          </p>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {status ? (
+                          <StatusCell
+                            status={status.tomestone}
+                            loading={Boolean(sourceRefreshing[`${m.id}:tomestone`])}
+                            onRefresh={() => handleRefreshMemberSource(m, "tomestone")}
+                          />
+                        ) : (
+                          <span className="text-xs text-muted-foreground">...</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {status ? (
+                          <StatusCell
+                            status={status.fflogs}
+                            loading={Boolean(sourceRefreshing[`${m.id}:fflogs`])}
+                            onRefresh={() => handleRefreshMemberSource(m, "fflogs")}
+                          />
+                        ) : (
+                          <span className="text-xs text-muted-foreground">...</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {status ? (
+                          <StatusCell
+                            status={status.lodestone}
+                            loading={Boolean(sourceRefreshing[`${m.id}:lodestone`])}
+                            onRefresh={() => handleRefreshMemberSource(m, "lodestone")}
+                          />
+                        ) : (
+                          <span className="text-xs text-muted-foreground">...</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openProfileEditor(m.id)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteMember(m.id, m.name)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {m.fcRank ? (
-                        <Badge variant={m.fcRank === "Friend" ? "secondary" : "outline"}>
-                          {m.fcRank}
-                        </Badge>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">No rank</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
-                      {m.id}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openProfileEditor(m.id)}
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteMember(m.id, m.name)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
                 {filteredMembers.length === 0 && (
                   <TableRow>
                     <TableCell
-                      colSpan={4}
+                      colSpan={8}
                       className="py-10 text-center text-sm text-muted-foreground"
                     >
                       No members match your search.
@@ -657,8 +1102,9 @@ export function FCMembersManager() {
                   </TableRow>
                 )}
               </TableBody>
-            </Table>
-          </div>
+              </Table>
+            </div>
+          </TooltipProvider>
         </div>
       )}
 
@@ -704,6 +1150,47 @@ export function FCMembersManager() {
           na.finalfantasyxiv.com/lodestone/character
         </a>
       </p>
+
+      <Dialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open && !deletingMember) setDeleteTarget(null);
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Remove {deleteTarget?.name ?? "member"}?</DialogTitle>
+            <DialogDescription>
+              This removes the character from the tracked roster and blocks automatic reimport from future syncs until an admin adds them again.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="rounded-lg border bg-muted/30 px-3 py-2">
+            <p className="text-sm font-medium">{deleteTarget?.name}</p>
+            <p className="font-mono text-xs text-muted-foreground">
+              {deleteTarget?.id}
+            </p>
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteTarget(null)}
+              disabled={deletingMember}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteMember}
+              disabled={deletingMember}
+            >
+              <Trash2 className="h-4 w-4" />
+              {deletingMember ? "Removing..." : "Remove Character"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Profile editor dialog */}
       <Dialog

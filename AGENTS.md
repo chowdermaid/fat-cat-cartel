@@ -108,6 +108,7 @@ functions/
 - Avoid comments unless the reason is non-obvious: hidden constraint, subtle invariant, or workaround for a specific bug.
 - Avoid premature abstraction. Prefer local, direct code until a helper removes real complexity.
 - Do not add unrelated cleanup or features while fixing a bug.
+- For complex implementations, update the relevant documentation in `docs/` as part of the change. If the work touches an existing documented domain, read the matching implementation doc first and use it as the reference for data shape, refresh behavior, cache keys, and verification.
 - Validate at system boundaries: user input, external APIs, Firebase, callable functions.
 - Prefer editing existing files over creating new files.
 - Use Tailwind classes for styling. Do not add CSS modules. Avoid inline styles except for computed visual transforms or canvas-adjacent positioning already used in the app.
@@ -248,4 +249,3 @@ For progress bars or visual meters, keep JSX at the base value and animate the c
 - For functions changes, run `cd functions` then `npm run build`.
 - When changing UI layout, run the dev server and inspect mobile and desktop states if feasible.
 - When changing Firebase data paths, test with `VITE_USE_STUBS=true` first unless the real backend is specifically required.
-

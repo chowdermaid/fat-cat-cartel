@@ -25,7 +25,8 @@ type SignupIssueReason =
   | "lodestone_claimed"
   | "discord_already_linked"
   | "existing_record_conflict"
-  | "lodestone_fetch_failed";
+  | "lodestone_fetch_failed"
+  | "admin_excluded";
 
 export type CommandResult = {
   ok: boolean;
@@ -70,6 +71,12 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
     db.ref(`${LINK_PATH}/${discordUserId}`).get(),
     db.ref(`members/${lodestoneId}`).get(),
   ]);
+  const exclusionSnapshot = await db.ref(`memberExclusions/${lodestoneId}`).get();
+  if (exclusionSnapshot.exists()) {
+    await writeSignupIssue(discordUserId, lodestoneId, "admin_excluded");
+    return fail("That Lodestone ID is not available for self-signup. Please ask an admin for help.");
+  }
+
   const existingLink = existingLinkSnapshot.val() as { lodestoneId?: unknown } | null;
   if (existingLink?.lodestoneId === lodestoneId && existingMemberSnapshot.exists()) {
     await writeDiscordLink(discordUserId, lodestoneId);
@@ -108,8 +115,19 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
   }
 
   const now = Date.now();
+  updates.membersLastUpdated = now;
   updates[`${LINK_PATH}/${discordUserId}`] = { lodestoneId, linkedAt: now };
   updates[`${LINK_BY_LODESTONE_PATH}/${lodestoneId}`] = discordUserId;
+  const refreshJobKey = db.ref("friendRefreshQueue").push().key;
+  if (!refreshJobKey) {
+    throw new Error("Could not allocate friend refresh job.");
+  }
+  updates[`friendRefreshQueue/${refreshJobKey}`] = {
+    lodestoneId,
+    discordUserId,
+    status: "queued",
+    createdAt: now,
+  };
   await db.ref("/").update(updates);
 
   const existingMember = existingMemberSnapshot.val() as TrackedMember | null;
@@ -118,8 +136,7 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
 
   return success([
     `${displayName} is now linked and tracked as ${trackedAs}.`,
-    "Collection data appears after the next collection refresh.",
-    "Raid stats appear after the next Tomestone raid stats refresh.",
+    "Collection and raid data are loading now.",
     "For achievements and titles, visit https://ffxivcollect.com/ and manually refresh your character.",
     "Your Lodestone achievement privacy must be set to everyone/public for achievements and titles to load.",
   ].join("\n"));

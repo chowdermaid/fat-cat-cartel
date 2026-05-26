@@ -5,6 +5,7 @@ import { ZONES, type ZoneConfig, type ZoneEncounter } from "./zones";
 const TOMESTONE_BASE_URL = "https://tomestone.gg/api";
 const ACTIVITY_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const GRAPH_CACHE_TTL = 6 * 60 * 60 * 1000;
+const TOMESTONE_REQUEST_DELAY_MS = 750;
 
 interface MemberNode {
   name: string;
@@ -208,16 +209,29 @@ function configuredEncountersByCanonical(): Map<string, { zone: ZoneConfig; enco
 }
 
 async function fetchTomestone<T>(token: string, path: string): Promise<T> {
-  const res = await fetch(`${TOMESTONE_BASE_URL}${path}`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(`${TOMESTONE_BASE_URL}${path}`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.ok) return (await res.json()) as T;
+
+    if (res.status === 429 && attempt < 3) {
+      const retryAfterSec = Number(res.headers.get("Retry-After"));
+      const delayMs = Number.isFinite(retryAfterSec) && retryAfterSec > 0
+        ? retryAfterSec * 1000
+        : (attempt + 1) * 2500;
+      console.warn(`[tomestone] 429 for ${path}; waiting ${delayMs}ms`);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      continue;
+    }
+
     throw new Error(`Tomestone request failed: ${res.status} ${path}`);
   }
-  return (await res.json()) as T;
+
+  throw new Error(`Tomestone request failed after retries: ${path}`);
 }
 
 function compactProfile(profile: TomestoneCharacter): Record<string, unknown> {
@@ -397,14 +411,82 @@ function computeMostPlayedJobs(zoneMembers: Record<number, Record<string, ZoneMe
 async function batchRun<T, R>(
   items: T[],
   fn: (item: T, index: number) => Promise<R>,
-  concurrency = 3,
+  concurrency = 1,
+  delayMs = 0,
 ): Promise<R[]> {
   const results: R[] = [];
   for (let i = 0; i < items.length; i += concurrency) {
     const batch = items.slice(i, i + concurrency);
     results.push(...(await Promise.all(batch.map((item, j) => fn(item, i + j)))));
+    if (delayMs > 0 && i + concurrency < items.length) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
   }
   return results;
+}
+
+export async function runRefreshTomestoneRaidStatsMember(
+  token: string,
+  lodestoneId: string,
+): Promise<void> {
+  const db = admin.database();
+  const memberSnap = await db.ref(`members/${lodestoneId}`).get();
+  const member = memberSnap.val() as MemberNode | null;
+  if (!member) {
+    throw new Error(`No tracked member found for ${lodestoneId}`);
+  }
+
+  const encounterMap = configuredEncountersByCanonical();
+  const zoneMembers = initializeZoneMembers({ [lodestoneId]: member });
+  const recentByZone = Object.fromEntries(ZONES.map((zone) => [zone.id, [] as CompactActivity[]]));
+  const allActivities: CompactActivity[] = [];
+  const profile = await fetchTomestone<TomestoneCharacter>(token, `/character/profile/${lodestoneId}`);
+  let recent: CompactActivity[] = [];
+  let activityLoaded = false;
+  try {
+    recent = await fetchRecentActivity(token, lodestoneId, encounterMap);
+    activityLoaded = true;
+  } catch (error) {
+    console.warn(
+      `[tomestone] recent activity failed for ${member.name}: ${
+        error instanceof Error ? error.message : "Unknown Tomestone error"
+      }`,
+    );
+  }
+  mergeProfileClears(zoneMembers, lodestoneId, profile, encounterMap);
+  for (const activity of recent) {
+    mergeActivity(zoneMembers, recentByZone, activity);
+    allActivities.push(activity);
+  }
+  computeMostPlayedJobs(zoneMembers, allActivities);
+
+  const now = Date.now();
+  const updates: Record<string, unknown> = {
+    [`members/${lodestoneId}/tomestoneProfile`]: compactProfile(profile),
+    membersLastUpdated: now,
+    "raidStats/lastUpdated": now,
+  };
+  if (activityLoaded) {
+    updates[`memberActivity/${lodestoneId}/tomestone/recent`] = recent;
+  }
+  if (profile.name) updates[`members/${lodestoneId}/name`] = profile.name;
+  if (profile.server) updates[`members/${lodestoneId}/server`] = profile.server;
+  if (profile.avatar && !member.avatarUrl) updates[`members/${lodestoneId}/avatarUrl`] = profile.avatar;
+
+  for (const zone of ZONES) {
+    const prefix = `raidStats/zones/${zone.id}`;
+    const existingRecent = ((await db.ref(`${prefix}/recentActivity`).get()).val() ?? []) as CompactActivity[];
+    updates[`${prefix}/members/${lodestoneId}`] = zoneMembers[zone.id][lodestoneId];
+    updates[`${prefix}/recentActivity`] = [
+      ...recentByZone[zone.id],
+      ...existingRecent.filter((activity) => activity.lodestoneId !== lodestoneId),
+    ]
+      .sort((a, b) => b.startedAt - a.startedAt)
+      .slice(0, 30);
+  }
+
+  await db.ref("/").update(updates);
+  console.log(`[tomestone] refreshed member ${lodestoneId}`);
 }
 
 export async function runRefreshTomestoneRaidStats(token: string): Promise<void> {
@@ -420,10 +502,17 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
   await batchRun(Object.entries(members), async ([lodestoneId, member], index) => {
     console.log(`[tomestone] fetching ${member.name} (${index + 1}/${Object.keys(members).length})`);
     try {
-      const [profile, recent] = await Promise.all([
-        fetchTomestone<TomestoneCharacter>(token, `/character/profile/${lodestoneId}`),
-        fetchRecentActivity(token, lodestoneId, encounterMap),
-      ]);
+      const profile = await fetchTomestone<TomestoneCharacter>(token, `/character/profile/${lodestoneId}`);
+      let recent: CompactActivity[] = [];
+      let activityLoaded = false;
+      try {
+        recent = await fetchRecentActivity(token, lodestoneId, encounterMap);
+        activityLoaded = true;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown Tomestone error";
+        console.warn(`[tomestone] recent activity failed for ${member.name}: ${message}`);
+        failures.push({ lodestoneId, message });
+      }
       mergeProfileClears(zoneMembers, lodestoneId, profile, encounterMap);
       for (const activity of recent) {
         mergeActivity(zoneMembers, recentByZone, activity);
@@ -431,18 +520,21 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
       }
       const updates: Record<string, unknown> = {
         [`members/${lodestoneId}/tomestoneProfile`]: compactProfile(profile),
+        membersLastUpdated: Date.now(),
       };
       if (profile.name) updates[`members/${lodestoneId}/name`] = profile.name;
       if (profile.server) updates[`members/${lodestoneId}/server`] = profile.server;
       if (profile.avatar && !member.avatarUrl) updates[`members/${lodestoneId}/avatarUrl`] = profile.avatar;
-      updates[`memberActivity/${lodestoneId}/tomestone/recent`] = recent;
+      if (activityLoaded) {
+        updates[`memberActivity/${lodestoneId}/tomestone/recent`] = recent;
+      }
       await db.ref("/").update(updates);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown Tomestone error";
       console.warn(`[tomestone] failed ${member.name}: ${message}`);
       failures.push({ lodestoneId, message });
     }
-  });
+  }, 1, TOMESTONE_REQUEST_DELAY_MS);
 
   computeMostPlayedJobs(zoneMembers, allActivities);
 

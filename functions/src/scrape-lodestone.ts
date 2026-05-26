@@ -143,8 +143,12 @@ export async function fetchLodestoneCharacter(lodestoneId: string): Promise<Lode
 
 export async function runScrapeLodestone(): Promise<SyncResult> {
   const db = admin.database();
-  const membersSnap = await db.ref("members").get();
+  const [membersSnap, exclusionsSnap] = await Promise.all([
+    db.ref("members").get(),
+    db.ref("memberExclusions").get(),
+  ]);
   const members = (membersSnap.val() ?? {}) as Record<string, unknown>;
+  const exclusions = (exclusionsSnap.val() ?? {}) as Record<string, unknown>;
   const lodestoneIds = Object.keys(members);
 
   const updates: Record<string, unknown> = {};
@@ -152,6 +156,7 @@ export async function runScrapeLodestone(): Promise<SyncResult> {
   let failed = 0;
 
   for (const lodestoneId of lodestoneIds) {
+    if (exclusions[lodestoneId]) continue;
     try {
       const entry = await fetchLodestoneCharacter(lodestoneId);
       if (!entry) {
@@ -176,6 +181,7 @@ export async function runScrapeLodestone(): Promise<SyncResult> {
   }
 
   if (Object.keys(updates).length > 0) {
+    updates.membersLastUpdated = Date.now();
     await db.ref("/").update(updates);
   }
 

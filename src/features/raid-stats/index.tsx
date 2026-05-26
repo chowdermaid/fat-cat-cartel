@@ -209,9 +209,14 @@ export function RaidStatsPage() {
   const pageRef = useRef<HTMLDivElement>(null);
 
   const joinedMembers = useMemo((): Record<string, MemberData> => {
-    if (!data?.parses) return {};
+    if (!data) return {};
+    const ids = new Set([
+      ...Object.keys(data.parses ?? {}),
+      ...Object.keys(data.members ?? {}),
+    ]);
     return Object.fromEntries(
-      Object.entries(data.parses).map(([id, parse]) => {
+      [...ids].map((id) => {
+        const parse = data.parses?.[id] ?? { savage: {}, normal: {}, allStars: null };
         const identity = members[id];
         return [
           id,
@@ -274,6 +279,12 @@ export function RaidStatsPage() {
       ),
     [data?.recentActivity, includeFriends, members],
   );
+  const hasVisibleParses = Object.values(scopedJoinedMembers).some(
+    (m) =>
+      Object.keys(
+        contentType === "savage" ? (m.savage ?? {}) : (m.normal ?? {}),
+      ).length > 0,
+  );
 
   return (
     <div className="min-w-0 max-w-full overflow-x-hidden space-y-4">
@@ -325,17 +336,12 @@ export function RaidStatsPage() {
             No data yet for this zone. The sync hasn't run yet. Check back soon.
           </p>
         </div>
-      ) : Object.values(scopedJoinedMembers).every(
-          (m) =>
-            Object.keys(
-              contentType === "savage" ? (m.savage ?? {}) : (m.normal ?? {}),
-            ).length === 0,
-        ) ? (
+      ) : !hasVisibleParses && scopedActivity.length === 0 ? (
         <div className="rounded-lg border bg-muted/30 px-6 py-10 text-center space-y-2">
-          <p className="text-sm font-medium">No logs found for this zone</p>
+          <p className="text-sm font-medium">No raid data found for this zone</p>
           <p className="text-sm text-muted-foreground">
             {includeFriends ? "Tracked characters" : "Free company members"}{" "}
-            haven't uploaded logs to FFLogs for this content yet.
+            do not have FFLogs or Tomestone activity for this content yet.
           </p>
         </div>
       ) : (
@@ -348,84 +354,97 @@ export function RaidStatsPage() {
             </p>
           </div>
 
-          {/* Summary strip */}
-          <div className="anim-section">
-            <GuildSummaryStrip
-              members={scopedJoinedMembers}
-              encounters={encounters}
-              contentType={contentType}
-            />
-          </div>
+          {hasVisibleParses && (
+            <>
+              {/* Summary strip */}
+              <div className="anim-section">
+                <GuildSummaryStrip
+                  members={scopedJoinedMembers}
+                  encounters={encounters}
+                  contentType={contentType}
+                />
+              </div>
 
-          {/* Best parse carousel */}
-          <div className="anim-section min-w-0 max-w-full overflow-hidden">
-            <BestParseCarousel
-              members={scopedJoinedMembers}
-              encounters={encounters}
-              contentType={contentType}
-              showFriendBadges={includeFriends}
-            />
-          </div>
+              {/* Best parse carousel */}
+              <div className="anim-section min-w-0 max-w-full overflow-hidden">
+                <BestParseCarousel
+                  members={scopedJoinedMembers}
+                  encounters={encounters}
+                  contentType={contentType}
+                  showFriendBadges={includeFriends}
+                />
+              </div>
 
-          {/* Best per job carousel */}
-          <div className="anim-section min-w-0 max-w-full overflow-hidden">
-            <BestPerJobCarousel
-              members={scopedJoinedMembers}
-              contentType={contentType}
-              showFriendBadges={includeFriends}
-            />
-          </div>
+              {/* Best per job carousel */}
+              <div className="anim-section min-w-0 max-w-full overflow-hidden">
+                <BestPerJobCarousel
+                  members={scopedJoinedMembers}
+                  contentType={contentType}
+                  showFriendBadges={includeFriends}
+                />
+              </div>
 
-          {/* Member board + radar chart */}
-          <div className="anim-section grid min-w-0 gap-6 lg:grid-cols-3">
-            <div className="min-w-0 lg:col-span-2">
-              <MemberBoard
-                members={scopedJoinedMembers}
-                encounters={encounters}
-                contentType={contentType}
-                selectedId={selectedMemberId}
-                onSelect={setSelectedMemberId}
-                showFriendBadges={includeFriends}
-              />
-            </div>
-            <div className="min-w-0">
-              <MemberRadarChart
-                member={selectedMember}
-                encounters={encounters}
-                contentType={contentType}
-                showFriendBadges={includeFriends}
-              />
-            </div>
-          </div>
+              {/* Member board + radar chart */}
+              <div className="anim-section grid min-w-0 gap-6 lg:grid-cols-3">
+                <div className="min-w-0 lg:col-span-2">
+                  <MemberBoard
+                    members={scopedJoinedMembers}
+                    encounters={encounters}
+                    contentType={contentType}
+                    selectedId={selectedMemberId}
+                    onSelect={setSelectedMemberId}
+                    showFriendBadges={includeFriends}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <MemberRadarChart
+                    member={selectedMember}
+                    encounters={encounters}
+                    contentType={contentType}
+                    showFriendBadges={includeFriends}
+                  />
+                </div>
+              </div>
 
-          {/* Parse distribution, savage only */}
-          {contentType === "savage" && (
-            <div className="anim-section">
-              <ParseHistogramCard
-                histogram={scopedHistogram}
-                encounters={encounters}
-                contentType={contentType}
-              />
-            </div>
+              {/* Parse distribution, savage only */}
+              {contentType === "savage" && (
+                <div className="anim-section">
+                  <ParseHistogramCard
+                    histogram={scopedHistogram}
+                    encounters={encounters}
+                    contentType={contentType}
+                  />
+                </div>
+              )}
+
+              {/* Cards grid */}
+              <div className="anim-section grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <AllStarsCard
+                  members={scopedJoinedMembers}
+                  showFriendBadges={includeFriends}
+                />
+                <EncounterAveragesCard
+                  members={scopedJoinedMembers}
+                  encounters={encounters}
+                  contentType={contentType}
+                />
+                <JobDistributionCard
+                  members={scopedJoinedMembers}
+                  contentType={contentType}
+                />
+                {data.recentKill && <RecentKillCard kill={data.recentKill} />}
+              </div>
+            </>
           )}
 
-          {/* Cards grid */}
-          <div className="anim-section grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AllStarsCard
-              members={scopedJoinedMembers}
-              showFriendBadges={includeFriends}
-            />
-            <EncounterAveragesCard
-              members={scopedJoinedMembers}
-              encounters={encounters}
-              contentType={contentType}
-            />
-            <JobDistributionCard
-              members={scopedJoinedMembers}
-              contentType={contentType}
-            />
-            {data.recentKill && <RecentKillCard kill={data.recentKill} />}
-          </div>
+          {!hasVisibleParses && scopedActivity.length > 0 && (
+            <div className="anim-section rounded-lg border bg-muted/30 px-6 py-6 text-center space-y-2">
+              <p className="text-sm font-medium">No FFLogs parses found</p>
+              <p className="text-sm text-muted-foreground">
+                Tomestone activity is available for this zone.
+              </p>
+            </div>
+          )}
 
           <div className="anim-section">
             <TomestoneActivitySection
