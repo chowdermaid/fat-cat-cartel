@@ -1,8 +1,8 @@
 /**
  * Database abstraction. Import from here instead of "firebase/database".
  *
- *   VITE_USE_STUBS=true   → in-memory stub, no Firebase needed
- *   VITE_USE_STUBS=false  → real Firebase Realtime Database
+ *   VITE_USE_STUBS=true   -> in-memory stub, no Firebase needed
+ *   VITE_USE_STUBS=false  -> Firebase Realtime Database or emulator
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

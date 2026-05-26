@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import { HttpsError } from "firebase-functions/v2/https";
 import { ZONES, type ZoneConfig, type ZoneEncounter } from "./zones";
+import { memberSyncError, memberSyncSuccess } from "./member-sync-status";
 
 const TOMESTONE_BASE_URL = "https://tomestone.gg/api";
 const ACTIVITY_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
@@ -498,9 +499,11 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
   const recentByZone = Object.fromEntries(ZONES.map((zone) => [zone.id, [] as CompactActivity[]]));
   const allActivities: CompactActivity[] = [];
   const failures: Array<{ lodestoneId: string; message: string }> = [];
+  const recentFailures: Array<{ lodestoneId: string; message: string }> = [];
 
   await batchRun(Object.entries(members), async ([lodestoneId, member], index) => {
     console.log(`[tomestone] fetching ${member.name} (${index + 1}/${Object.keys(members).length})`);
+    const attemptAt = Date.now();
     try {
       const profile = await fetchTomestone<TomestoneCharacter>(token, `/character/profile/${lodestoneId}`);
       let recent: CompactActivity[] = [];
@@ -511,7 +514,7 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown Tomestone error";
         console.warn(`[tomestone] recent activity failed for ${member.name}: ${message}`);
-        failures.push({ lodestoneId, message });
+        recentFailures.push({ lodestoneId, message });
       }
       mergeProfileClears(zoneMembers, lodestoneId, profile, encounterMap);
       for (const activity of recent) {
@@ -520,6 +523,12 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
       }
       const updates: Record<string, unknown> = {
         [`members/${lodestoneId}/tomestoneProfile`]: compactProfile(profile),
+        [`memberSyncStatus/${lodestoneId}/tomestone`]: memberSyncSuccess(
+          "tomestone",
+          attemptAt,
+          Date.now(),
+          activityLoaded ? "tomestone refreshed." : "tomestone profile refreshed; recent activity failed.",
+        ),
         membersLastUpdated: Date.now(),
       };
       if (profile.name) updates[`members/${lodestoneId}/name`] = profile.name;
@@ -533,6 +542,7 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
       const message = error instanceof Error ? error.message : "Unknown Tomestone error";
       console.warn(`[tomestone] failed ${member.name}: ${message}`);
       failures.push({ lodestoneId, message });
+      await db.ref(`memberSyncStatus/${lodestoneId}/tomestone`).set(memberSyncError(attemptAt, message));
     }
   }, 1, TOMESTONE_REQUEST_DELAY_MS);
 
@@ -548,6 +558,7 @@ export async function runRefreshTomestoneRaidStats(token: string): Promise<void>
       trackedMembers: Object.keys(members).length,
       failedMembers: failures.length,
       failures: failures.slice(0, 20),
+      recentActivityFailures: recentFailures.slice(0, 20),
     },
   };
 

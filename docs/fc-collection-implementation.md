@@ -118,6 +118,7 @@ Scheduled or manual collection refresh:
 - Fetches each tracked character's FFXIV Collect profile for avatar data.
 - Fetches owned mounts, minions, titles, and achievements for each tracked character.
 - Stores owned item IDs as arrays under `/fcCollection/memberData/{lodestoneId}/owned`.
+- Writes `/memberSyncStatus/{lodestoneId}/collection` success for each member with a non-zero `lastFetched`.
 - Stores previous owned counts from the prior refresh under `previousOwned`.
 - Falls back to prior member collection data if a member fetch fails.
 - Writes collectibles and all member data through one multipath root update.
@@ -269,10 +270,11 @@ Admin panel:
 - Calls `importLodestoneMembers` for names, portraits, servers, and job levels.
 - Manual member profile saves clear `fcc_collection_v3` because rank changes affect FC or Friend scoping.
 - Shows a Collection sync status column in the member table by reading `/fcCollection/memberData`.
-- Reads `/memberSyncStatus` to identify current, stale, failed, missing, or unknown-age collection states.
+- Reads `/memberSyncStatus` to identify current, stale, failed, missing, or unknown-age collection states. If metadata is missing, the table falls back to `/fcCollection/memberData/{lodestoneId}/lastFetched` for collection freshness.
 - Lets admins refresh one member's collection data from that member's Collection status cell.
 - Uses `deleteMember` and `upsertMember` callables in real Firebase mode. Stub mode falls back to direct local stub writes.
 - Shows a shadcn confirmation dialog before member deletion.
+- Passes `adminSessionToken` to admin callables. Firebase Functions validate the Discord session against configured Boss and Underpaw role IDs before writes or refreshes.
 
 ## Cache Keys
 
@@ -296,8 +298,10 @@ Current Realtime Database rules:
 - `/fcCollection` is publicly readable.
 - `/fcCollection/collectibles` is not client-writable.
 - `/fcCollection/memberData` is not client-writable.
+- `/members`, `/membersLastUpdated`, `/memberProfiles`, and `/events/easter2026/participants` are not client-writable.
 - `/memberExclusions` is not publicly readable or writable.
 - `/friendRefreshQueue` is not publicly readable or writable.
+- `/adminSessions` and `/adminOAuthStates` are not publicly readable or writable.
 - `/memberSyncStatus` is publicly readable and not client-writable.
 
 Collection writes are expected to come from Firebase Admin SDK in Functions. Public reads are an application choice, not a privacy guarantee.
@@ -325,7 +329,27 @@ Total external requests are roughly `5 + trackedMemberCount * 5`, plus any retri
 
 ## Local Development
 
-Use `VITE_USE_STUBS=true` for ordinary UI work without Firebase credentials.
+Use Firebase emulator mode for normal local development so collection pages exercise production-shaped RTDB data, database rules, and callable admin refreshes.
+
+Recommended root `.env.local` or local `.env` values:
+
+```bash
+VITE_USE_STUBS=false
+VITE_USE_DATABASE_EMULATOR=true
+VITE_DATABASE_EMULATOR_HOST=127.0.0.1
+VITE_DATABASE_EMULATOR_PORT=9000
+VITE_USE_FUNCTIONS_EMULATOR=true
+```
+
+Start the emulators with an imported RTDB export:
+
+```bash
+firebase emulators:start --only functions,database --import=emulator-data --export-on-exit=emulator-data
+```
+
+The import should include `emulator-data/firebase-export-metadata.json` and `emulator-data/database_export/fat-cat-cartel-default-rtdb.json`. With emulator mode enabled, `/members`, `/fcCollection/collectibles`, and `/fcCollection/memberData` are read from the local RTDB emulator instead of the in-memory stub.
+
+Use `VITE_USE_STUBS=true` only as an offline fallback when Firebase credentials or emulators are not available.
 
 The in-memory stub includes:
 
@@ -335,7 +359,7 @@ The in-memory stub includes:
 - Empty titles and achievements.
 - `/fcCollection/memberData` for sample ownership.
 
-Callable refreshes are not available in stub mode because `firebaseApp` is null. The admin panel shows a toast instead of calling Functions.
+Callable refreshes are available only in Firebase mode. In stub mode, `firebaseApp` is null and the admin panel shows a toast instead of calling Functions.
 
 ## Verification
 
@@ -352,4 +376,4 @@ cd functions
 npm run build
 ```
 
-When changing Firebase paths or refresh behavior, test UI behavior with `VITE_USE_STUBS=true` first. Use real Firebase mode only when validating the callable Function or live FFXIV Collect data.
+When changing Firebase paths or refresh behavior, test against the RTDB and Functions emulators first. Use `VITE_USE_STUBS=true` only to confirm the offline fallback still renders.

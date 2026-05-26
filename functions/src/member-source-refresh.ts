@@ -4,8 +4,11 @@ import { runRefreshFCCollectionMember } from "./refresh-fc-collection";
 import { runRefreshFFLogsMember } from "./refresh-fflogs";
 import { runRefreshTomestoneRaidStatsMember } from "./refresh-tomestone-raid-stats";
 import { fetchLodestoneCharacter } from "./scrape-lodestone";
-
-export type MemberSyncSource = "lodestone" | "collection" | "tomestone" | "fflogs";
+import {
+  memberSyncError,
+  memberSyncSuccess,
+  type MemberSyncSource,
+} from "./member-sync-status";
 
 export interface MemberSourceSecrets {
   fflogsClientId: string;
@@ -123,13 +126,7 @@ export async function refreshMemberSource(
     const details = await runSource(source, lodestoneId, secrets);
     const finishedAt = Date.now();
     const message = `${source} refreshed.`;
-    await db.ref(statusPath).set({
-      status: "success",
-      lastAttemptAt: now,
-      lastSuccessAt: finishedAt,
-      message,
-      ...(details ? { details } : {}),
-    });
+    await db.ref(statusPath).set(memberSyncSuccess(source, now, finishedAt, message, details));
 
     return {
       ok: true,
@@ -141,11 +138,7 @@ export async function refreshMemberSource(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown refresh error.";
-    await db.ref(statusPath).set({
-      status: "error",
-      lastAttemptAt: now,
-      message,
-    });
+    await db.ref(statusPath).set(memberSyncError(now, message));
 
     if (error instanceof HttpsError) throw error;
     throw new HttpsError("unavailable", message);

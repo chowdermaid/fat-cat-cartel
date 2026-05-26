@@ -9,6 +9,8 @@ Observed live top-level branches:
 - `/discordLinks`
 - `/discordLinksByLodestone`
 - `/discordSignupIssues`
+- `/adminOAuthStates`
+- `/adminSessions`
 - `/events`
 - `/fcCollection`
 - `/guildMembers`
@@ -45,13 +47,15 @@ Raid and activity data:
 - `/raidStats/fflogsSourceStatus`: FFLogs refresh diagnostics.
 - `/raidStats/zones/{zoneId}`: active raid stats data used by the raid stats dashboard and member profiles.
 - `/memberActivity/{lodestoneId}/tomestone/recent`: compact Tomestone activity rows used by member profiles and admin sync status.
-- `/memberSyncStatus/{lodestoneId}/{source}`: per-member source refresh metadata used by the admin members table.
+- `/memberSyncStatus/{lodestoneId}/{source}`: active per-member source refresh metadata used by the admin members table. Full and single-member refreshes write this path for `lodestone`, `collection`, `tomestone`, and `fflogs`.
 
 Discord and sync coordination:
 
 - `/discordLinks`: Discord user to Lodestone link records.
 - `/discordLinksByLodestone`: reverse lookup for Discord linking.
 - `/discordSignupIssues`: private signup conflict diagnostics.
+- `/adminOAuthStates`: short-lived hashed Discord OAuth state records for web admin login.
+- `/adminSessions`: hashed web admin session records authorized by Boss and Underpaw Discord role IDs. Session records include the linked Lodestone ID, character name, FC rank, and avatar URL copied from `/members/{lodestoneId}`.
 - `/memberExclusions`: admin-deleted members that should not be reimported.
 - `/friendRefreshQueue`: queued Discord Friend signup refresh jobs.
 
@@ -98,16 +102,49 @@ Candidate orphan paths:
 - `/memberActivity/{lodestoneId}`
 - `/memberProgressionGraphs/{lodestoneId}`
 - `/memberSyncStatus/{lodestoneId}`
+- `/adminOAuthStates/{stateHash}` when `expiresAt` is in the past.
+- `/adminSessions/{sessionIdHash}` when `expiresAt` is in the past.
 - `/raidStats/zones/{zoneId}/members/{lodestoneId}`
 - `/raidStats/zones/{zoneId}/parses/{lodestoneId}`
 
 Do not remove an orphan automatically if it exists under `/memberExclusions` and you want to preserve the deletion audit trail.
 
+## Emulator Data
+
+Use emulator imports for normal local development when validating RTDB rules, Functions, Discord OAuth, collection pages, raid stats, and admin flows.
+
+Expected import shape:
+
+```text
+emulator-data/
+  firebase-export-metadata.json
+  database_export/
+    fat-cat-cartel-default-rtdb.json
+```
+
+Start local Functions and RTDB with:
+
+```bash
+firebase emulators:start --only functions,database --import=emulator-data --export-on-exit=emulator-data
+```
+
+The export metadata should point the database emulator at `database_export`. The RTDB data file name must match the database namespace used by the app, such as `fat-cat-cartel-default-rtdb.json`.
+
+When checking imported data through emulator REST, include the namespace:
+
+```text
+http://127.0.0.1:9000/members/20439006.json?ns=fat-cat-cartel-default-rtdb
+```
+
+Private branches such as `/discordLinks`, `/discordLinksByLodestone`, `/adminSessions`, `/adminOAuthStates`, `/memberExclusions`, and `/friendRefreshQueue` should not be readable through client REST. A `401` for those paths is expected because rules deny public reads. Firebase Functions can still read them through the Admin SDK.
+
+Be careful with committed emulator exports. Full production exports can contain Discord IDs, Lodestone link records, OAuth session metadata, signup diagnostics, and other operational data. Commit only intentionally sanitized exports, or keep full exports local and gitignored.
+
 ## Local Storage Keys
 
 These are browser cache keys, not Realtime Database paths:
 
-- `admin_authed`
+- `admin_session_token`: localStorage key for the opaque Discord-backed web session token.
 - `theme`
 - `fcc_members_v3`
 - `fcc_collection_v3`
@@ -116,7 +153,7 @@ These are browser cache keys, not Realtime Database paths:
 - `fcc_raidstats_v4_{zoneId}`
 - `fc-member-filter-{type}`
 
-Older local keys such as `fcc_collection_v2`, `fcc_raidstats_v2_*`, and `fcc_raidstats_v3_*` can be ignored or cleared from browsers. They are not database cleanup targets.
+Older local keys such as `admin_authed`, `fcc_collection_v2`, `fcc_raidstats_v2_*`, and `fcc_raidstats_v3_*` can be ignored or cleared from browsers. They are not database cleanup targets.
 
 ## Suggested Cleanup Flow
 

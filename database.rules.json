@@ -5,12 +5,12 @@
 
     "members": {
       ".read": true,
-      ".write": true
+      ".write": false
     },
 
     "membersLastUpdated": {
       ".read": true,
-      ".write": true
+      ".write": false
     },
 
     "discordLinks": {
@@ -39,6 +39,16 @@
       ".write": false
     },
 
+    "adminOAuthStates": {
+      ".read": false,
+      ".write": false
+    },
+
+    "adminSessions": {
+      ".read": false,
+      ".write": false
+    },
+
     "raidStats": {
       ".read": true,
       ".write": false
@@ -53,7 +63,7 @@
     "memberProfiles": {
       ".read": true,
       "$lodestoneId": {
-        ".write": true
+        ".write": false
       }
     },
 
@@ -71,7 +81,7 @@
       ".read": true,
       "easter2026": {
         "participants": {
-          ".write": true
+          ".write": false
         }
       }
     }

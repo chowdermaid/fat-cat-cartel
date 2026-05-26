@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { memberSyncSuccess } from "./member-sync-status";
 
 const BASE = "https://ffxivcollect.com/api";
 
@@ -35,6 +36,11 @@ interface MemberCacheData {
   lastFetched: number;
 }
 
+interface MemberFetchResult {
+  data: MemberCacheData;
+  refreshed: boolean;
+}
+
 function parseOwned(json: unknown): number[] {
   if (!json) return [];
   const arr = Array.isArray(json) ? json : ((json as { results?: unknown[] })?.results ?? []);
@@ -58,7 +64,7 @@ const FC_ID = "9235616198341716868";
 async function fetchMemberCollectionData(
   lodestoneId: string,
   prev: MemberCacheData | undefined,
-): Promise<MemberCacheData> {
+): Promise<MemberFetchResult> {
   const now = Date.now();
   try {
     const [charRes, ...ownedResponses] = await Promise.all([
@@ -84,7 +90,7 @@ async function fetchMemberCollectionData(
       owned[key] = parseOwned(ownedJsons[i]);
       previousOwned[key] = { count: prev?.owned?.[key]?.length ?? 0, asOf: prev?.lastFetched ?? now };
     }
-    return { avatar, owned, previousOwned, lastFetched: now };
+    return { data: { avatar, owned, previousOwned, lastFetched: now }, refreshed: true };
   } catch (err) {
     console.error(`[fccollect] ${lodestoneId} fetch failed:`, err);
     const owned = {} as Record<CollectibleKey, number[]>;
@@ -93,7 +99,10 @@ async function fetchMemberCollectionData(
       owned[cfg.key] = prev?.owned?.[cfg.key] ?? [];
       previousOwned[cfg.key] = prev?.previousOwned?.[cfg.key] ?? { count: 0, asOf: now };
     }
-    return { avatar: prev?.avatar ?? "", owned, previousOwned, lastFetched: prev?.lastFetched ?? 0 };
+    return {
+      data: { avatar: prev?.avatar ?? "", owned, previousOwned, lastFetched: prev?.lastFetched ?? 0 },
+      refreshed: false,
+    };
   }
 }
 
@@ -102,7 +111,7 @@ export async function runRefreshFCCollectionMember(lodestoneId: string): Promise
   const prev = ((await db.ref(`fcCollection/memberData/${lodestoneId}`).get()).val() ?? undefined) as
     | MemberCacheData
     | undefined;
-  const data = await fetchMemberCollectionData(lodestoneId, prev);
+  const { data } = await fetchMemberCollectionData(lodestoneId, prev);
   await db.ref(`fcCollection/memberData/${lodestoneId}`).set(data);
   console.log(`[fccollect] written member ${lodestoneId}`);
 }
@@ -162,15 +171,24 @@ export async function runRefreshFCCollection(): Promise<void> {
   // 3. Fetch per-member owned items (all concurrent)
   const memberResults = await Promise.all(
     lodestoneIds.map(async (lodestoneId) => {
+      const attemptAt = Date.now();
       const prev = prevMemberData[lodestoneId];
-      return { lodestoneId, data: await fetchMemberCollectionData(lodestoneId, prev) };
+      return { lodestoneId, attemptAt, ...(await fetchMemberCollectionData(lodestoneId, prev)) };
     }),
   );
 
   // 4. Write collectibles and member data atomically
   const memberDataUpdate: Record<string, unknown> = { ...collectiblesUpdate };
-  for (const { lodestoneId, data } of memberResults) {
+  for (const { lodestoneId, attemptAt, data, refreshed } of memberResults) {
     memberDataUpdate[`fcCollection/memberData/${lodestoneId}`] = data;
+    if (refreshed && data.lastFetched > 0) {
+      memberDataUpdate[`memberSyncStatus/${lodestoneId}/collection`] = memberSyncSuccess(
+        "collection",
+        attemptAt,
+        data.lastFetched,
+        "collection refreshed.",
+      );
+    }
   }
 
   await db.ref("/").update(memberDataUpdate);

@@ -99,6 +99,7 @@ FFLogs refresh:
 - Tracks and logs 429 retries during GraphQL calls. No persistent `/raidStats/rateLimit` object is currently written.
 - Skips stale cleanup for Friend records so Friends are not deleted by guild roster sync.
 - Skips members listed under `/memberExclusions` so admin deletions survive later FFLogs refreshes.
+- Writes `/memberSyncStatus/{lodestoneId}/fflogs` success for resolved members included in the refresh, and error metadata for members whose per-character rankings failed.
 
 Tomestone refresh:
 
@@ -111,6 +112,7 @@ Tomestone refresh:
 - Writes up to 30 recent activities per zone to `/raidStats/zones/{zoneId}/recentActivity`.
 - Writes `/raidStats/sourceStatus` with request count, tracked member count, failed member count, and up to 20 failures.
 - May enrich `/members/{lodestoneId}` with Tomestone name, server, avatar URL when missing, and `tomestoneProfile`.
+- Writes `/memberSyncStatus/{lodestoneId}/tomestone` success when the profile fetch succeeds. Recent activity failures are recorded in source diagnostics but do not make the member status fail.
 
 Friend signup refresh:
 
@@ -149,7 +151,9 @@ Admin refresh controls:
 - Lodestone: `importLodestoneMembers`
 - Single member source refresh: `refreshMemberSource`
 
-The admin member table also reads `/fcCollection/memberData`, `/memberActivity`, `/raidStats/zones/73/parses`, and `/memberSyncStatus` to show per-member sync status columns for Collection, Tomestone, FFLogs, and Lodestone. Missing, stale, failed, no ID, no data, no activity, and unknown-age states expose a per-source refresh button in the status cell. Tooltips explain the reason for each state.
+These callable refreshes require `adminSessionToken`. Firebase Functions validate the Discord session server-side with the configured Boss and Underpaw role IDs before running any admin refresh. Discord Administrator permission is not checked.
+
+The admin member table also reads `/fcCollection/memberData`, `/memberActivity`, `/raidStats/zones/73/parses`, and `/memberSyncStatus` to show per-member sync status columns for Collection, Tomestone, FFLogs, and Lodestone. Missing, stale, failed, no ID, no data, no activity, and unknown-age states expose a per-source refresh button in the status cell. Collection can fall back to `/fcCollection/memberData/{lodestoneId}/lastFetched` and Lodestone can fall back to `/members/{lodestoneId}/jobLevelsLastFetched` when sync metadata is not present. Tomestone and FFLogs require `/memberSyncStatus` because global timestamps do not prove a specific member refreshed successfully. Tooltips explain the reason for each state.
 
 Admin deletion uses a shadcn confirmation dialog before calling `deleteMember`. The function removes the character from `/members`, generated collection data, Tomestone activity, progression graph cache, and raid zone member or parse entries, then recomputes zone histograms.
 
@@ -185,4 +189,24 @@ npm run build
 npm run build
 ```
 
-Use `VITE_USE_STUBS=true` for local UI work. The in-memory stub includes FFLogs-shaped parse data and Tomestone-shaped activity data.
+Use Firebase emulator mode for normal local development so raid stats pages exercise production-shaped RTDB data, database rules, and callable admin refreshes.
+
+Recommended root `.env.local` or local `.env` values:
+
+```bash
+VITE_USE_STUBS=false
+VITE_USE_DATABASE_EMULATOR=true
+VITE_DATABASE_EMULATOR_HOST=127.0.0.1
+VITE_DATABASE_EMULATOR_PORT=9000
+VITE_USE_FUNCTIONS_EMULATOR=true
+```
+
+Start local Functions and RTDB with imported data:
+
+```bash
+firebase emulators:start --only functions,database --import=emulator-data --export-on-exit=emulator-data
+```
+
+The import should include `emulator-data/firebase-export-metadata.json` and `emulator-data/database_export/fat-cat-cartel-default-rtdb.json`. With emulator mode enabled, `/members`, `/raidStats`, `/memberActivity`, and `/memberSyncStatus` are read from the local RTDB emulator.
+
+Use `VITE_USE_STUBS=true` only as an offline fallback. The in-memory stub includes FFLogs-shaped parse data and Tomestone-shaped activity data, but it does not exercise RTDB rules or callable Functions.

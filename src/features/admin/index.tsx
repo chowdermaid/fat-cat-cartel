@@ -10,18 +10,28 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { LogOut, CalendarDays, ArrowLeft, Settings } from "lucide-react";
 import { useAdminAuth } from "./hooks/useAdminAuth";
-import { AdminLogin } from "./components/AdminLogin";
+import { AuthAccessState } from "@/components/auth/AuthAccessState";
 import { ParticipantManager } from "./components/ParticipantManager";
 import { FCMembersManager } from "./components/FCMembersManager";
 
 type SelectedView = "easter2026" | "fc-members";
 
 export function AdminPage() {
-  const { authed, error, login, logout } = useAdminAuth();
+  const { authed, checking, error, login, logout, session, sessionToken, unauthorized } = useAdminAuth();
   const [selectedView, setSelectedView] = useState<SelectedView>("fc-members");
 
   if (!authed) {
-    return <AdminLogin error={error} onLogin={login} />;
+    return (
+      <AuthAccessState
+        title="Admin Panel"
+        description={unauthorized
+          ? "This page requires a linked character and a Boss or Underpaw Discord role."
+          : "Login with Discord to verify your linked character and admin role."}
+        error={error}
+        checking={checking}
+        onLogin={login}
+      />
+    );
   }
 
   if (selectedView === "easter2026") {
@@ -40,7 +50,7 @@ export function AdminPage() {
             <div>
               <h1 className="text-3xl font-bold">Easter Social 2026</h1>
               <p className="mt-1 text-muted-foreground">
-                Manage participants and scores.
+                Welcome, {session?.characterName ?? "admin"}. Manage participants and scores.
               </p>
             </div>
           </div>
@@ -49,7 +59,7 @@ export function AdminPage() {
             Sign out
           </Button>
         </div>
-        <ParticipantManager />
+        <ParticipantManager adminSessionToken={sessionToken} />
       </div>
     );
   }
@@ -59,7 +69,9 @@ export function AdminPage() {
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <p className="mt-1 text-muted-foreground">User management console.</p>
+          <p className="mt-1 text-muted-foreground">
+            Welcome, {session?.characterName ?? "admin"}. User management console.
+          </p>
         </div>
         <Button variant="outline" size="sm" onClick={logout}>
           <LogOut className="h-4 w-4" />
@@ -67,7 +79,7 @@ export function AdminPage() {
         </Button>
       </div>
 
-      <FCMembersManager />
+      <FCMembersManager adminSessionToken={sessionToken} />
 
       <Card>
         <CardHeader className="pb-3">

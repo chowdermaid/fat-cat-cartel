@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { memberSyncError, memberSyncSuccess } from "./member-sync-status";
 
 export interface LodestoneEntry {
   lodestoneId: string;
@@ -157,10 +158,15 @@ export async function runScrapeLodestone(): Promise<SyncResult> {
 
   for (const lodestoneId of lodestoneIds) {
     if (exclusions[lodestoneId]) continue;
+    const attemptAt = Date.now();
     try {
       const entry = await fetchLodestoneCharacter(lodestoneId);
       if (!entry) {
         failed++;
+        updates[`memberSyncStatus/${lodestoneId}/lodestone`] = memberSyncError(
+          attemptAt,
+          "Lodestone character was not found.",
+        );
         continue;
       }
       if (entry.name) updates[`members/${lodestoneId}/name`] = entry.name;
@@ -172,10 +178,23 @@ export async function runScrapeLodestone(): Promise<SyncResult> {
       } else {
         console.warn(`[lodestone] No job levels parsed for ${lodestoneId}`);
       }
+      updates[`memberSyncStatus/${lodestoneId}/lodestone`] = memberSyncSuccess(
+        "lodestone",
+        attemptAt,
+        Date.now(),
+        "lodestone refreshed.",
+        {
+          name: entry.name,
+          server: entry.server,
+          jobLevels: Object.keys(entry.jobLevels).length,
+        },
+      );
       written++;
       await new Promise((resolve) => setTimeout(resolve, 300));
     } catch (err) {
       failed++;
+      const message = err instanceof Error ? err.message : "Unknown Lodestone error.";
+      updates[`memberSyncStatus/${lodestoneId}/lodestone`] = memberSyncError(attemptAt, message);
       console.warn(`[lodestone] Failed to sync ${lodestoneId}:`, err);
     }
   }

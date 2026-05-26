@@ -33,7 +33,10 @@ export type CommandResult = {
   message: string;
 };
 
-export async function linkDiscordUser(discordUserId: string, lodestoneIdInput: string): Promise<CommandResult> {
+export async function linkDiscordUser(
+  discordUserId: string,
+  lodestoneIdInput: string,
+): Promise<CommandResult> {
   const lodestoneId = lodestoneIdInput.trim();
 
   if (!isValidLodestoneId(lodestoneId)) {
@@ -56,10 +59,15 @@ export async function linkDiscordUser(discordUserId: string, lodestoneIdInput: s
   await writeDiscordLink(discordUserId, lodestoneId);
 
   const member = memberSnapshot.val() as { name?: string };
-  return success(`Linked your Discord account to ${member.name ?? `Lodestone ${lodestoneId}`}.`);
+  return success(
+    `Linked your Discord account to ${member.name ?? `Lodestone ${lodestoneId}`}.`,
+  );
 }
 
-export async function signupFriend(discordUserId: string, lodestoneIdInput: string): Promise<CommandResult> {
+export async function signupFriend(
+  discordUserId: string,
+  lodestoneIdInput: string,
+): Promise<CommandResult> {
   const lodestoneId = lodestoneIdInput.trim();
 
   if (!isValidLodestoneId(lodestoneId)) {
@@ -71,16 +79,27 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
     db.ref(`${LINK_PATH}/${discordUserId}`).get(),
     db.ref(`members/${lodestoneId}`).get(),
   ]);
-  const exclusionSnapshot = await db.ref(`memberExclusions/${lodestoneId}`).get();
+  const exclusionSnapshot = await db
+    .ref(`memberExclusions/${lodestoneId}`)
+    .get();
   if (exclusionSnapshot.exists()) {
     await writeSignupIssue(discordUserId, lodestoneId, "admin_excluded");
-    return fail("That Lodestone ID is not available for self-signup. Please ask an admin for help.");
+    return fail(
+      "That Lodestone ID is not available for self-signup. Please ask an admin for help.",
+    );
   }
 
-  const existingLink = existingLinkSnapshot.val() as { lodestoneId?: unknown } | null;
-  if (existingLink?.lodestoneId === lodestoneId && existingMemberSnapshot.exists()) {
+  const existingLink = existingLinkSnapshot.val() as {
+    lodestoneId?: unknown;
+  } | null;
+  if (
+    existingLink?.lodestoneId === lodestoneId &&
+    existingMemberSnapshot.exists()
+  ) {
     await writeDiscordLink(discordUserId, lodestoneId);
-    return success("You are already linked to that Lodestone ID. Your Friend tracking is set up.");
+    return success(
+      "You are already linked to that Lodestone ID. Your Friend tracking is set up.",
+    );
   }
 
   const conflict = await findLinkConflict(discordUserId, lodestoneId);
@@ -93,14 +112,29 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
   try {
     character = await fetchLodestoneCharacter(lodestoneId);
   } catch (error) {
-    console.warn(`[discord] Lodestone signup fetch failed for ${lodestoneId}:`, error);
-    await writeSignupIssue(discordUserId, lodestoneId, "lodestone_fetch_failed");
-    return fail("I could not load that Lodestone character. Please check the ID and ask an admin if it keeps happening.");
+    console.warn(
+      `[discord] Lodestone signup fetch failed for ${lodestoneId}:`,
+      error,
+    );
+    await writeSignupIssue(
+      discordUserId,
+      lodestoneId,
+      "lodestone_fetch_failed",
+    );
+    return fail(
+      "I could not load that Lodestone character. Please check the ID and ask an admin if it keeps happening.",
+    );
   }
 
   if (!character || !character.name) {
-    await writeSignupIssue(discordUserId, lodestoneId, "lodestone_fetch_failed");
-    return fail("I could not find a character for that Lodestone ID. Please check the ID and try again.");
+    await writeSignupIssue(
+      discordUserId,
+      lodestoneId,
+      "lodestone_fetch_failed",
+    );
+    return fail(
+      "I could not find a character for that Lodestone ID. Please check the ID and try again.",
+    );
   }
 
   const updates: Record<string, unknown> = {};
@@ -134,15 +168,19 @@ export async function signupFriend(discordUserId: string, lodestoneIdInput: stri
   const displayName = existingMember?.name ?? character.name;
   const trackedAs = existingMember?.fcRank ? existingMember.fcRank : "Friend";
 
-  return success([
-    `${displayName} is now linked and tracked as ${trackedAs}.`,
-    "Collection and raid data are loading now.",
-    "For achievements and titles, visit https://ffxivcollect.com/ and manually refresh your character.",
-    "Your Lodestone achievement privacy must be set to everyone/public for achievements and titles to load.",
-  ].join("\n"));
+  return success(
+    [
+      `${displayName} is now linked and tracked as ${trackedAs}.`,
+      "Collection and raid data are loading now.",
+      "For achievements and titles, visit https://ffxivcollect.com/ and manually refresh your character.",
+      "Your Lodestone achievement privacy must be set to everyone/public for achievements and titles to load.",
+    ].join("\n"),
+  );
 }
 
-export async function viewFriendStatus(discordUserId: string): Promise<CommandResult> {
+export async function viewFriendStatus(
+  discordUserId: string,
+): Promise<CommandResult> {
   const linked = await getLinkedLodestoneId(discordUserId);
   if (!linked.ok) return linked;
 
@@ -155,16 +193,21 @@ export async function viewFriendStatus(discordUserId: string): Promise<CommandRe
   const member = (memberSnapshot.val() ?? {}) as TrackedMember;
   const name = member.name ?? `Lodestone ${linked.lodestoneId}`;
 
-  return success([
-    `Tracking status for ${name}${member.server ? ` @ ${member.server}` : ""}`,
-    `Lodestone ID: ${linked.lodestoneId}`,
-    `Rank: ${member.fcRank ?? "Not set"}`,
-    `Collection cache: ${collectionSnapshot.exists() ? "Loaded" : "Waiting for refresh"}`,
-    `Raid stats: ${member.tomestoneProfile ? "Tomestone loaded" : "Waiting for raid stats refresh"}`,
-  ].join("\n"));
+  return success(
+    [
+      `Tracking status for ${name}${member.server ? ` @ ${member.server}` : ""}`,
+      `Lodestone ID: ${linked.lodestoneId}`,
+      `Rank: ${member.fcRank ?? "Not set"}`,
+      `Collection cache: ${collectionSnapshot.exists() ? "Loaded" : "Waiting for refresh"}`,
+      `Raid stats: ${member.tomestoneProfile ? "Tomestone loaded" : "Waiting for raid stats refresh"}`,
+    ].join("\n"),
+  );
 }
 
-export async function updateBio(discordUserId: string, textInput: string): Promise<CommandResult> {
+export async function updateBio(
+  discordUserId: string,
+  textInput: string,
+): Promise<CommandResult> {
   const linked = await getLinkedLodestoneId(discordUserId);
   if (!linked.ok) return linked;
 
@@ -177,11 +220,18 @@ export async function updateBio(discordUserId: string, textInput: string): Promi
     return fail(`Bio must be ${BIO_MAX_LENGTH} characters or fewer.`);
   }
 
-  await admin.database().ref(`memberProfiles/${linked.lodestoneId}`).update({ bio });
+  await admin
+    .database()
+    .ref(`memberProfiles/${linked.lodestoneId}`)
+    .update({ bio });
   return success("Updated your profile bio.");
 }
 
-export async function updateBirthday(discordUserId: string, month: number, day: number): Promise<CommandResult> {
+export async function updateBirthday(
+  discordUserId: string,
+  month: number,
+  day: number,
+): Promise<CommandResult> {
   const linked = await getLinkedLodestoneId(discordUserId);
   if (!linked.ok) return linked;
 
@@ -190,12 +240,18 @@ export async function updateBirthday(discordUserId: string, month: number, day: 
   }
 
   const birthday = `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  await admin.database().ref(`memberProfiles/${linked.lodestoneId}`).update({ birthday });
+  await admin
+    .database()
+    .ref(`memberProfiles/${linked.lodestoneId}`)
+    .update({ birthday });
 
   return success(`Updated your birthday to ${birthday}.`);
 }
 
-export async function addJob(discordUserId: string, job: string): Promise<CommandResult> {
+export async function addJob(
+  discordUserId: string,
+  job: string,
+): Promise<CommandResult> {
   const linked = await getLinkedLodestoneId(discordUserId);
   if (!linked.ok) return linked;
 
@@ -204,7 +260,9 @@ export async function addJob(discordUserId: string, job: string): Promise<Comman
     return fail("That job is not recognized.");
   }
 
-  const profileRef = admin.database().ref(`memberProfiles/${linked.lodestoneId}`);
+  const profileRef = admin
+    .database()
+    .ref(`memberProfiles/${linked.lodestoneId}`);
   const profile = ((await profileRef.get()).val() ?? {}) as MemberProfile;
   const currentJobs = Array.isArray(profile.mainJobs) ? profile.mainJobs : [];
 
@@ -216,7 +274,10 @@ export async function addJob(discordUserId: string, job: string): Promise<Comman
   return success(`Added ${canonicalJob} to your main jobs.`);
 }
 
-export async function removeJob(discordUserId: string, job: string): Promise<CommandResult> {
+export async function removeJob(
+  discordUserId: string,
+  job: string,
+): Promise<CommandResult> {
   const linked = await getLinkedLodestoneId(discordUserId);
   if (!linked.ok) return linked;
 
@@ -225,10 +286,14 @@ export async function removeJob(discordUserId: string, job: string): Promise<Com
     return fail("That job is not recognized.");
   }
 
-  const profileRef = admin.database().ref(`memberProfiles/${linked.lodestoneId}`);
+  const profileRef = admin
+    .database()
+    .ref(`memberProfiles/${linked.lodestoneId}`);
   const profile = ((await profileRef.get()).val() ?? {}) as MemberProfile;
   const currentJobs = Array.isArray(profile.mainJobs) ? profile.mainJobs : [];
-  const nextJobs = currentJobs.filter((existingJob) => existingJob !== canonicalJob);
+  const nextJobs = currentJobs.filter(
+    (existingJob) => existingJob !== canonicalJob,
+  );
 
   if (nextJobs.length === currentJobs.length) {
     return success(`${canonicalJob} was not on your main jobs.`);
@@ -238,7 +303,9 @@ export async function removeJob(discordUserId: string, job: string): Promise<Com
   return success(`Removed ${canonicalJob} from your main jobs.`);
 }
 
-export async function viewProfile(discordUserId: string): Promise<CommandResult> {
+export async function viewProfile(
+  discordUserId: string,
+): Promise<CommandResult> {
   const linked = await getLinkedLodestoneId(discordUserId);
   if (!linked.ok) return linked;
 
@@ -248,21 +315,32 @@ export async function viewProfile(discordUserId: string): Promise<CommandResult>
     db.ref(`memberProfiles/${linked.lodestoneId}`).get(),
   ]);
 
-  const member = (memberSnapshot.val() ?? {}) as { name?: string; server?: string };
+  const member = (memberSnapshot.val() ?? {}) as {
+    name?: string;
+    server?: string;
+  };
   const profile = (profileSnapshot.val() ?? {}) as MemberProfile;
-  const jobs = Array.isArray(profile.mainJobs) && profile.mainJobs.length > 0 ? profile.mainJobs.join(", ") : "Not set";
+  const jobs =
+    Array.isArray(profile.mainJobs) && profile.mainJobs.length > 0
+      ? profile.mainJobs.join(", ")
+      : "Not set";
 
-  return success([
-    `Profile for ${member.name ?? linked.lodestoneId}${member.server ? ` @ ${member.server}` : ""}`,
-    `Bio: ${profile.bio || "Not set"}`,
-    `Birthday: ${profile.birthday || "Not set"}`,
-    `Main jobs: ${jobs}`,
-  ].join("\n"));
+  return success(
+    [
+      `Profile for ${member.name ?? linked.lodestoneId}${member.server ? ` @ ${member.server}` : ""}`,
+      `Bio: ${profile.bio || "Not set"}`,
+      `Birthday: ${profile.birthday || "Not set"}`,
+      `Main jobs: ${jobs}`,
+    ].join("\n"),
+  );
 }
 
 function normalizeJob(job: string): string | null {
   const normalized = job.trim().toLowerCase();
-  return FFXIV_JOBS.find((candidate) => candidate.toLowerCase() === normalized) ?? null;
+  return (
+    FFXIV_JOBS.find((candidate) => candidate.toLowerCase() === normalized) ??
+    null
+  );
 }
 
 function isValidBirthday(month: number, day: number): boolean {
@@ -273,17 +351,19 @@ function isValidBirthday(month: number, day: number): boolean {
   return day <= daysByMonth[month - 1];
 }
 
-async function getLinkedLodestoneId(discordUserId: string): Promise<
-  | { ok: true; lodestoneId: string }
-  | { ok: false; message: string }
-> {
-  const snapshot = await admin.database().ref(`${LINK_PATH}/${discordUserId}`).get();
+async function getLinkedLodestoneId(
+  discordUserId: string,
+): Promise<{ ok: true; lodestoneId: string } | { ok: false; message: string }> {
+  const snapshot = await admin
+    .database()
+    .ref(`${LINK_PATH}/${discordUserId}`)
+    .get();
   const link = snapshot.val() as { lodestoneId?: unknown } | null;
 
   if (!link || typeof link.lodestoneId !== "string") {
     return {
       ok: false,
-      message: "Link your Lodestone profile first with /link lodestone_id.",
+      message: "No lodestone ID linked.",
     };
   }
 
@@ -304,7 +384,9 @@ async function findLinkConflict(
     db.ref(`${LINK_BY_LODESTONE_PATH}/${lodestoneId}`).get(),
   ]);
 
-  const existingDiscordLink = discordLinkSnapshot.val() as { lodestoneId?: unknown } | null;
+  const existingDiscordLink = discordLinkSnapshot.val() as {
+    lodestoneId?: unknown;
+  } | null;
   if (existingDiscordLink?.lodestoneId === lodestoneId) {
     return null;
   }
@@ -312,38 +394,59 @@ async function findLinkConflict(
   if (typeof existingDiscordLink?.lodestoneId === "string") {
     return {
       reason: "discord_already_linked",
-      message: "Your Discord account is already linked to another Lodestone ID. Please ask an admin to change it.",
+      message:
+        "Your Discord account is already linked to another Lodestone ID. Please ask an admin to change it.",
     };
   }
 
   const reverseLinkedUser = lodestoneLinkSnapshot.val();
-  if (typeof reverseLinkedUser === "string" && reverseLinkedUser !== discordUserId) {
+  if (
+    typeof reverseLinkedUser === "string" &&
+    reverseLinkedUser !== discordUserId
+  ) {
     return {
       reason: "lodestone_claimed",
-      message: "That Lodestone ID is already linked to another Discord user. Please ask an admin for help.",
+      message:
+        "That Lodestone ID is already linked to another Discord user. Please ask an admin for help.",
     };
   }
 
-  const legacyLinkSnapshot = await db.ref(LINK_PATH).orderByChild("lodestoneId").equalTo(lodestoneId).get();
-  const legacyLinks = (legacyLinkSnapshot.val() ?? {}) as Record<string, unknown>;
-  const legacyUserIds = Object.keys(legacyLinks).filter((userId) => userId !== discordUserId);
+  const legacyLinkSnapshot = await db
+    .ref(LINK_PATH)
+    .orderByChild("lodestoneId")
+    .equalTo(lodestoneId)
+    .get();
+  const legacyLinks = (legacyLinkSnapshot.val() ?? {}) as Record<
+    string,
+    unknown
+  >;
+  const legacyUserIds = Object.keys(legacyLinks).filter(
+    (userId) => userId !== discordUserId,
+  );
 
   if (legacyUserIds.length > 0) {
     return {
       reason: "lodestone_claimed",
-      message: "That Lodestone ID is already linked to another Discord user. Please ask an admin for help.",
+      message:
+        "That Lodestone ID is already linked to another Discord user. Please ask an admin for help.",
     };
   }
 
   return null;
 }
 
-async function writeDiscordLink(discordUserId: string, lodestoneId: string): Promise<void> {
+async function writeDiscordLink(
+  discordUserId: string,
+  lodestoneId: string,
+): Promise<void> {
   const now = Date.now();
-  await admin.database().ref("/").update({
-    [`${LINK_PATH}/${discordUserId}`]: { lodestoneId, linkedAt: now },
-    [`${LINK_BY_LODESTONE_PATH}/${lodestoneId}`]: discordUserId,
-  });
+  await admin
+    .database()
+    .ref("/")
+    .update({
+      [`${LINK_PATH}/${discordUserId}`]: { lodestoneId, linkedAt: now },
+      [`${LINK_BY_LODESTONE_PATH}/${lodestoneId}`]: discordUserId,
+    });
 }
 
 async function writeSignupIssue(

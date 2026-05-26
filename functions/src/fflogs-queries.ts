@@ -7,7 +7,7 @@ export async function queryFFLogs(
   query: string,
   variables?: Record<string, unknown>,
   maxRetries = 2,
-  stats?: { rateLimitRetries: number },
+  stats?: { rateLimitRetries: number; rateLimitUntil?: number },
 ): Promise<unknown> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const res = await fetch("https://www.fflogs.com/api/v2/client", {
@@ -22,6 +22,10 @@ export async function queryFFLogs(
     if (res.status === 429) {
       if (stats) stats.rateLimitRetries++;
       const retryAfterSec = parseInt(res.headers.get("Retry-After") ?? "0") || 0;
+      if (stats && retryAfterSec > 0) {
+        const retryUntil = Date.now() + retryAfterSec * 1000;
+        stats.rateLimitUntil = Math.max(stats.rateLimitUntil ?? 0, retryUntil);
+      }
       // If FFLogs wants us to wait > 30s, fail immediately — can't hold a cloud function that long
       if (attempt === maxRetries || retryAfterSec > 30) {
         throw new Error(`FFLogs GraphQL request failed: 429 (retry-after=${retryAfterSec}s)`);

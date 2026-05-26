@@ -1,8 +1,8 @@
 import * as admin from "firebase-admin";
 import {
   refreshMemberSource,
-  type MemberSyncSource,
 } from "./member-source-refresh";
+import type { MemberSyncSource } from "./member-sync-status";
 
 interface FriendRefreshJob {
   lodestoneId?: unknown;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { db, ref, onValue, set, remove, get } from "@/lib/db";
 import { firebaseApp } from "@/lib/firebase";
+import { callAdminFunction } from "../lib/adminFunctions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -256,6 +257,7 @@ function buildStatus(
   missingDetail: string,
   metadata?: SyncMetadata,
   dataDetail?: string,
+  fallbackLastSuccessAt?: number | null,
 ): SourceSyncStatus {
   const label = SOURCE_LABEL[source];
   if (metadata?.status === "error") {
@@ -276,7 +278,8 @@ function buildStatus(
       actionable: true,
     };
   }
-  if (!metadata?.lastSuccessAt) {
+  const lastSuccessAt = metadata?.lastSuccessAt ?? fallbackLastSuccessAt ?? null;
+  if (!lastSuccessAt) {
     return {
       source,
       state: "unknown-age",
@@ -286,8 +289,8 @@ function buildStatus(
     };
   }
 
-  const age = Date.now() - metadata.lastSuccessAt;
-  const detail = `${dataDetail ?? `${label} data exists`}. Last synced ${formatTimeAgo(metadata.lastSuccessAt)}.`;
+  const age = Date.now() - lastSuccessAt;
+  const detail = `${dataDetail ?? `${label} data exists`}. Last synced ${formatTimeAgo(lastSuccessAt)}.`;
   if (age > FRESHNESS_MS[source]) {
     return {
       source,
@@ -369,7 +372,11 @@ async function readValue<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
-export function FCMembersManager() {
+interface FCMembersManagerProps {
+  adminSessionToken: string | null;
+}
+
+export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
   const [members, setMembers] = useState<Array<Member & { id: string }>>([]);
   const [name, setName] = useState("");
   const [lodestoneId, setLodestoneId] = useState("");
@@ -474,6 +481,7 @@ export function FCMembersManager() {
             collection
               ? `${collectionCount} tracked collectibles, member data fetched ${formatTimeAgo(collection.lastFetched)}`
               : undefined,
+            sourceStatus.collection?.lastSuccessAt ? null : collection?.lastFetched,
           ),
           tomestone: buildStatus(
             "tomestone",
@@ -510,6 +518,7 @@ export function FCMembersManager() {
                 ? `Job levels fetched ${formatTimeAgo(member.jobLevelsLastFetched)}`
                 : "Portrait loaded"
               : undefined,
+            sourceStatus.lodestone?.lastSuccessAt ? null : member.jobLevelsLastFetched,
           ),
         };
       }
@@ -532,20 +541,19 @@ export function FCMembersManager() {
   }, [members, syncReloadToken]);
 
   async function handleRefreshCollection() {
-    if (!firebaseApp) {
+    if (!firebaseApp || !adminSessionToken) {
       toast.error("Not available in local dev mode.");
       return;
     }
     setFetchingCollection(true);
     const id = toast.loading("Refreshing collection data...");
     try {
-      const { getFunctions, httpsCallable } =
-        await import("firebase/functions");
-      await httpsCallable(
-        getFunctions(firebaseApp),
+      await callAdminFunction(
         "triggerFCCollectionRefresh",
+        adminSessionToken,
+        {},
         { timeout: 300_000 },
-      )();
+      );
       toast.success("Collection data refreshed.", { id });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
@@ -555,18 +563,14 @@ export function FCMembersManager() {
   }
 
   async function handleRefreshTomestone() {
-    if (!firebaseApp) {
+    if (!firebaseApp || !adminSessionToken) {
       toast.error("Not available in local dev mode.");
       return;
     }
     setFetchingTomestone(true);
     const id = toast.loading("Refreshing Tomestone activity...");
     try {
-      const { getFunctions, httpsCallable } =
-        await import("firebase/functions");
-      await httpsCallable(getFunctions(firebaseApp), "triggerTomestoneRaidStatsRefresh", {
-        timeout: 300_000,
-      })();
+      await callAdminFunction("triggerTomestoneRaidStatsRefresh", adminSessionToken, {}, { timeout: 300_000 });
       clearMembersCache();
       clearRaidStatsCache();
       toast.success("Tomestone activity refreshed.", { id });
@@ -578,18 +582,14 @@ export function FCMembersManager() {
   }
 
   async function handleRefreshFFLogs() {
-    if (!firebaseApp) {
+    if (!firebaseApp || !adminSessionToken) {
       toast.error("Not available in local dev mode.");
       return;
     }
     setFetchingFFLogs(true);
     const id = toast.loading("Refreshing FFLogs parses...");
     try {
-      const { getFunctions, httpsCallable } =
-        await import("firebase/functions");
-      await httpsCallable(getFunctions(firebaseApp), "triggerFFLogsRefresh", {
-        timeout: 300_000,
-      })();
+      await callAdminFunction("triggerFFLogsRefresh", adminSessionToken, {}, { timeout: 300_000 });
       clearMembersCache();
       clearRaidStatsCache();
       toast.success("FFLogs parses refreshed.", { id });
@@ -601,7 +601,7 @@ export function FCMembersManager() {
   }
 
   async function handleRefreshMemberSource(member: Member & { id: string }, source: SyncSource) {
-    if (!firebaseApp) {
+    if (!firebaseApp || !adminSessionToken) {
       toast.error("Not available in local dev mode.");
       return;
     }
@@ -611,13 +611,12 @@ export function FCMembersManager() {
     const label = SOURCE_LABEL[source];
     const id = toast.loading(`Refreshing ${label} for ${member.name}...`);
     try {
-      const { getFunctions, httpsCallable } =
-        await import("firebase/functions");
-      await httpsCallable(
-        getFunctions(firebaseApp),
+      await callAdminFunction(
         "refreshMemberSource",
+        adminSessionToken,
+        { lodestoneId: member.id, source },
         { timeout: 300_000 },
-      )({ lodestoneId: member.id, source });
+      );
 
       if (source === "lodestone") clearMembersCache();
       if (source === "collection") clearCollectionCache();
@@ -640,24 +639,22 @@ export function FCMembersManager() {
   }
 
   async function handleImportLodestone() {
-    if (!firebaseApp) {
+    if (!firebaseApp || !adminSessionToken) {
       toast.error("Not available in local dev mode.");
       return;
     }
     setFetchingLodestone(true);
     const id = toast.loading("Syncing Lodestone portraits...");
     try {
-      const { getFunctions, httpsCallable } =
-        await import("firebase/functions");
-      const fn = httpsCallable<unknown, { total: number; written: number; failed: number }>(
-        getFunctions(firebaseApp),
+      const result = await callAdminFunction<{ total: number; written: number; failed: number }>(
         "importLodestoneMembers",
+        adminSessionToken,
+        {},
         { timeout: 300_000 },
       );
-      const res = await fn();
       clearMembersCache();
-      const failedText = res.data.failed > 0 ? `, ${res.data.failed} failed` : "";
-      toast.success(`${res.data.written}/${res.data.total} tracked members synced${failedText}.`, { id });
+      const failedText = result.failed > 0 ? `, ${result.failed} failed` : "";
+      toast.success(`${result.written}/${result.total} tracked members synced${failedText}.`, { id });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Sync failed.", { id });
     } finally {
@@ -670,12 +667,12 @@ export function FCMembersManager() {
     const memberName = name.trim();
     const memberLodestoneId = lodestoneId.trim();
     if (firebaseApp) {
-      const { getFunctions, httpsCallable } =
-        await import("firebase/functions");
-      await httpsCallable(
-        getFunctions(firebaseApp),
+      if (!adminSessionToken) throw new Error("Admin session is required.");
+      await callAdminFunction(
         "upsertMember",
-      )({ lodestoneId: memberLodestoneId, name: memberName });
+        adminSessionToken,
+        { lodestoneId: memberLodestoneId, name: memberName },
+      );
     } else {
       await Promise.all([
         set(ref(db, `members/${memberLodestoneId}`), {
@@ -700,12 +697,12 @@ export function FCMembersManager() {
     setDeletingMember(true);
     try {
       if (firebaseApp) {
-        const { getFunctions, httpsCallable } =
-          await import("firebase/functions");
-        await httpsCallable(
-          getFunctions(firebaseApp),
+        if (!adminSessionToken) throw new Error("Admin session is required.");
+        await callAdminFunction(
           "deleteMember",
-        )({ lodestoneId: deleteTarget.id, name: deleteTarget.name });
+          adminSessionToken,
+          { lodestoneId: deleteTarget.id, name: deleteTarget.name },
+        );
       } else {
         await Promise.all([
           remove(ref(db, `members/${deleteTarget.id}`)),
@@ -761,11 +758,20 @@ export function FCMembersManager() {
         birthday: encodeBirthday(bdMonth, bdDay),
         mainJobs: profileDraft.mainJobs ?? [],
       };
-      await Promise.all([
-        set(ref(db, `memberProfiles/${editingMemberId}`), profileData),
-        set(ref(db, `members/${editingMemberId}/fcRank`), rankDraft || null),
-        set(ref(db, "membersLastUpdated"), Date.now()),
-      ]);
+      if (firebaseApp) {
+        if (!adminSessionToken) throw new Error("Admin session is required.");
+        await callAdminFunction("updateMemberProfileAdmin", adminSessionToken, {
+          lodestoneId: editingMemberId,
+          profile: profileData,
+          fcRank: rankDraft || null,
+        });
+      } else {
+        await Promise.all([
+          set(ref(db, `memberProfiles/${editingMemberId}`), profileData),
+          set(ref(db, `members/${editingMemberId}/fcRank`), rankDraft || null),
+          set(ref(db, "membersLastUpdated"), Date.now()),
+        ]);
+      }
       clearMembersCache();
       localStorage.removeItem("fcc_collection_v3");
       clearRaidStatsCache();

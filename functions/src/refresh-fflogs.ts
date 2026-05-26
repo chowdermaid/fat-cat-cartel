@@ -9,6 +9,7 @@ import {
   buildCharacterZonesQuery,
 } from "./fflogs-queries";
 import { ZONES } from "./zones";
+import { memberSyncError, memberSyncSuccess } from "./member-sync-status";
 
 // ─── Raw API types ────────────────────────────────────────────────────────────
 
@@ -291,7 +292,9 @@ export async function runRefreshFFLogsMember(
   }
 
   const token = await getFFLogsToken(clientId, clientSecret);
-  const fflogsStats = { rateLimitRetries: 0 };
+  const fflogsStats: { rateLimitRetries: number; rateLimitUntil?: number } = {
+    rateLimitRetries: 0,
+  };
   const data = (await queryFFLogs(
     token,
     buildCharacterZonesQuery(ZONES, "lodestoneID"),
@@ -341,7 +344,9 @@ export async function runRefreshFFLogs(
 ): Promise<void> {
   const token = await getFFLogsToken(clientId, clientSecret);
   const db = admin.database();
-  const fflogsStats = { rateLimitRetries: 0 };
+  const fflogsStats: { rateLimitRetries: number; rateLimitUntil?: number } = {
+    rateLimitRetries: 0,
+  };
 
   // 1. Guild members (lodestoneID now included in query)
   const membersPayload = (await queryFFLogs(token, GUILD_MEMBERS_QUERY, {
@@ -395,20 +400,9 @@ export async function runRefreshFFLogs(
   const CHARACTER_BY_LODESTONE_QUERY = buildCharacterZonesQuery(ZONES, "lodestoneID");
 
   const zoneParses: Record<number, Record<string, ParseEntry>> = {};
-  const zoneHistograms: Record<
-    number,
-    Record<string, { savage: ParseBuckets; normal: ParseBuckets }>
-  > = {};
 
   for (const zone of ZONES) {
     zoneParses[zone.id] = {};
-    zoneHistograms[zone.id] = {};
-    for (const enc of zone.encounters) {
-      zoneHistograms[zone.id][enc.key] = {
-        savage: emptyBuckets(),
-        normal: emptyBuckets(),
-      };
-    }
   }
 
   const memberRankings = await batchRun(
@@ -436,10 +430,15 @@ export async function runRefreshFFLogs(
         const char = data.characterData.character;
         const lodestoneID = char?.lodestoneID != null ? String(char.lodestoneID) : null;
         if (member.source === "friend" && char) friendLookupSuccesses++;
-        return { member, char, lodestoneID };
+        return { member, char, lodestoneID, error: null };
       } catch (err) {
         console.warn(`[fflogs] Failed rankings for ${member.name}:`, err);
-        return { member, char: null, lodestoneID: null };
+        return {
+          member,
+          char: null,
+          lodestoneID: null,
+          error: err instanceof Error ? err.message : "Unknown FFLogs error.",
+        };
       }
     },
     1,
@@ -473,8 +472,9 @@ export async function runRefreshFFLogs(
     effectiveLodestoneId.set(key, resolved);
   }
 
-  // 4. Build per-zone parse entries and histograms, keyed by lodestoneId
+  // 4. Build fresh successful per-zone parse entries, keyed by lodestoneId
   for (const { member, char } of memberRankings) {
+    if (!char) continue;
     const memberKey =
       member.source === "friend"
         ? (member.fflogsIdHint ?? member.lodestoneIdHint)
@@ -485,18 +485,7 @@ export async function runRefreshFFLogs(
 
     const entries = buildCharacterParseEntries(char, member.name);
     for (const zone of ZONES) {
-      const entry = entries[zone.id];
-      zoneParses[zone.id][lodestoneId] = entry;
-      for (const [key, parse] of Object.entries(entry.savage)) {
-        if (parse) {
-          zoneHistograms[zone.id][key].savage[percentileBucket(parse.percentile)]++;
-        }
-      }
-      for (const [key, parse] of Object.entries(entry.normal)) {
-        if (parse) {
-          zoneHistograms[zone.id][key].normal[percentileBucket(parse.percentile)]++;
-        }
-      }
+      zoneParses[zone.id][lodestoneId] = entries[zone.id];
     }
   }
 
@@ -584,19 +573,28 @@ export async function runRefreshFFLogs(
       friendLookupSuccesses,
       friendLookupFailures: friendLookupFailures.slice(0, 20),
       rateLimitRetries: fflogsStats.rateLimitRetries,
+      ...(fflogsStats.rateLimitUntil
+        ? { rateLimitUntil: fflogsStats.rateLimitUntil }
+        : {}),
     },
+    ...(fflogsStats.rateLimitUntil
+      ? { "raidStats/fflogsRateLimitUntil": fflogsStats.rateLimitUntil }
+      : {}),
     membersLastUpdated: now,
   };
 
   // Per-field member writes keyed by lodestoneId; never clobber avatarUrl set by the Lodestone scraper.
   const activeFflogsIds = new Set(rawMembers.map((m) => String(m.id)));
+  const removedLodestoneIds = new Set<string>();
   for (const [lodestoneId, m] of Object.entries(existingMembers)) {
     if (memberExclusions[lodestoneId]) {
+      removedLodestoneIds.add(lodestoneId);
       updates[`members/${lodestoneId}`] = null;
       continue;
     }
     if (m.fcRank === "Friend") continue;
     if (m.fflogsId && !activeFflogsIds.has(m.fflogsId)) {
+      removedLodestoneIds.add(lodestoneId);
       updates[`members/${lodestoneId}`] = null;
     }
   }
@@ -605,6 +603,7 @@ export async function runRefreshFFLogs(
     updates[`members/${lodestoneId}/server`] = node.server;
     updates[`members/${lodestoneId}/fflogsId`] = node.fflogsId;
   }
+  const fflogsStatusLodestoneIds = new Set<string>();
   for (const { member, char } of memberRankings) {
     if (member.source !== "friend" || !char?.id) continue;
     if (memberExclusions[member.lodestoneIdHint]) continue;
@@ -614,9 +613,58 @@ export async function runRefreshFFLogs(
       updates[`members/${member.lodestoneIdHint}/server`] = char.server.slug;
     }
   }
+  for (const { member, char, error } of memberRankings) {
+    const memberKey =
+      member.source === "friend"
+        ? (member.fflogsIdHint ?? member.lodestoneIdHint)
+        : String(member.id);
+    const lodestoneId = effectiveLodestoneId.get(memberKey);
+    if (
+      !lodestoneId ||
+      memberExclusions[lodestoneId] ||
+      fflogsStatusLodestoneIds.has(lodestoneId)
+    ) {
+      continue;
+    }
+    fflogsStatusLodestoneIds.add(lodestoneId);
+    updates[`memberSyncStatus/${lodestoneId}/fflogs`] = error
+      ? memberSyncError(now, error)
+      : memberSyncSuccess(
+        "fflogs",
+        now,
+        now,
+        "fflogs refreshed.",
+        {
+          fflogsId: char?.id != null
+            ? String(char.id)
+            : member.source === "friend"
+              ? (member.fflogsIdHint ?? null)
+              : String(member.id),
+        },
+      );
+  }
+
+  const existingZoneParses = new Map<number, Record<string, ParseEntry>>();
+  await Promise.all(
+    ZONES.map(async (zone) => {
+      const snap = await db.ref(`raidStats/zones/${zone.id}/parses`).get();
+      existingZoneParses.set(
+        zone.id,
+        (snap.val() ?? {}) as Record<string, ParseEntry>,
+      );
+    }),
+  );
 
   for (const zone of ZONES) {
     const prefix = `raidStats/zones/${zone.id}`;
+    const mergedParses: Record<string, ParseEntry> = {
+      ...(existingZoneParses.get(zone.id) ?? {}),
+    };
+    for (const lodestoneId of removedLodestoneIds) {
+      delete mergedParses[lodestoneId];
+    }
+    Object.assign(mergedParses, zoneParses[zone.id]);
+
     updates[`${prefix}/meta`] = {
       id: zone.id,
       name: zone.name,
@@ -630,8 +678,8 @@ export async function runRefreshFFLogs(
       })),
     };
     updates[`${prefix}/lastUpdated`] = now;
-    updates[`${prefix}/parses`] = zoneParses[zone.id];
-    updates[`${prefix}/histogram`] = zoneHistograms[zone.id];
+    updates[`${prefix}/parses`] = mergedParses;
+    updates[`${prefix}/histogram`] = recomputeHistogramForZone(zone, mergedParses);
     updates[`${prefix}/recentKill`] = recentKills[zone.id] ?? null;
     updates[`${prefix}/firstKills`] =
       Object.keys(firstKills[zone.id] ?? {}).length > 0

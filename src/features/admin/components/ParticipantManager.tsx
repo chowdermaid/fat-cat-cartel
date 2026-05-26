@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { db, ref, onValue, push, set, remove } from "@/lib/db";
+import { firebaseApp } from "@/lib/firebase";
+import { callAdminFunction } from "../lib/adminFunctions";
 import type { Participant, Scores, ScoreCategory } from "@/types";
 import { SCORE_CATEGORIES } from "@/types";
 import {
@@ -23,7 +25,11 @@ interface LocalParticipant extends Participant {
   saving: boolean;
 }
 
-export function ParticipantManager() {
+interface ParticipantManagerProps {
+  adminSessionToken: string | null;
+}
+
+export function ParticipantManager({ adminSessionToken }: ParticipantManagerProps) {
   const [participants, setParticipants] = useState<LocalParticipant[]>([]);
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState("");
@@ -81,11 +87,20 @@ export function ParticipantManager() {
       prev.map((p) => (p.id === id ? { ...p, saving: true } : p))
     );
     try {
-      await set(ref(db, `events/easter2026/participants/${id}`), {
-        name: participant.name,
-        scores: participant.scores,
-        total: participant.total,
-      });
+      if (firebaseApp) {
+        if (!adminSessionToken) throw new Error("Admin session is required.");
+        await callAdminFunction("upsertEasterParticipantAdmin", adminSessionToken, {
+          id,
+          name: participant.name,
+          scores: participant.scores,
+        });
+      } else {
+        await set(ref(db, `events/easter2026/participants/${id}`), {
+          name: participant.name,
+          scores: participant.scores,
+          total: participant.total,
+        });
+      }
       setParticipants((prev) =>
         prev.map((p) => (p.id === id ? { ...p, dirty: false, saving: false } : p))
       );
@@ -101,7 +116,12 @@ export function ParticipantManager() {
   async function deleteParticipant(id: string, participantName: string) {
     if (!confirm(`Remove ${participantName}?`)) return;
     try {
-      await remove(ref(db, `events/easter2026/participants/${id}`));
+      if (firebaseApp) {
+        if (!adminSessionToken) throw new Error("Admin session is required.");
+        await callAdminFunction("deleteEasterParticipantAdmin", adminSessionToken, { id });
+      } else {
+        await remove(ref(db, `events/easter2026/participants/${id}`));
+      }
       toast.success(`${participantName} removed.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to remove participant.");
@@ -118,11 +138,19 @@ export function ParticipantManager() {
       eorzoaGuessr: 0,
     };
     try {
-      await push(ref(db, "events/easter2026/participants"), {
-        name,
-        scores: defaultScores,
-        total: 0,
-      });
+      if (firebaseApp) {
+        if (!adminSessionToken) throw new Error("Admin session is required.");
+        await callAdminFunction("upsertEasterParticipantAdmin", adminSessionToken, {
+          name,
+          scores: defaultScores,
+        });
+      } else {
+        await push(ref(db, "events/easter2026/participants"), {
+          name,
+          scores: defaultScores,
+          total: 0,
+        });
+      }
       setNewName("");
       toast.success(`${name} added.`);
     } catch (e) {

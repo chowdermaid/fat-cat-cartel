@@ -1,7 +1,8 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
-import { getDatabase, type Database } from "firebase/database";
+import { connectDatabaseEmulator, getDatabase, type Database } from "firebase/database";
 
 const USE_STUBS = import.meta.env.VITE_USE_STUBS === "true";
+const USE_DATABASE_EMULATOR = import.meta.env.VITE_USE_DATABASE_EMULATOR === "true";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export let db: Database = null as any;
@@ -20,4 +21,10 @@ if (!USE_STUBS) {
 
   firebaseApp = initializeApp(firebaseConfig);
   db = getDatabase(firebaseApp);
+
+  if (USE_DATABASE_EMULATOR) {
+    const host = import.meta.env.VITE_DATABASE_EMULATOR_HOST || "127.0.0.1";
+    const port = Number(import.meta.env.VITE_DATABASE_EMULATOR_PORT || "9000");
+    connectDatabaseEmulator(db, host, port);
+  }
 }

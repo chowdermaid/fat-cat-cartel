@@ -25,6 +25,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useDarkMode } from "@/hooks/useDarkMode";
+import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
+import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import fatcathi from "../../assets/fatcathi.png";
 
 const navItems = [
@@ -38,8 +40,9 @@ const navItems = [
 const bottomItems = [
   { label: "Join the Meowfia", to: "/jointhemeowfia", icon: UserPlus },
   { label: "Past Events", to: "/pastevents", icon: CalendarDays },
-  { label: "Admin", to: "/admin", icon: ShieldUser },
 ] as const;
+
+const adminItem = { label: "Admin", to: "/admin", icon: ShieldUser } as const;
 
 function NavLink({
   to,
@@ -74,6 +77,7 @@ function NavLink({
 
 export function AppSidebar() {
   const { isDark, toggle } = useDarkMode();
+  const auth = useAdminAuth();
 
   return (
     <Sidebar>
@@ -118,9 +122,12 @@ export function AppSidebar() {
               {bottomItems.map((item) => (
                 <NavLink key={item.to} {...item} />
               ))}
+              {auth.authed && <NavLink key={adminItem.to} {...adminItem} />}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <Separator className="my-2" />
+        <AuthUserMenu auth={auth} />
         <Separator className="my-2" />
         <div className="flex items-center justify-between px-2">
           <a
