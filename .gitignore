@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .env
 functions/lib/
+functions/.env.fat-cat-cartel
+functions/src/.env.fat-cat-cartel
