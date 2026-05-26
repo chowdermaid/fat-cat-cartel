@@ -1,11 +1,7 @@
 import type { Request, Response } from "express";
 import {
-  addJob,
   linkDiscordUser,
-  removeJob,
   signupFriend,
-  updateBio,
-  updateBirthday,
   viewFriendStatus,
   viewProfile,
 } from "./profile";
@@ -113,10 +109,7 @@ async function runCommand(interaction: DiscordInteraction, userId: string): Prom
       "/friend status - Check whether your collection and raid tracking have loaded.",
       "/link lodestone_id - Link your Discord account to your FC profile.",
       "/profile view - Show your linked profile summary.",
-      "/profile bio text - Update your profile bio.",
-      "/profile birthday month day - Update your birthday.",
-      "/profile jobs add job - Add a main job.",
-      "/profile jobs remove job - Remove a main job.",
+      "Profile edits now live on the website.",
     ].join("\n");
   }
 
@@ -160,58 +153,16 @@ async function runProfileCommand(options: DiscordOption[], userId: string): Prom
   const subcommand = options[0];
   if (!subcommand) return "Please choose a profile action.";
 
-  if (subcommand.name === "bio") {
-    const text = stringOption(subcommand.options, "text");
-    if (!text) return "Please provide bio text.";
-
-    return (await updateBio(userId, text)).message;
-  }
-
   if (subcommand.name === "view") {
     return (await viewProfile(userId)).message;
   }
 
-  if (subcommand.name === "birthday") {
-    const month = numberOption(subcommand.options, "month");
-    const day = numberOption(subcommand.options, "day");
-    if (!month || !day) return "Please provide a month and day.";
-
-    return (await updateBirthday(userId, month, day)).message;
-  }
-
-  if (subcommand.name === "jobs") {
-    return runJobsCommand(subcommand.options ?? [], userId);
-  }
-
-  return "Unknown profile action.";
-}
-
-async function runJobsCommand(options: DiscordOption[], userId: string): Promise<string> {
-  const subcommand = options[0];
-  if (!subcommand) return "Please choose add or remove.";
-
-  const job = stringOption(subcommand.options, "job");
-  if (!job) return "Please choose a job.";
-
-  if (subcommand.name === "add") {
-    return (await addJob(userId, job)).message;
-  }
-
-  if (subcommand.name === "remove") {
-    return (await removeJob(userId, job)).message;
-  }
-
-  return "Unknown jobs action.";
+  return "Profile edits now live on the website. Use /profile view here, or edit from your member page.";
 }
 
 function stringOption(options: DiscordOption[] | undefined, name: string): string | null {
   const value = options?.find((option) => option.name === name)?.value;
   return typeof value === "string" ? value : null;
-}
-
-function numberOption(options: DiscordOption[] | undefined, name: string): number | null {
-  const value = options?.find((option) => option.name === name)?.value;
-  return typeof value === "number" ? value : null;
 }
 
 function ephemeral(content: string) {

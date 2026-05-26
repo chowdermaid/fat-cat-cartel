@@ -17,19 +17,41 @@ import { FCMembersManager } from "./components/FCMembersManager";
 type SelectedView = "easter2026" | "fc-members";
 
 export function AdminPage() {
-  const { authed, checking, error, login, logout, session, sessionToken, unauthorized } = useAdminAuth();
+  const {
+    authed,
+    checking,
+    error,
+    login,
+    logout,
+    session,
+    sessionToken,
+    unauthorized,
+  } = useAdminAuth();
   const [selectedView, setSelectedView] = useState<SelectedView>("fc-members");
 
   if (!authed) {
     return (
       <AuthAccessState
         title="Admin Panel"
-        description={unauthorized
-          ? "This page requires a linked character and a Boss or Underpaw Discord role."
-          : "Login with Discord to verify your linked character and admin role."}
+        description={
+          unauthorized
+            ? "This page requires a linked character and a Boss or Underpaw Discord role."
+            : "Login with Discord to verify your linked character and admin role."
+        }
         error={error}
         checking={checking}
         onLogin={login}
+      />
+    );
+  }
+
+  if (session?.isAdmin !== true) {
+    return (
+      <AuthAccessState
+        title="Admin Panel"
+        description="This page requires a Boss or Underpaw Discord role."
+        error="Boss or Underpaw Discord role required."
+        showLogin={false}
       />
     );
   }
@@ -50,7 +72,8 @@ export function AdminPage() {
             <div>
               <h1 className="text-3xl font-bold">Easter Social 2026</h1>
               <p className="mt-1 text-muted-foreground">
-                Welcome, {session?.characterName ?? "admin"}. Manage participants and scores.
+                Welcome, {session?.characterName ?? "admin"}. Manage
+                participants and scores.
               </p>
             </div>
           </div>
@@ -70,7 +93,8 @@ export function AdminPage() {
         <div>
           <h1 className="text-3xl font-bold">Admin Panel</h1>
           <p className="mt-1 text-muted-foreground">
-            Welcome, {session?.characterName ?? "admin"}. User management console.
+            Welcome, {session?.characterName ?? "admin"}. User management
+            console.
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={logout}>
@@ -81,7 +105,7 @@ export function AdminPage() {
 
       <FCMembersManager adminSessionToken={sessionToken} />
 
-      <Card>
+      <Card className="w-32">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2">

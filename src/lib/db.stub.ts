@@ -310,7 +310,10 @@ let store: Record<string, unknown> = {
     "11111001": {
       bio: "Main tank of the FC. Chow is basically holding the group together with their bare hands.",
       birthday: "03-15",
-      quote: "git gud",
+      timezone: "Australia/Sydney",
+      favoriteMountId: 2,
+      favoriteMinionId: 4,
+      favoriteContent: "Savage Raids",
       mainJobs: ["Dark Knight", "Paladin"],
       pronouns: "they/them",
     },

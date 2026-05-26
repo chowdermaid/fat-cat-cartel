@@ -1,8 +1,6 @@
 import * as admin from "firebase-admin";
 import { fetchLodestoneCharacter } from "../scrape-lodestone";
-import { FFXIV_JOBS } from "./commands";
 
-const BIO_MAX_LENGTH = 500;
 const LINK_PATH = "discordLinks";
 const LINK_BY_LODESTONE_PATH = "discordLinksByLodestone";
 const SIGNUP_ISSUES_PATH = "discordSignupIssues";
@@ -204,105 +202,6 @@ export async function viewFriendStatus(
   );
 }
 
-export async function updateBio(
-  discordUserId: string,
-  textInput: string,
-): Promise<CommandResult> {
-  const linked = await getLinkedLodestoneId(discordUserId);
-  if (!linked.ok) return linked;
-
-  const bio = textInput.trim();
-  if (bio.length < 1) {
-    return fail("Bio cannot be empty.");
-  }
-
-  if (bio.length > BIO_MAX_LENGTH) {
-    return fail(`Bio must be ${BIO_MAX_LENGTH} characters or fewer.`);
-  }
-
-  await admin
-    .database()
-    .ref(`memberProfiles/${linked.lodestoneId}`)
-    .update({ bio });
-  return success("Updated your profile bio.");
-}
-
-export async function updateBirthday(
-  discordUserId: string,
-  month: number,
-  day: number,
-): Promise<CommandResult> {
-  const linked = await getLinkedLodestoneId(discordUserId);
-  if (!linked.ok) return linked;
-
-  if (!isValidBirthday(month, day)) {
-    return fail("Please provide a valid birthday.");
-  }
-
-  const birthday = `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  await admin
-    .database()
-    .ref(`memberProfiles/${linked.lodestoneId}`)
-    .update({ birthday });
-
-  return success(`Updated your birthday to ${birthday}.`);
-}
-
-export async function addJob(
-  discordUserId: string,
-  job: string,
-): Promise<CommandResult> {
-  const linked = await getLinkedLodestoneId(discordUserId);
-  if (!linked.ok) return linked;
-
-  const canonicalJob = normalizeJob(job);
-  if (!canonicalJob) {
-    return fail("That job is not recognized.");
-  }
-
-  const profileRef = admin
-    .database()
-    .ref(`memberProfiles/${linked.lodestoneId}`);
-  const profile = ((await profileRef.get()).val() ?? {}) as MemberProfile;
-  const currentJobs = Array.isArray(profile.mainJobs) ? profile.mainJobs : [];
-
-  if (currentJobs.includes(canonicalJob)) {
-    return success(`${canonicalJob} is already on your main jobs.`);
-  }
-
-  await profileRef.update({ mainJobs: [...currentJobs, canonicalJob] });
-  return success(`Added ${canonicalJob} to your main jobs.`);
-}
-
-export async function removeJob(
-  discordUserId: string,
-  job: string,
-): Promise<CommandResult> {
-  const linked = await getLinkedLodestoneId(discordUserId);
-  if (!linked.ok) return linked;
-
-  const canonicalJob = normalizeJob(job);
-  if (!canonicalJob) {
-    return fail("That job is not recognized.");
-  }
-
-  const profileRef = admin
-    .database()
-    .ref(`memberProfiles/${linked.lodestoneId}`);
-  const profile = ((await profileRef.get()).val() ?? {}) as MemberProfile;
-  const currentJobs = Array.isArray(profile.mainJobs) ? profile.mainJobs : [];
-  const nextJobs = currentJobs.filter(
-    (existingJob) => existingJob !== canonicalJob,
-  );
-
-  if (nextJobs.length === currentJobs.length) {
-    return success(`${canonicalJob} was not on your main jobs.`);
-  }
-
-  await profileRef.update({ mainJobs: nextJobs });
-  return success(`Removed ${canonicalJob} from your main jobs.`);
-}
-
 export async function viewProfile(
   discordUserId: string,
 ): Promise<CommandResult> {
@@ -333,22 +232,6 @@ export async function viewProfile(
       `Main jobs: ${jobs}`,
     ].join("\n"),
   );
-}
-
-function normalizeJob(job: string): string | null {
-  const normalized = job.trim().toLowerCase();
-  return (
-    FFXIV_JOBS.find((candidate) => candidate.toLowerCase() === normalized) ??
-    null
-  );
-}
-
-function isValidBirthday(month: number, day: number): boolean {
-  if (!Number.isInteger(month) || !Number.isInteger(day)) return false;
-  if (month < 1 || month > 12 || day < 1) return false;
-
-  const daysByMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return day <= daysByMonth[month - 1];
 }
 
 async function getLinkedLodestoneId(

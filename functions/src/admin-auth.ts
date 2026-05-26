@@ -16,6 +16,7 @@ export interface AdminAuthConfig {
   redirectUri: string;
   guildId: string;
   adminRoleIds: string;
+  memberRoleIds: string;
   botToken: string;
   appOrigin: string;
 }
@@ -27,6 +28,7 @@ export interface AdminSession {
   fcRank: string | null;
   avatarUrl: string | null;
   roleIds: string[];
+  isAdmin?: boolean;
   createdAt: number;
   expiresAt: number;
   lastSeenAt: number;
@@ -68,15 +70,18 @@ function parseRoleIds(value: string): string[] {
     .filter(Boolean);
 }
 
-function hasAdminRole(memberRoles: string[], adminRoleIds: string[]): boolean {
+function hasAnyRole(memberRoles: string[], allowedRoleIds: string[]): boolean {
   const memberRoleSet = new Set(memberRoles);
-  return adminRoleIds.some((roleId) => memberRoleSet.has(roleId));
+  return allowedRoleIds.some((roleId) => memberRoleSet.has(roleId));
 }
 
 function getSessionToken(data: unknown): string {
-  const token = typeof data === "object" && data
-    ? (data as { adminSessionToken?: unknown }).adminSessionToken
-    : null;
+  const token =
+    typeof data === "object" && data
+      ? ((data as { adminSessionToken?: unknown; sessionToken?: unknown })
+          .adminSessionToken ??
+        (data as { sessionToken?: unknown }).sessionToken)
+      : null;
   if (typeof token !== "string" || token.length < 32) {
     throw new HttpsError("unauthenticated", "Admin session is required.");
   }
@@ -89,14 +94,21 @@ function safeEqual(a: string, b: string): boolean {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
-function redirectUrl(appOrigin: string, params: Record<string, string>): string {
+function redirectUrl(
+  appOrigin: string,
+  params: Record<string, string>,
+): string {
   const url = new URL("/admin", appOrigin);
   url.hash = new URLSearchParams(params).toString();
   return url.toString();
 }
 
 function safeReturnTo(value: unknown): string {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) {
+  if (
+    typeof value !== "string" ||
+    !value.startsWith("/") ||
+    value.startsWith("//")
+  ) {
     return DEFAULT_RETURN_TO;
   }
 
@@ -108,17 +120,27 @@ function safeReturnTo(value: unknown): string {
   }
 }
 
-function redirectToApp(appOrigin: string, returnTo: string, params: Record<string, string>): string {
+function redirectToApp(
+  appOrigin: string,
+  returnTo: string,
+  params: Record<string, string>,
+): string {
   const url = new URL(safeReturnTo(returnTo), appOrigin);
   url.hash = new URLSearchParams(params).toString();
   return url.toString();
 }
 
 function cookieIsSecure(config: AdminAuthConfig): boolean {
-  return config.redirectUri.startsWith("https://") && config.appOrigin.startsWith("https://");
+  return (
+    config.redirectUri.startsWith("https://") &&
+    config.appOrigin.startsWith("https://")
+  );
 }
 
-function cookieValue(req: { cookies?: Record<string, string>; headers?: Record<string, unknown> }, name: string): string {
+function cookieValue(
+  req: { cookies?: Record<string, string>; headers?: Record<string, unknown> },
+  name: string,
+): string {
   const parsedCookie = req.cookies?.[name];
   if (parsedCookie) return parsedCookie;
 
@@ -136,7 +158,9 @@ async function discordJson<T>(url: string, init: RequestInit): Promise<T> {
   const response = await fetch(url, init);
   if (!response.ok) {
     const body = await response.text().catch(() => "");
-    throw new Error(`Discord request failed: ${response.status} ${body.slice(0, 200)}`);
+    throw new Error(
+      `Discord request failed: ${response.status} ${body.slice(0, 200)}`,
+    );
   }
   return response.json() as Promise<T>;
 }
@@ -147,21 +171,36 @@ async function fetchCurrentUser(accessToken: string): Promise<DiscordUser> {
   });
 }
 
-async function fetchCurrentUserGuildMember(accessToken: string, guildId: string): Promise<DiscordGuildMember> {
-  return discordJson<DiscordGuildMember>(`${DISCORD_API_BASE}/users/@me/guilds/${guildId}/member`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+async function fetchCurrentUserGuildMember(
+  accessToken: string,
+  guildId: string,
+): Promise<DiscordGuildMember> {
+  return discordJson<DiscordGuildMember>(
+    `${DISCORD_API_BASE}/users/@me/guilds/${guildId}/member`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
 }
 
-async function fetchGuildMemberWithBot(botToken: string, guildId: string, discordUserId: string): Promise<DiscordGuildMember> {
-  return discordJson<DiscordGuildMember>(`${DISCORD_API_BASE}/guilds/${guildId}/members/${discordUserId}`, {
-    headers: { Authorization: `Bot ${botToken}` },
-  });
+async function fetchGuildMemberWithBot(
+  botToken: string,
+  guildId: string,
+  discordUserId: string,
+): Promise<DiscordGuildMember> {
+  return discordJson<DiscordGuildMember>(
+    `${DISCORD_API_BASE}/guilds/${guildId}/members/${discordUserId}`,
+    {
+      headers: { Authorization: `Bot ${botToken}` },
+    },
+  );
 }
 
-function memberRoleIds(member: DiscordGuildMember): string[] {
+function roleIdsFromMember(member: DiscordGuildMember): string[] {
   return Array.isArray(member.roles)
-    ? member.roles.filter((roleId): roleId is string => typeof roleId === "string")
+    ? member.roles.filter(
+        (roleId): roleId is string => typeof roleId === "string",
+      )
     : [];
 }
 
@@ -175,7 +214,10 @@ async function linkedCharacter(discordUserId: string): Promise<{
   const linkSnapshot = await db.ref(`discordLinks/${discordUserId}`).get();
   const link = linkSnapshot.val() as { lodestoneId?: unknown } | null;
   if (!link || typeof link.lodestoneId !== "string") {
-    throw new HttpsError("failed-precondition", "Link your Lodestone profile first with the Discord /link command.");
+    throw new HttpsError(
+      "failed-precondition",
+      "Link your Lodestone profile first with the Discord /link command, or /friend signup if you are not in the FC.",
+    );
   }
 
   const memberSnapshot = await db.ref(`members/${link.lodestoneId}`).get();
@@ -185,18 +227,30 @@ async function linkedCharacter(discordUserId: string): Promise<{
     avatarUrl?: unknown;
   } | null;
   if (!member || typeof member.name !== "string" || !member.name.trim()) {
-    throw new HttpsError("failed-precondition", "Your linked character is no longer tracked.");
+    throw new HttpsError(
+      "failed-precondition",
+      "Your linked character is no longer tracked.",
+    );
   }
 
   return {
     lodestoneId: link.lodestoneId,
     characterName: member.name.trim(),
-    fcRank: typeof member.fcRank === "string" && member.fcRank.trim() ? member.fcRank.trim() : null,
-    avatarUrl: typeof member.avatarUrl === "string" && member.avatarUrl.trim() ? member.avatarUrl.trim() : null,
+    fcRank:
+      typeof member.fcRank === "string" && member.fcRank.trim()
+        ? member.fcRank.trim()
+        : null,
+    avatarUrl:
+      typeof member.avatarUrl === "string" && member.avatarUrl.trim()
+        ? member.avatarUrl.trim()
+        : null,
   };
 }
 
-async function exchangeCode(config: AdminAuthConfig, code: string): Promise<string> {
+async function exchangeCode(
+  config: AdminAuthConfig,
+  code: string,
+): Promise<string> {
   const body = new URLSearchParams({
     client_id: config.clientId,
     client_secret: config.clientSecret,
@@ -205,11 +259,14 @@ async function exchangeCode(config: AdminAuthConfig, code: string): Promise<stri
     redirect_uri: config.redirectUri,
   });
 
-  const token = await discordJson<DiscordTokenResponse>(`${DISCORD_API_BASE}/oauth2/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body,
-  });
+  const token = await discordJson<DiscordTokenResponse>(
+    `${DISCORD_API_BASE}/oauth2/token`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    },
+  );
 
   if (!token.access_token) {
     throw new Error("Discord did not return an access token.");
@@ -220,16 +277,26 @@ async function exchangeCode(config: AdminAuthConfig, code: string): Promise<stri
 export async function startDiscordAdminOAuth(
   config: AdminAuthConfig,
   req: { query: Record<string, unknown> },
-  res: { cookie: (name: string, value: string, options: Record<string, unknown>) => void; redirect: (url: string) => void },
+  res: {
+    cookie: (
+      name: string,
+      value: string,
+      options: Record<string, unknown>,
+    ) => void;
+    redirect: (url: string) => void;
+  },
 ): Promise<void> {
   const state = randomToken(24);
   const stateHash = hashToken(state);
   const now = Date.now();
-  await admin.database().ref(`adminOAuthStates/${stateHash}`).set({
-    createdAt: now,
-    expiresAt: now + OAUTH_STATE_MS,
-    returnTo: safeReturnTo(req.query.returnTo),
-  });
+  await admin
+    .database()
+    .ref(`adminOAuthStates/${stateHash}`)
+    .set({
+      createdAt: now,
+      expiresAt: now + OAUTH_STATE_MS,
+      returnTo: safeReturnTo(req.query.returnTo),
+    });
 
   res.cookie(STATE_COOKIE, state, {
     httpOnly: true,
@@ -250,7 +317,11 @@ export async function startDiscordAdminOAuth(
 
 export async function finishDiscordAdminOAuth(
   config: AdminAuthConfig,
-  req: { query: Record<string, unknown>; cookies?: Record<string, string>; headers?: Record<string, unknown> },
+  req: {
+    query: Record<string, unknown>;
+    cookies?: Record<string, string>;
+    headers?: Record<string, unknown>;
+  },
   res: {
     clearCookie: (name: string, options: Record<string, unknown>) => void;
     redirect: (url: string) => void;
@@ -262,7 +333,9 @@ export async function finishDiscordAdminOAuth(
   res.clearCookie(STATE_COOKIE, { path: "/" });
 
   if (!code || !state || !cookieState || !safeEqual(state, cookieState)) {
-    res.redirect(redirectUrl(config.appOrigin, { admin_error: "invalid_state" }));
+    res.redirect(
+      redirectUrl(config.appOrigin, { admin_error: "invalid_state" }),
+    );
     return;
   }
 
@@ -270,9 +343,18 @@ export async function finishDiscordAdminOAuth(
   const stateRef = admin.database().ref(`adminOAuthStates/${stateHash}`);
   const stateSnap = await stateRef.get();
   await stateRef.remove();
-  const storedState = stateSnap.val() as { expiresAt?: unknown; returnTo?: unknown } | null;
-  if (!storedState || typeof storedState.expiresAt !== "number" || storedState.expiresAt <= Date.now()) {
-    res.redirect(redirectUrl(config.appOrigin, { admin_error: "invalid_state" }));
+  const storedState = stateSnap.val() as {
+    expiresAt?: unknown;
+    returnTo?: unknown;
+  } | null;
+  if (
+    !storedState ||
+    typeof storedState.expiresAt !== "number" ||
+    storedState.expiresAt <= Date.now()
+  ) {
+    res.redirect(
+      redirectUrl(config.appOrigin, { admin_error: "invalid_state" }),
+    );
     return;
   }
   const returnTo = safeReturnTo(storedState.returnTo);
@@ -284,9 +366,16 @@ export async function finishDiscordAdminOAuth(
       fetchCurrentUserGuildMember(accessToken, config.guildId),
     ]);
     const discordUserId = user.id;
-    const roleIds = memberRoleIds(member);
-    if (!discordUserId || !hasAdminRole(roleIds, parseRoleIds(config.adminRoleIds))) {
-      res.redirect(redirectToApp(config.appOrigin, returnTo, { admin_error: "unauthorized" }));
+    const roleIds = roleIdsFromMember(member);
+    const adminRoleIds = parseRoleIds(config.adminRoleIds);
+    const memberRoleIds = parseRoleIds(config.memberRoleIds);
+    const isAdmin = hasAnyRole(roleIds, adminRoleIds);
+    if (!discordUserId || (!isAdmin && !hasAnyRole(roleIds, memberRoleIds))) {
+      res.redirect(
+        redirectToApp(config.appOrigin, returnTo, {
+          admin_error: "unauthorized",
+        }),
+      );
       return;
     }
 
@@ -294,12 +383,26 @@ export async function finishDiscordAdminOAuth(
     try {
       character = await linkedCharacter(discordUserId);
     } catch (error) {
-      if (error instanceof HttpsError && error.message.includes("Link your Lodestone")) {
-        res.redirect(redirectToApp(config.appOrigin, returnTo, { admin_error: "not_linked" }));
+      if (
+        error instanceof HttpsError &&
+        error.message.includes("Link your Lodestone")
+      ) {
+        res.redirect(
+          redirectToApp(config.appOrigin, returnTo, {
+            admin_error: "not_linked",
+          }),
+        );
         return;
       }
-      if (error instanceof HttpsError && error.message.includes("no longer tracked")) {
-        res.redirect(redirectToApp(config.appOrigin, returnTo, { admin_error: "missing_member" }));
+      if (
+        error instanceof HttpsError &&
+        error.message.includes("no longer tracked")
+      ) {
+        res.redirect(
+          redirectToApp(config.appOrigin, returnTo, {
+            admin_error: "missing_member",
+          }),
+        );
         return;
       }
       throw error;
@@ -308,26 +411,44 @@ export async function finishDiscordAdminOAuth(
     const sessionToken = randomToken(48);
     const sessionHash = hashToken(sessionToken);
     const now = Date.now();
-    await admin.database().ref(`adminSessions/${sessionHash}`).set({
-      discordUserId,
-      lodestoneId: character.lodestoneId,
-      characterName: character.characterName,
-      fcRank: character.fcRank,
-      avatarUrl: character.avatarUrl,
-      roleIds,
-      createdAt: now,
-      expiresAt: now + SESSION_MS,
-      lastSeenAt: now,
-    });
+    await admin
+      .database()
+      .ref(`adminSessions/${sessionHash}`)
+      .set({
+        discordUserId,
+        lodestoneId: character.lodestoneId,
+        characterName: character.characterName,
+        fcRank: character.fcRank,
+        avatarUrl: character.avatarUrl,
+        roleIds,
+        isAdmin,
+        createdAt: now,
+        expiresAt: now + SESSION_MS,
+        lastSeenAt: now,
+      });
 
-    res.redirect(redirectToApp(config.appOrigin, returnTo, { admin_session: sessionToken }));
+    res.redirect(
+      redirectToApp(config.appOrigin, returnTo, {
+        admin_session: sessionToken,
+      }),
+    );
   } catch (error) {
     console.error("Discord admin OAuth failed", error);
-    res.redirect(redirectToApp(config.appOrigin, returnTo, { admin_error: "oauth_failed" }));
+    res.redirect(
+      redirectToApp(config.appOrigin, returnTo, {
+        admin_error: "oauth_failed",
+      }),
+    );
   }
 }
 
-export async function requireAdminSession(data: unknown, config: Pick<AdminAuthConfig, "guildId" | "adminRoleIds" | "botToken">): Promise<VerifiedAdminSession> {
+export async function requireMemberSession(
+  data: unknown,
+  config: Pick<
+    AdminAuthConfig,
+    "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
+  >,
+): Promise<VerifiedAdminSession> {
   const token = getSessionToken(data);
   const sessionHash = hashToken(token);
   const sessionRef = admin.database().ref(`adminSessions/${sessionHash}`);
@@ -335,24 +456,39 @@ export async function requireAdminSession(data: unknown, config: Pick<AdminAuthC
   const session = snapshot.val() as AdminSession | null;
   const now = Date.now();
 
-  if (!session?.discordUserId || typeof session.expiresAt !== "number" || session.expiresAt <= now) {
+  if (
+    !session?.discordUserId ||
+    typeof session.expiresAt !== "number" ||
+    session.expiresAt <= now
+  ) {
     await sessionRef.remove();
     throw new HttpsError("unauthenticated", "Admin session expired.");
   }
 
   let currentRoleIds: string[];
   try {
-    currentRoleIds = memberRoleIds(
-      await fetchGuildMemberWithBot(config.botToken, config.guildId, session.discordUserId),
+    currentRoleIds = roleIdsFromMember(
+      await fetchGuildMemberWithBot(
+        config.botToken,
+        config.guildId,
+        session.discordUserId,
+      ),
     );
-  } catch (error) {
+  } catch {
     await sessionRef.remove();
-    throw new HttpsError("permission-denied", "Could not verify Discord guild membership.");
+    throw new HttpsError(
+      "permission-denied",
+      "Could not verify Discord guild membership.",
+    );
   }
 
-  if (!hasAdminRole(currentRoleIds, parseRoleIds(config.adminRoleIds))) {
+  const adminRoleIds = parseRoleIds(config.adminRoleIds);
+  const memberRoleIds = parseRoleIds(config.memberRoleIds);
+  const isAdmin = hasAnyRole(currentRoleIds, adminRoleIds);
+
+  if (!isAdmin && !hasAnyRole(currentRoleIds, memberRoleIds)) {
     await sessionRef.remove();
-    throw new HttpsError("permission-denied", "Boss or Underpaw Discord role required.");
+    throw new HttpsError("permission-denied", "Allowed Discord role required.");
   }
 
   let character: Awaited<ReturnType<typeof linkedCharacter>>;
@@ -361,7 +497,10 @@ export async function requireAdminSession(data: unknown, config: Pick<AdminAuthC
   } catch (error) {
     await sessionRef.remove();
     if (error instanceof HttpsError) throw error;
-    throw new HttpsError("failed-precondition", "Could not verify linked character.");
+    throw new HttpsError(
+      "failed-precondition",
+      "Could not verify linked character.",
+    );
   }
 
   if (!session.lastSeenAt || now - session.lastSeenAt > LAST_SEEN_WRITE_MS) {
@@ -372,13 +511,43 @@ export async function requireAdminSession(data: unknown, config: Pick<AdminAuthC
       characterName: character.characterName,
       fcRank: character.fcRank,
       avatarUrl: character.avatarUrl,
+      isAdmin,
     });
   }
 
-  return { ...session, ...character, roleIds: currentRoleIds, sessionHash };
+  return {
+    ...session,
+    ...character,
+    roleIds: currentRoleIds,
+    isAdmin,
+    sessionHash,
+  };
 }
 
-export async function getAdminSession(data: unknown, config: Pick<AdminAuthConfig, "guildId" | "adminRoleIds" | "botToken">): Promise<{
+export async function requireAdminSession(
+  data: unknown,
+  config: Pick<
+    AdminAuthConfig,
+    "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
+  >,
+): Promise<VerifiedAdminSession> {
+  const session = await requireMemberSession(data, config);
+  if (!session.isAdmin) {
+    throw new HttpsError(
+      "permission-denied",
+      "Boss or Underpaw Discord role required.",
+    );
+  }
+  return session;
+}
+
+export async function getAdminSession(
+  data: unknown,
+  config: Pick<
+    AdminAuthConfig,
+    "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
+  >,
+): Promise<{
   ok: true;
   discordUserId: string;
   lodestoneId: string;
@@ -386,9 +555,10 @@ export async function getAdminSession(data: unknown, config: Pick<AdminAuthConfi
   fcRank: string | null;
   avatarUrl: string | null;
   roleIds: string[];
+  isAdmin: boolean;
   expiresAt: number;
 }> {
-  const session = await requireAdminSession(data, config);
+  const session = await requireMemberSession(data, config);
   return {
     ok: true,
     discordUserId: session.discordUserId,
@@ -397,12 +567,16 @@ export async function getAdminSession(data: unknown, config: Pick<AdminAuthConfi
     fcRank: session.fcRank,
     avatarUrl: session.avatarUrl ?? null,
     roleIds: session.roleIds,
+    isAdmin: session.isAdmin === true,
     expiresAt: session.expiresAt,
   };
 }
 
 export async function logoutAdminSession(data: unknown): Promise<{ ok: true }> {
   const token = getSessionToken(data);
-  await admin.database().ref(`adminSessions/${hashToken(token)}`).remove();
+  await admin
+    .database()
+    .ref(`adminSessions/${hashToken(token)}`)
+    .remove();
   return { ok: true };
 }

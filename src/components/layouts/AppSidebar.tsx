@@ -122,7 +122,9 @@ export function AppSidebar() {
               {bottomItems.map((item) => (
                 <NavLink key={item.to} {...item} />
               ))}
-              {auth.authed && <NavLink key={adminItem.to} {...adminItem} />}
+              {auth.sessionWasAdmin && (
+                <NavLink key={adminItem.to} {...adminItem} dim={auth.checking} />
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

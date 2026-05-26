@@ -50,7 +50,17 @@ import {
 } from "@/components/ui/tooltip";
 import type { Member } from "@/types";
 import type { MemberProfile } from "@/features/member-profile/types";
+import {
+  FavoriteCollectiblePicker,
+  type FavoriteCollectibleOption,
+} from "@/features/member-profile/FavoriteCollectiblePicker";
+import {
+  FAVORITE_CONTENT_OPTIONS,
+  PROFILE_TIMEZONES,
+  timezoneLabel,
+} from "@/features/member-profile/profileOptions";
 import type { MemberCacheData } from "@/features/fc-collection/types";
+import type { Collectible } from "@/features/fc-collection/types";
 import type { ParseEntry, TomestoneActivity } from "@/features/raid-stats/types";
 
 const jobIconMap = import.meta.glob<string>("../../../assets/jobs/*.png", {
@@ -208,6 +218,10 @@ const EMPTY_PROFILE: MemberProfile = {
   bio: null,
   birthday: null,
   mainJobs: [],
+  timezone: null,
+  favoriteMountId: null,
+  favoriteMinionId: null,
+  favoriteContent: null,
 };
 
 function clearRaidStatsCache() {
@@ -372,6 +386,21 @@ async function readValue<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
+function isCollectible(value: unknown): value is Collectible {
+  return value != null && typeof value === "object" && "id" in value && "name" in value;
+}
+
+function buildFavoriteOptions(
+  ownedIds: number[] | undefined,
+  collectiblesById: Record<string, Collectible>,
+): FavoriteCollectibleOption[] {
+  return (ownedIds ?? [])
+    .map((id) => collectiblesById[String(id)])
+    .filter(isCollectible)
+    .map((item) => ({ id: item.id, name: item.name, icon: item.icon ?? null }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 interface FCMembersManagerProps {
   adminSessionToken: string | null;
 }
@@ -406,6 +435,8 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
   const [bdMonth, setBdMonth] = useState(0);
   const [bdDay, setBdDay] = useState(0);
   const [profileSaving, setProfileSaving] = useState(false);
+  const [favoriteMountOptions, setFavoriteMountOptions] = useState<FavoriteCollectibleOption[]>([]);
+  const [favoriteMinionOptions, setFavoriteMinionOptions] = useState<FavoriteCollectibleOption[]>([]);
 
   useEffect(() => {
     return onValue(ref(db, "members"), (snap: { val(): Record<string, Member> | null }) => {
@@ -724,6 +755,8 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
 
   async function openProfileEditor(memberId: string) {
     setProfileDraft({ ...EMPTY_PROFILE });
+    setFavoriteMountOptions([]);
+    setFavoriteMinionOptions([]);
     setBdMonth(0);
     setBdDay(0);
     const currentRank = members.find((m) => m.id === memberId)?.fcRank;
@@ -732,18 +765,29 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
     );
     setEditingMemberId(memberId);
     try {
-      const snap = await get(ref(db, `memberProfiles/${memberId}`));
+      const [snap, collectionData, mounts, minions] = await Promise.all([
+        get(ref(db, `memberProfiles/${memberId}`)),
+        readValue<MemberCacheData | null>(`fcCollection/memberData/${memberId}`, null),
+        readValue<Record<string, Collectible>>("fcCollection/collectibles/mounts", {}),
+        readValue<Record<string, Collectible>>("fcCollection/collectibles/minions", {}),
+      ]);
       const existing = snap.val() as Partial<MemberProfile> | null;
       if (existing) {
         setProfileDraft({
           bio: existing.bio ?? null,
           birthday: existing.birthday ?? null,
           mainJobs: Array.isArray(existing.mainJobs) ? existing.mainJobs : [],
+          timezone: existing.timezone ?? null,
+          favoriteMountId: existing.favoriteMountId ?? null,
+          favoriteMinionId: existing.favoriteMinionId ?? null,
+          favoriteContent: existing.favoriteContent ?? null,
         });
         const { month, day } = parseBirthday(existing.birthday ?? null);
         setBdMonth(month);
         setBdDay(day);
       }
+      setFavoriteMountOptions(buildFavoriteOptions(collectionData?.owned.mounts, mounts));
+      setFavoriteMinionOptions(buildFavoriteOptions(collectionData?.owned.minions, minions));
     } catch {
       toast.error("Failed to load profile.");
     }
@@ -757,6 +801,10 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
         bio: profileDraft.bio?.trim() || null,
         birthday: encodeBirthday(bdMonth, bdDay),
         mainJobs: profileDraft.mainJobs ?? [],
+        timezone: profileDraft.timezone ?? null,
+        favoriteMountId: profileDraft.favoriteMountId ?? null,
+        favoriteMinionId: profileDraft.favoriteMinionId ?? null,
+        favoriteContent: profileDraft.favoriteContent ?? null,
       };
       if (firebaseApp) {
         if (!adminSessionToken) throw new Error("Admin session is required.");
@@ -1280,6 +1328,80 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Timezone</Label>
+                <Select
+                  value={profileDraft.timezone ?? "none"}
+                  onValueChange={(value) =>
+                    setProfileDraft((d) => ({
+                      ...d,
+                      timezone: value === "none" ? null : value,
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Timezone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No timezone</SelectItem>
+                    {PROFILE_TIMEZONES.map((timezone) => (
+                      <SelectItem key={timezone} value={timezone}>
+                        {timezoneLabel(timezone)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Favorite Content</Label>
+                <Select
+                  value={profileDraft.favoriteContent ?? "none"}
+                  onValueChange={(value) =>
+                    setProfileDraft((d) => ({
+                      ...d,
+                      favoriteContent: value === "none" ? null : value,
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Favorite content" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No favorite</SelectItem>
+                    {FAVORITE_CONTENT_OPTIONS.map((content) => (
+                      <SelectItem key={content} value={content}>
+                        {content}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <FavoriteCollectiblePicker
+                label="Favorite Mount"
+                emptyText="No synced owned mounts yet."
+                options={favoriteMountOptions}
+                value={profileDraft.favoriteMountId}
+                onChange={(value) =>
+                  setProfileDraft((d) => ({ ...d, favoriteMountId: value }))
+                }
+              />
+
+              <FavoriteCollectiblePicker
+                label="Favorite Minion"
+                emptyText="No synced owned minions yet."
+                options={favoriteMinionOptions}
+                value={profileDraft.favoriteMinionId}
+                onChange={(value) =>
+                  setProfileDraft((d) => ({ ...d, favoriteMinionId: value }))
+                }
+              />
             </div>
 
             {/* Main jobs */}

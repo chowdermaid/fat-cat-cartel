@@ -1,33 +1,78 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { animate, stagger } from "animejs";
+import ReactCountryFlag from "react-country-flag";
 import {
   Activity,
   Award,
   BarChart3,
   Cake,
   ChevronLeft,
+  Coffee,
   Crown,
+  Fish,
+  Gamepad2,
+  Hammer,
+  Heart,
+  Home,
+  Loader2,
+  Map as MapIcon,
+  MessageSquareQuote,
+  Pencil,
   ExternalLink,
   Mountain,
+  Palette,
   Rabbit,
+  Sparkles,
+  Star,
   Swords,
   Trophy,
   User,
+  Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useMemberProfile } from "./api/useMemberProfile";
+import { useMemberProfile, type CollectiblesData } from "./api/useMemberProfile";
+import { db, ref, set } from "@/lib/db";
+import { firebaseApp } from "@/lib/firebase";
+import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
+import { callAdminFunction } from "@/features/admin/lib/adminFunctions";
 import { COLLECTIBLE_KEYS } from "@/features/fc-collection/collectibleConfig";
 import type { CollectibleKey } from "@/features/fc-collection/collectibleConfig";
-import type { Collectible } from "@/features/fc-collection/types";
+import type { Collectible, MemberCacheData } from "@/features/fc-collection/types";
+import type { MemberProfile } from "./types";
+import {
+  FavoriteCollectiblePicker,
+  type FavoriteCollectibleOption,
+} from "./FavoriteCollectiblePicker";
+import {
+  FAVORITE_CONTENT_OPTIONS,
+  PROFILE_TIMEZONES,
+  timezoneCountryCode,
+  timezoneLabel,
+} from "./profileOptions";
 import { JOB_ICONS } from "@/features/raid-stats/jobIcons";
 import {
   formatJobName,
@@ -142,6 +187,55 @@ const JOB_ABBR: Record<string, string> = {
   Fisher: "FSH",
 };
 
+const PROFILE_JOBS = [
+  "Paladin",
+  "Warrior",
+  "Dark Knight",
+  "Gunbreaker",
+  "White Mage",
+  "Scholar",
+  "Astrologian",
+  "Sage",
+  "Monk",
+  "Dragoon",
+  "Ninja",
+  "Samurai",
+  "Reaper",
+  "Viper",
+  "Bard",
+  "Machinist",
+  "Dancer",
+  "Black Mage",
+  "Summoner",
+  "Red Mage",
+  "Pictomancer",
+] as const;
+
+const PROFILE_MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const PROFILE_DAYS = Array.from({ length: 31 }, (_, index) => index + 1);
+const EMPTY_PROFILE: MemberProfile = {
+  bio: null,
+  birthday: null,
+  mainJobs: [],
+  timezone: null,
+  favoriteMountId: null,
+  favoriteMinionId: null,
+  favoriteContent: null,
+};
+
 const DEFAULT_MAX_JOB_LEVEL = 100;
 const JOB_MAX_LEVELS: Partial<Record<string, number>> = {
   "Blue Mage": 80,
@@ -244,6 +338,54 @@ function ownedPct(
   return (owned / maxOwned) * 100;
 }
 
+function favoriteOptions(
+  ownedIds: number[] | undefined,
+  collectiblesById: Record<string, Collectible> | undefined,
+): FavoriteCollectibleOption[] {
+  if (!collectiblesById) return [];
+  return (ownedIds ?? [])
+    .map((id) => collectiblesById[String(id)])
+    .filter(isCollectible)
+    .map((item) => ({
+      id: item.id,
+      name: item.name,
+      icon: item.icon ?? null,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function favoriteById(
+  id: number | null | undefined,
+  collectiblesById: Record<string, Collectible> | undefined,
+): Collectible | null {
+  if (!id || !collectiblesById) return null;
+  const item = collectiblesById[String(id)];
+  return isCollectible(item) ? item : null;
+}
+
+function favoriteContentIcon(content: string): React.ElementType {
+  if (content.includes("Savage") || content.includes("Ultimate")) return Swords;
+  if (content.includes("Extreme")) return Sparkles;
+  if (content.includes("Alliance")) return Users;
+  if (content.includes("Dungeon")) return Mountain;
+  if (content.includes("Field")) return MapIcon;
+  if (content.includes("Treasure")) return MapIcon;
+  if (content.includes("Crafting")) return Hammer;
+  if (content.includes("Fishing")) return Fish;
+  if (content.includes("Housing")) return Home;
+  if (content.includes("Gold Saucer")) return Gamepad2;
+  if (content.includes("Glamour")) return Palette;
+  if (content.includes("Mount")) return Mountain;
+  if (content.includes("Minion")) return Rabbit;
+  if (content.includes("Achievement")) return Trophy;
+  if (content.includes("Blue Mage")) return Sparkles;
+  if (content.includes("PvP")) return Swords;
+  if (content.includes("Roleplay")) return Star;
+  if (content.includes("AFK")) return Coffee;
+  if (content.includes("Social")) return Heart;
+  return Heart;
+}
+
 function formatBirthday(mmdd: string): string {
   const [month, day] = mmdd.split("-").map(Number);
   const months = [
@@ -261,6 +403,25 @@ function formatBirthday(mmdd: string): string {
     "Dec",
   ];
   return `${months[month - 1] ?? "?"} ${day}`;
+}
+
+function parseBirthday(mmdd: string | null): { month: number; day: number } {
+  if (!mmdd) return { month: 0, day: 0 };
+  const [month, day] = mmdd.split("-").map(Number);
+  return { month: month || 0, day: day || 0 };
+}
+
+function validBirthday(month: number, day: number): boolean {
+  if (!month && !day) return true;
+  if (month < 1 || month > 12 || day < 1) return false;
+  const daysByMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return day <= daysByMonth[month - 1];
+}
+
+function encodeBirthday(month: number, day: number): string | null {
+  if (!month && !day) return null;
+  if (!validBirthday(month, day)) return null;
+  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 function formatDate(ms: number | null): string {
@@ -1090,6 +1251,298 @@ function RaidActivityInsights({
   );
 }
 
+function ProfileEditorDialog({
+  open,
+  onOpenChange,
+  lodestoneId,
+  profile,
+  collectionData,
+  collectibles,
+  sessionToken,
+  onSaved,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  lodestoneId: string;
+  profile: MemberProfile | null;
+  collectionData: MemberCacheData | null;
+  collectibles: CollectiblesData | null;
+  sessionToken: string | null;
+  onSaved: (profile: MemberProfile) => void;
+}) {
+  const [draft, setDraft] = useState<MemberProfile>(EMPTY_PROFILE);
+  const [{ month, day }, setBirthday] = useState({ month: 0, day: 0 });
+  const [saving, setSaving] = useState(false);
+  const mountOptions = useMemo(
+    () => favoriteOptions(collectionData?.owned.mounts, collectibles?.mounts),
+    [collectionData, collectibles],
+  );
+  const minionOptions = useMemo(
+    () => favoriteOptions(collectionData?.owned.minions, collectibles?.minions),
+    [collectionData, collectibles],
+  );
+
+  useEffect(() => {
+    if (!open) return;
+    const nextProfile = profile ?? EMPTY_PROFILE;
+    setDraft({
+      bio: nextProfile.bio ?? null,
+      birthday: nextProfile.birthday ?? null,
+      mainJobs: Array.isArray(nextProfile.mainJobs) ? nextProfile.mainJobs : [],
+      timezone: nextProfile.timezone ?? null,
+      favoriteMountId: nextProfile.favoriteMountId ?? null,
+      favoriteMinionId: nextProfile.favoriteMinionId ?? null,
+      favoriteContent: nextProfile.favoriteContent ?? null,
+    });
+    setBirthday(parseBirthday(nextProfile.birthday ?? null));
+  }, [open, profile]);
+
+  function toggleJob(job: string) {
+    setDraft((current) => {
+      const jobs = current.mainJobs ?? [];
+      const nextJobs = jobs.includes(job)
+        ? jobs.filter((currentJob) => currentJob !== job)
+        : jobs.length >= 8
+          ? jobs
+          : [...jobs, job];
+      return { ...current, mainJobs: nextJobs };
+    });
+  }
+
+  async function saveProfile() {
+    if (!validBirthday(month, day)) {
+      toast.error("Please provide a valid birthday.");
+      return;
+    }
+
+    const nextProfile: MemberProfile = {
+      bio: draft.bio?.trim() || null,
+      birthday: encodeBirthday(month, day),
+      mainJobs: draft.mainJobs ?? [],
+      timezone: draft.timezone ?? null,
+      favoriteMountId: draft.favoriteMountId ?? null,
+      favoriteMinionId: draft.favoriteMinionId ?? null,
+      favoriteContent: draft.favoriteContent ?? null,
+    };
+
+    setSaving(true);
+    try {
+      if (firebaseApp) {
+        if (!sessionToken) throw new Error("Login is required.");
+        await callAdminFunction("updateOwnMemberProfile", sessionToken, {
+          profile: nextProfile,
+        });
+      } else {
+        await set(ref(db, `memberProfiles/${lodestoneId}`), nextProfile);
+      }
+      onSaved(nextProfile);
+      onOpenChange(false);
+      toast.success("Profile saved.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to save profile.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Edit Profile</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-5 py-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="profile-bio">Bio</Label>
+            <textarea
+              id="profile-bio"
+              value={draft.bio ?? ""}
+              maxLength={500}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  bio: event.target.value || null,
+                }))
+              }
+              rows={4}
+              className="w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+            <p className="text-xs text-muted-foreground">
+              {(draft.bio ?? "").length}/500
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Birthday</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Select
+                value={month ? String(month) : "0"}
+                onValueChange={(value) =>
+                  setBirthday((current) => ({ ...current, month: Number(value) }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Month" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">No month</SelectItem>
+                  {PROFILE_MONTHS.map((label, index) => (
+                    <SelectItem key={label} value={String(index + 1)}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={day ? String(day) : "0"}
+                onValueChange={(value) =>
+                  setBirthday((current) => ({ ...current, day: Number(value) }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Day" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">No day</SelectItem>
+                  {PROFILE_DAYS.map((value) => (
+                    <SelectItem key={value} value={String(value)}>
+                      {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label>Timezone</Label>
+              <Select
+                value={draft.timezone ?? "none"}
+                onValueChange={(value) =>
+                  setDraft((current) => ({
+                    ...current,
+                    timezone: value === "none" ? null : value,
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No timezone</SelectItem>
+                  {PROFILE_TIMEZONES.map((timezone) => (
+                    <SelectItem key={timezone} value={timezone}>
+                      {timezoneLabel(timezone)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label>Favorite Content</Label>
+              <Select
+                value={draft.favoriteContent ?? "none"}
+                onValueChange={(value) =>
+                  setDraft((current) => ({
+                    ...current,
+                    favoriteContent: value === "none" ? null : value,
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Favorite content" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No favorite</SelectItem>
+                  {FAVORITE_CONTENT_OPTIONS.map((content) => (
+                    <SelectItem key={content} value={content}>
+                      {content}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <FavoriteCollectiblePicker
+              label="Favorite Mount"
+              emptyText="No synced owned mounts yet."
+              options={mountOptions}
+              value={draft.favoriteMountId}
+              onChange={(value) =>
+                setDraft((current) => ({ ...current, favoriteMountId: value }))
+              }
+            />
+
+            <FavoriteCollectiblePicker
+              label="Favorite Minion"
+              emptyText="No synced owned minions yet."
+              options={minionOptions}
+              value={draft.favoriteMinionId}
+              onChange={(value) =>
+                setDraft((current) => ({ ...current, favoriteMinionId: value }))
+              }
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Main Jobs</Label>
+            <div className="grid grid-cols-7 gap-1.5">
+              {PROFILE_JOBS.map((job) => {
+                const selected = draft.mainJobs.includes(job);
+                const icon = jobIconSrc(job);
+                const abbr = JOB_ABBR[job] ?? job;
+                return (
+                  <button
+                    key={job}
+                    type="button"
+                    title={job}
+                    onClick={() => toggleJob(job)}
+                    className={`flex aspect-square items-center justify-center rounded-md border text-xs transition-colors ${
+                      selected
+                        ? "border-primary bg-primary/15 text-primary"
+                        : "bg-muted/30 hover:bg-muted"
+                    }`}
+                  >
+                    {icon ? (
+                      <img src={icon} alt={abbr} className="h-6 w-6 object-contain" />
+                    ) : (
+                      abbr
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {draft.mainJobs.length}/8 selected
+            </p>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={saving}
+          >
+            Cancel
+          </Button>
+          <Button type="button" onClick={saveProfile} disabled={saving}>
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+            Save Profile
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function MemberProfilePage() {
   const { lodestoneId } = useParams({ strict: false }) as {
     lodestoneId: string;
@@ -1104,7 +1557,13 @@ export function MemberProfilePage() {
     loading,
     notFound,
   } = useMemberProfile(lodestoneId);
+  const auth = useAdminAuth();
   const [activityPage, setActivityPage] = useState(1);
+  const [profileOverride, setProfileOverride] = useState<{
+    lodestoneId: string;
+    profile: MemberProfile;
+  } | null>(null);
+  const [editingProfile, setEditingProfile] = useState(false);
   const pageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1175,7 +1634,10 @@ export function MemberProfilePage() {
     );
   }
 
-  const mainJobs = profile?.mainJobs ?? [];
+  const effectiveProfile =
+    profileOverride?.lodestoneId === lodestoneId ? profileOverride.profile : profile;
+  const canEditProfile = auth.authed && auth.session?.lodestoneId === lodestoneId;
+  const mainJobs = effectiveProfile?.mainJobs ?? [];
   const ownedCounts = COLLECTIBLE_KEYS.map((key) => ({
     key,
     count: collectionData?.owned?.[key]?.length ?? null,
@@ -1187,6 +1649,22 @@ export function MemberProfilePage() {
   const rarestMinion = collectibles
     ? findRarest(collectionData?.owned?.minions ?? [], collectibles.minions)
     : null;
+  const favoriteMount = favoriteById(
+    effectiveProfile?.favoriteMountId,
+    collectibles?.mounts,
+  );
+  const favoriteMinion = favoriteById(
+    effectiveProfile?.favoriteMinionId,
+    collectibles?.minions,
+  );
+  const hasPersonalDetails = Boolean(
+    effectiveProfile?.favoriteContent ||
+      favoriteMount ||
+      favoriteMinion,
+  );
+  const FavoriteContentIcon = effectiveProfile?.favoriteContent
+    ? favoriteContentIcon(effectiveProfile.favoriteContent)
+    : Heart;
   const avatar = member.avatarUrl ?? null;
   return (
     <div ref={pageRef} className="space-y-8">
@@ -1212,9 +1690,22 @@ export function MemberProfilePage() {
             </div>
           )}
           <div className="min-w-0 space-y-2 pt-1">
-            <h1 className="font-serif text-3xl font-bold leading-tight">
-              {member.name}
-            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="font-serif text-3xl font-bold leading-tight">
+                {member.name}
+              </h1>
+              {canEditProfile && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditingProfile(true)}
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit Profile
+                </Button>
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">
               {[
                 member.fcRank,
@@ -1239,20 +1730,96 @@ export function MemberProfilePage() {
                 ))}
               </div>
             )}
-            {profile?.birthday && (
-              <Badge variant="secondary" className="w-fit gap-1.5 font-normal">
-                <Cake className="h-3 w-3" />
-                {formatBirthday(profile.birthday)}
-              </Badge>
+            {(effectiveProfile?.birthday || effectiveProfile?.timezone) && (
+              <div className="flex flex-wrap gap-2">
+                {effectiveProfile?.birthday && (
+                  <Badge
+                    variant="secondary"
+                    className="h-7 w-fit gap-1.5 px-3 font-normal"
+                  >
+                    <Cake className="h-3.5 w-3.5" />
+                    {formatBirthday(effectiveProfile.birthday)}
+                  </Badge>
+                )}
+                {effectiveProfile?.timezone && (
+                  <Badge
+                    variant="secondary"
+                    className="h-7 w-fit gap-1.5 px-3 font-normal"
+                  >
+                    <ReactCountryFlag
+                      countryCode={timezoneCountryCode(effectiveProfile.timezone)}
+                      svg
+                      aria-hidden="true"
+                      className="text-sm leading-none"
+                    />
+                    {timezoneLabel(effectiveProfile.timezone)}
+                  </Badge>
+                )}
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {profile?.bio && (
+      {hasPersonalDetails && (
+        <div className="anim-section flex max-w-5xl flex-wrap items-center gap-2">
+          {effectiveProfile?.favoriteContent && (
+            <div className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-full border bg-card px-2.5 py-1.5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted/60">
+                <FavoriteContentIcon className="h-4 w-4 text-muted-foreground" />
+              </span>
+              <div className="min-w-0 pr-1">
+                <p className="text-[10px] uppercase text-muted-foreground">
+                  Favorite Content
+                </p>
+                <p className="max-w-44 truncate text-xs font-medium">
+                  {effectiveProfile.favoriteContent}
+                </p>
+              </div>
+            </div>
+          )}
+          {favoriteMount && (
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border bg-card px-2.5 py-1.5">
+              <img
+                src={favoriteMount.icon}
+                alt={favoriteMount.name}
+                className="h-7 w-7 shrink-0 rounded object-contain"
+              />
+              <div className="min-w-0 pr-1">
+                <p className="text-[10px] uppercase text-muted-foreground">
+                  Favorite Mount
+                </p>
+                <p className="max-w-40 truncate text-xs font-medium">
+                  {favoriteMount.name}
+                </p>
+              </div>
+            </div>
+          )}
+          {favoriteMinion && (
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border bg-card px-2.5 py-1.5">
+              <img
+                src={favoriteMinion.icon}
+                alt={favoriteMinion.name}
+                className="h-7 w-7 shrink-0 rounded object-contain"
+              />
+              <div className="min-w-0 pr-1">
+                <p className="text-[10px] uppercase text-muted-foreground">
+                  Favorite Minion
+                </p>
+                <p className="max-w-40 truncate text-xs font-medium">
+                  {favoriteMinion.name}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {effectiveProfile?.bio && (
         <div className="anim-section max-w-3xl pl-1">
-          <p className="border-l-2 border-primary/40 pl-4 text-sm italic leading-relaxed text-foreground/80">
-            {profile.bio}
+          <p className="inline-flex items-start gap-2 rounded-lg border bg-card px-4 py-3 text-sm font-medium text-foreground/90">
+            <MessageSquareQuote className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+            {effectiveProfile.bio}
           </p>
         </div>
       )}
@@ -1520,6 +2087,17 @@ export function MemberProfilePage() {
           </div>
         </aside>
       </div>
+
+      <ProfileEditorDialog
+        open={editingProfile}
+        onOpenChange={setEditingProfile}
+        lodestoneId={lodestoneId}
+        profile={effectiveProfile}
+        collectionData={collectionData}
+        collectibles={collectibles}
+        sessionToken={auth.sessionToken}
+        onSaved={(nextProfile) => setProfileOverride({ lodestoneId, profile: nextProfile })}
+      />
     </div>
   );
 }

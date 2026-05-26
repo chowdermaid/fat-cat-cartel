@@ -46,7 +46,7 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
             </div>
             <div className="grid min-w-0 flex-1 text-left leading-tight">
               <span className="truncate text-sm font-medium">
-                {checking ? "Checking User..." : "Coming soon"}
+                {checking ? "Checking User..." : "Login"}
               </span>
               <span
                 className={cn(
@@ -54,7 +54,7 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
                   error && "text-destructive",
                 )}
               >
-                {error ?? "Login with Discord"}
+                {error ?? "Lodestone link required."}
               </span>
             </div>
           </SidebarMenuButton>

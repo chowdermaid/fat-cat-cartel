@@ -18,10 +18,12 @@ import {
   getAdminSession as getAdminSessionForToken,
   logoutAdminSession as logoutAdminSessionForToken,
   requireAdminSession,
+  requireMemberSession,
   startDiscordAdminOAuth as startDiscordOAuth,
 } from "./admin-auth";
 import {
   deleteEasterParticipantAdmin as deleteEasterParticipant,
+  updateOwnMemberProfile as updateOwnProfile,
   updateMemberProfileAdmin as updateMemberProfile,
   upsertEasterParticipantAdmin as upsertEasterParticipant,
 } from "./admin-mutations";
@@ -40,6 +42,7 @@ const discordClientSecret = defineSecret("DISCORD_CLIENT_SECRET");
 const discordRedirectUri = defineSecret("DISCORD_REDIRECT_URI");
 const discordGuildId = defineSecret("DISCORD_GUILD_ID");
 const discordAdminRoleIds = defineSecret("DISCORD_ADMIN_ROLE_IDS");
+const discordMemberRoleIds = defineSecret("DISCORD_MEMBER_ROLE_IDS");
 const discordBotToken = defineSecret("DISCORD_BOT_TOKEN");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
 
@@ -47,6 +50,7 @@ function adminAuthConfig() {
   return {
     guildId: discordGuildId.value(),
     adminRoleIds: discordAdminRoleIds.value(),
+    memberRoleIds: discordMemberRoleIds.value(),
     botToken: discordBotToken.value(),
   };
 }
@@ -70,7 +74,7 @@ export const refreshFFLogs = onSchedule(
 );
 
 export const triggerFFLogsRefresh = onCall(
-  { secrets: [fflogsClientId, fflogsClientSecret, discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  { secrets: [fflogsClientId, fflogsClientSecret, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
@@ -79,7 +83,7 @@ export const triggerFFLogsRefresh = onCall(
 );
 
 export const deleteMember = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 120, region: "us-central1" },
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 120, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return deleteTrackedMember(request.data);
@@ -87,7 +91,7 @@ export const deleteMember = onCall(
 );
 
 export const upsertMember = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return upsertTrackedMember(request.data);
@@ -97,7 +101,7 @@ export const upsertMember = onCall(
 export const refreshMemberSource = onCall(
   {
     cors: true,
-    secrets: [fflogsClientId, fflogsClientSecret, tomestoneBearerToken, discordGuildId, discordAdminRoleIds, discordBotToken],
+    secrets: [fflogsClientId, fflogsClientSecret, tomestoneBearerToken, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
     timeoutSeconds: 180,
     region: "us-central1",
   },
@@ -120,7 +124,7 @@ export const refreshTomestoneRaidStats = onSchedule(
 );
 
 export const triggerTomestoneRaidStatsRefresh = onCall(
-  { secrets: [tomestoneBearerToken, discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  { secrets: [tomestoneBearerToken, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
@@ -144,7 +148,7 @@ export const getTomestoneProgressionGraph = onCall(
 );
 
 export const importLodestoneMembers = onCall(
-  { secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  { secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     const result = await runScrapeLodestone();
@@ -177,7 +181,7 @@ export const refreshFCCollection = onSchedule(
 );
 
 export const triggerFCCollectionRefresh = onCall(
-  { secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  { secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshFCCollection();
@@ -187,7 +191,7 @@ export const triggerFCCollectionRefresh = onCall(
 
 export const startDiscordAdminOAuth = onRequest(
   {
-    secrets: [discordClientId, discordClientSecret, discordRedirectUri, discordGuildId, discordAdminRoleIds, discordBotToken],
+    secrets: [discordClientId, discordClientSecret, discordRedirectUri, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -198,7 +202,7 @@ export const startDiscordAdminOAuth = onRequest(
 
 export const discordAdminOAuthCallback = onRequest(
   {
-    secrets: [discordClientId, discordClientSecret, discordRedirectUri, discordGuildId, discordAdminRoleIds, discordBotToken],
+    secrets: [discordClientId, discordClientSecret, discordRedirectUri, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -208,7 +212,7 @@ export const discordAdminOAuthCallback = onRequest(
 );
 
 export const getAdminSession = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 30, region: "us-central1" },
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 30, region: "us-central1" },
   async (request) => getAdminSessionForToken(request.data, adminAuthConfig()),
 );
 
@@ -218,15 +222,23 @@ export const logoutAdminSession = onCall(
 );
 
 export const updateMemberProfileAdmin = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return updateMemberProfile(request.data);
   },
 );
 
+export const updateOwnMemberProfile = onCall(
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    return updateOwnProfile(request.data, session.lodestoneId);
+  },
+);
+
 export const upsertEasterParticipantAdmin = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return upsertEasterParticipant(request.data);
@@ -234,7 +246,7 @@ export const upsertEasterParticipantAdmin = onCall(
 );
 
 export const deleteEasterParticipantAdmin = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return deleteEasterParticipant(request.data);

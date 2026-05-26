@@ -32,7 +32,7 @@ Core app data:
 
 - `/members`: canonical tracked character records keyed by Lodestone ID.
 - `/membersLastUpdated`: cache invalidation timestamp for member identity reads.
-- `/memberProfiles`: editable profile data such as bio, birthday, and main jobs.
+- `/memberProfiles`: editable profile data such as bio, birthday, main jobs, timezone, favorite owned mount and minion IDs, and favorite content type.
 - `/events/easter2026/participants`: archived Easter 2026 scoreboard and admin data.
 
 Collection data:
