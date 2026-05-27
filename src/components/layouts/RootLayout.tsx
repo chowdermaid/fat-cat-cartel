@@ -7,38 +7,51 @@ import {
 import { Toaster } from "sonner";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { AppSidebar } from "./AppSidebar";
-import omgpeets from "../../assets/fatcat/omgpeets.png";
+import fatCatOutline from "@/assets/fatcat/fatcatoutline.svg";
 
-const BANNER_CATS: { deg: number; y: number }[] = [
-  { deg: -35, y: 2 },
-  { deg: 48, y: -2 },
-  { deg: -20, y: 3 },
-  { deg: 62, y: -1 },
-  { deg: -50, y: 2 },
-  { deg: 25, y: -3 },
-  { deg: -70, y: 1 },
-  { deg: 40, y: 2 },
-  { deg: -15, y: -2 },
-  { deg: 55, y: 3 },
-  { deg: -42, y: -1 },
-  { deg: 18, y: 2 },
-  { deg: -60, y: -2 },
-  { deg: 33, y: 1 },
-  { deg: -28, y: 3 },
-  { deg: 75, y: -2 },
-  { deg: -45, y: 1 },
-  { deg: 22, y: -3 },
-  { deg: -65, y: 2 },
-  { deg: 28, y: -1 },
-  { deg: -38, y: -1 },
-  { deg: -38, y: -1 },
-  { deg: 58, y: -1 },
-  { deg: 38, y: -1 },
-  { deg: 98, y: -1 },
-  { deg: -38, y: -1 },
-  { deg: 8, y: -1 },
-  { deg: 38, y: -1 },
+const BANNER_CATS = [
+  { rotate: -18, y: 1 },
+  { rotate: 15, y: -2 },
+  { rotate: -10, y: 2 },
+  { rotate: 21, y: -1 },
+  { rotate: -16, y: 1 },
+  { rotate: 12, y: -2 },
+  { rotate: -23, y: 2 },
+  { rotate: 9, y: -1 },
+  { rotate: -13, y: 1 },
+  { rotate: 18, y: -2 },
+  { rotate: -9, y: 2 },
+  { rotate: 14, y: -1 },
+  { rotate: -20, y: 1 },
+  { rotate: 11, y: -2 },
+  { rotate: -15, y: 2 },
+  { rotate: 23, y: -1 },
+  { rotate: -12, y: 1 },
+  { rotate: 16, y: -2 },
+  { rotate: -22, y: 2 },
+  { rotate: 10, y: -1 },
+  { rotate: -17, y: 1 },
+  { rotate: 19, y: -2 },
 ] as const;
+
+function FatCatBanner() {
+  return (
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-around gap-6 px-14 opacity-70 select-none">
+      {BANNER_CATS.map((cat, index) => (
+        <img
+          key={index}
+          src={fatCatOutline}
+          alt=""
+          aria-hidden="true"
+          className="h-10 w-16 max-w-none shrink-0 object-contain opacity-70 dark:invert"
+          style={{
+            transform: `rotate(${cat.rotate}deg) translateY(${cat.y}px)`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export function RootLayout() {
   const { isDark } = useDarkMode();
@@ -47,19 +60,7 @@ export function RootLayout() {
       <AppSidebar />
       <SidebarInset className="min-w-0 overflow-x-hidden">
         <header className="relative flex h-12 items-center border-b overflow-hidden bg-sidebar/30">
-          <div className="absolute inset-0 flex items-center justify-around pointer-events-none select-none px-8">
-            {BANNER_CATS.map((cat, i) => (
-              <img
-                key={i}
-                src={omgpeets}
-                alt=""
-                className="h-9 w-9 object-contain shrink-0"
-                style={{
-                  transform: `rotate(${cat.deg}deg) translateY(${cat.y}px)`,
-                }}
-              />
-            ))}
-          </div>
+          <FatCatBanner />
           <div className="relative z-10 px-2">
             <SidebarTrigger />
           </div>

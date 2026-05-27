@@ -785,8 +785,8 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
         setBdMonth(month);
         setBdDay(day);
       }
-      setFavoriteMountOptions(buildFavoriteOptions(collectionData?.owned.mounts, mounts));
-      setFavoriteMinionOptions(buildFavoriteOptions(collectionData?.owned.minions, minions));
+      setFavoriteMountOptions(buildFavoriteOptions(collectionData?.owned?.mounts, mounts));
+      setFavoriteMinionOptions(buildFavoriteOptions(collectionData?.owned?.minions, minions));
     } catch {
       toast.error("Failed to load profile.");
     }

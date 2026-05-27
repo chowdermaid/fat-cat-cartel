@@ -1274,11 +1274,11 @@ function ProfileEditorDialog({
   const [{ month, day }, setBirthday] = useState({ month: 0, day: 0 });
   const [saving, setSaving] = useState(false);
   const mountOptions = useMemo(
-    () => favoriteOptions(collectionData?.owned.mounts, collectibles?.mounts),
+    () => favoriteOptions(collectionData?.owned?.mounts, collectibles?.mounts),
     [collectionData, collectibles],
   );
   const minionOptions = useMemo(
-    () => favoriteOptions(collectionData?.owned.minions, collectibles?.minions),
+    () => favoriteOptions(collectionData?.owned?.minions, collectibles?.minions),
     [collectionData, collectibles],
   );
 

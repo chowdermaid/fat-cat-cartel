@@ -10,6 +10,10 @@ import { deleteTrackedMember, upsertTrackedMember } from "./delete-member";
 import { processQueuedFriendRefreshJobs } from "./friend-refresh";
 import { refreshMemberSourceForAdmin } from "./member-source-refresh";
 import {
+  createRaidHelperEventForAdmin,
+  runSyncDiscordPlannerEvents,
+} from "./sync-discord-planner-events";
+import {
   fetchTomestoneProgressionGraph,
   runRefreshTomestoneRaidStats,
 } from "./refresh-tomestone-raid-stats";
@@ -44,7 +48,13 @@ const discordGuildId = defineSecret("DISCORD_GUILD_ID");
 const discordAdminRoleIds = defineSecret("DISCORD_ADMIN_ROLE_IDS");
 const discordMemberRoleIds = defineSecret("DISCORD_MEMBER_ROLE_IDS");
 const discordBotToken = defineSecret("DISCORD_BOT_TOKEN");
+const discordEventChannelId = defineSecret("DISCORD_EVENT_CHANNEL_ID");
+const raidHelperApiKey = defineSecret("RAID_HELPER_API_KEY");
+const raidHelperTemplateId = defineSecret("RAID_HELPER_TEMPLATE_ID");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
+const raidHelperFallbackLeaderId = defineString("RAID_HELPER_FALLBACK_LEADER_ID", {
+  default: "",
+});
 
 function adminAuthConfig() {
   return {
@@ -62,6 +72,22 @@ function discordOAuthConfig() {
     clientSecret: discordClientSecret.value(),
     redirectUri: discordRedirectUri.value(),
     appOrigin: adminAppOrigin.value(),
+  };
+}
+
+function discordPlannerConfig() {
+  return {
+    apiKey: raidHelperApiKey.value(),
+    guildId: discordGuildId.value(),
+    channelId: discordEventChannelId.value(),
+  };
+}
+
+function raidHelperCreateConfig() {
+  return {
+    ...discordPlannerConfig(),
+    templateId: raidHelperTemplateId.value(),
+    fallbackLeaderId: raidHelperFallbackLeaderId.value(),
   };
 }
 
@@ -177,6 +203,48 @@ export const refreshFCCollection = onSchedule(
   { schedule: "0 */3 * * *", timeoutSeconds: 300, region: "us-central1" },
   async () => {
     await runRefreshFCCollection();
+  },
+);
+
+export const syncDiscordPlannerEvents = onSchedule(
+  {
+    schedule: "0 * * * *",
+    secrets: [discordGuildId, discordEventChannelId, raidHelperApiKey],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async () => {
+    await runSyncDiscordPlannerEvents(discordPlannerConfig());
+  },
+);
+
+export const triggerDiscordPlannerSync = onCall(
+  {
+    cors: true,
+    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken, discordEventChannelId, raidHelperApiKey],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return runSyncDiscordPlannerEvents(discordPlannerConfig());
+  },
+);
+
+export const createRaidHelperEvent = onCall(
+  {
+    cors: true,
+    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken, discordEventChannelId, raidHelperApiKey, raidHelperTemplateId],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireAdminSession(request.data, adminAuthConfig());
+    return createRaidHelperEventForAdmin(
+      request.data,
+      session.discordUserId,
+      raidHelperCreateConfig(),
+    );
   },
 );
 

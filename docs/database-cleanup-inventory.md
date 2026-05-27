@@ -12,6 +12,8 @@ Observed live top-level branches:
 - `/adminOAuthStates`
 - `/adminSessions`
 - `/events`
+- `/calendarEvents`
+- `/calendarSync`
 - `/fcCollection`
 - `/guildMembers`
 - `/memberActivity`
@@ -34,6 +36,8 @@ Core app data:
 - `/membersLastUpdated`: cache invalidation timestamp for member identity reads.
 - `/memberProfiles`: editable profile data such as bio, birthday, main jobs, timezone, favorite owned mount and minion IDs, and favorite content type.
 - `/events/easter2026/participants`: archived Easter 2026 scoreboard and admin data.
+- `/calendarEvents`: normalized read-only Discord Event Planner imports used by `/calendar`.
+- `/calendarSync/discordPlanner`: sync diagnostics for the admin Calendar Sync panel.
 
 Collection data:
 

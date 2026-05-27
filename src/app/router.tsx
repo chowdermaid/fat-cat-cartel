@@ -16,6 +16,7 @@ import { RaidStatsPage } from "@/features/raid-stats";
 import { MountRoulettePage } from "@/features/mount-roulette";
 import { MembersPage } from "@/features/members";
 import { MemberProfilePage } from "@/features/member-profile";
+import { CalendarPage } from "@/features/calendar";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -75,6 +76,12 @@ const mountRouletteRoute = createRoute({
   component: MountRoulettePage,
 });
 
+const calendarRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/calendar",
+  component: CalendarPage,
+});
+
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
@@ -103,6 +110,7 @@ const routeTree = rootRoute.addChildren([
   fcLeaderboardRoute,
   raidStatsRoute,
   mountRouletteRoute,
+  calendarRoute,
   adminRoute,
   membersRoute,
   memberProfileRoute,

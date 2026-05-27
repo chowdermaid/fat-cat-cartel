@@ -359,6 +359,31 @@ let store: Record<string, unknown> = {
     "11111001": { tomestone: { recent: STUB_RECENT_ACTIVITY.filter((activity) => activity.lodestoneId === "11111001") } },
     "11111002": { tomestone: { recent: STUB_RECENT_ACTIVITY.filter((activity) => activity.lodestoneId === "11111002") } },
   },
+  calendarEvents: {
+    "discordPlanner_stub-event": {
+      title: "Mount Farm Night",
+      description: "Bring your wish list and we will rotate through everyone.",
+      startAt: NOW + 3 * DAY,
+      endAt: NOW + 3 * DAY + 2 * 60 * 60_000,
+      location: "Discord voice",
+      source: "discordPlanner",
+      sourceUrl: "https://discord.com/channels/stub/stub/stub",
+      plannerMessageId: "stub-event",
+      lastSyncedAt: NOW - 15 * 60_000,
+      updatedAt: NOW - 15 * 60_000,
+      status: "scheduled",
+    },
+  },
+  calendarSync: {
+    discordPlanner: {
+      lastStartedAt: NOW - 15 * 60_000,
+      lastSucceededAt: NOW - 15 * 60_000,
+      importedCount: 1,
+      skippedCount: 0,
+      lastError: null,
+      recentFailures: [],
+    },
+  },
   events: {
     easter2026: {
       participants: {
@@ -452,6 +477,7 @@ export function stubOnValue(
   callback: Callback,
   _onError?: (e: Error) => void,
 ): Unsubscribe {
+  void _onError;
   if (!listeners.has(r.path)) listeners.set(r.path, new Set());
   listeners.get(r.path)!.add(callback);
   setTimeout(() => callback(makeSnapshot(r.path)), 0);

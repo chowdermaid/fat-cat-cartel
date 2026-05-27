@@ -13,6 +13,7 @@ import { useAdminAuth } from "./hooks/useAdminAuth";
 import { AuthAccessState } from "@/components/auth/AuthAccessState";
 import { ParticipantManager } from "./components/ParticipantManager";
 import { FCMembersManager } from "./components/FCMembersManager";
+import { CalendarSyncStatus } from "./components/CalendarSyncStatus";
 
 type SelectedView = "easter2026" | "fc-members";
 
@@ -105,41 +106,45 @@ export function AdminPage() {
 
       <FCMembersManager adminSessionToken={sessionToken} />
 
-      <Card className="w-32">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <CardTitle className="text-lg font-serif leading-tight">
-                  Easter Social 2026
-                </CardTitle>
-                <p className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                  26 April 2026
-                </p>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+        <CalendarSyncStatus adminSessionToken={sessionToken} />
+
+        <Card className="h-full">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <CalendarDays className="h-5 w-5 shrink-0 text-muted-foreground" />
+                <div className="min-w-0">
+                  <CardTitle className="text-lg font-serif leading-tight">
+                    Easter Social 2026
+                  </CardTitle>
+                  <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                    26 April 2026
+                  </p>
+                </div>
               </div>
+              <Badge variant="secondary" className="shrink-0">
+                Archived
+              </Badge>
             </div>
-            <Badge variant="secondary" className="shrink-0">
-              Archived
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Manage participants and scores for the Easter 2026 event.
-          </p>
-        </CardContent>
-        <CardFooter className="pt-0">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSelectedView("easter2026")}
-          >
-            <Settings className="h-3.5 w-3.5" />
-            Manage Easter Social
-          </Button>
-        </CardFooter>
-      </Card>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Manage participants and scores for the Easter 2026 event.
+            </p>
+          </CardContent>
+          <CardFooter className="pt-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedView("easter2026")}
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Manage Easter Social
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }

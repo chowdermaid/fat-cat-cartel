@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { animate, stagger } from "animejs";
 import ReactCountryFlag from "react-country-flag";
-import { Crown, Shield, User } from "lucide-react";
+import { Crown, Heart, Shield, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMembers } from "@/hooks/useMembers";
 import { db, get, ref } from "@/lib/db";
@@ -107,6 +107,14 @@ function rankLabel(rank: string | null) {
   return rank && RANK_SORT_ORDER.has(rank) ? rank : "Member";
 }
 
+function rankBadgeClass(rank: string | null) {
+  if (rank === "Friend") {
+    return "border-pink-300/60 bg-pink-500/10 text-pink-600 dark:border-pink-400/40 dark:bg-pink-400/10 dark:text-pink-200";
+  }
+
+  return "";
+}
+
 function isOmniMaxed(jobLevels?: Record<string, number | null>) {
   if (!jobLevels) return false;
 
@@ -174,10 +182,17 @@ function MemberCard({
           <p className="truncate text-sm font-semibold">{member.name}</p>
           <div className="flex flex-wrap items-center gap-1.5">
             <Badge
-              variant={member.fcRank === "Friend" ? "secondary" : "outline"}
-              className="max-w-full gap-1 px-2 py-0 text-[0.68rem]"
+              variant="outline"
+              className={cn(
+                "max-w-full gap-1 px-2 py-0 text-[0.68rem]",
+                rankBadgeClass(member.fcRank),
+              )}
             >
-              <Shield className="h-3 w-3 shrink-0" />
+              {member.fcRank === "Friend" ? (
+                <Heart className="h-3 w-3 shrink-0 fill-current" />
+              ) : (
+                <Shield className="h-3 w-3 shrink-0" />
+              )}
               <span className="truncate">{rankLabel(member.fcRank)}</span>
             </Badge>
             {omniMaxed && (

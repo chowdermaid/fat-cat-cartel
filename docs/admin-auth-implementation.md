@@ -76,6 +76,8 @@ All admin mutations must include `adminSessionToken` and call `requireAdminSessi
 - `triggerTomestoneRaidStatsRefresh`
 - `importLodestoneMembers`
 - `triggerFCCollectionRefresh`
+- `triggerDiscordPlannerSync`
+- `createRaidHelperEvent`
 - `updateMemberProfileAdmin`
 - `upsertEasterParticipantAdmin`
 - `deleteEasterParticipantAdmin`

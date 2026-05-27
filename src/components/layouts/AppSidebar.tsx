@@ -32,9 +32,16 @@ import fatcathi from "../../assets/fatcathi.png";
 const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Members", to: "/members", icon: Users },
+  { label: "Calendar", to: "/calendar", icon: CalendarDays },
+] as const;
+
+const progressItems = [
   { label: "FC Collection", to: "/fc-collection", icon: Library },
-  { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
   { label: "Raid Stats", to: "/raid-stats", icon: BarChart2 },
+] as const;
+
+const toolItems = [
+  { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
 ] as const;
 
 const bottomItems = [
@@ -64,7 +71,11 @@ function NavLink({
       <SidebarMenuButton
         asChild
         isActive={isActive}
-        className={dim ? "text-muted-foreground/50 hover:text-muted-foreground" : undefined}
+        className={
+          dim
+            ? "text-muted-foreground/50 hover:text-muted-foreground"
+            : undefined
+        }
       >
         <Link to={to}>
           <Icon className="h-4 w-4 shrink-0" />
@@ -82,10 +93,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="border-b pb-4">
-        <Link
-          to="/"
-          className="flex items-center gap-3 px-2 pt-2 group"
-        >
+        <Link to="/" className="flex items-center gap-3 px-2 pt-2 group">
           <img
             src={fatcathi}
             className="w-9 h-9 rounded-full ring-2 ring-sidebar-border group-hover:ring-sidebar-accent transition-all"
@@ -111,6 +119,32 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <SidebarGroup>
+          <div className="px-2 pb-1 text-xs font-medium text-muted-foreground">
+            Progress
+          </div>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {progressItems.map((item) => (
+                <NavLink key={item.to} {...item} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <div className="px-2 pb-1 text-xs font-medium text-muted-foreground">
+            Tools
+          </div>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {toolItems.map((item) => (
+                <NavLink key={item.to} {...item} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         <div className="mt-auto" />
       </SidebarContent>
 
@@ -123,7 +157,11 @@ export function AppSidebar() {
                 <NavLink key={item.to} {...item} />
               ))}
               {auth.sessionWasAdmin && (
-                <NavLink key={adminItem.to} {...adminItem} dim={auth.checking} />
+                <NavLink
+                  key={adminItem.to}
+                  {...adminItem}
+                  dim={auth.checking}
+                />
               )}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -147,7 +185,11 @@ export function AppSidebar() {
             className="h-7 w-7"
             aria-label="Toggle theme"
           >
-            {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+            {isDark ? (
+              <Sun className="h-3.5 w-3.5" />
+            ) : (
+              <Moon className="h-3.5 w-3.5" />
+            )}
           </Button>
         </div>
       </SidebarFooter>
