@@ -1,7 +1,8 @@
 import { firebaseApp } from "@/lib/firebase";
 
 const REGION = "us-central1";
-const USE_FUNCTIONS_EMULATOR = import.meta.env.VITE_USE_FUNCTIONS_EMULATOR === "true";
+const USE_FUNCTIONS_EMULATOR =
+  import.meta.env.DEV && import.meta.env.VITE_USE_FUNCTIONS_EMULATOR === "true";
 let connectedToFunctionsEmulator = false;
 
 function projectId(): string | null {

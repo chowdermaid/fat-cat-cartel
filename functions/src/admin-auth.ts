@@ -9,6 +9,7 @@ const OAUTH_STATE_MS = 10 * 60 * 1000;
 const LAST_SEEN_WRITE_MS = 5 * 60 * 1000;
 const STATE_COOKIE = "fcc_admin_oauth_state";
 const DEFAULT_RETURN_TO = "/admin";
+const LOCAL_DEV_ADMIN_SESSION_TOKEN = "local-dev-admin-session-token-00000001";
 
 export interface AdminAuthConfig {
   clientId: string;
@@ -450,6 +451,25 @@ export async function requireMemberSession(
   >,
 ): Promise<VerifiedAdminSession> {
   const token = getSessionToken(data);
+  if (
+    process.env.FUNCTIONS_EMULATOR === "true" &&
+    token === LOCAL_DEV_ADMIN_SESSION_TOKEN
+  ) {
+    return {
+      discordUserId: "local-dev",
+      lodestoneId: "local-dev",
+      characterName: "Local Admin",
+      fcRank: "Dev",
+      avatarUrl: null,
+      roleIds: ["local-dev"],
+      isAdmin: true,
+      createdAt: 0,
+      expiresAt: Number.MAX_SAFE_INTEGER,
+      lastSeenAt: Date.now(),
+      sessionHash: "local-dev",
+    };
+  }
+
   const sessionHash = hashToken(token);
   const sessionRef = admin.database().ref(`adminSessions/${sessionHash}`);
   const snapshot = await sessionRef.get();

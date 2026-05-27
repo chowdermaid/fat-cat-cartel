@@ -1,73 +1,220 @@
-# React + TypeScript + Vite
+# Fat Cat Cartel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website for the FFXIV Free Company Fat Cat Cartel.
 
-Currently, two official plugins are available:
+## Local App Commands
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Install dependencies:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the Vite dev server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Start the app with local stubs instead of Firebase:
+
+```bash
+VITE_USE_STUBS=true npm run dev
+```
+
+Build the app:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+Lint the app:
+
+```bash
+npm run lint
+```
+
+## Firebase Functions Commands
+
+Install function dependencies:
+
+```bash
+cd functions
+npm install
+```
+
+Build functions:
+
+```bash
+cd functions
+npm run build
+```
+
+Watch-build functions during emulator work:
+
+```bash
+cd functions
+npm run build:watch
+```
+
+Register Discord commands:
+
+```bash
+cd functions
+npm run register:discord
+```
+
+## Firebase Emulator Commands
+
+The local emulator data lives here:
+
+```text
+emulator-data
+```
+
+Start all configured emulators and import saved data:
+
+```bash
+firebase emulators:start --import="./emulator-data"
+```
+
+Start emulators, import saved data, and export changes back on exit:
+
+```bash
+firebase emulators:start --import="./emulator-data" --export-on-exit="./emulator-data"
+```
+
+Start only Functions and Realtime Database emulators:
+
+```bash
+firebase emulators:start --only functions,database --import="./emulator-data" --export-on-exit="./emulator-data"
+```
+
+Emulator ports from `firebase.json`:
+
+```text
+Emulator UI: http://127.0.0.1:4000
+Functions:   http://127.0.0.1:5001
+Database:    http://127.0.0.1:9000
+```
+
+Export current emulator data manually:
+
+```bash
+firebase emulators:export "./emulator-data"
+```
+
+## Firebase Deploy Commands
+
+Build app and deploy everything configured in `firebase.json`:
+
+```bash
+npm run build
+firebase deploy
+```
+
+Deploy hosting only:
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+Deploy functions only:
+
+```bash
+cd functions
+npm run build
+cd ..
+firebase deploy --only functions
+```
+
+Deploy Realtime Database rules only:
+
+```bash
+firebase deploy --only database
+```
+
+Deploy hosting and functions:
+
+```bash
+npm run build
+cd functions
+npm run build
+cd ..
+firebase deploy --only hosting,functions
+```
+
+Deploy a single function:
+
+```bash
+firebase deploy --only functions:functionName
+```
+
+Example:
+
+```bash
+firebase deploy --only functions:triggerFCCollectionRefresh
+```
+
+## Useful Firebase Commands
+
+Log in to Firebase:
+
+```bash
+firebase login
+```
+
+Check the active Firebase project:
+
+```bash
+firebase use
+```
+
+Switch Firebase project:
+
+```bash
+firebase use project-id
+```
+
+List Firebase projects:
+
+```bash
+firebase projects:list
+```
+
+View function logs:
+
+```bash
+firebase functions:log
+```
+
+View logs for one function:
+
+```bash
+firebase functions:log --only functionName
+```
+
+Set a Functions secret:
+
+```bash
+firebase functions:secrets:set SECRET_NAME
+```
+
+Read a Functions secret value:
+
+```bash
+firebase functions:secrets:access SECRET_NAME
+```
+
+## Notes
+
+- Use real Firebase values in `.env` for real backend testing and deploys.
+- Use `VITE_USE_STUBS=true` for ordinary UI work without Firebase credentials.
+- Firebase Hosting serves `dist` and rewrites app routes to `index.html`.

@@ -76,9 +76,15 @@ function sampleJobLevels() {
   };
 }
 
+function maxedJobLevels() {
+  return Object.fromEntries(
+    Object.entries(sampleJobLevels()).map(([job]) => [job, job === "Blue Mage" ? 80 : 100]),
+  );
+}
+
 // Stub members keyed by lodestoneId (new canonical key)
 const STUB_MEMBERS = {
-  "11111001": { name: "Chow Chow",       server: "Sophia", avatarUrl: null, fcRank: "Boss", jobLevels: sampleJobLevels(), jobLevelsLastFetched: NOW - 900_000, tomestoneProfile: { datacenter: "Materia", achievementPoints: 21400, totalMounts: 192, totalMinions: 301 } },
+  "11111001": { name: "Chow Chow",       server: "Sophia", avatarUrl: "/favicon.svg", fcRank: "Boss", jobLevels: maxedJobLevels(), jobLevelsLastFetched: NOW - 900_000, tomestoneProfile: { datacenter: "Materia", portrait: "/icons.svg", achievementPoints: 21400, totalMounts: 192, totalMinions: 301 } },
   "11111002": { name: "Axo Lotl",        server: "Sophia", avatarUrl: null, fcRank: "Underpaw", jobLevels: { ...sampleJobLevels(), Paladin: null, Warrior: 100, Dragoon: 82, Carpenter: 12 }, jobLevelsLastFetched: NOW - 900_000 },
   "11111003": { name: "Sweet Potatoes",  server: "Sophia", avatarUrl: null, fcRank: "Underpaw" },
   "11111004": { name: "Zalka Tohka",     server: "Sophia", avatarUrl: null, fcRank: "Housecat" },

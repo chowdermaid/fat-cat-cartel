@@ -209,7 +209,6 @@ const FRESHNESS_MS: Record<SyncSource, number> = {
   fflogs: 30 * 60 * 60 * 1000,
   lodestone: 7 * 24 * 60 * 60 * 1000,
 };
-
 const RANK_ORDER = new Map<string, number>(
   FC_RANKS.map((rank, index) => [rank, index]),
 );

@@ -7,6 +7,7 @@ const SESSION_KEY = "admin_session_token";
 const SESSION_ADMIN_KEY = "admin_session_is_admin";
 const SESSION_EVENT = "admin-session-change";
 const LOGIN_TOAST_KEY = "admin_login_toast_pending";
+const LOCAL_DEV_ADMIN_SESSION_TOKEN = "local-dev-admin-session-token-00000001";
 const ADMIN_AUTH_BYPASS =
   import.meta.env.DEV && import.meta.env.VITE_ADMIN_AUTH_BYPASS === "true";
 
@@ -65,7 +66,7 @@ let authSnapshot: AuthSnapshot = {
       : storedSessionToken()
         ? "checking"
         : "login",
-  sessionToken: ADMIN_AUTH_BYPASS ? null : storedSessionToken(),
+  sessionToken: ADMIN_AUTH_BYPASS ? LOCAL_DEV_ADMIN_SESSION_TOKEN : storedSessionToken(),
   session: ADMIN_AUTH_BYPASS || !firebaseApp ? localDevSession : null,
   error: null,
 };
@@ -128,7 +129,7 @@ export function useAdminAuth() {
     if (ADMIN_AUTH_BYPASS) {
       updateAuthSnapshot({
         state: "authed",
-        sessionToken: null,
+        sessionToken: LOCAL_DEV_ADMIN_SESSION_TOKEN,
         session: localDevSession,
         error: null,
       });
@@ -247,6 +248,7 @@ export function useAdminAuth() {
     if (ADMIN_AUTH_BYPASS) {
       updateAuthSnapshot({
         state: "authed",
+        sessionToken: LOCAL_DEV_ADMIN_SESSION_TOKEN,
         session: localDevSession,
         error: null,
       });
@@ -281,6 +283,7 @@ export function useAdminAuth() {
     window.dispatchEvent(new Event(SESSION_EVENT));
     if (ADMIN_AUTH_BYPASS) {
       updateAuthSnapshot({
+        sessionToken: LOCAL_DEV_ADMIN_SESSION_TOKEN,
         session: localDevSession,
         error: null,
         state: "authed",

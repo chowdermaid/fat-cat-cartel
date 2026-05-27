@@ -1,8 +1,9 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { connectDatabaseEmulator, getDatabase, type Database } from "firebase/database";
 
-const USE_STUBS = import.meta.env.VITE_USE_STUBS === "true";
-const USE_DATABASE_EMULATOR = import.meta.env.VITE_USE_DATABASE_EMULATOR === "true";
+const USE_STUBS = import.meta.env.DEV && import.meta.env.VITE_USE_STUBS === "true";
+const USE_DATABASE_EMULATOR =
+  import.meta.env.DEV && import.meta.env.VITE_USE_DATABASE_EMULATOR === "true";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export let db: Database = null as any;
