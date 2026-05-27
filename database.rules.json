@@ -77,6 +77,16 @@
       ".write": false
     },
 
+    "calendarEvents": {
+      ".read": true,
+      ".write": false
+    },
+
+    "calendarSync": {
+      ".read": true,
+      ".write": false
+    },
+
     "events": {
       ".read": true,
       "easter2026": {
