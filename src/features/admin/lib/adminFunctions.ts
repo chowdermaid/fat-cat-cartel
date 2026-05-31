@@ -1,4 +1,6 @@
 import { firebaseApp } from "@/lib/firebase";
+import { callDevAdminFunction } from "@/lib/dev/callables";
+import { DEV_AUTH_LAYER_ENABLED } from "@/lib/dev/personas";
 
 const REGION = "us-central1";
 const USE_FUNCTIONS_EMULATOR =
@@ -32,6 +34,9 @@ export async function callAdminFunction<T = unknown>(
   data: Record<string, unknown> = {},
   options?: { timeout?: number },
 ): Promise<T> {
+  if (DEV_AUTH_LAYER_ENABLED) {
+    return callDevAdminFunction<T>(name, adminSessionToken, data);
+  }
   if (!firebaseApp) throw new Error("Firebase is not available in local dev mode.");
   const { connectFunctionsEmulator, getFunctions, httpsCallable } = await import("firebase/functions");
   const functions = getFunctions(firebaseApp);

@@ -158,3 +158,4 @@ For progress bars or visual meters, keep JSX at the base value and animate the c
 - Functions changes: `cd functions` then `npm run build`.
 - UI layout changes: run the dev server and inspect mobile and desktop states if feasible.
 - Firebase data path changes: test with `VITE_USE_STUBS=true` first unless real backend or emulator behavior is required.
+- Local UI flow testing can use `VITE_DEV_AUTH_LAYER=true` for the top-header persona selector and local mock callables. Use Firebase emulators instead for backend, auth, rules, or external integration verification.

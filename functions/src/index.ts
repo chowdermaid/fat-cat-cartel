@@ -10,8 +10,12 @@ import { deleteTrackedMember, upsertTrackedMember } from "./delete-member";
 import { processQueuedFriendRefreshJobs } from "./friend-refresh";
 import { refreshMemberSourceForAdmin } from "./member-source-refresh";
 import {
+  approveCalendarEventRequest as approveEventRequest,
   createRaidHelperEventForAdmin,
+  denyCalendarEventRequest as denyEventRequest,
+  listCalendarEventRequests as listEventRequests,
   runSyncDiscordPlannerEvents,
+  submitCalendarEventRequest as submitEventRequest,
 } from "./sync-discord-planner-events";
 import {
   fetchTomestoneProgressionGraph,
@@ -20,7 +24,9 @@ import {
 import {
   finishDiscordAdminOAuth,
   getAdminSession as getAdminSessionForToken,
+  hasAnyRole,
   logoutAdminSession as logoutAdminSessionForToken,
+  parseRoleIds,
   requireAdminSession,
   requireMemberSession,
   startDiscordAdminOAuth as startDiscordOAuth,
@@ -47,8 +53,10 @@ const discordRedirectUri = defineSecret("DISCORD_REDIRECT_URI");
 const discordGuildId = defineSecret("DISCORD_GUILD_ID");
 const discordAdminRoleIds = defineSecret("DISCORD_ADMIN_ROLE_IDS");
 const discordMemberRoleIds = defineSecret("DISCORD_MEMBER_ROLE_IDS");
+const discordHousecatRoleId = defineSecret("DISCORD_HOUSECAT_ROLE_ID");
 const discordBotToken = defineSecret("DISCORD_BOT_TOKEN");
 const discordEventChannelId = defineSecret("DISCORD_EVENT_CHANNEL_ID");
+const discordDonChannelId = defineSecret("DISCORD_DON_CHANNEL_ID");
 const raidHelperApiKey = defineSecret("RAID_HELPER_API_KEY");
 const raidHelperTemplateId = defineSecret("RAID_HELPER_TEMPLATE_ID");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
@@ -62,6 +70,13 @@ function adminAuthConfig() {
     adminRoleIds: discordAdminRoleIds.value(),
     memberRoleIds: discordMemberRoleIds.value(),
     botToken: discordBotToken.value(),
+  };
+}
+
+function adminAuthConfigWithHousecat() {
+  return {
+    ...adminAuthConfig(),
+    housecatRoleId: discordHousecatRoleId.value(),
   };
 }
 
@@ -89,6 +104,13 @@ function raidHelperCreateConfig() {
     templateId: raidHelperTemplateId.value(),
     fallbackLeaderId: raidHelperFallbackLeaderId.value(),
     discordBotToken: discordBotToken.value(),
+  };
+}
+
+function eventRequestNotificationConfig() {
+  return {
+    discordBotToken: discordBotToken.value(),
+    donChannelId: discordDonChannelId.value(),
   };
 }
 
@@ -249,6 +271,76 @@ export const createRaidHelperEvent = onCall(
   },
 );
 
+export const submitCalendarEventRequest = onCall(
+  {
+    cors: true,
+    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordHousecatRoleId, discordBotToken, discordDonChannelId],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithHousecat(),
+    );
+    if (!hasAnyRole(session.roleIds, parseRoleIds(discordHousecatRoleId.value()))) {
+      throw new HttpsError("permission-denied", "Housecat Discord role required.");
+    }
+    return submitEventRequest(
+      request.data,
+      {
+        discordUserId: session.discordUserId,
+        lodestoneId: session.lodestoneId,
+        characterName: session.characterName,
+        fcRank: session.fcRank,
+        avatarUrl: session.avatarUrl ?? null,
+      },
+      eventRequestNotificationConfig(),
+    );
+  },
+);
+
+export const listCalendarEventRequests = onCall(
+  {
+    cors: true,
+    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return listEventRequests();
+  },
+);
+
+export const approveCalendarEventRequest = onCall(
+  {
+    cors: true,
+    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken, discordEventChannelId, raidHelperApiKey, raidHelperTemplateId],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return approveEventRequest(request.data, raidHelperCreateConfig());
+  },
+);
+
+export const denyCalendarEventRequest = onCall(
+  {
+    cors: true,
+    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return denyEventRequest(request.data, {
+      discordBotToken: discordBotToken.value(),
+    });
+  },
+);
+
 export const triggerFCCollectionRefresh = onCall(
   { secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
   async (request) => {
@@ -281,8 +373,8 @@ export const discordAdminOAuthCallback = onRequest(
 );
 
 export const getAdminSession = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 30, region: "us-central1" },
-  async (request) => getAdminSessionForToken(request.data, adminAuthConfig()),
+  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordHousecatRoleId, discordBotToken], timeoutSeconds: 30, region: "us-central1" },
+  async (request) => getAdminSessionForToken(request.data, adminAuthConfigWithHousecat()),
 );
 
 export const logoutAdminSession = onCall(

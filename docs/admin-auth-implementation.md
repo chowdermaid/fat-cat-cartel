@@ -21,12 +21,15 @@ Required Functions values:
 - `DISCORD_GUILD_ID`
 - `DISCORD_ADMIN_ROLE_IDS`, comma-separated Boss and Underpaw role IDs
 - `DISCORD_MEMBER_ROLE_IDS`, comma-separated non-admin role IDs allowed to log in
+- `DISCORD_HOUSECAT_ROLE_ID`, single role ID allowed to submit calendar event requests
 - `DISCORD_BOT_TOKEN`
 - `ADMIN_APP_ORIGIN`
 
 The Discord Developer Portal redirect URI must exactly match `DISCORD_REDIRECT_URI`, which should point at `discordAdminOAuthCallback`.
 
 Underpaw users do not need Discord Administrator permission. The backend does not check Discord permission bits, role names, or FC rank for admin authorization. A user is an admin only when their current Discord guild member role IDs include one of the configured Boss or Underpaw role IDs. Non-admin member roles allow login and self-profile editing, but not admin navigation or admin callables.
+
+Housecat calendar event requests require a normal member session plus the configured `DISCORD_HOUSECAT_ROLE_ID`. Housecat authorization does not grant admin access.
 
 `DISCORD_ADMIN_ROLE_IDS` should be set to the Boss and Underpaw role IDs, currently `1336553728513146930,1336487933967990925`.
 
@@ -43,6 +46,7 @@ Admin sessions live at `/adminSessions/{sessionIdHash}`:
 - `avatarUrl`
 - `roleIds`
 - `isAdmin`
+- `isHousecat` is returned by `getAdminSession` for client gating but is derived from live Discord roles, not stored as an auth authority.
 - `createdAt`
 - `expiresAt`
 - `lastSeenAt`
@@ -61,6 +65,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - Logged-in users see their linked in-game character name and FC rank. The account popover says `Welcome, {characterName}` and includes logout.
 - Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, and favorite content type. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
+- Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
 - Local Vite dev can bypass browser Discord OAuth with `VITE_ADMIN_AUTH_BYPASS=true`. The bypass only opens the admin UI locally because the client also checks `import.meta.env.DEV`; production builds ignore it.
 - Logout calls `logoutAdminSession`, shows a Sonner toast, clears the local token, and redirects to the home page.
@@ -78,11 +83,14 @@ All admin mutations must include `adminSessionToken` and call `requireAdminSessi
 - `triggerFCCollectionRefresh`
 - `triggerDiscordPlannerSync`
 - `createRaidHelperEvent`
+- `listCalendarEventRequests`
+- `approveCalendarEventRequest`
+- `denyCalendarEventRequest`
 - `updateMemberProfileAdmin`
 - `upsertEasterParticipantAdmin`
 - `deleteEasterParticipantAdmin`
 
-Member self profile editing uses `updateOwnMemberProfile`. It accepts the same session token, calls `requireMemberSession`, and writes only to the linked `/memberProfiles/{lodestoneId}` derived from the verified session. Favorite mount and minion IDs are accepted only when they are present in that member's synced `/fcCollection/memberData/{lodestoneId}/owned` arrays.
+Member self profile editing uses `updateOwnMemberProfile`. Housecat event request creation uses `submitCalendarEventRequest`. Both accept the same session token and call `requireMemberSession`; profile edits write only to the linked `/memberProfiles/{lodestoneId}` derived from the verified session. Favorite mount and minion IDs are accepted only when they are present in that member's synced `/fcCollection/memberData/{lodestoneId}/owned` arrays.
 
 The admin and profile UIs use `callAdminFunction` to attach the session token to callable payloads. Stub mode keeps direct local writes for UI development only because `firebaseApp` is null.
 
@@ -112,11 +120,23 @@ VITE_DATABASE_EMULATOR_HOST=127.0.0.1
 VITE_DATABASE_EMULATOR_PORT=9000
 VITE_USE_FUNCTIONS_EMULATOR=true
 VITE_ADMIN_AUTH_BYPASS=false
+VITE_DEV_AUTH_LAYER=false
 ```
 
 The normal `VITE_FIREBASE_*` web app config is still required. The Firebase SDK uses it to identify the project and RTDB instance, even when the app connects to the local emulator.
 
 Set `VITE_ADMIN_AUTH_BYPASS=true` only for local browser UI work when Discord OAuth is not needed. It does not create a real server session, so Firebase callable admin operations still require emulator stub paths or a valid Discord-backed session.
+
+Set `VITE_DEV_AUTH_LAYER=true` only for local UI flow testing. It shows a top-header persona selector, returns local pseudo sessions, and routes registered callables through localStorage-backed mock handlers instead of Firebase, Discord, or Raid Helper. Use emulators instead when validating RTDB rules, Functions, OAuth, or external integrations.
+
+For local integration testing with real Discord OAuth, real callable Functions, Firebase emulators, and real Discord bot delivery, keep `VITE_DEV_AUTH_LAYER=false` and enable the Functions role override only in the emulator:
+
+```bash
+FUNCTIONS_DEV_ALLOW_ROLE_OVERRIDE=true
+FUNCTIONS_DEV_DISCORD_ROLE_OVERRIDE=housecat
+```
+
+The override is rejected unless `FUNCTIONS_EMULATOR=true`. It does not change Discord roles, linked members, stored sessions, or production data; it only adjusts the app-facing role IDs returned by `requireMemberSession` after real Discord session validation succeeds.
 
 Recommended Functions local files:
 

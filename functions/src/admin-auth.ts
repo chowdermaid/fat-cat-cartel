@@ -56,6 +56,11 @@ export interface VerifiedAdminSession extends AdminSession {
   sessionHash: string;
 }
 
+type MemberSessionConfig = Pick<
+  AdminAuthConfig,
+  "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
+> & { housecatRoleId?: string };
+
 function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -64,16 +69,62 @@ function randomToken(bytes = 32): string {
   return randomBytes(bytes).toString("base64url");
 }
 
-function parseRoleIds(value: string): string[] {
+export function parseRoleIds(value: string): string[] {
   return value
     .split(",")
     .map((roleId) => roleId.trim())
     .filter(Boolean);
 }
 
-function hasAnyRole(memberRoles: string[], allowedRoleIds: string[]): boolean {
+export function hasAnyRole(memberRoles: string[], allowedRoleIds: string[]): boolean {
   const memberRoleSet = new Set(memberRoles);
   return allowedRoleIds.some((roleId) => memberRoleSet.has(roleId));
+}
+
+function assertDevRoleOverrideSafety(): void {
+  if (
+    process.env.FUNCTIONS_DEV_ALLOW_ROLE_OVERRIDE === "true" &&
+    process.env.FUNCTIONS_EMULATOR !== "true"
+  ) {
+    throw new HttpsError(
+      "failed-precondition",
+      "Discord role override cannot be enabled outside local emulator.",
+    );
+  }
+}
+
+function applyDevRoleOverride(
+  roleIds: string[],
+  config: MemberSessionConfig,
+): string[] {
+  assertDevRoleOverrideSafety();
+  const overrideEnabled =
+    process.env.FUNCTIONS_DEV_ALLOW_ROLE_OVERRIDE === "true";
+  const overrideRole = process.env.FUNCTIONS_DEV_DISCORD_ROLE_OVERRIDE;
+  if (!overrideEnabled || !overrideRole) return roleIds;
+
+  if (overrideRole !== "housecat") {
+    throw new HttpsError(
+      "failed-precondition",
+      "Unsupported local Discord role override.",
+    );
+  }
+
+  const housecatRoleId = config.housecatRoleId?.trim();
+  if (!housecatRoleId) {
+    throw new HttpsError(
+      "failed-precondition",
+      "Housecat role override requires DISCORD_HOUSECAT_ROLE_ID.",
+    );
+  }
+
+  const adminRoleIds = new Set(parseRoleIds(config.adminRoleIds));
+  return Array.from(
+    new Set([
+      ...roleIds.filter((roleId) => !adminRoleIds.has(roleId)),
+      housecatRoleId,
+    ]),
+  );
 }
 
 function getSessionToken(data: unknown): string {
@@ -445,11 +496,9 @@ export async function finishDiscordAdminOAuth(
 
 export async function requireMemberSession(
   data: unknown,
-  config: Pick<
-    AdminAuthConfig,
-    "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
-  >,
+  config: MemberSessionConfig,
 ): Promise<VerifiedAdminSession> {
+  assertDevRoleOverrideSafety();
   const token = getSessionToken(data);
   if (
     process.env.FUNCTIONS_EMULATOR === "true" &&
@@ -535,21 +584,21 @@ export async function requireMemberSession(
     });
   }
 
+  const appRoleIds = applyDevRoleOverride(currentRoleIds, config);
+  const appIsAdmin = hasAnyRole(appRoleIds, adminRoleIds);
+
   return {
     ...session,
     ...character,
-    roleIds: currentRoleIds,
-    isAdmin,
+    roleIds: appRoleIds,
+    isAdmin: appIsAdmin,
     sessionHash,
   };
 }
 
 export async function requireAdminSession(
   data: unknown,
-  config: Pick<
-    AdminAuthConfig,
-    "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
-  >,
+  config: MemberSessionConfig,
 ): Promise<VerifiedAdminSession> {
   const session = await requireMemberSession(data, config);
   if (!session.isAdmin) {
@@ -563,10 +612,7 @@ export async function requireAdminSession(
 
 export async function getAdminSession(
   data: unknown,
-  config: Pick<
-    AdminAuthConfig,
-    "guildId" | "adminRoleIds" | "memberRoleIds" | "botToken"
-  >,
+  config: MemberSessionConfig,
 ): Promise<{
   ok: true;
   discordUserId: string;
@@ -576,9 +622,11 @@ export async function getAdminSession(
   avatarUrl: string | null;
   roleIds: string[];
   isAdmin: boolean;
+  isHousecat: boolean;
   expiresAt: number;
 }> {
   const session = await requireMemberSession(data, config);
+  const housecatRoleId = config.housecatRoleId?.trim();
   return {
     ok: true,
     discordUserId: session.discordUserId,
@@ -588,6 +636,7 @@ export async function getAdminSession(
     avatarUrl: session.avatarUrl ?? null,
     roleIds: session.roleIds,
     isAdmin: session.isAdmin === true,
+    isHousecat: housecatRoleId ? session.roleIds.includes(housecatRoleId) : false,
     expiresAt: session.expiresAt,
   };
 }

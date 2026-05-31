@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart2, Dices, LayoutGrid, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart2,
+  CalendarDays,
+  Dices,
+  LayoutGrid,
+  Users,
+} from "lucide-react";
 import { animate, stagger } from "animejs";
 import {
   Card,
@@ -17,6 +24,12 @@ const quickLinks = [
     icon: Users,
     title: "Members",
     description: "Snoop around. 👁️👄👁️",
+  },
+  {
+    to: "/calendar",
+    icon: CalendarDays,
+    title: "Calendar",
+    description: "View upcoming events and birthdays.",
   },
   {
     to: "/fc-collection",
@@ -54,7 +67,7 @@ export function About() {
 
   return (
     <section>
-      <div ref={gridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div ref={gridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
         {quickLinks.map(({ to, icon: Icon, title, description }) => (
           <Card key={to} className="about-card flex flex-col">
             <CardHeader className="pb-3">

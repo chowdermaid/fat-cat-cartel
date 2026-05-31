@@ -22,6 +22,14 @@ Start the app with local stubs instead of Firebase:
 VITE_USE_STUBS=true npm run dev
 ```
 
+Start with the dev persona layer for local UI flow testing:
+
+```bash
+VITE_DEV_AUTH_LAYER=true npm run dev
+```
+
+The dev persona layer is local-only and bypasses Firebase Functions, Discord, and Raid Helper calls with localStorage-backed mock callables.
+
 Build the app:
 
 ```bash

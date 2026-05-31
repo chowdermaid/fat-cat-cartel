@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { firebaseApp } from "@/lib/firebase";
+import {
+  DEV_AUTH_LAYER_ENABLED,
+  DEV_SESSION_TOKEN,
+  getSelectedDevPersona,
+  subscribeDevPersona,
+} from "@/lib/dev/personas";
 import { adminOAuthStartUrl, callAdminFunction } from "../lib/adminFunctions";
 
 const SESSION_KEY = "admin_session_token";
@@ -23,6 +29,8 @@ export interface AdminSession {
   avatarUrl?: string | null;
   roleIds: string[];
   isAdmin: boolean;
+  isHousecat: boolean;
+  capabilities?: string[];
   expiresAt: number;
 }
 
@@ -43,8 +51,37 @@ const localDevSession: AdminSession = {
   avatarUrl: null,
   roleIds: ["local-dev"],
   isAdmin: true,
+  isHousecat: false,
+  capabilities: ["admin:*"],
   expiresAt: Number.MAX_SAFE_INTEGER,
 };
+
+function devSessionFromPersona(): AdminSession | null {
+  const persona = getSelectedDevPersona();
+  if (!persona.authenticated) return null;
+  return {
+    discordUserId: persona.discordUserId,
+    lodestoneId: persona.lodestoneId,
+    characterName: persona.characterName,
+    fcRank: persona.fcRank,
+    avatarUrl: null,
+    roleIds: persona.roleIds,
+    isAdmin: persona.isAdmin,
+    isHousecat: persona.isHousecat,
+    capabilities: persona.capabilities,
+    expiresAt: Number.MAX_SAFE_INTEGER,
+  };
+}
+
+function devAuthSnapshot(): AuthSnapshot {
+  const session = devSessionFromPersona();
+  return {
+    state: session ? "authed" : "login",
+    sessionToken: session ? DEV_SESSION_TOKEN : null,
+    session,
+    error: null,
+  };
+}
 
 function storedSessionToken(): string | null {
   return typeof window === "undefined"
@@ -59,17 +96,21 @@ function storedSessionIsAdmin(): boolean {
   );
 }
 
-let authSnapshot: AuthSnapshot = {
-  state:
-    ADMIN_AUTH_BYPASS || !firebaseApp
-      ? "authed"
-      : storedSessionToken()
-        ? "checking"
-        : "login",
-  sessionToken: ADMIN_AUTH_BYPASS ? LOCAL_DEV_ADMIN_SESSION_TOKEN : storedSessionToken(),
-  session: ADMIN_AUTH_BYPASS || !firebaseApp ? localDevSession : null,
-  error: null,
-};
+let authSnapshot: AuthSnapshot = DEV_AUTH_LAYER_ENABLED
+  ? devAuthSnapshot()
+  : {
+      state:
+        ADMIN_AUTH_BYPASS || !firebaseApp
+          ? "authed"
+          : storedSessionToken()
+            ? "checking"
+            : "login",
+      sessionToken: ADMIN_AUTH_BYPASS
+        ? LOCAL_DEV_ADMIN_SESSION_TOKEN
+        : storedSessionToken(),
+      session: ADMIN_AUTH_BYPASS || !firebaseApp ? localDevSession : null,
+      error: null,
+    };
 
 function updateAuthSnapshot(next: Partial<AuthSnapshot>): void {
   authSnapshot = { ...authSnapshot, ...next };
@@ -108,14 +149,27 @@ export function useAdminAuth() {
     function syncSnapshot() {
       setSnapshot(authSnapshot);
     }
+    subscribers.add(syncSnapshot);
+    syncSnapshot();
+
+    if (DEV_AUTH_LAYER_ENABLED) {
+      function syncDevPersona() {
+        updateAuthSnapshot(devAuthSnapshot());
+      }
+      syncDevPersona();
+      const unsubscribeDevPersona = subscribeDevPersona(syncDevPersona);
+      return () => {
+        subscribers.delete(syncSnapshot);
+        unsubscribeDevPersona();
+      };
+    }
+
     function syncSessionToken() {
       updateAuthSnapshot({ sessionToken: storedSessionToken() });
     }
     function syncStorage(event: StorageEvent) {
       if (event.key === SESSION_KEY) syncSessionToken();
     }
-    subscribers.add(syncSnapshot);
-    syncSnapshot();
     window.addEventListener(SESSION_EVENT, syncSessionToken);
     window.addEventListener("storage", syncStorage);
     return () => {
@@ -126,6 +180,11 @@ export function useAdminAuth() {
   }, []);
 
   useEffect(() => {
+    if (DEV_AUTH_LAYER_ENABLED) {
+      updateAuthSnapshot(devAuthSnapshot());
+      return;
+    }
+
     if (ADMIN_AUTH_BYPASS) {
       updateAuthSnapshot({
         state: "authed",
@@ -245,6 +304,11 @@ export function useAdminAuth() {
   }, [sessionToken]);
 
   function login() {
+    if (DEV_AUTH_LAYER_ENABLED) {
+      updateAuthSnapshot(devAuthSnapshot());
+      return;
+    }
+
     if (ADMIN_AUTH_BYPASS) {
       updateAuthSnapshot({
         state: "authed",
@@ -275,6 +339,16 @@ export function useAdminAuth() {
   }
 
   async function logout() {
+    if (DEV_AUTH_LAYER_ENABLED) {
+      updateAuthSnapshot({
+        state: "login",
+        sessionToken: null,
+        session: null,
+        error: null,
+      });
+      return;
+    }
+
     const token = sessionToken;
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(SESSION_ADMIN_KEY);

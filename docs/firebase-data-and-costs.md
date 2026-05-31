@@ -53,6 +53,7 @@ Important RTDB paths:
 - `/memberSyncStatus/{lodestoneId}/{source}`: per-member source refresh metadata.
 - `/events/easter2026/participants/{participantId}`: archived Easter event scores and totals.
 - `/calendarEvents/{eventId}`: normalized planner events.
+- `/calendarEventRequests/{requestId}`: temporary Housecat event requests awaiting Boss or Underpaw approval.
 - `/calendarSync/discordPlanner`: Raid Helper sync diagnostics.
 - `/adminOAuthStates/{stateHash}`: short-lived hashed Discord OAuth state records.
 - `/adminSessions/{sessionIdHash}`: hashed web session records.
@@ -67,6 +68,7 @@ Important RTDB paths:
 - Tomestone refresh writes recent activity, raid member summaries, and may enrich missing member identity fields.
 - FC collection refresh writes collectibles and member collection data.
 - Calendar sync writes Raid Helper planner events and diagnostics.
+- Housecat event requests are written by Functions, reviewed by Boss/Underpaw callables, and deleted on approve or deny.
 - Admin UI can edit Easter participants, member profiles, `fcRank`, and manual member entries through callables.
 - Manual member adds may be overwritten by the next Lodestone or FFLogs sync.
 - Discord signup can add Friend records and queue source refreshes.
@@ -91,6 +93,10 @@ Functions are exported from `functions/src/index.ts`.
 - `syncDiscordPlannerEvents`: scheduled Raid Helper planner sync.
 - `triggerDiscordPlannerSync`: callable admin planner sync.
 - `createRaidHelperEvent`: callable admin event creation.
+- `submitCalendarEventRequest`: callable Housecat event request creation; sends one Discord DON-channel notification.
+- `listCalendarEventRequests`: callable admin one-time pending request read.
+- `approveCalendarEventRequest`: callable admin approval; creates a Raid Helper event and deletes the request.
+- `denyCalendarEventRequest`: callable admin denial; deletes the request.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
 
