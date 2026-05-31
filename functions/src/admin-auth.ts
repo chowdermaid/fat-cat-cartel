@@ -8,7 +8,7 @@ const SESSION_MS = SESSION_HOURS * 60 * 60 * 1000;
 const OAUTH_STATE_MS = 10 * 60 * 1000;
 const LAST_SEEN_WRITE_MS = 5 * 60 * 1000;
 const STATE_COOKIE = "fcc_admin_oauth_state";
-const DEFAULT_RETURN_TO = "/admin";
+const DEFAULT_RETURN_TO = "/";
 const LOCAL_DEV_ADMIN_SESSION_TOKEN = "local-dev-admin-session-token-00000001";
 
 export interface AdminAuthConfig {
