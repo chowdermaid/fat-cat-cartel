@@ -1,22 +1,47 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentType,
+  type FormEvent,
+} from "react";
 import { Link } from "@tanstack/react-router";
+import ReactCountryFlag from "react-country-flag";
 import { animate, stagger } from "animejs";
 import {
+  Bell,
   Cake,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
   Clock,
+  Compass,
   ExternalLink,
+  Gem,
+  Globe2,
   MapPin,
+  PartyPopper,
   Plus,
+  Siren,
+  Swords,
   User,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Stepper,
+  StepperContent,
+  StepperIndicator,
+  StepperItem,
+  StepperNav,
+  StepperPanel,
+  StepperTrigger,
+} from "@/components/reui/stepper";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +57,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -99,14 +131,48 @@ const DATE_BUTTON_FORMATTER = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
   year: "numeric",
 });
-const RAID_HELPER_PING_ROLES: Array<{ label: string; id: string }> = [
-  { label: "ROULETTES", id: "1339834783064264715" },
-  { label: "MOUNT FARMING", id: "1375069801244004462" },
-  { label: "TREASURE MAPS", id: "1339828715164532846" },
-  { label: "FIELD OPERATIONS", id: "1339834667561648198" },
-  { label: "RAIDS / TRIALS / VARIANT / DD", id: "1339833818055446621" },
-  { label: "SOCIAL EVENTS", id: "1339835677457514567" },
-  { label: "HUNTS / FATES / RED ALERTS", id: "1374967120235855946" },
+const DATE_TIME_PREVIEW_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+const TIME_ZONE_PREVIEWS = [
+  {
+    label: "Sydney / Melbourne",
+    timeZone: "Australia/Sydney",
+    countryCode: "AU",
+  },
+  { label: "Brisbane", timeZone: "Australia/Brisbane", countryCode: "AU" },
+  { label: "Perth", timeZone: "Australia/Perth", countryCode: "AU" },
+  { label: "Adelaide", timeZone: "Australia/Adelaide", countryCode: "AU" },
+  { label: "New Zealand", timeZone: "Pacific/Auckland", countryCode: "NZ" },
+  { label: "Singapore", timeZone: "Asia/Singapore", countryCode: "SG" },
+] as const;
+const HOURS = Array.from({ length: 24 }, (_, hour) =>
+  String(hour).padStart(2, "0"),
+);
+const MINUTES = Array.from({ length: 60 }, (_, minute) =>
+  String(minute).padStart(2, "0"),
+);
+const RAID_HELPER_PING_ROLES: Array<{
+  label: string;
+  id: string;
+  icon: ComponentType<{ className?: string }>;
+}> = [
+  { label: "ROULETTES", id: "1339834783064264715", icon: Compass },
+  { label: "MOUNT FARMING", id: "1375069801244004462", icon: Bell },
+  { label: "TREASURE MAPS", id: "1339828715164532846", icon: Gem },
+  { label: "FIELD OPERATIONS", id: "1339834667561648198", icon: MapPin },
+  {
+    label: "RAIDS / TRIALS / VARIANT / DD",
+    id: "1339833818055446621",
+    icon: Swords,
+  },
+  { label: "SOCIAL EVENTS", id: "1339835677457514567", icon: PartyPopper },
+  {
+    label: "HUNTS / FATES / RED ALERTS",
+    id: "1374967120235855946",
+    icon: Siren,
+  },
 ];
 
 function daysInMonth(year: number, month: number): number {
@@ -423,6 +489,36 @@ function dateAndTimeToTimestamp(date: Date | undefined, time: string): number {
   return next.getTime();
 }
 
+function timeHour(time: string): string {
+  return time.split(":")[0] ?? "00";
+}
+
+function timeMinute(time: string): string {
+  return time.split(":")[1] ?? "00";
+}
+
+function updateTimePart(
+  time: string,
+  part: "hour" | "minute",
+  value: string,
+): string {
+  const hour = part === "hour" ? value : timeHour(time);
+  const minute = part === "minute" ? value : timeMinute(time);
+  return `${hour}:${minute}`;
+}
+
+function formatTimeZonePreview(timestamp: number, timeZone: string): string {
+  if (!Number.isFinite(timestamp)) return "Pick a date and time";
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone,
+  }).format(new Date(timestamp));
+}
+
 function CreateEventDialog({
   adminSessionToken,
   onCreated,
@@ -431,6 +527,7 @@ function CreateEventDialog({
   onCreated: (event: PlannerEvent) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(() =>
@@ -441,9 +538,36 @@ function CreateEventDialog({
   );
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [confirmReady, setConfirmReady] = useState(false);
+  const parsedStartAt = dateAndTimeToTimestamp(selectedDate, selectedTime);
+  const titleValid = title.trim().length > 0;
+  const startValid =
+    Number.isFinite(parsedStartAt) && parsedStartAt > Date.now() - 60_000;
+  const canSubmit = titleValid && startValid;
+  const selectedRoles = RAID_HELPER_PING_ROLES.filter((role) =>
+    selectedRoleIds.includes(role.id),
+  );
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  function resetForm() {
+    setTitle("");
+    setDescription("");
+    const nextDate = initialEventDate();
+    setSelectedDate(nextDate);
+    setSelectedTime(timeInputValue(nextDate));
+    setSelectedRoleIds([]);
+    setStep(1);
+    setConfirmReady(false);
+  }
+
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (step !== 4) {
+      setStep((current) => Math.min(4, current + 1));
+    }
+  }
+
+  async function createEvent() {
+    if (step !== 4 || !confirmReady) return;
     if (!firebaseApp || !adminSessionToken) {
       toast.error(
         "Firebase Functions are required to create Raid Helper events.",
@@ -451,8 +575,7 @@ function CreateEventDialog({
       return;
     }
 
-    const parsedStartAt = dateAndTimeToTimestamp(selectedDate, selectedTime);
-    if (!title.trim() || !Number.isFinite(parsedStartAt)) {
+    if (!canSubmit) {
       toast.error("Title and start time are required.");
       return;
     }
@@ -468,17 +591,12 @@ function CreateEventDialog({
         title,
         description,
         startAt: parsedStartAt,
-        // roleIds: selectedRoleIds,
+        roleIds: selectedRoleIds,
       });
       const created = plannerEventFromRecord(result.eventId, result.event);
       if (created) onCreated(created);
       toast.success("Event created.", { id });
-      setTitle("");
-      setDescription("");
-      const nextDate = initialEventDate();
-      setSelectedDate(nextDate);
-      setSelectedTime(timeInputValue(nextDate));
-      setSelectedRoleIds([]);
+      resetForm();
       setOpen(false);
     } catch (error) {
       toast.error(
@@ -490,118 +608,308 @@ function CreateEventDialog({
     }
   }
 
+  useEffect(() => {
+    setConfirmReady(false);
+    if (step !== 4) return;
+    const timeoutId = window.setTimeout(() => setConfirmReady(true), 350);
+    return () => window.clearTimeout(timeoutId);
+  }, [step]);
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (nextOpen) {
+          setStep(1);
+          setConfirmReady(false);
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button size="sm">
           <Plus className="h-4 w-4" />
           Create Event
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-h-[min(90vh,760px)] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Raid Helper Event</DialogTitle>
-          <DialogDescription>
-            (currently uses my discord id plz dont make me look bad)
-          </DialogDescription>
+          <DialogDescription>Admins only!</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
-          <div className="space-y-2">
-            <Label htmlFor="calendar-event-title">Title</Label>
-            <Input
-              id="calendar-event-title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              maxLength={120}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Start</Label>
-            <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_8rem]">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      "justify-start text-left font-normal",
-                      !selectedDate && "text-muted-foreground",
-                    )}
-                  >
-                    <CalendarDays className="h-4 w-4" />
-                    {selectedDate
-                      ? DATE_BUTTON_FORMATTER.format(selectedDate)
-                      : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarPicker
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    disabled={(date) =>
-                      date < new Date(new Date().setHours(0, 0, 0, 0))
-                    }
+          <Stepper value={step} onValueChange={setStep}>
+            <StepperNav>
+              {[
+                { step: 1, label: "Details" },
+                { step: 2, label: "Date" },
+                { step: 3, label: "Pings" },
+                { step: 4, label: "Confirm" },
+              ].map((item) => (
+                <StepperItem key={item.step} step={item.step}>
+                  <StepperTrigger step={item.step}>
+                    <StepperIndicator>{item.step}</StepperIndicator>
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <span className="truncate font-medium">{item.label}</span>
+                    </span>
+                  </StepperTrigger>
+                </StepperItem>
+              ))}
+            </StepperNav>
+
+            <StepperPanel>
+              <StepperContent value={1}>
+                <div className="space-y-2">
+                  <Label htmlFor="calendar-event-title">Title</Label>
+                  <Input
+                    id="calendar-event-title"
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    maxLength={120}
+                    required
+                    aria-invalid={!titleValid}
                   />
-                </PopoverContent>
-              </Popover>
-              <Input
-                aria-label="Event start time"
-                type="time"
-                value={selectedTime}
-                onChange={(event) => setSelectedTime(event.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="calendar-event-description">Description</Label>
-            <textarea
-              id="calendar-event-description"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              maxLength={1200}
-              rows={5}
-              className="min-h-28 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            />
-          </div>
-          <div className="rounded-md border bg-muted/20 p-3">
-            <div>
-              <p className="text-sm font-medium">
-                Role Pings (doesnt work currently)
-              </p>
-            </div>
-            {RAID_HELPER_PING_ROLES.length > 0 ? (
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {RAID_HELPER_PING_ROLES.map((role) => (
-                  <label
-                    key={role.id}
-                    className="flex items-center gap-2 rounded-md border bg-background/80 px-3 py-2 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedRoleIds.includes(role.id)}
-                      onChange={(event) => {
-                        setSelectedRoleIds((current) =>
-                          event.target.checked
-                            ? [...current, role.id]
-                            : current.filter((roleId) => roleId !== role.id),
-                        );
-                      }}
-                      className="h-4 w-4 rounded border-input"
-                    />
-                    <span>{role.label}</span>
-                  </label>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-3 text-xs text-muted-foreground">
-                No ping roles configured yet.
-              </p>
-            )}
-          </div>
-          <div className="flex justify-end gap-2">
+                  {!titleValid && (
+                    <p className="text-xs text-destructive">
+                      Title is required.
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="calendar-event-description">
+                    Description
+                  </Label>
+                  <textarea
+                    id="calendar-event-description"
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    maxLength={1200}
+                    rows={8}
+                    className="min-h-40 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              </StepperContent>
+
+              <StepperContent value={2}>
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Start date</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !selectedDate && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                            {selectedDate
+                              ? DATE_BUTTON_FORMATTER.format(selectedDate)
+                              : "Pick a date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <CalendarPicker
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                            disabled={(date) =>
+                              date < new Date(new Date().setHours(0, 0, 0, 0))
+                            }
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Start time</Label>
+                      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2">
+                        <Select
+                          value={timeHour(selectedTime)}
+                          onValueChange={(value) =>
+                            setSelectedTime((current) =>
+                              updateTimePart(current, "hour", value),
+                            )
+                          }
+                        >
+                          <SelectTrigger aria-label="Event start hour">
+                            <SelectValue placeholder="Hour" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-64">
+                            {HOURS.map((hour) => (
+                              <SelectItem key={hour} value={hour}>
+                                {hour}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={timeMinute(selectedTime)}
+                          onValueChange={(value) =>
+                            setSelectedTime((current) =>
+                              updateTimePart(current, "minute", value),
+                            )
+                          }
+                        >
+                          <SelectTrigger aria-label="Event start minute">
+                            <SelectValue placeholder="Minute" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-64">
+                            {MINUTES.map((minute) => (
+                              <SelectItem key={minute} value={minute}>
+                                {minute}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {!startValid && (
+                        <p className="text-xs text-destructive">
+                          Pick a future date and time.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="rounded-md p-3">
+                    <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+                      <Globe2 className="h-4 w-4 text-muted-foreground" />
+                      Local previews
+                    </div>
+                    <div className="space-y-2">
+                      {TIME_ZONE_PREVIEWS.map((zone) => (
+                        <div
+                          key={zone.timeZone}
+                          className="flex min-w-0 items-center gap-2 rounded-md border bg-background/80 px-3 py-2 text-xs"
+                        >
+                          <ReactCountryFlag
+                            countryCode={zone.countryCode}
+                            svg
+                            aria-hidden="true"
+                            className="shrink-0 text-sm leading-none"
+                          />
+                          <div className="min-w-0">
+                            <p className="font-medium">{zone.label}</p>
+                            <p className="truncate text-muted-foreground">
+                              {formatTimeZonePreview(
+                                parsedStartAt,
+                                zone.timeZone,
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </StepperContent>
+
+              <StepperContent value={3}>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {RAID_HELPER_PING_ROLES.map((role) => {
+                    const checked = selectedRoleIds.includes(role.id);
+                    const RoleIcon = role.icon;
+                    return (
+                      <label
+                        key={role.id}
+                        className={cn(
+                          "flex min-h-16 cursor-pointer items-center gap-3 rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/60",
+                          checked && "border-primary bg-primary/10",
+                        )}
+                      >
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={(nextChecked) => {
+                            setSelectedRoleIds((current) =>
+                              nextChecked === true
+                                ? [...current, role.id]
+                                : current.filter(
+                                    (roleId) => roleId !== role.id,
+                                  ),
+                            );
+                          }}
+                        />
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted/70">
+                          <RoleIcon className="h-4 w-4 text-muted-foreground" />
+                        </span>
+                        <span className="min-w-0 flex-1 font-medium">
+                          {role.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Role pings are optional. Selected roles will be mentioned in
+                  the event channel after the planner post is created.
+                </p>
+              </StepperContent>
+
+              <StepperContent value={4}>
+                <div className="grid gap-3">
+                  <div className="rounded-md border bg-muted/20 p-3">
+                    <p className="text-xs font-medium uppercase text-muted-foreground">
+                      Event
+                    </p>
+                    <p className="mt-1 text-base font-semibold">
+                      {title.trim() || "Missing title"}
+                    </p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
+                      {description.trim() || "No description"}
+                    </p>
+                  </div>
+                  <div className="rounded-md border bg-muted/20 p-3">
+                    <p className="text-xs font-medium uppercase text-muted-foreground">
+                      Start
+                    </p>
+                    <p className="mt-1 flex items-center gap-2 text-sm font-medium">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      {Number.isFinite(parsedStartAt)
+                        ? DATE_TIME_PREVIEW_FORMATTER.format(
+                            new Date(parsedStartAt),
+                          )
+                        : "Missing date or time"}
+                    </p>
+                  </div>
+                  <div className="rounded-md border bg-muted/20 p-3">
+                    <p className="text-xs font-medium uppercase text-muted-foreground">
+                      Role pings
+                    </p>
+                    {selectedRoles.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {selectedRoles.map((role) => {
+                          const RoleIcon = role.icon;
+                          return (
+                            <Badge
+                              key={role.id}
+                              variant="secondary"
+                              className="gap-1.5"
+                            >
+                              <RoleIcon className="h-3.5 w-3.5" />
+                              {role.label}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        No role pings selected.
+                      </p>
+                    )}
+                  </div>
+                  {!canSubmit && (
+                    <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                      Add a title and a future start date before creating the
+                      event.
+                    </div>
+                  )}
+                </div>
+              </StepperContent>
+            </StepperPanel>
+          </Stepper>
+
+          <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
             <Button
               type="button"
               variant="outline"
@@ -610,9 +918,31 @@ function CreateEventDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting ? "Creating..." : "Create Event"}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setStep((current) => Math.max(1, current - 1))}
+              disabled={submitting || step === 1}
+            >
+              Back
             </Button>
+            {step < 4 ? (
+              <Button
+                type="button"
+                onClick={() => setStep((current) => Math.min(4, current + 1))}
+                disabled={submitting}
+              >
+                Next
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={createEvent}
+                disabled={submitting || !canSubmit || !confirmReady}
+              >
+                {submitting ? "Creating..." : "Create Event"}
+              </Button>
+            )}
           </div>
         </form>
       </DialogContent>
@@ -802,27 +1132,23 @@ export function CalendarPage() {
                   : "No calendar items this month"}
               </p>
             </div>
-            <div className="flex min-w-32 items-center gap-2 rounded-md border bg-background/70 px-3 py-2 ml-5">
-              <Cake className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-lg font-semibold leading-none">
-                  {visibleBirthdays.length}
-                </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Birthday{visibleBirthdays.length === 1 ? "" : "s"}
-                </p>
-              </div>
-            </div>
-            <div className="flex min-w-32 items-center gap-2 rounded-md border bg-background/70 px-3 py-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-lg font-semibold leading-none">
-                  {visiblePlannerEvents.length}
-                </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Event{visiblePlannerEvents.length === 1 ? "" : "s"}
-                </p>
-              </div>
+            <div className="flex flex-wrap items-center gap-2 sm:ml-2">
+              <Badge
+                variant="outline"
+                className="h-8 gap-1.5 rounded-full border-border bg-muted px-3 font-medium text-muted-foreground"
+              >
+                <Cake className="h-3.5 w-3.5" />
+                {visibleBirthdays.length} Birthday
+                {visibleBirthdays.length === 1 ? "" : "s"}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="h-8 gap-1.5 rounded-full border-border bg-muted px-3 font-medium text-muted-foreground"
+              >
+                <Users className="h-3.5 w-3.5" />
+                {visiblePlannerEvents.length} Event
+                {visiblePlannerEvents.length === 1 ? "" : "s"}
+              </Badge>
             </div>
           </div>
           {canCreateEvents && (
@@ -882,9 +1208,9 @@ export function CalendarPage() {
                   birthdayKey(day.date.getMonth() + 1, day.date.getDate()),
                   dateKey(day.date),
                 ];
-                const dayEvents = day.inMonth
-                  ? keys.flatMap((key) => eventsByDate.get(key) ?? [])
-                  : [];
+                const dayEvents = keys.flatMap(
+                  (key) => eventsByDate.get(key) ?? [],
+                );
                 return (
                   <CalendarDayCell
                     key={day.date.toISOString()}

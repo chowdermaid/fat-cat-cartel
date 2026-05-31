@@ -40,7 +40,7 @@ Events without an ID, title, or start time are skipped and surfaced under `/cale
 
 Logged-in Boss and Underpaw users see a Create Event button on `/calendar` in the month summary card. The dialog uses the local shadcn Calendar picker plus a time input. The callable uses the verified Discord session's `discordUserId` as Raid Helper `leaderId`, the configured `RAID_HELPER_TEMPLATE_ID`, and writes the returned event into `/calendarEvents` immediately.
 
-The create dialog has an Advanced role-ping section scaffolded with an empty frontend allowlist. Functions also validate selected role IDs against an empty backend allowlist. Fill both allowlists and add the Raid Helper `announcement` payload only after the exact role-ping request shape is confirmed.
+The create dialog has a role-ping section with an explicit frontend/backend allowlist. Selected role IDs are sent to `createRaidHelperEvent`; Functions validates them, creates the Raid Helper event, then posts a Discord role mention message to the event channel with `DISCORD_BOT_TOKEN`. This adds one Discord API call only when at least one role ping is selected.
 
 When testing with `VITE_ADMIN_AUTH_BYPASS=true`, the emulator session has `discordUserId: "local-dev"`, which Raid Helper rejects. Set `RAID_HELPER_FALLBACK_LEADER_ID` in `functions/.env.local` to a real Discord user ID from the server for local event-creation tests.
 

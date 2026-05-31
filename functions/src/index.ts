@@ -88,6 +88,7 @@ function raidHelperCreateConfig() {
     ...discordPlannerConfig(),
     templateId: raidHelperTemplateId.value(),
     fallbackLeaderId: raidHelperFallbackLeaderId.value(),
+    discordBotToken: discordBotToken.value(),
   };
 }
 

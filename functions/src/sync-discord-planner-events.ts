@@ -2,7 +2,15 @@ import * as admin from "firebase-admin";
 
 const RAID_HELPER_API_BASE = "https://raid-helper.xyz/api/v4";
 const RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
-const ALLOWED_RAID_HELPER_PING_ROLE_IDS = new Set<string>([]);
+const ALLOWED_RAID_HELPER_PING_ROLE_IDS = new Set<string>([
+  "1339834783064264715",
+  "1375069801244004462",
+  "1339828715164532846",
+  "1339834667561648198",
+  "1339833818055446621",
+  "1339835677457514567",
+  "1374967120235855946",
+]);
 
 type RaidHelperEvent = {
   id?: string;
@@ -70,6 +78,7 @@ export type DiscordPlannerSyncConfig = {
 export type RaidHelperCreateConfig = DiscordPlannerSyncConfig & {
   templateId: string;
   fallbackLeaderId?: string;
+  discordBotToken?: string;
 };
 
 export type CreateRaidHelperEventRequest = {
@@ -136,6 +145,37 @@ async function raidHelperJson<T>(
     throw new Error(`Raid Helper request failed: ${response.status} ${body.slice(0, 200)}`);
   }
   return response.json() as Promise<T>;
+}
+
+async function sendDiscordRoleMentions(
+  channelId: string,
+  botToken: string,
+  roleIds: string[],
+): Promise<void> {
+  if (roleIds.length === 0) return;
+  if (!botToken) {
+    throw new Error("Discord bot token is required to ping selected roles.");
+  }
+
+  const response = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bot ${botToken}`,
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify({
+      content: roleIds.map((roleId) => `<@&${roleId}>`).join(" "),
+      allowed_mentions: {
+        parse: [],
+        roles: roleIds,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`Discord role ping failed: ${response.status} ${body.slice(0, 200)}`);
+  }
 }
 
 function normalizeRaidHelperEvent(
@@ -357,6 +397,7 @@ export async function createRaidHelperEventForAdmin(
   if (!normalized) {
     throw new Error("Raid Helper returned an event without an ID, title, or start time.");
   }
+  await sendDiscordRoleMentions(config.channelId, cleanText(config.discordBotToken), parsed.roleIds);
   await admin.database().ref(`calendarEvents/${normalized.eventId}`).set(normalized.event);
   return {
     ok: true,
