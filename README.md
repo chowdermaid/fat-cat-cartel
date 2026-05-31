@@ -110,6 +110,38 @@ Export current emulator data manually:
 firebase emulators:export "./emulator-data"
 ```
 
+## Firebase Console
+
+Production backend console:
+
+```text
+https://console.firebase.google.com/project/fat-cat-cartel/overview
+```
+
+Common pages:
+
+```text
+Realtime Database: https://console.firebase.google.com/project/fat-cat-cartel/database/fat-cat-cartel-default-rtdb/data
+Functions:         https://console.firebase.google.com/project/fat-cat-cartel/functions
+Hosting:           https://console.firebase.google.com/project/fat-cat-cartel/hosting
+Project settings:  https://console.firebase.google.com/project/fat-cat-cartel/settings/general
+```
+
+Backend error logs:
+
+```text
+Firebase Functions logs: https://console.firebase.google.com/project/fat-cat-cartel/functions/logs
+Google Cloud Logging:    https://console.cloud.google.com/logs/query?project=fat-cat-cartel
+```
+
+Use Firebase Functions logs for quick callable or scheduled Function errors. Use Google Cloud Logging when you need deeper filtering by severity, function name, request ID, timestamp, or stack trace.
+
+Use the local Emulator UI for local backend state:
+
+```text
+http://127.0.0.1:4000
+```
+
 ## Firebase Deploy Commands
 
 Build app and deploy everything configured in `firebase.json`:
