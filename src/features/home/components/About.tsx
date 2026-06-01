@@ -5,6 +5,7 @@ import {
   BarChart2,
   CalendarDays,
   Dices,
+  Hammer,
   LayoutGrid,
   Users,
 } from "lucide-react";
@@ -44,6 +45,12 @@ const quickLinks = [
     description: "Necessary because everyone is indecisive",
   },
   {
+    to: "/craftingboard",
+    icon: Hammer,
+    title: "Crafting Board",
+    description: "Preview recipes and material totals.",
+  },
+  {
     to: "/raid-stats",
     icon: BarChart2,
     title: "Raid Stats",
@@ -67,7 +74,7 @@ export function About() {
 
   return (
     <section>
-      <div ref={gridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+      <div ref={gridRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {quickLinks.map(({ to, icon: Icon, title, description }) => (
           <Card key={to} className="about-card flex flex-col">
             <CardHeader className="pb-3">

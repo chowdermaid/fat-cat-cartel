@@ -300,6 +300,237 @@ const STUB_RECENT_ACTIVITY = [
   },
 ];
 
+const STUB_CRAFTING_MEMBER_CHOW = {
+  lodestoneId: "11111001",
+  discordUserId: "stub-discord-chow",
+  characterName: "Chow Chow",
+  fcRank: "Boss",
+  avatarUrl: "/favicon.svg",
+};
+
+const STUB_CRAFTING_MEMBER_AXO = {
+  lodestoneId: "11111002",
+  discordUserId: "stub-discord-axo",
+  characterName: "Axo Lotl",
+  fcRank: "Underpaw",
+  avatarUrl: null,
+};
+
+const STUB_CRAFTING_MEMBER_ZALKA = {
+  lodestoneId: "11111004",
+  discordUserId: "stub-discord-zalka",
+  characterName: "Zalka Tohka",
+  fcRank: "Housecat",
+  avatarUrl: null,
+};
+
+const STUB_CRAFTING_RECIPE_SNAPSHOT = {
+  recipeId: 35209,
+  itemId: 36044,
+  itemName: "Classical Longsword",
+  amountResult: 1,
+  crafter: "Blacksmith",
+  recipeLevel: 90,
+  ingredients: [
+    { itemId: 36040, name: "Classical Ingot", amount: 3 },
+    { itemId: 36041, name: "Classical Rivets", amount: 1 },
+  ],
+  crystals: [
+    { itemId: 8, name: "Fire Crystal", amount: 8 },
+  ],
+  clusters: [
+    { itemId: 14, name: "Earth Cluster", amount: 2 },
+  ],
+  precrafts: [
+    {
+      itemId: 36040,
+      itemName: "Classical Ingot",
+      quantity: 3,
+      recipeId: 35188,
+      crafter: "Blacksmith",
+      recipeLevel: 90,
+    },
+  ],
+  eligibleCrafters: [
+    {
+      ...STUB_CRAFTING_MEMBER_CHOW,
+      job: "Blacksmith",
+      level: 100,
+    },
+  ],
+  snapshottedAt: NOW - 2 * DAY,
+  source: "xivapi",
+};
+
+function craftingDashboardRecord(
+  request: Record<string, unknown>,
+): Record<string, unknown> {
+  const items = request.items as Array<{ itemName: string }> | undefined;
+  return {
+    id: request.id,
+    status: request.status,
+    materialStatus: request.materialStatus,
+    requester: request.requester,
+    acceptedBy: request.acceptedBy ?? null,
+    commission: request.commission ?? null,
+    createdAt: request.createdAt,
+    updatedAt: request.updatedAt,
+    completedAt: request.completedAt,
+    itemCount: items?.length ?? 0,
+    itemNames: items?.map((item) => item.itemName) ?? [],
+    items,
+  };
+}
+
+const STUB_CRAFTING_REQUESTS: Record<string, Record<string, unknown>> = {
+  "stub-craft-open": {
+    id: "stub-craft-open",
+    status: "open",
+    materialStatus: "requester_has_some_materials",
+    requester: STUB_CRAFTING_MEMBER_ZALKA,
+    commission: {
+      offered: true,
+      gil: 250000,
+    },
+    items: [
+      {
+        itemId: 36044,
+        itemName: "Classical Longsword",
+        quantity: 1,
+        selectedRecipeId: 35209,
+        recipeSnapshot: STUB_CRAFTING_RECIPE_SNAPSHOT,
+      },
+    ],
+    discordMessage: {
+      channelId: "stub-crafting-channel",
+      messageId: "stub-craft-open-message",
+      url: "https://discord.com/channels/stub/stub-crafting-channel/stub-craft-open-message",
+    },
+    createdAt: NOW - 2 * DAY,
+    updatedAt: NOW - 2 * DAY,
+    completedAt: null,
+  },
+  "stub-craft-progress": {
+    id: "stub-craft-progress",
+    status: "in_progress",
+    materialStatus: "crafter_to_provide_materials",
+    requester: STUB_CRAFTING_MEMBER_ZALKA,
+    commission: null,
+    acceptedBy: {
+      ...STUB_CRAFTING_MEMBER_CHOW,
+      acceptedAt: NOW - DAY,
+    },
+    items: [
+      {
+        itemId: 36044,
+        itemName: "Classical Longsword",
+        quantity: 2,
+        selectedRecipeId: 35209,
+        recipeSnapshot: STUB_CRAFTING_RECIPE_SNAPSHOT,
+      },
+    ],
+    discordMessage: {
+      channelId: "stub-crafting-channel",
+      messageId: "stub-craft-progress-message",
+      url: "https://discord.com/channels/stub/stub-crafting-channel/stub-craft-progress-message",
+    },
+    createdAt: NOW - 2 * DAY,
+    updatedAt: NOW - DAY,
+    completedAt: null,
+  },
+  "stub-craft-completed-recent": {
+    id: "stub-craft-completed-recent",
+    status: "completed",
+    materialStatus: "requester_has_all_materials",
+    requester: STUB_CRAFTING_MEMBER_AXO,
+    commission: {
+      offered: true,
+      gil: null,
+    },
+    acceptedBy: {
+      ...STUB_CRAFTING_MEMBER_CHOW,
+      acceptedAt: NOW - 4 * DAY,
+    },
+    items: [
+      {
+        itemId: 36044,
+        itemName: "Classical Longsword",
+        quantity: 1,
+        selectedRecipeId: 35209,
+        recipeSnapshot: STUB_CRAFTING_RECIPE_SNAPSHOT,
+      },
+    ],
+    discordMessage: {
+      channelId: "stub-crafting-channel",
+      messageId: "stub-craft-completed-message",
+      url: "https://discord.com/channels/stub/stub-crafting-channel/stub-craft-completed-message",
+    },
+    createdAt: NOW - 5 * DAY,
+    updatedAt: NOW - 3 * DAY,
+    completedAt: NOW - 3 * DAY,
+  },
+  "stub-craft-completed-old": {
+    id: "stub-craft-completed-old",
+    status: "completed",
+    materialStatus: "requester_has_all_materials",
+    requester: STUB_CRAFTING_MEMBER_AXO,
+    commission: null,
+    acceptedBy: {
+      ...STUB_CRAFTING_MEMBER_CHOW,
+      acceptedAt: NOW - 42 * DAY,
+    },
+    items: [
+      {
+        itemId: 36044,
+        itemName: "Classical Longsword",
+        quantity: 1,
+        selectedRecipeId: 35209,
+        recipeSnapshot: STUB_CRAFTING_RECIPE_SNAPSHOT,
+      },
+    ],
+    discordMessage: null,
+    createdAt: NOW - 45 * DAY,
+    updatedAt: NOW - 40 * DAY,
+    completedAt: NOW - 40 * DAY,
+  },
+  "stub-craft-cancelled": {
+    id: "stub-craft-cancelled",
+    status: "cancelled",
+    materialStatus: "requester_has_some_materials",
+    requester: STUB_CRAFTING_MEMBER_ZALKA,
+    items: [
+      {
+        itemId: 36044,
+        itemName: "Classical Longsword",
+        quantity: 1,
+        selectedRecipeId: 35209,
+        recipeSnapshot: STUB_CRAFTING_RECIPE_SNAPSHOT,
+      },
+    ],
+    discordMessage: null,
+    createdAt: NOW - 6 * DAY,
+    updatedAt: NOW - 6 * DAY,
+    completedAt: null,
+    cancelledAt: NOW - 6 * DAY,
+  },
+};
+
+const STUB_CRAFTING_INDEXES = {
+  open: {
+    "stub-craft-open": craftingDashboardRecord(STUB_CRAFTING_REQUESTS["stub-craft-open"]),
+  },
+  inProgress: {
+    "stub-craft-progress": craftingDashboardRecord(STUB_CRAFTING_REQUESTS["stub-craft-progress"]),
+  },
+  completedRecent: {
+    "stub-craft-completed-recent": craftingDashboardRecord(STUB_CRAFTING_REQUESTS["stub-craft-completed-recent"]),
+    "stub-craft-completed-old": craftingDashboardRecord(STUB_CRAFTING_REQUESTS["stub-craft-completed-old"]),
+  },
+  cancelled: {
+    "stub-craft-cancelled": craftingDashboardRecord(STUB_CRAFTING_REQUESTS["stub-craft-cancelled"]),
+  },
+};
+
 let store: Record<string, unknown> = {
   members: STUB_MEMBERS,
   fcCollection: {
@@ -383,6 +614,11 @@ let store: Record<string, unknown> = {
       lastError: null,
       recentFailures: [],
     },
+  },
+  craftingRequests: STUB_CRAFTING_REQUESTS,
+  craftingRequestIndexes: STUB_CRAFTING_INDEXES,
+  craftingRequestStats: {
+    completedTotal: 12,
   },
   events: {
     easter2026: {
@@ -491,6 +727,15 @@ export function stubGet(r: StubRef): Promise<StubSnapshot> {
 export function stubSet(r: StubRef, value: unknown): Promise<void> {
   setAtPath(r.path, value);
   notifyPath(r.path);
+  return Promise.resolve();
+}
+
+export function stubUpdate(r: StubRef, values: Record<string, unknown>): Promise<void> {
+  for (const [key, value] of Object.entries(values)) {
+    const path = r.path ? `${r.path}/${key}` : key;
+    setAtPath(path, value);
+    notifyPath(path);
+  }
   return Promise.resolve();
 }
 

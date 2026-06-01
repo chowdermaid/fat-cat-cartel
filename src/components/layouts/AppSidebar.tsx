@@ -3,6 +3,7 @@ import {
   BarChart2,
   CalendarDays,
   Dices,
+  Hammer,
   Home,
   Library,
   Moon,
@@ -42,6 +43,7 @@ const progressItems = [
 
 const toolItems = [
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
+  { label: "Crafting Board", to: "/craftingboard", icon: Hammer },
 ] as const;
 
 const bottomItems = [

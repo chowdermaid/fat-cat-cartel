@@ -19,6 +19,14 @@ This file is optional project guidance. Keep durable, always-needed rules in `AG
 4. MCP or plugins: only for external systems that need real tool access, such as GitHub, Firebase, issue trackers, docs, or design tools.
 5. Subagents: use for independent review passes, test investigation, accessibility checks, or larger refactors where parallel judgment helps.
 
+## Adopted External Guidance
+
+Karpathy-style discipline from `multica-ai/andrej-karpathy-skills` is folded into `AGENTS.md`: think before coding, prefer simple implementations, keep edits surgical, and verify against clear success criteria.
+
+Source: `https://github.com/multica-ai/andrej-karpathy-skills`
+
+This repo does not vendor the upstream `CLAUDE.md`, add Cursor rules, or install the Claude plugin. Add Claude or Cursor files later only if those tools become first-class targets for this repository.
+
 ## Skills Worth Adding For This Repo
 
 ### `fat-cat-feature-builder`
@@ -113,4 +121,3 @@ Add these as small reference files or skill references, not all inside `AGENTS.m
 ## Suggested Next Step
 
 Create the repo skills above only after one or two more real tasks. `AGENTS.md` is enough for normal work now; skills become valuable once a workflow repeats or has fragile project-specific steps.
-

@@ -199,6 +199,10 @@ Before editing, summarize the files you think matter.
 ```
 
 ```text
+Before editing, state assumptions, success criteria, and the smallest relevant verification.
+```
+
+```text
 Keep final answer short: changed files, verification, risks.
 ```
 

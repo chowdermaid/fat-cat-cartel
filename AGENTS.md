@@ -17,6 +17,13 @@ You are working on Fat Cat Cartel, a React and Firebase FFXIV Free Company websi
 - Do not use live listeners unless realtime behavior is core to the feature.
 - After code changes, run the smallest relevant check.
 
+## Work Discipline
+
+- Surface assumptions and ask only when repo inspection cannot resolve ambiguity.
+- Prefer the smallest working implementation; do not add speculative flexibility.
+- Keep diffs surgical. Mention unrelated cleanup opportunities instead of doing them.
+- Before editing, know the success criteria and the smallest relevant verification.
+
 ## Lazy Docs
 
 Read docs only when the task touches that area:

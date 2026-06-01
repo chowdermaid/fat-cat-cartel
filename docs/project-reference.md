@@ -51,6 +51,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/fc-collection/$type`: `CollectiblePage`
 - `/fc-collection/leaderboard`: `LeaderboardPage`
 - `/mount-roulette`: `MountRoulettePage`
+- `/craftingboard`: `CraftingBoardPage`
 - `/raid-stats`: `RaidStatsPage`
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
@@ -81,6 +82,7 @@ src/
     member-profile/
     members/
     mount-roulette/
+    craftingboard/
     pastevents/
     raid-stats/
     recruitment/

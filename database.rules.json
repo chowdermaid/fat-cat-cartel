@@ -87,6 +87,21 @@
       ".write": false
     },
 
+    "craftingRequests": {
+      ".read": true,
+      ".write": false
+    },
+
+    "craftingRequestIndexes": {
+      ".read": true,
+      ".write": false
+    },
+
+    "craftingRequestStats": {
+      ".read": true,
+      ".write": false
+    },
+
     "events": {
       ".read": true,
       "easter2026": {

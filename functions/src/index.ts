@@ -7,6 +7,11 @@ import { runRefreshFCCollection } from "./refresh-fc-collection";
 import { runScrapeLodestone } from "./scrape-lodestone";
 import { handleDiscordInteraction } from "./discord/interactions";
 import { deleteTrackedMember, upsertTrackedMember } from "./delete-member";
+import {
+  acceptCraftingRequestForMember,
+  completeCraftingRequestForMember,
+  createCraftingRequestForMember,
+} from "./crafting-requests";
 import { processQueuedFriendRefreshJobs } from "./friend-refresh";
 import { refreshMemberSourceForAdmin } from "./member-source-refresh";
 import {
@@ -39,8 +44,9 @@ import {
 } from "./admin-mutations";
 
 admin.initializeApp({
-  databaseURL: process.env.FIREBASE_DATABASE_URL
-    ?? "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    process.env.FIREBASE_DATABASE_URL ??
+    "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app",
 });
 
 const fflogsClientId = defineSecret("FFLOGS_CLIENT_ID");
@@ -60,9 +66,12 @@ const discordDonChannelId = defineSecret("DISCORD_DON_CHANNEL_ID");
 const raidHelperApiKey = defineSecret("RAID_HELPER_API_KEY");
 const raidHelperTemplateId = defineSecret("RAID_HELPER_TEMPLATE_ID");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
-const raidHelperFallbackLeaderId = defineString("RAID_HELPER_FALLBACK_LEADER_ID", {
-  default: "",
-});
+const raidHelperFallbackLeaderId = defineString(
+  "RAID_HELPER_FALLBACK_LEADER_ID",
+  {
+    default: "",
+  },
+);
 
 function adminAuthConfig() {
   return {
@@ -114,16 +123,48 @@ function eventRequestNotificationConfig() {
   };
 }
 
+function craftingRequestDiscordConfig() {
+  return {
+    botToken: discordBotToken.value(),
+    channelId: discordDonChannelId.value(),
+    guildId: discordGuildId.value(),
+    appOrigin: adminAppOrigin.value(),
+  };
+}
+
+function craftingRequestDiscordUpdateConfig() {
+  return {
+    botToken: discordBotToken.value(),
+    appOrigin: adminAppOrigin.value(),
+  };
+}
+
 // Runs daily: fetches historical parse rankings from FFLogs and writes parse data to /raidStats.
 export const refreshFFLogs = onSchedule(
-  { schedule: "0 11 * * *", secrets: [fflogsClientId, fflogsClientSecret], timeoutSeconds: 300, region: "us-central1" },
+  {
+    schedule: "0 11 * * *",
+    secrets: [fflogsClientId, fflogsClientSecret],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
   async () => {
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
   },
 );
 
 export const triggerFFLogsRefresh = onCall(
-  { secrets: [fflogsClientId, fflogsClientSecret, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  {
+    secrets: [
+      fflogsClientId,
+      fflogsClientSecret,
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshFFLogs(fflogsClientId.value(), fflogsClientSecret.value());
@@ -132,7 +173,17 @@ export const triggerFFLogsRefresh = onCall(
 );
 
 export const deleteMember = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 120, region: "us-central1" },
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 120,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return deleteTrackedMember(request.data);
@@ -140,7 +191,17 @@ export const deleteMember = onCall(
 );
 
 export const upsertMember = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return upsertTrackedMember(request.data);
@@ -150,7 +211,15 @@ export const upsertMember = onCall(
 export const refreshMemberSource = onCall(
   {
     cors: true,
-    secrets: [fflogsClientId, fflogsClientSecret, tomestoneBearerToken, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    secrets: [
+      fflogsClientId,
+      fflogsClientSecret,
+      tomestoneBearerToken,
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
     timeoutSeconds: 180,
     region: "us-central1",
   },
@@ -166,14 +235,29 @@ export const refreshMemberSource = onCall(
 
 // Runs hourly: fetches tracked character raid activity from Tomestone and writes to /raidStats.
 export const refreshTomestoneRaidStats = onSchedule(
-  { schedule: "0 * * * *", secrets: [tomestoneBearerToken], timeoutSeconds: 300, region: "us-central1" },
+  {
+    schedule: "0 * * * *",
+    secrets: [tomestoneBearerToken],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
   async () => {
     await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
   },
 );
 
 export const triggerTomestoneRaidStatsRefresh = onCall(
-  { secrets: [tomestoneBearerToken, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  {
+    secrets: [
+      tomestoneBearerToken,
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
@@ -182,22 +266,40 @@ export const triggerTomestoneRaidStatsRefresh = onCall(
 );
 
 export const getTomestoneProgressionGraph = onCall(
-  { secrets: [tomestoneBearerToken], timeoutSeconds: 60, region: "us-central1" },
+  {
+    secrets: [tomestoneBearerToken],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
   async (request) => {
     try {
-      return await fetchTomestoneProgressionGraph(tomestoneBearerToken.value(), request.data);
+      return await fetchTomestoneProgressionGraph(
+        tomestoneBearerToken.value(),
+        request.data,
+      );
     } catch (error) {
       if (error instanceof HttpsError) throw error;
       throw new HttpsError(
         "unavailable",
-        error instanceof Error ? error.message : "Failed to fetch Tomestone progression graph.",
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch Tomestone progression graph.",
       );
     }
   },
 );
 
 export const importLodestoneMembers = onCall(
-  { secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  {
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     const result = await runScrapeLodestone();
@@ -244,7 +346,14 @@ export const syncDiscordPlannerEvents = onSchedule(
 export const triggerDiscordPlannerSync = onCall(
   {
     cors: true,
-    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken, discordEventChannelId, raidHelperApiKey],
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+      discordEventChannelId,
+      raidHelperApiKey,
+    ],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -257,7 +366,15 @@ export const triggerDiscordPlannerSync = onCall(
 export const createRaidHelperEvent = onCall(
   {
     cors: true,
-    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken, discordEventChannelId, raidHelperApiKey, raidHelperTemplateId],
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+      discordEventChannelId,
+      raidHelperApiKey,
+      raidHelperTemplateId,
+    ],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -274,7 +391,14 @@ export const createRaidHelperEvent = onCall(
 export const submitCalendarEventRequest = onCall(
   {
     cors: true,
-    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordHousecatRoleId, discordBotToken, discordDonChannelId],
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordHousecatRoleId,
+      discordBotToken,
+      discordDonChannelId,
+    ],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -283,8 +407,13 @@ export const submitCalendarEventRequest = onCall(
       request.data,
       adminAuthConfigWithHousecat(),
     );
-    if (!hasAnyRole(session.roleIds, parseRoleIds(discordHousecatRoleId.value()))) {
-      throw new HttpsError("permission-denied", "Housecat Discord role required.");
+    if (
+      !hasAnyRole(session.roleIds, parseRoleIds(discordHousecatRoleId.value()))
+    ) {
+      throw new HttpsError(
+        "permission-denied",
+        "Housecat Discord role required.",
+      );
     }
     return submitEventRequest(
       request.data,
@@ -303,7 +432,12 @@ export const submitCalendarEventRequest = onCall(
 export const listCalendarEventRequests = onCall(
   {
     cors: true,
-    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -316,7 +450,15 @@ export const listCalendarEventRequests = onCall(
 export const approveCalendarEventRequest = onCall(
   {
     cors: true,
-    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken, discordEventChannelId, raidHelperApiKey, raidHelperTemplateId],
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+      discordEventChannelId,
+      raidHelperApiKey,
+      raidHelperTemplateId,
+    ],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -329,7 +471,12 @@ export const approveCalendarEventRequest = onCall(
 export const denyCalendarEventRequest = onCall(
   {
     cors: true,
-    secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -342,7 +489,16 @@ export const denyCalendarEventRequest = onCall(
 );
 
 export const triggerFCCollectionRefresh = onCall(
-  { secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 300, region: "us-central1" },
+  {
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshFCCollection();
@@ -352,7 +508,15 @@ export const triggerFCCollectionRefresh = onCall(
 
 export const startDiscordAdminOAuth = onRequest(
   {
-    secrets: [discordClientId, discordClientSecret, discordRedirectUri, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    secrets: [
+      discordClientId,
+      discordClientSecret,
+      discordRedirectUri,
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -363,7 +527,15 @@ export const startDiscordAdminOAuth = onRequest(
 
 export const discordAdminOAuthCallback = onRequest(
   {
-    secrets: [discordClientId, discordClientSecret, discordRedirectUri, discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken],
+    secrets: [
+      discordClientId,
+      discordClientSecret,
+      discordRedirectUri,
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -373,8 +545,20 @@ export const discordAdminOAuthCallback = onRequest(
 );
 
 export const getAdminSession = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordHousecatRoleId, discordBotToken], timeoutSeconds: 30, region: "us-central1" },
-  async (request) => getAdminSessionForToken(request.data, adminAuthConfigWithHousecat()),
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordHousecatRoleId,
+      discordBotToken,
+    ],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) =>
+    getAdminSessionForToken(request.data, adminAuthConfigWithHousecat()),
 );
 
 export const logoutAdminSession = onCall(
@@ -383,7 +567,17 @@ export const logoutAdminSession = onCall(
 );
 
 export const updateMemberProfileAdmin = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return updateMemberProfile(request.data);
@@ -391,15 +585,102 @@ export const updateMemberProfileAdmin = onCall(
 );
 
 export const updateOwnMemberProfile = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
   async (request) => {
     const session = await requireMemberSession(request.data, adminAuthConfig());
     return updateOwnProfile(request.data, session.lodestoneId);
   },
 );
 
+export const createCraftingRequest = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+      discordDonChannelId,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    return createCraftingRequestForMember(
+      request.data,
+      session,
+      craftingRequestDiscordConfig(),
+    );
+  },
+);
+
+export const acceptCraftingRequest = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    return acceptCraftingRequestForMember(
+      request.data,
+      session,
+      craftingRequestDiscordUpdateConfig(),
+    );
+  },
+);
+
+export const completeCraftingRequest = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    return completeCraftingRequestForMember(
+      request.data,
+      session,
+      craftingRequestDiscordUpdateConfig(),
+    );
+  },
+);
+
 export const upsertEasterParticipantAdmin = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return upsertEasterParticipant(request.data);
@@ -407,7 +688,17 @@ export const upsertEasterParticipantAdmin = onCall(
 );
 
 export const deleteEasterParticipantAdmin = onCall(
-  { cors: true, secrets: [discordGuildId, discordAdminRoleIds, discordMemberRoleIds, discordBotToken], timeoutSeconds: 60, region: "us-central1" },
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return deleteEasterParticipant(request.data);

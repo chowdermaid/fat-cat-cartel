@@ -14,6 +14,7 @@ import {
   onValue as fbOnValue,
   get as fbGet,
   set as fbSet,
+  update as fbUpdate,
   push as fbPush,
   remove as fbRemove,
 } from "firebase/database";
@@ -24,6 +25,7 @@ import {
   stubOnValue,
   stubGet,
   stubSet,
+  stubUpdate,
   stubPush,
   stubRemove,
 } from "./db.stub";
@@ -37,5 +39,6 @@ export const ref: AnyFn = USE_STUBS ? stubRef : fbRef;
 export const onValue: AnyFn = USE_STUBS ? stubOnValue : fbOnValue;
 export const get: AnyFn = USE_STUBS ? stubGet : fbGet;
 export const set: AnyFn = USE_STUBS ? stubSet : fbSet;
+export const update: AnyFn = USE_STUBS ? stubUpdate : fbUpdate;
 export const push: AnyFn = USE_STUBS ? stubPush : fbPush;
 export const remove: AnyFn = USE_STUBS ? stubRemove : fbRemove;
