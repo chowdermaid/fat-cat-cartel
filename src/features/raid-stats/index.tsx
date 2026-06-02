@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
+import { BarChart2 } from "lucide-react";
 import { useRaidStats } from "./api/useRaidStats";
 import { useMembers } from "@/hooks/useMembers";
 import { CollectionScopeToggle } from "@/features/fc-collection/components/CollectionScopeToggle";
@@ -291,7 +292,10 @@ export function RaidStatsPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold font-serif">Raid Stats</h1>
+          <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
+            <BarChart2 className="h-7 w-7 text-muted-foreground" />
+            Raid Stats
+          </h1>
           <p className="mt-1 text-muted-foreground text-sm">
             Historical parse performance from fflogs
           </p>

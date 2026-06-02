@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
+import { Dices } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useFCCollection } from "@/features/fc-collection/api/useFCCollection";
@@ -206,7 +207,10 @@ export function MountRoulettePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold font-serif">Mount Roulette</h1>
+        <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
+          <Dices className="h-7 w-7 text-muted-foreground" />
+          Mount Roulette
+        </h1>
         <p className="mt-1 text-muted-foreground">WAT ARE WE FARMING</p>
       </div>
 

@@ -6,6 +6,7 @@ The crafting board is a lightweight recipe preview page at `/craftingboard`. It 
 
 - Search and preview craftable item recipes, including direct materials, crystals, clusters, and nested precrafts.
 - Crafting request dashboard read helpers and member create/accept/complete mutations exist.
+- Requesters who choose "I have some of the materials" can add an optional 100-character materials note for Discord.
 - Creating a request posts one Discord bot message and stores the returned channel/message IDs.
 - Accepting and completing a request edit the existing Discord message without posting duplicates.
 - Selected preview items live in React state for the current browser session.
@@ -100,13 +101,23 @@ All-time dashboard stats live separately:
 
 `completedTotal` is an integer counter for completed requests. It is incremented only after a successful `in_progress` -> `completed` transaction, so the compact Done metric can outlive the 30-day dashboard index.
 
+Per-member fulfillment totals live under:
+
+```text
+/craftingRequestStats/memberTotals/{lodestoneId}
+```
+
+Each member total stores `fulfilledRequests`, `fulfilledItems`, and `updatedAt`. A completed or closed request credits the verified member who performed the action.
+
 Each `/craftingRequests/{requestId}` record should include:
 
 - `id`
 - `status`
 - `materialStatus`
+- `materialNote`: optional 100-character requester note, stored only when the requester has some materials.
 - `requester`: Lodestone ID, Discord user ID, character name, FC rank, and avatar URL.
 - `acceptedBy`: optional assigned crafter with the same member fields plus `acceptedAt`.
+- `completedBy`: optional member that completed or closed the request, with the same member fields plus `completedAt`.
 - `items`: selected requested items, quantities, selected recipe ID, and recipe snapshot.
 - `commission`: optional `{ offered, gil }` object. `gil` is nullable when a member wants to commission but does not enter an amount.
 - `discordMessage`: Discord channel ID, message ID, and optional message URL.
@@ -148,7 +159,7 @@ The form blocks:
 - Invalid commission gil values.
 - Top-level gil, tip, and estimated material cost fields are not rendered or accepted.
 
-Production persistence uses callable Function `createCraftingRequest`. The Function requires a verified Discord-backed member session with `requireMemberSession`, validates the payload, derives requester identity from the session, derives eligible FC crafters from `/members`, posts one Discord bot message to `DISCORD_CRAFTING_CHANNEL_ID`, stores the returned `channelId`, `messageId`, and message URL under `discordMessage`, then writes the canonical request plus open dashboard index with one multi-path Admin SDK update.
+Production persistence uses callable Function `createCraftingRequest`. The Function requires a verified Discord-backed member session with `requireMemberSession`, validates the payload, derives requester identity from the session, derives eligible FC crafters from `/members`, posts one Discord bot message to `DISCORD_DON_CHANNEL_ID`, stores the returned `channelId`, `messageId`, and message URL under `discordMessage`, then writes the canonical request plus open dashboard index with one multi-path Admin SDK update.
 
 The Discord message includes requester mention and character name, material status, optional commission, item quantities, recipe job/level summaries, direct materials, crystals, clusters, precrafts, eligible crafters, and a link to `/craftingboard`. The link uses `ADMIN_APP_ORIGIN` when configured, otherwise the production web app URL.
 
@@ -158,7 +169,7 @@ Required Functions config/secrets for crafting create:
 
 - `DISCORD_BOT_TOKEN`
 - `DISCORD_GUILD_ID`
-- `DISCORD_CRAFTING_CHANNEL_ID`
+- `DISCORD_DON_CHANNEL_ID`
 - `ADMIN_APP_ORIGIN`, optional for local/emulator links
 
 Stub mode writes the same canonical and index paths through `src/lib/db.ts` helpers so the dashboard can be tested without Firebase credentials.
@@ -167,9 +178,11 @@ Stub mode writes the same canonical and index paths through `src/lib/db.ts` help
 
 Open requests can be accepted from the dashboard. Accept uses callable Function `acceptCraftingRequest`, verifies a member session, and runs a transaction against `/craftingRequests/{requestId}`. The transaction only commits when the request is still `open` and has no `acceptedBy`, which prevents two crafters from accepting the same request. After the transaction commits, the Function removes the open index entry and writes the in-progress index entry with a short retry loop, then edits the existing Discord message to show `accepted by` the verified crafter.
 
-In-progress requests can be completed from the dashboard. Complete uses callable Function `completeCraftingRequest`, verifies a member session, and runs a transaction against `/craftingRequests/{requestId}`. The transaction only commits when the request is `in_progress` and the caller is the accepted crafter, or has the existing admin session flag. After commit, the Function removes the in-progress index entry and writes the completed-recent index entry with a short retry loop, then edits the existing Discord message to show completed state.
+Open or in-progress requests can be completed from the dashboard. Complete uses callable Function `completeCraftingRequest`, verifies a member session, and runs a transaction against `/craftingRequests/{requestId}`. The transaction only commits when the caller is the requester, accepted crafter, or has the existing admin session flag. After commit, the Function removes active index entries, writes the completed-recent index entry, increments `completedTotal`, and edits the existing Discord message to show completed state.
 
-Request state in Realtime Database is the source of truth. If a Discord edit fails after accept or complete, the Function logs a warning and still returns success. Missing `discordMessage` metadata or a deleted Discord message is treated as recoverable and logged instead of rolling back request state.
+Requesters or admins can close open or in-progress requests with `closeCraftingRequest`; close uses the same completed state and `completedTotal` increment as complete. Requesters or admins can move in-progress requests back to open with `reopenCraftingRequest`; reopen clears `acceptedBy`, removes the in-progress index entry, and restores the open index entry.
+
+Request state in Realtime Database is the source of truth. If a Discord edit fails after accept, complete, close, or reopen, the Function logs a warning and still returns success. Missing `discordMessage` metadata or a deleted Discord message is treated as recoverable and logged instead of rolling back request state.
 
 ## Request Cost Impact
 
@@ -179,6 +192,7 @@ Read impact:
 
 - Dashboard load: four one-shot reads for `/craftingRequestIndexes/open`, `/craftingRequestIndexes/inProgress`, `/craftingRequestIndexes/completedRecent`, and `/craftingRequestStats`.
 - Request detail: one one-shot read for `/craftingRequests/{requestId}`.
+- Member profile craft stats: one one-shot read for `/craftingRequestStats/memberTotals/{lodestoneId}`.
 - Eligible crafter fallback: reuses `useMembers()` cache. When cache is cold or stale, that hook reads `/membersLastUpdated` and then `/members`; otherwise it adds no extra Firebase download.
 - No live listeners and no polling.
 
@@ -191,12 +205,14 @@ Current create cost is one callable Function invocation, one Discord API message
 /craftingRequestIndexes/open/{requestId}
 ```
 
+If a material note is supplied, the same short string is included in the compact dashboard record and Discord embed. This adds no extra Firebase reads or Function calls.
+
 The canonical request and open dashboard index both include Discord message metadata. If the final Firebase write fails after the Discord post and database retry, rollback attempts one extra Discord API delete. No client RTDB writes are used in production.
 
 Lifecycle write impact:
 
 - Accept: one callable Function invocation, one transactional canonical request read/write at `/craftingRequests/{requestId}`, one multi-path index update touching `/craftingRequestIndexes/open/{requestId}` and `/craftingRequestIndexes/inProgress/{requestId}`, then one Discord API message edit when metadata exists. Transient database update failures can retry up to three total attempts.
-- Complete: one callable Function invocation, one transactional canonical request read/write at `/craftingRequests/{requestId}`, one completed-recent index read for 30-day pruning, one multi-path index/stat update touching `/craftingRequestIndexes/inProgress/{requestId}`, `/craftingRequestIndexes/completedRecent/{requestId}`, stale completed-recent removals if any, and `/craftingRequestStats/completedTotal`, then one Discord API message edit when metadata exists. Transient database update failures can retry up to three total attempts.
-- Cancel: one callable Function invocation, one canonical request update, one index move to cancelled or removal from active indexes, and one Discord message edit if a message exists.
+- Complete or close: one callable Function invocation, one transactional canonical request read/write at `/craftingRequests/{requestId}`, one completed-recent index read for 30-day pruning, one multi-path index/stat update touching active indexes, `/craftingRequestIndexes/completedRecent/{requestId}`, stale completed-recent removals if any, `/craftingRequestStats/completedTotal`, and `/craftingRequestStats/memberTotals/{lodestoneId}`, then one Discord API message edit when metadata exists. Transient database update failures can retry up to three total attempts.
+- Reopen: one callable Function invocation, one transactional canonical request read/write at `/craftingRequests/{requestId}`, one multi-path index update touching `/craftingRequestIndexes/open/{requestId}` and `/craftingRequestIndexes/inProgress/{requestId}`, then one Discord API message edit when metadata exists.
 
 Client writes should remain denied in `database.rules.json`; request mutations should use callable Functions with Discord-backed member sessions.

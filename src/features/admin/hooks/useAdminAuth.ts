@@ -39,6 +39,7 @@ interface AuthSnapshot {
   sessionToken: string | null;
   session: AdminSession | null;
   error: string | null;
+  errorCode: string | null;
 }
 
 const subscribers = new Set<() => void>();
@@ -80,6 +81,7 @@ function devAuthSnapshot(): AuthSnapshot {
     sessionToken: session ? DEV_SESSION_TOKEN : null,
     session,
     error: null,
+    errorCode: null,
   };
 }
 
@@ -110,6 +112,7 @@ let authSnapshot: AuthSnapshot = DEV_AUTH_LAYER_ENABLED
         : storedSessionToken(),
       session: ADMIN_AUTH_BYPASS || !firebaseApp ? localDevSession : null,
       error: null,
+      errorCode: null,
     };
 
 function updateAuthSnapshot(next: Partial<AuthSnapshot>): void {
@@ -143,7 +146,7 @@ function redirectHomeSoon(): void {
 
 export function useAdminAuth() {
   const [snapshot, setSnapshot] = useState<AuthSnapshot>(authSnapshot);
-  const { state, sessionToken, session, error } = snapshot;
+  const { state, sessionToken, session, error, errorCode } = snapshot;
 
   useEffect(() => {
     function syncSnapshot() {
@@ -191,6 +194,7 @@ export function useAdminAuth() {
         sessionToken: LOCAL_DEV_ADMIN_SESSION_TOKEN,
         session: localDevSession,
         error: null,
+        errorCode: null,
       });
       return;
     }
@@ -200,6 +204,7 @@ export function useAdminAuth() {
         state: "authed",
         session: localDevSession,
         error: null,
+        errorCode: null,
       });
       return;
     }
@@ -216,6 +221,7 @@ export function useAdminAuth() {
         sessionToken: returnedToken,
         state: "checking",
         error: null,
+        errorCode: null,
       });
       window.dispatchEvent(new Event(SESSION_EVENT));
       removeAdminHashParams();
@@ -229,10 +235,11 @@ export function useAdminAuth() {
       updateAuthSnapshot({ sessionToken: null });
       window.dispatchEvent(new Event(SESSION_EVENT));
       const message = errorMessage(returnedError) ?? "Discord login failed.";
-      toast.error(message);
+      if (returnedError !== "not_linked") toast.error(message);
       updateAuthSnapshot({
         session: null,
         error: message,
+        errorCode: returnedError,
         state: returnedError === "unauthorized" ? "unauthorized" : "login",
       });
       removeAdminHashParams();
@@ -249,7 +256,7 @@ export function useAdminAuth() {
     }
 
     if (!effectiveSessionToken) {
-      updateAuthSnapshot({ state: "login", session: null });
+      updateAuthSnapshot({ state: "login", session: null, errorCode: null });
       return;
     }
 
@@ -265,6 +272,7 @@ export function useAdminAuth() {
         updateAuthSnapshot({
           session: adminSession,
           error: null,
+          errorCode: null,
           state: "authed",
         });
         if (sessionStorage.getItem(LOGIN_TOAST_KEY) === "1") {
@@ -291,9 +299,17 @@ export function useAdminAuth() {
               : message.includes("no longer tracked")
                 ? "Your linked character is no longer tracked."
                 : message;
+        const knownErrorCode = knownMessage.includes("Link your Lodestone")
+          ? "not_linked"
+          : knownMessage.includes("no longer tracked")
+            ? "missing_member"
+            : knownMessage.includes("Allowed Discord role")
+              ? "unauthorized"
+              : null;
         updateAuthSnapshot({
           session: null,
           error: knownMessage,
+          errorCode: knownErrorCode,
           state: "unauthorized",
         });
       });
@@ -315,6 +331,7 @@ export function useAdminAuth() {
         sessionToken: LOCAL_DEV_ADMIN_SESSION_TOKEN,
         session: localDevSession,
         error: null,
+        errorCode: null,
       });
       return;
     }
@@ -324,6 +341,7 @@ export function useAdminAuth() {
         state: "authed",
         session: localDevSession,
         error: null,
+        errorCode: null,
       });
       return;
     }
@@ -331,6 +349,7 @@ export function useAdminAuth() {
     if (!loginUrl) {
       updateAuthSnapshot({
         error: "Firebase project ID is missing.",
+        errorCode: null,
         state: "login",
       });
       return;
@@ -345,6 +364,7 @@ export function useAdminAuth() {
         sessionToken: null,
         session: null,
         error: null,
+        errorCode: null,
       });
       return;
     }
@@ -368,6 +388,7 @@ export function useAdminAuth() {
     updateAuthSnapshot({
       session: null,
       error: null,
+      errorCode: null,
       state: firebaseApp ? "login" : "authed",
     });
     if (token && firebaseApp) {
@@ -390,6 +411,7 @@ export function useAdminAuth() {
     checking: state === "checking",
     unauthorized: state === "unauthorized",
     error,
+    errorCode,
     login,
     logout,
     session,

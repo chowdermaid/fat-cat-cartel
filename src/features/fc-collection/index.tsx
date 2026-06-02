@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, Library } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,7 +41,10 @@ export function FCCollectionPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold font-serif">FC Collection</h1>
+          <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
+            <Library className="h-7 w-7 text-muted-foreground" />
+            FC Collection
+          </h1>
           <p className="mt-1 text-muted-foreground">I love data</p>
         </div>
         <CollectionScopeToggle scope={scope} onChange={setScope} />

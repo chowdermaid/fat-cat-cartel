@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { animate, stagger } from "animejs";
 import ReactCountryFlag from "react-country-flag";
-import { Crown, Heart, Shield, User } from "lucide-react";
+import { Crown, Heart, Shield, User, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMembers } from "@/hooks/useMembers";
 import { db, get, ref } from "@/lib/db";
@@ -303,7 +303,10 @@ export function MembersPage() {
   return (
     <div ref={pageRef} className="space-y-5">
       <div>
-        <h1 className="text-3xl font-bold font-serif">Members</h1>
+        <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
+          <Users className="h-7 w-7 text-muted-foreground" />
+          Members
+        </h1>
       </div>
 
       {totalCount === 0 ? (

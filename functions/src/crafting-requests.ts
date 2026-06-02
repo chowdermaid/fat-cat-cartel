@@ -10,8 +10,14 @@ const MATERIAL_STATUSES = new Set([
   "crafter_to_provide_materials",
 ]);
 const MAX_ITEMS = 12;
+const MATERIAL_NOTE_MAX_LENGTH = 100;
 const ROOT_UPDATE_ATTEMPTS = 3;
 const COMPLETED_RECENT_MS = 30 * 24 * 60 * 60 * 1000;
+const SERVER_INCREMENT_ONE = { ".sv": { increment: 1 } };
+
+function serverIncrement(value: number) {
+  return { ".sv": { increment: value } };
+}
 
 type CraftingIngredient = {
   itemId: number;
@@ -68,6 +74,7 @@ type CraftingRequestRecord = {
   id: string;
   status: "open" | "in_progress" | "completed" | "cancelled";
   materialStatus: string;
+  materialNote?: string | null;
   requester: {
     lodestoneId: string;
     discordUserId: string;
@@ -82,7 +89,15 @@ type CraftingRequestRecord = {
     fcRank: string | null;
     avatarUrl: string | null;
     acceptedAt: number;
-  };
+  } | null;
+  completedBy?: {
+    lodestoneId: string;
+    discordUserId: string;
+    characterName: string;
+    fcRank: string | null;
+    avatarUrl: string | null;
+    completedAt: number;
+  } | null;
   items: CraftingSelectedItem[];
   commission?: {
     offered: boolean;
@@ -228,6 +243,12 @@ function discordCraftingRequestPayload(
             value: materialStatusLabel(request.materialStatus),
             inline: true,
           },
+          ...(request.materialNote
+            ? [{
+                name: "Materials note",
+                value: request.materialNote,
+              }]
+            : []),
           ...(commission
             ? [{
                 name: "Commission",
@@ -382,6 +403,12 @@ function parseCommission(value: unknown): CraftingRequestRecord["commission"] {
   return { offered: true, gil: Math.min(gil, 999_999_999) };
 }
 
+function parseMaterialNote(value: unknown, materialStatus: string): string | null {
+  if (materialStatus !== "requester_has_some_materials") return null;
+  const note = cleanText(value).slice(0, MATERIAL_NOTE_MAX_LENGTH);
+  return note || null;
+}
+
 function parseIngredient(value: unknown): CraftingIngredient {
   const input = objectValue(value, "Ingredient is invalid.");
   return {
@@ -471,6 +498,7 @@ function arrayValue(value: unknown): unknown[] {
 
 function parseRequest(data: unknown): {
   materialStatus: string;
+  materialNote: string | null;
   items: CraftingSelectedItem[];
   commission: CraftingRequestRecord["commission"];
 } {
@@ -491,6 +519,7 @@ function parseRequest(data: unknown): {
   }
   return {
     materialStatus,
+    materialNote: parseMaterialNote(input.materialNote, materialStatus),
     items,
     commission: parseCommission(input.commission),
   };
@@ -539,18 +568,53 @@ function memberFromSession(session: VerifiedAdminSession) {
   };
 }
 
+function sameLodestoneId(left: unknown, right: unknown): boolean {
+  return String(left ?? "").trim() === String(right ?? "").trim();
+}
+
+function sameDiscordUserId(left: unknown, right: unknown): boolean {
+  return String(left ?? "").trim() === String(right ?? "").trim();
+}
+
+function isCraftingRequester(
+  request: CraftingRequestRecord,
+  session: VerifiedAdminSession,
+): boolean {
+  return (
+    sameLodestoneId(request.requester.lodestoneId, session.lodestoneId) ||
+    sameDiscordUserId(request.requester.discordUserId, session.discordUserId)
+  );
+}
+
+function isCraftingAcceptedCrafter(
+  request: CraftingRequestRecord,
+  session: VerifiedAdminSession,
+): boolean {
+  return (
+    sameLodestoneId(request.acceptedBy?.lodestoneId, session.lodestoneId) ||
+    sameDiscordUserId(request.acceptedBy?.discordUserId, session.discordUserId)
+  );
+}
+
+function isCraftingAdmin(session: VerifiedAdminSession): boolean {
+  const rank = String(session.fcRank ?? "").trim().toLowerCase();
+  return session.isAdmin === true || rank === "boss" || rank === "underpaw";
+}
+
 function dashboardRecordFromRequest(request: CraftingRequestRecord) {
   const items = arrayValue(request.items) as CraftingSelectedItem[];
   return {
     id: request.id,
     status: request.status,
     materialStatus: request.materialStatus,
+    materialNote: request.materialNote ?? null,
     requester: request.requester,
     acceptedBy: request.acceptedBy ?? null,
+    completedBy: request.completedBy ?? null,
     commission: request.commission ?? null,
     createdAt: request.createdAt,
     updatedAt: request.updatedAt,
-    completedAt: request.completedAt,
+    completedAt: request.completedAt ?? null,
     itemCount: items.length,
     itemNames: items.map((item) => item.itemName),
     items,
@@ -589,6 +653,13 @@ async function oldCompletedRecentRemovals(now: number): Promise<Record<string, n
   );
 }
 
+async function readCraftingRequestRecord(
+  requestId: string,
+): Promise<CraftingRequestRecord | null> {
+  const snap = await admin.database().ref(`craftingRequests/${requestId}`).get();
+  return snap.val() as CraftingRequestRecord | null;
+}
+
 export async function createCraftingRequestForMember(
   data: unknown,
   session: VerifiedAdminSession,
@@ -603,6 +674,7 @@ export async function createCraftingRequestForMember(
     id: requestId,
     status: "open",
     materialStatus: parsed.materialStatus,
+    materialNote: parsed.materialNote,
     requester: {
       ...memberFromSession(session),
     },
@@ -643,28 +715,32 @@ export async function acceptCraftingRequestForMember(
     ...memberFromSession(session),
     acceptedAt: now,
   };
-  const ref = admin.database().ref(`craftingRequests/${requestId}`);
-  let nextRequest: CraftingRequestRecord | null = null;
-  let currentRequest: CraftingRequestRecord | null = null;
+  const currentRequest = await readCraftingRequestRecord(requestId);
 
-  const result = await ref.transaction((current: CraftingRequestRecord | null) => {
-    currentRequest = current;
-    if (!current) return;
-    if (current.status !== "open" || current.acceptedBy) return;
-    nextRequest = {
-      ...current,
-      status: "in_progress",
-      acceptedBy,
-      updatedAt: now,
-    };
-    return nextRequest;
-  });
-
-  if (!result.committed || !nextRequest) {
-    const repairRequest = currentRequest as CraftingRequestRecord | null;
-    const staleIndexUpdates: Record<string, unknown> = {
-      [`craftingRequestIndexes/open/${requestId}`]: null,
-    };
+  if (
+    !currentRequest ||
+    currentRequest.status !== "open" ||
+    currentRequest.acceptedBy
+  ) {
+    const repairRequest = currentRequest;
+    if (
+      repairRequest &&
+      isCraftingRequester(repairRequest, session) &&
+      !isCraftingAdmin(session)
+    ) {
+      throw new HttpsError(
+        "failed-precondition",
+        "Requesters can close their own request instead.",
+      );
+    }
+    const staleIndexUpdates: Record<string, unknown> = repairRequest
+      ? {
+          [`craftingRequestIndexes/open/${requestId}`]:
+            repairRequest.status === "open"
+              ? dashboardRecordFromRequest(repairRequest)
+              : null,
+        }
+      : {};
     if (repairRequest?.status === "in_progress") {
       staleIndexUpdates[`craftingRequestIndexes/inProgress/${requestId}`] =
         dashboardRecordFromRequest(repairRequest);
@@ -677,13 +753,29 @@ export async function acceptCraftingRequestForMember(
       staleIndexUpdates[`craftingRequestIndexes/cancelled/${requestId}`] =
         dashboardRecordFromRequest(repairRequest);
     }
-    await updateRootWithRetry(staleIndexUpdates).catch((error) => {
-      console.warn("Could not repair stale open crafting request index", error);
-    });
+    if (Object.keys(staleIndexUpdates).length > 0) {
+      await updateRootWithRetry(staleIndexUpdates).catch((error) => {
+        console.warn("Could not repair stale open crafting request index", error);
+      });
+    }
     throw new HttpsError("failed-precondition", "Request is no longer open.");
   }
+  if (isCraftingRequester(currentRequest, session) && !isCraftingAdmin(session)) {
+    throw new HttpsError(
+      "failed-precondition",
+      "Requesters can close their own request instead.",
+    );
+  }
+
+  const nextRequest: CraftingRequestRecord = {
+    ...currentRequest,
+    status: "in_progress",
+    acceptedBy,
+    updatedAt: now,
+  };
 
   await updateRootWithRetry({
+    [`craftingRequests/${requestId}`]: nextRequest,
     [`craftingRequestIndexes/open/${requestId}`]: null,
     [`craftingRequestIndexes/inProgress/${requestId}`]: dashboardRecordFromRequest(nextRequest),
   });
@@ -702,41 +794,164 @@ export async function completeCraftingRequestForMember(
 ): Promise<{ ok: true; requestId: string }> {
   const requestId = parseRequestId((objectValue(data, "Request is invalid.")).requestId);
   const now = Date.now();
-  const ref = admin.database().ref(`craftingRequests/${requestId}`);
-  let nextRequest: CraftingRequestRecord | null = null;
-
-  const result = await ref.transaction((current: CraftingRequestRecord | null) => {
-    if (!current) return;
-    if (current.status !== "in_progress" || !current.acceptedBy) return;
-    const isAcceptedCrafter = current.acceptedBy.lodestoneId === session.lodestoneId;
-    if (!isAcceptedCrafter && session.isAdmin !== true) return;
-    nextRequest = {
-      ...current,
-      status: "completed",
-      completedAt: now,
-      updatedAt: now,
-    };
-    return nextRequest;
-  });
-
-  if (!result.committed || !nextRequest) {
+  const currentRequest = await readCraftingRequestRecord(requestId);
+  const isRequester = currentRequest
+    ? isCraftingRequester(currentRequest, session)
+    : false;
+  const isAcceptedCrafter = currentRequest
+    ? isCraftingAcceptedCrafter(currentRequest, session)
+    : false;
+  if (
+    !currentRequest ||
+    currentRequest.status !== "in_progress" ||
+    (!isRequester && !isAcceptedCrafter && !isCraftingAdmin(session))
+  ) {
     throw new HttpsError(
       "failed-precondition",
       "Request cannot be completed by this session.",
     );
   }
+  const nextRequest: CraftingRequestRecord = {
+    ...currentRequest,
+    status: "completed",
+    completedAt: now,
+    completedBy: { ...memberFromSession(session), completedAt: now },
+    updatedAt: now,
+  };
 
   const staleCompletedRemovals = await oldCompletedRecentRemovals(now);
   await updateRootWithRetry({
     ...staleCompletedRemovals,
+    [`craftingRequests/${requestId}`]: nextRequest,
+    [`craftingRequestIndexes/open/${requestId}`]: null,
     [`craftingRequestIndexes/inProgress/${requestId}`]: null,
     [`craftingRequestIndexes/completedRecent/${requestId}`]: dashboardRecordFromRequest(nextRequest),
-    "craftingRequestStats/completedTotal": admin.database.ServerValue.increment(1),
+    "craftingRequestStats/completedTotal": SERVER_INCREMENT_ONE,
+    [`craftingRequestStats/memberTotals/${session.lodestoneId}/fulfilledRequests`]:
+      SERVER_INCREMENT_ONE,
+    [`craftingRequestStats/memberTotals/${session.lodestoneId}/fulfilledItems`]:
+      serverIncrement(arrayValue(currentRequest.items).length),
+    [`craftingRequestStats/memberTotals/${session.lodestoneId}/updatedAt`]: now,
   });
   try {
     await updateDiscordCraftingRequestMessage(nextRequest, discordConfig);
   } catch (error) {
     console.warn("Could not update completed crafting request Discord message", error);
+  }
+  return { ok: true, requestId };
+}
+
+export async function closeCraftingRequestForMember(
+  data: unknown,
+  session: VerifiedAdminSession,
+  discordConfig: CraftingDiscordUpdateConfig,
+): Promise<{ ok: true; requestId: string }> {
+  const requestId = parseRequestId((objectValue(data, "Request is invalid.")).requestId);
+  const now = Date.now();
+  const currentRequest = await readCraftingRequestRecord(requestId);
+  const isRequester = currentRequest
+    ? isCraftingRequester(currentRequest, session)
+    : false;
+  if (
+    !currentRequest ||
+    currentRequest.status !== "open" ||
+    (!isRequester && !isCraftingAdmin(session))
+  ) {
+    if (process.env.FUNCTIONS_EMULATOR === "true") {
+      console.warn("[crafting] close denied", {
+        requestId,
+        session: {
+          lodestoneId: session.lodestoneId,
+          characterName: session.characterName,
+          discordUserId: session.discordUserId,
+          isAdmin: session.isAdmin,
+          fcRank: session.fcRank,
+          isCraftingAdmin: isCraftingAdmin(session),
+        },
+        database: {
+          emulatorHost: process.env.FIREBASE_DATABASE_EMULATOR_HOST ?? null,
+          databaseURL: admin.app().options.databaseURL ?? null,
+        },
+        request: currentRequest
+          ? {
+              status: currentRequest.status,
+              requester: currentRequest.requester,
+            }
+          : null,
+      });
+    }
+    throw new HttpsError(
+      "failed-precondition",
+      "Request cannot be closed by this session.",
+    );
+  }
+  const nextRequest: CraftingRequestRecord = {
+    ...currentRequest,
+    status: "completed",
+    completedAt: now,
+    completedBy: { ...memberFromSession(session), completedAt: now },
+    updatedAt: now,
+  };
+
+  const staleCompletedRemovals = await oldCompletedRecentRemovals(now);
+  await updateRootWithRetry({
+    ...staleCompletedRemovals,
+    [`craftingRequests/${requestId}`]: nextRequest,
+    [`craftingRequestIndexes/open/${requestId}`]: null,
+    [`craftingRequestIndexes/inProgress/${requestId}`]: null,
+    [`craftingRequestIndexes/completedRecent/${requestId}`]: dashboardRecordFromRequest(nextRequest),
+    "craftingRequestStats/completedTotal": SERVER_INCREMENT_ONE,
+    [`craftingRequestStats/memberTotals/${session.lodestoneId}/fulfilledRequests`]:
+      SERVER_INCREMENT_ONE,
+    [`craftingRequestStats/memberTotals/${session.lodestoneId}/fulfilledItems`]:
+      serverIncrement(arrayValue(currentRequest.items).length),
+    [`craftingRequestStats/memberTotals/${session.lodestoneId}/updatedAt`]: now,
+  });
+  try {
+    await updateDiscordCraftingRequestMessage(nextRequest, discordConfig);
+  } catch (error) {
+    console.warn("Could not update closed crafting request Discord message", error);
+  }
+  return { ok: true, requestId };
+}
+
+export async function reopenCraftingRequestForMember(
+  data: unknown,
+  session: VerifiedAdminSession,
+  discordConfig: CraftingDiscordUpdateConfig,
+): Promise<{ ok: true; requestId: string }> {
+  const requestId = parseRequestId((objectValue(data, "Request is invalid.")).requestId);
+  const now = Date.now();
+  const currentRequest = await readCraftingRequestRecord(requestId);
+  const isRequester = currentRequest
+    ? isCraftingRequester(currentRequest, session)
+    : false;
+  if (
+    !currentRequest ||
+    currentRequest.status !== "in_progress" ||
+    (!isRequester && !isCraftingAdmin(session))
+  ) {
+    throw new HttpsError(
+      "failed-precondition",
+      "Request cannot be moved back to open by this session.",
+    );
+  }
+  const nextRequest: CraftingRequestRecord = {
+    ...currentRequest,
+    status: "open",
+    acceptedBy: null,
+    updatedAt: now,
+  };
+
+  await updateRootWithRetry({
+    [`craftingRequests/${requestId}`]: nextRequest,
+    [`craftingRequestIndexes/open/${requestId}`]: dashboardRecordFromRequest(nextRequest),
+    [`craftingRequestIndexes/inProgress/${requestId}`]: null,
+  });
+  try {
+    await updateDiscordCraftingRequestMessage(nextRequest, discordConfig);
+  } catch (error) {
+    console.warn("Could not update reopened crafting request Discord message", error);
   }
   return { ok: true, requestId };
 }

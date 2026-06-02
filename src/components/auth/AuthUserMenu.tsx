@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronsUpDown, LogIn, LogOut } from "lucide-react";
 import {
   SidebarMenu,
@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { type AdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import { cn } from "@/lib/utils";
+import { AuthLinkHelpDialog } from "./AuthLinkHelpDialog";
 
 interface AuthUserMenuProps {
   auth: AdminAuth;
@@ -23,43 +24,58 @@ function initials(value: string): string {
 }
 
 export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
-  const { authed, checking, error, login, logout, session } = auth;
+  const { authed, checking, error, errorCode, login, logout, session } = auth;
   const [open, setOpen] = useState(false);
+  const [linkHelpOpen, setLinkHelpOpen] = useState(false);
   const name = session?.characterName ?? "Fat Cat";
   const rank = session?.fcRank ?? "No rank";
   const showAuthenticatedMenu = authed || Boolean(session);
+  const isMissingLinkError = errorCode === "not_linked";
+  const helperText = isMissingLinkError
+    ? "Discord link setup required."
+    : (error ?? "Lodestone link required.");
+
+  useEffect(() => {
+    if (errorCode === "not_linked") setLinkHelpOpen(true);
+  }, [errorCode]);
 
   if (!showAuthenticatedMenu) {
     return (
-      <SidebarMenu className={className}>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            type="button"
-            size="lg"
-            onClick={login}
-            disabled={checking}
-            tooltip="Login with Discord"
-            className="h-12"
-          >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
-              <LogIn className="h-4 w-4" />
-            </div>
-            <div className="grid min-w-0 flex-1 text-left leading-tight">
-              <span className="truncate text-sm font-medium">
-                {checking ? "Checking User..." : "Login"}
-              </span>
-              <span
-                className={cn(
-                  "truncate text-xs text-muted-foreground",
-                  error && "text-destructive",
-                )}
-              >
-                {error ?? "Lodestone link required."}
-              </span>
-            </div>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
+      <>
+        <SidebarMenu className={className}>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              type="button"
+              size="lg"
+              onClick={login}
+              disabled={checking}
+              tooltip="Login with Discord"
+              className="h-12"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
+                <LogIn className="h-4 w-4" />
+              </div>
+              <div className="grid min-w-0 flex-1 text-left leading-tight">
+                <span className="truncate text-sm font-medium">
+                  {checking ? "Checking User..." : "Login"}
+                </span>
+                <span
+                  className={cn(
+                    "truncate text-xs text-muted-foreground",
+                    error && !isMissingLinkError && "text-destructive",
+                  )}
+                >
+                  {helperText}
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <AuthLinkHelpDialog
+          open={linkHelpOpen}
+          onOpenChange={setLinkHelpOpen}
+        />
+      </>
     );
   }
 

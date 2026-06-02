@@ -54,14 +54,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useMemberProfile, type CollectiblesData } from "./api/useMemberProfile";
+import {
+  useMemberProfile,
+  type CollectiblesData,
+} from "./api/useMemberProfile";
 import { db, ref, set } from "@/lib/db";
 import { firebaseApp } from "@/lib/firebase";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import { callAdminFunction } from "@/features/admin/lib/adminFunctions";
 import { COLLECTIBLE_KEYS } from "@/features/fc-collection/collectibleConfig";
 import type { CollectibleKey } from "@/features/fc-collection/collectibleConfig";
-import type { Collectible, MemberCacheData } from "@/features/fc-collection/types";
+import type {
+  Collectible,
+  MemberCacheData,
+} from "@/features/fc-collection/types";
 import type { MemberProfile } from "./types";
 import {
   FavoriteCollectiblePicker,
@@ -86,11 +92,7 @@ import type {
 } from "@/features/raid-stats/types";
 
 type ProfileParseType = "savage" | "trial" | "alliance";
-type ActivityChartType =
-  | "timeline"
-  | "progress"
-  | "jobs"
-  | "heatmap";
+type ActivityChartType = "timeline" | "progress" | "jobs" | "heatmap";
 const ACTIVITY_PAGE_SIZE = 10;
 
 const jobIconMap = import.meta.glob<string>("../../assets/jobs/*.png", {
@@ -684,7 +686,11 @@ function JobLevelGroupCard({
   );
 }
 
-function JobLevels({ jobLevels }: { jobLevels?: Record<string, number | null> }) {
+function JobLevels({
+  jobLevels,
+}: {
+  jobLevels?: Record<string, number | null>;
+}) {
   const hasLevels = jobLevels && Object.keys(jobLevels).length > 0;
   const groupByLabel = Object.fromEntries(
     JOB_LEVEL_GROUPS.map((group) => [group.label, group]),
@@ -704,19 +710,47 @@ function JobLevels({ jobLevels }: { jobLevels?: Record<string, number | null> })
       <div className="rounded-lg border bg-card p-3">
         <div className="space-y-3">
           <div className="grid gap-3 lg:grid-cols-2">
-            <JobLevelGroupCard group={groupByLabel.Tank} jobLevels={jobLevels} />
-            <JobLevelGroupCard group={groupByLabel.Healer} jobLevels={jobLevels} />
+            <JobLevelGroupCard
+              group={groupByLabel.Tank}
+              jobLevels={jobLevels}
+            />
+            <JobLevelGroupCard
+              group={groupByLabel.Healer}
+              jobLevels={jobLevels}
+            />
           </div>
           <div className="grid gap-3 lg:grid-cols-2">
-            <JobLevelGroupCard group={groupByLabel["Melee DPS"]} jobLevels={jobLevels} />
-            <JobLevelGroupCard group={groupByLabel["Magical Ranged"]} jobLevels={jobLevels} />
+            <JobLevelGroupCard
+              group={groupByLabel["Melee DPS"]}
+              jobLevels={jobLevels}
+            />
+            <JobLevelGroupCard
+              group={groupByLabel["Magical Ranged"]}
+              jobLevels={jobLevels}
+            />
           </div>
           <div className="grid gap-3 lg:grid-cols-[3fr_1fr]">
-            <JobLevelGroupCard group={groupByLabel["Physical Ranged"]} jobLevels={jobLevels} columns="grid-cols-2 lg:grid-cols-3" />
-            <JobLevelGroupCard group={groupByLabel.Limited} jobLevels={jobLevels} columns="grid-cols-1" />
+            <JobLevelGroupCard
+              group={groupByLabel["Physical Ranged"]}
+              jobLevels={jobLevels}
+              columns="grid-cols-2 lg:grid-cols-3"
+            />
+            <JobLevelGroupCard
+              group={groupByLabel.Limited}
+              jobLevels={jobLevels}
+              columns="grid-cols-1"
+            />
           </div>
-          <JobLevelGroupCard group={groupByLabel.Crafting} jobLevels={jobLevels} columns="grid-cols-2 sm:grid-cols-3 2xl:grid-cols-4" />
-          <JobLevelGroupCard group={groupByLabel.Gathering} jobLevels={jobLevels} columns="grid-cols-2 sm:grid-cols-3 2xl:grid-cols-4" />
+          <JobLevelGroupCard
+            group={groupByLabel.Crafting}
+            jobLevels={jobLevels}
+            columns="grid-cols-2 sm:grid-cols-3 2xl:grid-cols-4"
+          />
+          <JobLevelGroupCard
+            group={groupByLabel.Gathering}
+            jobLevels={jobLevels}
+            columns="grid-cols-2 sm:grid-cols-3 2xl:grid-cols-4"
+          />
           {!hasLevels && (
             <p className="rounded-md border border-dashed bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
               No Lodestone job level sync has run for this member yet.
@@ -736,11 +770,7 @@ function EmptyChart({ message }: { message: string }) {
   );
 }
 
-function ActivityTooltipContent({
-  activity,
-}: {
-  activity: TomestoneActivity;
-}) {
+function ActivityTooltipContent({ activity }: { activity: TomestoneActivity }) {
   return (
     <TooltipContent className="max-w-64 text-xs">
       <div className="space-y-1">
@@ -926,7 +956,9 @@ function JobUsageDonut({ activities }: { activities: TomestoneActivity[] }) {
           </svg>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
             <span className="text-2xl font-bold tabular-nums">{total}</span>
-            <span className="text-[11px] text-muted-foreground">activities</span>
+            <span className="text-[11px] text-muted-foreground">
+              activities
+            </span>
           </div>
         </div>
         <ScrollArea className="h-48 pr-3">
@@ -977,10 +1009,7 @@ function RaidActivityHeatmap({
   }
   const sortedKeys = [...buckets.keys()].sort();
   const data = sortedKeys.map((key) => ({ key, ...buckets.get(key)! }));
-  const maxValue = Math.max(
-    1,
-    ...data.map((row) => row.clears + row.wipes),
-  );
+  const maxValue = Math.max(1, ...data.map((row) => row.clears + row.wipes));
   const first = new Date(`${sortedKeys[0]}T00:00:00`);
   const last = new Date(`${sortedKeys[sortedKeys.length - 1]}T00:00:00`);
   const calendarStart = new Date(first);
@@ -1029,7 +1058,8 @@ function RaidActivityHeatmap({
             {days.map((day) => {
               const row = buckets.get(day.key);
               const total = row ? row.clears + row.wipes : 0;
-              const alpha = total === 0 ? 0.06 : 0.18 + (total / maxValue) * 0.72;
+              const alpha =
+                total === 0 ? 0.06 : 0.18 + (total / maxValue) * 0.72;
               const backgroundColor =
                 total === 0
                   ? "rgba(255, 255, 255, 0.04)"
@@ -1179,8 +1209,7 @@ function BestProgressByEncounter({
                     {row.clears} clears, {row.wipes} wipes
                   </p>
                   <p>
-                    Best boss HP:{" "}
-                    {hp == null ? "Unknown" : `${hp.toFixed(1)}%`}
+                    Best boss HP: {hp == null ? "Unknown" : `${hp.toFixed(1)}%`}
                   </p>
                   <p>Latest: {formatDate(row.latest)}</p>
                 </TooltipContent>
@@ -1278,7 +1307,8 @@ function ProfileEditorDialog({
     [collectionData, collectibles],
   );
   const minionOptions = useMemo(
-    () => favoriteOptions(collectionData?.owned?.minions, collectibles?.minions),
+    () =>
+      favoriteOptions(collectionData?.owned?.minions, collectibles?.minions),
     [collectionData, collectibles],
   );
 
@@ -1339,7 +1369,9 @@ function ProfileEditorDialog({
       onOpenChange(false);
       toast.success("Profile saved.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save profile.");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to save profile.",
+      );
     } finally {
       setSaving(false);
     }
@@ -1379,7 +1411,10 @@ function ProfileEditorDialog({
               <Select
                 value={month ? String(month) : "0"}
                 onValueChange={(value) =>
-                  setBirthday((current) => ({ ...current, month: Number(value) }))
+                  setBirthday((current) => ({
+                    ...current,
+                    month: Number(value),
+                  }))
                 }
               >
                 <SelectTrigger>
@@ -1510,7 +1545,11 @@ function ProfileEditorDialog({
                     }`}
                   >
                     {icon ? (
-                      <img src={icon} alt={abbr} className="h-6 w-6 object-contain" />
+                      <img
+                        src={icon}
+                        alt={abbr}
+                        className="h-6 w-6 object-contain"
+                      />
                     ) : (
                       abbr
                     )}
@@ -1550,6 +1589,7 @@ export function MemberProfilePage() {
   const {
     member,
     profile,
+    craftingStats,
     collectionData,
     collectibles,
     raidZones,
@@ -1635,8 +1675,11 @@ export function MemberProfilePage() {
   }
 
   const effectiveProfile =
-    profileOverride?.lodestoneId === lodestoneId ? profileOverride.profile : profile;
-  const canEditProfile = auth.authed && auth.session?.lodestoneId === lodestoneId;
+    profileOverride?.lodestoneId === lodestoneId
+      ? profileOverride.profile
+      : profile;
+  const canEditProfile =
+    auth.authed && auth.session?.lodestoneId === lodestoneId;
   const mainJobs = effectiveProfile?.mainJobs ?? [];
   const ownedCounts = COLLECTIBLE_KEYS.map((key) => ({
     key,
@@ -1658,9 +1701,7 @@ export function MemberProfilePage() {
     collectibles?.minions,
   );
   const hasPersonalDetails = Boolean(
-    effectiveProfile?.favoriteContent ||
-      favoriteMount ||
-      favoriteMinion,
+    effectiveProfile?.favoriteContent || favoriteMount || favoriteMinion,
   );
   const FavoriteContentIcon = effectiveProfile?.favoriteContent
     ? favoriteContentIcon(effectiveProfile.favoriteContent)
@@ -1723,9 +1764,7 @@ export function MemberProfilePage() {
                     className="flex items-center gap-1.5 rounded-full border bg-muted/50 px-2.5 py-1"
                   >
                     <JobIcon fullName={job} size={16} />
-                    <span className="text-xs">
-                      {displayJobName(job)}
-                    </span>
+                    <span className="text-xs">{displayJobName(job)}</span>
                   </div>
                 ))}
               </div>
@@ -1747,7 +1786,9 @@ export function MemberProfilePage() {
                     className="h-7 w-fit gap-1.5 px-3 font-normal"
                   >
                     <ReactCountryFlag
-                      countryCode={timezoneCountryCode(effectiveProfile.timezone)}
+                      countryCode={timezoneCountryCode(
+                        effectiveProfile.timezone,
+                      )}
                       svg
                       aria-hidden="true"
                       className="text-sm leading-none"
@@ -1814,6 +1855,19 @@ export function MemberProfilePage() {
           )}
         </div>
       )}
+
+      <div className="anim-section flex max-w-5xl flex-wrap gap-2">
+        <Badge variant="outline" className="h-7 w-fit gap-1.5 px-3 font-normal">
+          <Hammer className="h-3.5 w-3.5" />
+          {craftingStats.fulfilledRequests.toLocaleString()} request
+          {craftingStats.fulfilledRequests === 1 ? "" : "s"} completed
+        </Badge>
+        <Badge variant="outline" className="h-7 w-fit gap-1.5 px-3 font-normal">
+          <Sparkles className="h-3.5 w-3.5" />
+          {craftingStats.fulfilledItems.toLocaleString()} crafted item
+          {craftingStats.fulfilledItems === 1 ? "" : "s"}
+        </Badge>
+      </div>
 
       {effectiveProfile?.bio && (
         <div className="anim-section max-w-3xl pl-1">
@@ -1891,8 +1945,10 @@ export function MemberProfilePage() {
                           {rarestMount.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {ownedPct(rarestMount, collectibles.mounts).toFixed(1)}% of
-                          players
+                          {ownedPct(rarestMount, collectibles.mounts).toFixed(
+                            1,
+                          )}
+                          % of players
                         </p>
                       </div>
                     </div>
@@ -1918,8 +1974,10 @@ export function MemberProfilePage() {
                           {rarestMinion.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {ownedPct(rarestMinion, collectibles.minions).toFixed(1)}% of
-                          players
+                          {ownedPct(rarestMinion, collectibles.minions).toFixed(
+                            1,
+                          )}
+                          % of players
                         </p>
                       </div>
                     </div>
@@ -2096,7 +2154,9 @@ export function MemberProfilePage() {
         collectionData={collectionData}
         collectibles={collectibles}
         sessionToken={auth.sessionToken}
-        onSaved={(nextProfile) => setProfileOverride({ lodestoneId, profile: nextProfile })}
+        onSaved={(nextProfile) =>
+          setProfileOverride({ lodestoneId, profile: nextProfile })
+        }
       />
     </div>
   );

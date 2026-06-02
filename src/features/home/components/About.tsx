@@ -48,7 +48,8 @@ const quickLinks = [
     to: "/craftingboard",
     icon: Hammer,
     title: "Crafting Board",
-    description: "Preview recipes and material totals.",
+    description:
+      "I love my jira kanban boards so much i bring it out of work /s",
   },
   {
     to: "/raid-stats",

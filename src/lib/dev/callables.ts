@@ -1,4 +1,11 @@
 import {
+  acceptDevCraftingRequest,
+  closeDevCraftingRequest,
+  completeDevCraftingRequest,
+  createDevCraftingRequest,
+  reopenDevCraftingRequest,
+} from "./craftingRequests";
+import {
   DEV_AUTH_LAYER_ENABLED,
   devPersonaHasCapability,
   devStorageKey,
@@ -246,6 +253,22 @@ function registerDefaultHandlers(): void {
     });
     return { ok: true };
   });
+
+  handlers.set("createCraftingRequest", (data) =>
+    createDevCraftingRequest(data),
+  );
+  handlers.set("acceptCraftingRequest", (data) =>
+    acceptDevCraftingRequest(data),
+  );
+  handlers.set("completeCraftingRequest", (data) =>
+    completeDevCraftingRequest(data),
+  );
+  handlers.set("closeCraftingRequest", (data) =>
+    closeDevCraftingRequest(data),
+  );
+  handlers.set("reopenCraftingRequest", (data) =>
+    reopenDevCraftingRequest(data),
+  );
 }
 
 export function registerDevCallable(name: string, handler: DevCallableHandler): void {
@@ -270,4 +293,3 @@ export function getDevCalendarEvents(): Record<string, unknown> {
   if (!DEV_AUTH_LAYER_ENABLED) return {};
   return readCalendarStore().events;
 }
-

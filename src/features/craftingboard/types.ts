@@ -87,9 +87,13 @@ export type CraftingRequest = {
   id: string;
   status: CraftingRequestStatus;
   materialStatus: CraftingMaterialStatus;
+  materialNote?: string | null;
   requester: CraftingRequestMember;
   acceptedBy?: (CraftingRequestMember & {
     acceptedAt: number;
+  }) | null;
+  completedBy?: (CraftingRequestMember & {
+    completedAt: number;
   }) | null;
   items: CraftingSelectedItem[];
   commission?: CraftingRequestCommission | null;
@@ -123,8 +127,10 @@ export type CraftingRequestDashboardRecord = Pick<
   | "id"
   | "status"
   | "materialStatus"
+  | "materialNote"
   | "requester"
   | "acceptedBy"
+  | "completedBy"
   | "commission"
   | "createdAt"
   | "updatedAt"

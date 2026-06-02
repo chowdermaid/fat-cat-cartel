@@ -7,6 +7,7 @@ export type DevCapability =
 export type DevPersonaId =
   | "guest"
   | "member"
+  | "crafter"
   | "housecat"
   | "underpaw"
   | "boss"
@@ -59,6 +60,20 @@ export const DEV_PERSONAS: DevPersona[] = [
     discordUserId: "dev-member",
     lodestoneId: "dev-member",
     characterName: "Mochi Member",
+    fcRank: "Member",
+    roleIds: ["dev-member-role"],
+    isAdmin: false,
+    isHousecat: false,
+    capabilities: [],
+  },
+  {
+    id: "crafter",
+    label: "Crafter",
+    description: "Second logged-in member for request handoff testing.",
+    authenticated: true,
+    discordUserId: "dev-crafter",
+    lodestoneId: "dev-crafter",
+    characterName: "Crispin Crafter",
     fcRank: "Member",
     roleIds: ["dev-member-role"],
     isAdmin: false,
@@ -172,4 +187,3 @@ export function devPersonaHasCapability(
 ): boolean {
   return persona.capabilities.includes("admin:*") || persona.capabilities.includes(capability);
 }
-

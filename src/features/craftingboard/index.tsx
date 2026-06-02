@@ -3,20 +3,27 @@ import { animate, stagger } from "animejs";
 import {
   CheckCircle2,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ChevronsUpDown,
   Clock3,
+  Coins,
   ExternalLink,
   Hammer,
+  HandHeart,
   Inbox,
   ListPlus,
   Loader2,
+  MessageSquareText,
   Minus,
   PackageCheck,
   PackageOpen,
   Plus,
+  RotateCcw,
   Sparkles,
   Trash2,
   UserRound,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
@@ -41,6 +48,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Popover,
   PopoverContent,
@@ -79,8 +91,10 @@ import {
 } from "./api/xivapi";
 import {
   acceptCraftingRequest,
+  closeCraftingRequest,
   completeCraftingRequest,
   createCraftingRequest,
+  reopenCraftingRequest,
   useCraftingRequests,
 } from "./api/useCraftingRequests";
 import type {
@@ -128,8 +142,8 @@ type RequestSectionConfig = {
 const sectionConfigs = {
   open: {
     title: "Open requests",
-    description: "Waiting for a crafter to pick them up.",
-    emptyText: "No open requests.",
+    description: "Waiting for a willing crafter to pick up the leve.",
+    emptyText: "No open requests. Astrid is behaving.",
     icon: Inbox,
     accent: "text-primary",
     laneClass:
@@ -137,8 +151,8 @@ const sectionConfigs = {
   },
   inProgress: {
     title: "In progress",
-    description: "Locked to one crafter and being worked on.",
-    emptyText: "Nothing is in progress.",
+    description: "Claimed by a crafter.",
+    emptyText: "Nothing is in progress. The workshop is quiet.",
     icon: Clock3,
     accent: "text-amber-600 dark:text-amber-400",
     laneClass:
@@ -146,7 +160,7 @@ const sectionConfigs = {
   },
   completed: {
     title: "Completed",
-    description: "Finished requests (30 days)",
+    description: "Finished requests (last 30 days)",
     emptyText: "No completed requests from the last 30 days.",
     icon: CheckCircle2,
     accent: "text-emerald-600 dark:text-emerald-400",
@@ -156,6 +170,12 @@ const sectionConfigs = {
 
 const SEARCH_DELAY_MS = 300;
 const SCROLL_AREA_VIEWPORT_SELECTOR = "[data-radix-scroll-area-viewport]";
+const REQUEST_SECTION_PAGE_SIZE = 3;
+const COMPLETED_SECTION_PAGE_SIZE = 8;
+const TEAMCRAFT_IMPORT_BASE_URL = "https://ffxivteamcraft.com/import";
+const MATERIAL_NOTE_MAX_LENGTH = 200;
+const DEFAULT_MATERIAL_STATUS: CraftingMaterialStatus =
+  "requester_has_all_materials";
 
 function handleNestedScrollAreaWheel(event: React.WheelEvent<HTMLDivElement>) {
   const viewport = event.currentTarget.querySelector<HTMLElement>(
@@ -201,9 +221,11 @@ export function CraftingBoardPage() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState("");
   const [requestItems, setRequestItems] = useState<CraftingSelectedItem[]>([]);
+  const [lastAddedRequestItemKey, setLastAddedRequestItemKey] = useState("");
   const [materialStatus, setMaterialStatus] = useState<
     CraftingMaterialStatus | ""
-  >("");
+  >(DEFAULT_MATERIAL_STATUS);
+  const [materialNote, setMaterialNote] = useState("");
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
   const [commissionOffered, setCommissionOffered] = useState(false);
   const [commissionGil, setCommissionGil] = useState("");
@@ -390,6 +412,7 @@ export function CraftingBoardPage() {
   function addPreviewToRequest() {
     if (!preview) return;
     setFormError("");
+    const addedRecipeId = preview.selectedRecipeId;
     setRequestItems((items) => {
       const existingIndex = items.findIndex(
         (item) => item.selectedRecipeId === preview.selectedRecipeId,
@@ -403,6 +426,7 @@ export function CraftingBoardPage() {
       }
       return [...items, preview];
     });
+    setLastAddedRequestItemKey(`${addedRecipeId}:${Date.now()}`);
   }
 
   function updateRequestItemQuantity(recipeId: number, nextQuantity: number) {
@@ -421,6 +445,11 @@ export function CraftingBoardPage() {
     );
   }
 
+  function updateMaterialStatus(value: CraftingMaterialStatus) {
+    setMaterialStatus(value);
+    if (value !== "requester_has_some_materials") setMaterialNote("");
+  }
+
   async function submitRequest() {
     setFormError("");
     if (requestItems.length === 0) {
@@ -435,6 +464,10 @@ export function CraftingBoardPage() {
       setFormError("Member login is required.");
       return;
     }
+    const trimmedMaterialNote =
+      materialStatus === "requester_has_some_materials"
+        ? materialNote.trim().slice(0, MATERIAL_NOTE_MAX_LENGTH)
+        : null;
     const trimmedCommissionGil = commissionGil.trim();
     const commissionGilValue = trimmedCommissionGil
       ? Number(trimmedCommissionGil)
@@ -460,13 +493,15 @@ export function CraftingBoardPage() {
           avatarUrl: auth.session.avatarUrl ?? null,
         },
         materialStatus,
+        materialNote: trimmedMaterialNote,
         items: requestItems,
         commission: commissionOffered
           ? { offered: true, gil: commissionGilValue }
           : null,
       });
       setRequestItems([]);
-      setMaterialStatus("");
+      setMaterialStatus(DEFAULT_MATERIAL_STATUS);
+      setMaterialNote("");
       setCommissionOffered(false);
       setCommissionGil("");
       setRequestDialogOpen(false);
@@ -493,10 +528,11 @@ export function CraftingBoardPage() {
         avatarUrl: auth.session.avatarUrl ?? null,
       }
     : null;
+  const isCraftingAdmin = isCraftingAdminSession(auth.session);
 
   async function runLifecycleAction(
     requestId: string,
-    action: "accept" | "complete",
+    action: "accept" | "complete" | "close" | "reopen",
   ) {
     if (!currentMember) {
       toast.error("Member login is required.");
@@ -507,15 +543,21 @@ export function CraftingBoardPage() {
       const payload = {
         sessionToken: auth.sessionToken,
         member: currentMember,
-        isAdmin: auth.session?.isAdmin === true,
+        isAdmin: isCraftingAdmin,
         requestId,
       };
       if (action === "accept") {
         await acceptCraftingRequest(payload);
         toast.success("Request accepted.");
-      } else {
+      } else if (action === "complete") {
         await completeCraftingRequest(payload);
         toast.success("Request completed.");
+      } else if (action === "close") {
+        await closeCraftingRequest(payload);
+        toast.success("Request closed.");
+      } else {
+        await reopenCraftingRequest(payload);
+        toast.success("Request moved back to open.");
       }
       await reload();
     } catch (requestError) {
@@ -535,10 +577,13 @@ export function CraftingBoardPage() {
       <section className="crafting-section space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold font-serif">Crafting Requests</h1>
+            <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
+              <Hammer className="h-7 w-7 text-muted-foreground" />
+              Crafting Requests
+            </h1>
             <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Track FC crafting requests, assigned crafters, material readiness,
-              and recipe snapshots.
+              Could this have been a discord message?? Yes. Do you guys get a
+              dashboard instead? Also yes.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -553,10 +598,12 @@ export function CraftingBoardPage() {
               label="Done"
               value={data.stats.completedTotal}
             />
-            <Button type="button" onClick={() => setRequestDialogOpen(true)}>
-              Request item
-              <ListPlus className="h-4 w-4" />
-            </Button>
+            {auth.session && (
+              <Button type="button" onClick={() => setRequestDialogOpen(true)}>
+                Request item
+                <ListPlus className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </section>
@@ -585,16 +632,21 @@ export function CraftingBoardPage() {
         onAddPreview={addPreviewToRequest}
         items={requestItems}
         materialStatus={materialStatus}
+        materialNote={materialNote}
         commissionOffered={commissionOffered}
         commissionGil={commissionGil}
         creating={creating}
         error={formError}
         isAuthed={Boolean(auth.session)}
-        onMaterialStatusChange={setMaterialStatus}
+        onMaterialStatusChange={updateMaterialStatus}
+        onMaterialNoteChange={(value) =>
+          setMaterialNote(value.slice(0, MATERIAL_NOTE_MAX_LENGTH))
+        }
         onCommissionOfferedChange={setCommissionOffered}
         onCommissionGilChange={setCommissionGil}
         onQuantityChange={updateRequestItemQuantity}
         onRemove={removeRequestItem}
+        lastAddedRequestItemKey={lastAddedRequestItemKey}
         onSubmit={submitRequest}
       />
 
@@ -626,42 +678,48 @@ export function CraftingBoardPage() {
             </Card>
           )}
 
-          <div className="grid gap-5 xl:grid-cols-[3fr_3fr_1fr]">
+          <div className="grid gap-5 xl:grid-cols-[2fr_2fr_1fr]">
             <RequestSection
               config={sectionConfigs.open}
               requests={data.open}
               currentMember={currentMember}
               members={members}
-              isAdmin={auth.session?.isAdmin === true}
+              isAdmin={isCraftingAdmin}
               actionRequestId={actionRequestId}
               onAccept={(requestId) => runLifecycleAction(requestId, "accept")}
               onComplete={(requestId) =>
                 runLifecycleAction(requestId, "complete")
               }
+              onClose={(requestId) => runLifecycleAction(requestId, "close")}
+              onReopen={(requestId) => runLifecycleAction(requestId, "reopen")}
             />
             <RequestSection
               config={sectionConfigs.inProgress}
               requests={data.inProgress}
               currentMember={currentMember}
               members={members}
-              isAdmin={auth.session?.isAdmin === true}
+              isAdmin={isCraftingAdmin}
               actionRequestId={actionRequestId}
               onAccept={(requestId) => runLifecycleAction(requestId, "accept")}
               onComplete={(requestId) =>
                 runLifecycleAction(requestId, "complete")
               }
+              onClose={(requestId) => runLifecycleAction(requestId, "close")}
+              onReopen={(requestId) => runLifecycleAction(requestId, "reopen")}
             />
             <RequestSection
               config={sectionConfigs.completed}
               requests={data.completed}
               currentMember={currentMember}
               members={members}
-              isAdmin={auth.session?.isAdmin === true}
+              isAdmin={isCraftingAdmin}
               actionRequestId={actionRequestId}
               onAccept={(requestId) => runLifecycleAction(requestId, "accept")}
               onComplete={(requestId) =>
                 runLifecycleAction(requestId, "complete")
               }
+              onClose={(requestId) => runLifecycleAction(requestId, "close")}
+              onReopen={(requestId) => runLifecycleAction(requestId, "reopen")}
               compactCards
             />
           </div>
@@ -713,16 +771,19 @@ function CreateRequestDialog({
   onAddPreview,
   items,
   materialStatus,
+  materialNote,
   commissionOffered,
   commissionGil,
   creating,
   error,
   isAuthed,
   onMaterialStatusChange,
+  onMaterialNoteChange,
   onCommissionOfferedChange,
   onCommissionGilChange,
   onQuantityChange,
   onRemove,
+  lastAddedRequestItemKey,
   onSubmit,
 }: {
   open: boolean;
@@ -748,18 +809,41 @@ function CreateRequestDialog({
   onAddPreview: () => void;
   items: CraftingSelectedItem[];
   materialStatus: CraftingMaterialStatus | "";
+  materialNote: string;
   commissionOffered: boolean;
   commissionGil: string;
   creating: boolean;
   error: string;
   isAuthed: boolean;
   onMaterialStatusChange: (value: CraftingMaterialStatus) => void;
+  onMaterialNoteChange: (value: string) => void;
   onCommissionOfferedChange: (value: boolean) => void;
   onCommissionGilChange: (value: string) => void;
   onQuantityChange: (recipeId: number, quantity: number) => void;
   onRemove: (recipeId: number) => void;
+  lastAddedRequestItemKey: string;
   onSubmit: () => void;
 }) {
+  const requestItemsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const [recipeId] = lastAddedRequestItemKey.split(":");
+    if (!recipeId || !requestItemsRef.current) return;
+
+    const element = requestItemsRef.current.querySelector(
+      `[data-request-item-id="${recipeId}"]`,
+    );
+    if (!element) return;
+
+    animate(element, {
+      opacity: [0, 1],
+      translateY: [10, 0],
+      scale: [0.97, 1],
+      duration: 320,
+      easing: "easeOutBack",
+    });
+  }, [lastAddedRequestItemKey]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92vh] max-w-7xl p-0">
@@ -777,9 +861,6 @@ function CreateRequestDialog({
                   <CardTitle className="font-serif text-xl">
                     Find item
                   </CardTitle>
-                  <CardDescription>
-                    Search craftable outputs. Preview uses XIVAPI snapshots.
-                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Popover open={searchOpen} onOpenChange={onSearchOpenChange}>
@@ -791,8 +872,7 @@ function CreateRequestDialog({
                         className="h-11 w-full justify-between"
                       >
                         <span className="truncate text-muted-foreground">
-                          {selectedSource?.itemName ??
-                            "Search craftable item..."}
+                          {selectedSource?.itemName ?? "Search item..."}
                         </span>
                         <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -903,13 +983,6 @@ function CreateRequestDialog({
                           </SelectContent>
                         </Select>
                       )}
-                      <div className="flex justify-center">
-                        <QuantityControl
-                          value={previewQuantity}
-                          onChange={onPreviewQuantityChange}
-                          editable={false}
-                        />
-                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -920,6 +993,7 @@ function CreateRequestDialog({
                 loading={previewLoading}
                 error={previewError}
                 quantity={previewQuantity}
+                onQuantityChange={onPreviewQuantityChange}
                 onAdd={onAddPreview}
               />
             </div>
@@ -930,7 +1004,7 @@ function CreateRequestDialog({
                   New Request
                 </CardTitle>
                 <CardDescription>
-                  Add one or more previewed craftable items.
+                  Add one or more craftable items.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -940,10 +1014,11 @@ function CreateRequestDialog({
                   </div>
                 ) : (
                   <ScrollArea className="max-h-80 pr-3">
-                    <div className="space-y-2">
+                    <div ref={requestItemsRef} className="space-y-2">
                       {items.map((item) => (
                         <div
                           key={item.selectedRecipeId}
+                          data-request-item-id={item.selectedRecipeId}
                           className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3"
                         >
                           <PreviewIcon icon={item.itemIcon} />
@@ -1010,6 +1085,23 @@ function CreateRequestDialog({
                     </SelectContent>
                   </Select>
 
+                  {materialStatus === "requester_has_some_materials" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="crafting-material-note">
+                        Materials note
+                      </Label>
+                      <Input
+                        id="crafting-material-note"
+                        value={materialNote}
+                        maxLength={MATERIAL_NOTE_MAX_LENGTH}
+                        onChange={(event) =>
+                          onMaterialNoteChange(event.target.value)
+                        }
+                        placeholder="What you have or still need"
+                      />
+                    </div>
+                  )}
+
                   <div className="space-y-3 rounded-md border p-3">
                     <div className="flex items-center gap-2">
                       <Checkbox
@@ -1071,6 +1163,7 @@ function RecipePreview({
   loading,
   error,
   quantity,
+  onQuantityChange,
   onAdd,
 }: {
   selectedRecipe: CraftingRecipe | null;
@@ -1078,6 +1171,7 @@ function RecipePreview({
   loading: boolean;
   error: string;
   quantity: number;
+  onQuantityChange: (value: number) => void;
   onAdd: () => void;
 }) {
   if (!selectedRecipe) {
@@ -1137,11 +1231,7 @@ function RecipePreview({
   const recipe = preview.recipeSnapshot;
   const amountResult = recipe.amountResult || 1;
   const ingredients = safeArray(recipe.ingredients);
-  const crystals = safeArray(recipe.crystals);
-  const clusters = safeArray(recipe.clusters);
-  const precrafts = safeArray(recipe.precrafts);
   const craftsNeeded = Math.ceil(quantity / amountResult);
-  const crystalsAndClusters = [...crystals, ...clusters];
 
   return (
     <Card>
@@ -1160,10 +1250,18 @@ function RecipePreview({
         </div>
       </CardHeader>
       <CardContent className="space-y-5">
-        <Button type="button" onClick={onAdd} className="w-full sm:w-auto">
-          Add to request
-          <Plus className="h-4 w-4" />
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <QuantityControl
+            value={quantity}
+            onChange={onQuantityChange}
+            editable={false}
+            centered={false}
+          />
+          <Button type="button" onClick={onAdd}>
+            Add to request
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
         <IngredientGroup
           title="Crafting Ingredients"
           items={ingredients}
@@ -1215,59 +1313,27 @@ function IngredientGroup({
   );
 }
 
-function PrecraftGroup({
-  items,
-  craftMultiplier,
-}: {
-  items: CraftingRecipeSnapshot["precrafts"];
-  craftMultiplier: number;
-}) {
-  return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-semibold">Precraft</h3>
-      {items.length === 0 ? (
-        <p className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-          No craftable sub-components found.
-        </p>
-      ) : (
-        <div className="grid gap-2 md:grid-cols-2">
-          {items.map((item) => (
-            <div
-              key={`${item.recipeId}-${item.depth ?? 0}`}
-              className="flex min-w-0 items-center gap-2 rounded-md border bg-muted/20 p-2"
-            >
-              <PreviewIcon icon={item.itemIcon} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
-                  {item.quantity * craftMultiplier}x {item.itemName}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {item.crafter}
-                  {item.recipeLevel !== null ? ` Lv. ${item.recipeLevel}` : ""}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function QuantityControl({
   value,
   onChange,
   editable = true,
+  centered = true,
 }: {
   value: number;
   onChange: (value: number) => void;
   editable?: boolean;
+  centered?: boolean;
 }) {
   const setSafeValue = (next: number) =>
     onChange(Math.max(1, Math.floor(next || 1)));
 
   return (
-    <div className="mx-auto flex w-fit items-center rounded-md border">
+    <div
+      className={cn(
+        "flex w-fit items-center rounded-md border",
+        centered && "mx-auto",
+      )}
+    >
       <Button
         type="button"
         variant="ghost"
@@ -1332,6 +1398,8 @@ function RequestSection({
   actionRequestId,
   onAccept,
   onComplete,
+  onClose,
+  onReopen,
   compactCards = false,
 }: {
   config: RequestSectionConfig;
@@ -1342,20 +1410,57 @@ function RequestSection({
   actionRequestId: string | null;
   onAccept: (requestId: string) => void;
   onComplete: (requestId: string) => void;
+  onClose: (requestId: string) => void;
+  onReopen: (requestId: string) => void;
   compactCards?: boolean;
 }) {
   const Icon = config.icon;
+  const pageContainerRef = useRef<HTMLDivElement>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = compactCards
+    ? COMPLETED_SECTION_PAGE_SIZE
+    : REQUEST_SECTION_PAGE_SIZE;
+  const totalPages = Math.max(1, Math.ceil(requests.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const visibleRequests = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return requests.slice(start, start + pageSize);
+  }, [currentPage, pageSize, requests]);
+  const visibleRequestIds = visibleRequests
+    .map((request) => request.id)
+    .join("|");
+
+  useEffect(() => {
+    if (!pageContainerRef.current || requests.length === 0) return;
+
+    animate(pageContainerRef.current.querySelectorAll("[data-page-card]"), {
+      opacity: [0, 1],
+      translateX: [12, 0],
+      delay: stagger(45),
+      duration: 260,
+      easing: "easeOutQuad",
+    });
+  }, [currentPage, requests.length, visibleRequestIds]);
 
   return (
     <section
       className={cn("crafting-section min-w-0 space-y-3", config.laneClass)}
     >
-      <div className="min-w-0">
-        <h2 className="flex items-center gap-2 font-serif text-2xl font-semibold">
-          <Icon className={cn("h-5 w-5 shrink-0", config.accent)} />
-          <span className="min-w-0 truncate">{config.title}</span>
-        </h2>
-        <p className="text-sm text-muted-foreground">{config.description}</p>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="flex items-center gap-2 font-serif text-2xl font-semibold">
+            <Icon className={cn("h-5 w-5 shrink-0", config.accent)} />
+            <span className="min-w-0 truncate">{config.title}</span>
+          </h2>
+          <p className="text-sm text-muted-foreground">{config.description}</p>
+        </div>
+        {totalPages > 1 && (
+          <LanePagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </div>
 
       {requests.length === 0 ? (
@@ -1365,35 +1470,82 @@ function RequestSection({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-1">
-          {requests.map((request) =>
-            compactCards ? (
-              <CompletedRequestButton
-                key={request.id}
-                request={request}
-                currentMember={currentMember}
-                members={members}
-                isAdmin={isAdmin}
-                busy={actionRequestId === request.id}
-                onAccept={onAccept}
-                onComplete={onComplete}
-              />
-            ) : (
-              <RequestCard
-                key={request.id}
-                request={request}
-                currentMember={currentMember}
-                members={members}
-                isAdmin={isAdmin}
-                busy={actionRequestId === request.id}
-                onAccept={onAccept}
-                onComplete={onComplete}
-              />
-            ),
-          )}
+        <div
+          ref={pageContainerRef}
+          className="grid gap-3 md:grid-cols-2 xl:grid-cols-1"
+        >
+          {visibleRequests.map((request) => (
+            <div key={request.id} data-page-card>
+              {compactCards ? (
+                <CompletedRequestButton
+                  request={request}
+                  currentMember={currentMember}
+                  members={members}
+                  isAdmin={isAdmin}
+                  busy={actionRequestId === request.id}
+                  onAccept={onAccept}
+                  onComplete={onComplete}
+                  onClose={onClose}
+                  onReopen={onReopen}
+                />
+              ) : (
+                <RequestCard
+                  request={request}
+                  currentMember={currentMember}
+                  members={members}
+                  isAdmin={isAdmin}
+                  busy={actionRequestId === request.id}
+                  onAccept={onAccept}
+                  onComplete={onComplete}
+                  onClose={onClose}
+                  onReopen={onReopen}
+                />
+              )}
+            </div>
+          ))}
         </div>
       )}
     </section>
+  );
+}
+
+function LanePagination({
+  page,
+  totalPages,
+  onPageChange,
+}: {
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="h-8 w-8"
+        disabled={page <= 1}
+        onClick={() => onPageChange(Math.max(1, page - 1))}
+        aria-label="Previous page"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <span className="min-w-12 text-center text-xs font-medium tabular-nums text-muted-foreground">
+        {page} / {totalPages}
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="h-8 w-8"
+        disabled={page >= totalPages}
+        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+        aria-label="Next page"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+    </div>
   );
 }
 
@@ -1405,6 +1557,8 @@ function CompletedRequestButton({
   busy,
   onAccept,
   onComplete,
+  onClose,
+  onReopen,
 }: {
   request: CraftingRequestDashboardRecord;
   currentMember: CraftingRequestMember | null;
@@ -1413,9 +1567,12 @@ function CompletedRequestButton({
   busy: boolean;
   onAccept: (requestId: string) => void;
   onComplete: (requestId: string) => void;
+  onClose: (requestId: string) => void;
+  onReopen: (requestId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const firstItem = safeArray(request.items)[0];
+  const completedBy = completedByMember(request);
 
   return (
     <>
@@ -1433,11 +1590,10 @@ function CompletedRequestButton({
           <p className="text-xs text-muted-foreground">
             {formatRequestDate(request.createdAt)}
             {" · "}
+            {`Completed by ${completedBy.characterName}`}
             {request.commission?.offered
-              ? commissionLabel(request.commission)
-              : request.acceptedBy
-                ? `Done by ${request.acceptedBy.characterName}`
-                : "Completed"}
+              ? ` - ${commissionLabel(request.commission)}`
+              : ""}
           </p>
         </div>
         <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -1458,6 +1614,8 @@ function CompletedRequestButton({
             busy={busy}
             onAccept={onAccept}
             onComplete={onComplete}
+            onClose={onClose}
+            onReopen={onReopen}
           />
         </DialogContent>
       </Dialog>
@@ -1473,6 +1631,8 @@ function RequestCard({
   busy,
   onAccept,
   onComplete,
+  onClose,
+  onReopen,
 }: {
   request: CraftingRequestDashboardRecord;
   currentMember: CraftingRequestMember | null;
@@ -1481,119 +1641,265 @@ function RequestCard({
   busy: boolean;
   onAccept: (requestId: string) => void;
   onComplete: (requestId: string) => void;
+  onClose: (requestId: string) => void;
+  onReopen: (requestId: string) => void;
 }) {
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false);
   const requestItems = safeArray(request.items);
   const firstItem = requestItems[0];
   const accepted = request.acceptedBy;
+  const isAuthed = Boolean(currentMember);
+  const isRequester = sameCraftingMember(currentMember, request.requester);
+  const isAcceptedCrafter = sameCraftingMember(currentMember, accepted);
   const canAccept =
-    Boolean(currentMember) && request.status === "open" && !accepted;
+    isAuthed &&
+    request.status === "open" &&
+    !accepted &&
+    (!isRequester || isAdmin);
   const canComplete =
-    Boolean(currentMember) &&
+    isAuthed &&
     request.status === "in_progress" &&
-    Boolean(accepted) &&
-    (accepted?.lodestoneId === currentMember?.lodestoneId || isAdmin);
+    (isRequester || isAcceptedCrafter || isAdmin);
+  const canClose =
+    isAuthed && request.status === "open" && (isRequester || isAdmin);
+  const canReopen =
+    isAuthed && request.status === "in_progress" && (isRequester || isAdmin);
+  const teamcraftUrl = teamcraftImportUrl(requestItems);
+  const gilLabel = gilCommissionLabel(request.commission);
+  const showActions =
+    isAuthed && (request.status === "open" || request.status === "in_progress");
 
   return (
-    <Card
-      data-request-id={request.id}
-      className="flex h-98 flex-col overflow-hidden"
-    >
-      <CardHeader className="space-y-3 pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 gap-3">
-            <ItemIcon item={firstItem} />
-            <div className="min-w-0">
-              <CardTitle className="line-clamp-2 font-serif text-xl leading-tight">
-                {requestTitle(request)}
-              </CardTitle>
-              <CardDescription>
-                {request.commission?.offered
-                  ? commissionLabel(request.commission)
-                  : `${request.itemCount} item${
-                      request.itemCount === 1 ? "" : "s"
-                    } requested`}
-              </CardDescription>
+    <>
+      <Card
+        data-request-id={request.id}
+        className="flex max-h-130 flex-col overflow-hidden"
+      >
+        <CardHeader className="space-y-3 pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 gap-3">
+              <ItemIcon item={firstItem} />
+              <div className="min-w-0">
+                <CardTitle className="line-clamp-2 font-serif text-xl leading-tight">
+                  {requestTitle(request)}
+                </CardTitle>
+                <CardDescription>
+                  {materialGuidanceText(request.materialStatus)}
+                </CardDescription>
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+              {gilLabel && (
+                <Badge
+                  variant="outline"
+                  className="gap-1 border-amber-400/60 bg-amber-100/70 text-amber-950 dark:border-amber-500/50 dark:bg-amber-500/15 dark:text-amber-200"
+                >
+                  <Coins className="h-3.5 w-3.5" />
+                  {gilLabel}
+                </Badge>
+              )}
+              <Badge variant="outline">
+                {formatRequestDate(request.createdAt)}
+              </Badge>
+              <Badge
+                variant={
+                  request.status === "completed" ? "secondary" : "default"
+                }
+              >
+                {statusLabel(request.status)}
+              </Badge>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex flex-wrap gap-2">
             <Badge variant="outline">
-              {formatRequestDate(request.createdAt)}
+              {materialStatusLabels[request.materialStatus]}
             </Badge>
-            <Badge
-              variant={request.status === "completed" ? "secondary" : "default"}
-            >
-              {statusLabel(request.status)}
+            <Badge variant="outline">
+              {request.itemCount} item{request.itemCount === 1 ? "" : "s"}
             </Badge>
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">
-            {materialStatusLabels[request.materialStatus]}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="flex min-h-0 flex-1 flex-col space-y-3">
-        <div className="grid gap-2 text-sm">
-          <MemberLine label="Requester" member={request.requester} />
-          {accepted ? (
-            <MemberLine label="Crafter" member={accepted} />
-          ) : (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <UserRound className="h-4 w-4 shrink-0" />
-              <span>No crafter assigned</span>
-            </div>
+          {request.materialNote && (
+            <p className="flex gap-2 rounded-md border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+              <MessageSquareText className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span className="line-clamp-2">{request.materialNote}</span>
+            </p>
           )}
-        </div>
-
-        <ScrollArea className="min-h-0 flex-1 pr-3">
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {requestItems.map((item) => (
-              <RequestedItem
-                key={`${request.id}-${item.selectedRecipeId}`}
-                item={item}
+        </CardHeader>
+        <CardContent className="flex min-h-0 flex-1 flex-col space-y-3">
+          <div className="grid gap-2 text-sm">
+            <MemberLine label="Requester" member={request.requester} />
+            {accepted && <MemberLine label="Crafter" member={accepted} />}
+            {request.status === "completed" && (
+              <MemberLine
+                label="Completed by"
+                member={completedByMember(request)}
               />
-            ))}
+            )}
           </div>
-        </ScrollArea>
 
-        <EligibleCrafters items={requestItems} members={members} />
-        {(request.status === "open" || request.status === "in_progress") && (
-          <div className="flex flex-col gap-2 sm:flex-row">
-            {request.status === "open" && (
-              <Button
-                type="button"
-                size="sm"
-                disabled={!canAccept || busy}
-                onClick={() => onAccept(request.id)}
-              >
-                {busy ? "Accepting..." : "Accept"}
-                {busy ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <PackageOpen className="h-4 w-4" />
+          <ScrollArea className="min-h-0 flex-1 border-y pt-2 pr-3 min-h-18 bg-muted/10">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {requestItems.map((item) => (
+                <RequestedItem
+                  key={`${request.id}-${item.selectedRecipeId}`}
+                  item={item}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+
+          {isAuthed && teamcraftUrl && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-7 w-fit px-2 text-xs"
+              asChild
+            >
+              <a href={teamcraftUrl} target="_blank" rel="noreferrer">
+                Export items to Teamcraft list
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </Button>
+          )}
+
+          <EligibleCrafters items={requestItems} members={members} />
+          {showActions &&
+            (canAccept || canComplete || canClose || canReopen) && (
+              <div className="flex flex-wrap gap-2">
+                {canAccept && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="min-w-24"
+                    disabled={busy}
+                    onClick={() => onAccept(request.id)}
+                  >
+                    {busy ? "Accepting..." : "Accept"}
+                    {busy ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <HandHeart className="h-4 w-4" />
+                    )}
+                  </Button>
                 )}
-              </Button>
-            )}
-            {request.status === "in_progress" && (
-              <Button
-                type="button"
-                size="sm"
-                disabled={!canComplete || busy}
-                onClick={() => onComplete(request.id)}
-              >
-                {busy ? "Completing..." : "Complete"}
-                {busy ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="h-4 w-4" />
+                {canComplete && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="min-w-24"
+                    disabled={busy}
+                    onClick={() => onComplete(request.id)}
+                  >
+                    {busy ? "Completing..." : "Complete"}
+                    {busy ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <CheckCircle2 className="h-4 w-4" />
+                    )}
+                  </Button>
                 )}
-              </Button>
+                {canClose && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="min-w-24"
+                    disabled={busy}
+                    onClick={() => setCloseConfirmOpen(true)}
+                  >
+                    Close
+                    <XCircle className="h-4 w-4" />
+                  </Button>
+                )}
+                {canReopen && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="min-w-24"
+                    disabled={busy}
+                    onClick={() => onReopen(request.id)}
+                  >
+                    Reopen
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             )}
+        </CardContent>
+      </Card>
+      <Dialog open={closeConfirmOpen} onOpenChange={setCloseConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Close request?</DialogTitle>
+            <DialogDescription>
+              Closing this will count as completed. Continue?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setCloseConfirmOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={!canClose || busy}
+              onClick={() => {
+                setCloseConfirmOpen(false);
+                onClose(request.id);
+              }}
+            >
+              {busy ? "Closing..." : "Close request"}
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4" />
+              )}
+            </Button>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </DialogContent>
+      </Dialog>
+    </>
   );
+}
+
+function sameCraftingMember(
+  left:
+    | Pick<CraftingRequestMember, "lodestoneId" | "discordUserId">
+    | null
+    | undefined,
+  right:
+    | Pick<CraftingRequestMember, "lodestoneId" | "discordUserId">
+    | null
+    | undefined,
+): boolean {
+  return (
+    sameStringId(left?.lodestoneId, right?.lodestoneId) ||
+    sameStringId(left?.discordUserId, right?.discordUserId)
+  );
+}
+
+function sameStringId(left: unknown, right: unknown): boolean {
+  return String(left ?? "").trim() === String(right ?? "").trim();
+}
+
+function completedByMember(
+  request: CraftingRequestDashboardRecord,
+): CraftingRequestMember {
+  return request.completedBy ?? request.acceptedBy ?? request.requester;
+}
+
+function isCraftingAdminSession(
+  session: { isAdmin?: boolean; fcRank?: string | null } | null,
+): boolean {
+  const rank = String(session?.fcRank ?? "")
+    .trim()
+    .toLowerCase();
+  return session?.isAdmin === true || rank === "boss" || rank === "underpaw";
 }
 
 function RequestedItem({ item }: { item: CraftingRequestDashboardItem }) {
@@ -1633,33 +1939,38 @@ function EligibleCrafters({
   const crafters = eligibility.crafters;
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase text-muted-foreground">
-        <Sparkles className="h-3.5 w-3.5" />
-        Eligible FC crafters
-      </div>
-      {eligibility.status === "unknown" ? (
-        <p className="text-sm text-muted-foreground">
-          Eligibility unknown. Lodestone job levels have not been synced for
-          this crafter job.
-        </p>
-      ) : crafters.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No eligible FC crafters found from synced job levels.
-        </p>
-      ) : (
-        <ScrollArea className="max-h-16 pr-2">
-          <div className="flex flex-wrap gap-2">
-            {crafters.map((crafter) => (
-              <CrafterChip
-                key={`${crafter.lodestoneId}-${crafter.job}`}
-                crafter={crafter}
-              />
-            ))}
-          </div>
-        </ScrollArea>
-      )}
-    </div>
+    <Collapsible>
+      <CollapsibleTrigger className="group flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-1 py-1 text-left text-xs font-medium uppercase text-muted-foreground transition hover:bg-muted/50">
+        <span className="flex min-w-0 items-center gap-2">
+          <Sparkles className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">Eligible crafters</span>
+        </span>
+        <ChevronRight className="h-3.5 w-3.5 shrink-0 transition group-data-[state=open]:rotate-90" />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pt-2">
+        {eligibility.status === "unknown" ? (
+          <p className="text-sm text-muted-foreground">
+            Eligibility unknown. Lodestone job levels have not been synced for
+            this crafter job.
+          </p>
+        ) : crafters.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No eligible FC crafters found from synced job levels.
+          </p>
+        ) : (
+          <ScrollArea className="max-h-16 pr-2">
+            <div className="flex flex-wrap gap-2">
+              {crafters.map((crafter) => (
+                <CrafterChip
+                  key={`${crafter.lodestoneId}-${crafter.job}`}
+                  crafter={crafter}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -1822,7 +2133,22 @@ function commissionLabel(
 ) {
   return typeof commission.gil === "number" && commission.gil > 0
     ? `${commission.gil.toLocaleString()} gil`
-    : "Commission";
+    : "";
+}
+
+function gilCommissionLabel(
+  commission: CraftingRequestDashboardRecord["commission"],
+) {
+  if (!commission?.offered) return null;
+  const label = commissionLabel(commission);
+  return label || null;
+}
+
+function materialGuidanceText(status: CraftingMaterialStatus) {
+  if (status === "crafter_to_provide_materials") {
+    return "Crafter to provide materials.";
+  }
+  return "Materials: FC chest tab 2 or coordinate with crafter.";
 }
 
 function requestTitle(request: CraftingRequestDashboardRecord) {
@@ -1840,6 +2166,26 @@ function formatRequestDate(timestamp: number) {
 
 function itemWebUrl(itemId: number) {
   return `https://ffxivteamcraft.com/db/en/item/${itemId}`;
+}
+
+function teamcraftImportUrl(items: CraftingRequestDashboardItem[]) {
+  const importString = items
+    .map((item) => {
+      const itemId = Math.trunc(Number(item.itemId));
+      const recipeId = Math.trunc(Number(item.selectedRecipeId));
+      const quantity = Math.max(1, Math.trunc(Number(item.quantity)));
+      if (!Number.isFinite(itemId) || itemId <= 0) return null;
+      return [
+        itemId,
+        Number.isFinite(recipeId) && recipeId > 0 ? recipeId : "null",
+        Number.isFinite(quantity) ? quantity : 1,
+      ].join(",");
+    })
+    .filter((row): row is string => Boolean(row))
+    .join(";");
+
+  if (!importString) return null;
+  return `${TEAMCRAFT_IMPORT_BASE_URL}/${window.btoa(importString)}`;
 }
 
 function LoadingBoard() {

@@ -127,7 +127,7 @@ The normal `VITE_FIREBASE_*` web app config is still required. The Firebase SDK 
 
 Set `VITE_ADMIN_AUTH_BYPASS=true` only for local browser UI work when Discord OAuth is not needed. It does not create a real server session, so Firebase callable admin operations still require emulator stub paths or a valid Discord-backed session.
 
-Set `VITE_DEV_AUTH_LAYER=true` only for local UI flow testing. It shows a top-header persona selector, returns local pseudo sessions, and routes registered callables through localStorage-backed mock handlers instead of Firebase, Discord, or Raid Helper. Use emulators instead when validating RTDB rules, Functions, OAuth, or external integrations.
+Set `VITE_DEV_AUTH_LAYER=true` only for local UI flow testing. It shows a top-header persona selector, returns local pseudo sessions, and routes registered callables through localStorage-backed mock handlers instead of Firebase, Discord, Raid Helper, or crafting request Functions. The crafting board mock store is kept in localStorage, so switching from Member to Crafter can test create -> accept -> complete/close/reopen flows without Firebase writes. Use emulators instead when validating RTDB rules, Functions, OAuth, or external integrations.
 
 For local integration testing with real Discord OAuth, real callable Functions, Firebase emulators, and real Discord bot delivery, keep `VITE_DEV_AUTH_LAYER=false` and enable the Functions role override only in the emulator:
 

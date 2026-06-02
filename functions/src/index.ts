@@ -1,3 +1,4 @@
+import "./firebase-admin-emulator";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
 import { defineSecret, defineString } from "firebase-functions/params";
@@ -9,8 +10,10 @@ import { handleDiscordInteraction } from "./discord/interactions";
 import { deleteTrackedMember, upsertTrackedMember } from "./delete-member";
 import {
   acceptCraftingRequestForMember,
+  closeCraftingRequestForMember,
   completeCraftingRequestForMember,
   createCraftingRequestForMember,
+  reopenCraftingRequestForMember,
 } from "./crafting-requests";
 import { processQueuedFriendRefreshJobs } from "./friend-refresh";
 import { refreshMemberSourceForAdmin } from "./member-source-refresh";
@@ -43,10 +46,11 @@ import {
   upsertEasterParticipantAdmin as upsertEasterParticipant,
 } from "./admin-mutations";
 
+const DEFAULT_DATABASE_URL =
+  "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app";
+
 admin.initializeApp({
-  databaseURL:
-    process.env.FIREBASE_DATABASE_URL ??
-    "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: process.env.FIREBASE_DATABASE_URL ?? DEFAULT_DATABASE_URL,
 });
 
 const fflogsClientId = defineSecret("FFLOGS_CLIENT_ID");
@@ -662,6 +666,50 @@ export const completeCraftingRequest = onCall(
   async (request) => {
     const session = await requireMemberSession(request.data, adminAuthConfig());
     return completeCraftingRequestForMember(
+      request.data,
+      session,
+      craftingRequestDiscordUpdateConfig(),
+    );
+  },
+);
+
+export const closeCraftingRequest = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    return closeCraftingRequestForMember(
+      request.data,
+      session,
+      craftingRequestDiscordUpdateConfig(),
+    );
+  },
+);
+
+export const reopenCraftingRequest = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    return reopenCraftingRequestForMember(
       request.data,
       session,
       craftingRequestDiscordUpdateConfig(),
