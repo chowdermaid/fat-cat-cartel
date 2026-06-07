@@ -1013,7 +1013,10 @@ function CreateRequestDialog({
                     No items added yet.
                   </div>
                 ) : (
-                  <ScrollArea className="max-h-80 pr-3">
+                  <ScrollArea
+                    className="h-80 pr-3"
+                    onWheelCapture={handleNestedScrollAreaWheel}
+                  >
                     <div ref={requestItemsRef} className="space-y-2">
                       {items.map((item) => (
                         <div
@@ -1737,7 +1740,11 @@ function RequestCard({
             )}
           </div>
 
-          <ScrollArea className="min-h-0 flex-1 border-y pt-2 pr-3 min-h-18 bg-muted/10">
+          <ScrollArea
+            type="always"
+            className="h-48 border-y bg-muted/10 py-2 pr-3"
+            onWheelCapture={handleNestedScrollAreaWheel}
+          >
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {requestItems.map((item) => (
                 <RequestedItem

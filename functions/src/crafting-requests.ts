@@ -9,7 +9,6 @@ const MATERIAL_STATUSES = new Set([
   "requester_has_some_materials",
   "crafter_to_provide_materials",
 ]);
-const MAX_ITEMS = 12;
 const MATERIAL_NOTE_MAX_LENGTH = 100;
 const ROOT_UPDATE_ATTEMPTS = 3;
 const COMPLETED_RECENT_MS = 30 * 24 * 60 * 60 * 1000;
@@ -513,9 +512,6 @@ function parseRequest(data: unknown): {
   const items = arrayValue(input.items).map(parseItem);
   if (items.length === 0) {
     throw new HttpsError("invalid-argument", "Add at least one craftable item.");
-  }
-  if (items.length > MAX_ITEMS) {
-    throw new HttpsError("invalid-argument", `Choose up to ${MAX_ITEMS} items.`);
   }
   return {
     materialStatus,
