@@ -8,6 +8,7 @@ import {
 import { type AdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import { cn } from "@/lib/utils";
 import { AuthLinkHelpDialog } from "./AuthLinkHelpDialog";
+import { AuthLoginInstructionsDialog } from "./AuthLoginInstructionsDialog";
 
 interface AuthUserMenuProps {
   auth: AdminAuth;
@@ -26,6 +27,7 @@ function initials(value: string): string {
 export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
   const { authed, checking, error, errorCode, login, logout, session } = auth;
   const [open, setOpen] = useState(false);
+  const [loginInstructionsOpen, setLoginInstructionsOpen] = useState(false);
   const [linkHelpOpen, setLinkHelpOpen] = useState(false);
   const name = session?.characterName ?? "Fat Cat";
   const rank = session?.fcRank ?? "No rank";
@@ -47,7 +49,7 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
             <SidebarMenuButton
               type="button"
               size="lg"
-              onClick={login}
+              onClick={() => setLoginInstructionsOpen(true)}
               disabled={checking}
               tooltip="Login with Discord"
               className="h-12"
@@ -74,6 +76,12 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
         <AuthLinkHelpDialog
           open={linkHelpOpen}
           onOpenChange={setLinkHelpOpen}
+        />
+        <AuthLoginInstructionsDialog
+          checking={checking}
+          open={loginInstructionsOpen}
+          onLogin={login}
+          onOpenChange={setLoginInstructionsOpen}
         />
       </>
     );
