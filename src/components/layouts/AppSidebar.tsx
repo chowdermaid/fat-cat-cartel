@@ -4,11 +4,11 @@ import {
   CalendarDays,
   Dices,
   Hammer,
+  HandCoins,
   Home,
   Library,
   Moon,
   ShieldUser,
-  ShoppingCart,
   Sun,
   Users,
   UserPlus,
@@ -45,7 +45,7 @@ const progressItems = [
 const toolItems = [
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
   { label: "Crafting Board", to: "/craftingboard", icon: Hammer },
-  { label: "Meowket Board", to: "/meowketboard", icon: ShoppingCart },
+  { label: "Meowket Board", to: "/meowketboard", icon: HandCoins },
 ] as const;
 
 const bottomItems = [
@@ -95,7 +95,9 @@ export function AppSidebar() {
   const auth = useAdminAuth();
   const visibleToolItems = auth.sessionWasAdmin
     ? toolItems
-    : toolItems.filter((item) => item.to !== "/meowketboard");
+    : toolItems.filter(
+        (item) => item.to !== "/meowketboard" || auth.authed || auth.checking,
+      );
 
   return (
     <Sidebar>

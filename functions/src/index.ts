@@ -66,6 +66,7 @@ const discordClientSecret = defineSecret("DISCORD_CLIENT_SECRET");
 const discordRedirectUri = defineSecret("DISCORD_REDIRECT_URI");
 const discordGuildId = defineSecret("DISCORD_GUILD_ID");
 const discordAdminRoleIds = defineSecret("DISCORD_ADMIN_ROLE_IDS");
+const discordMemberRoleId = defineSecret("DISCORD_MEMBER_ROLE_ID");
 const discordMemberRoleIds = defineSecret("DISCORD_MEMBER_ROLE_IDS");
 const discordHousecatRoleId = defineSecret("DISCORD_HOUSECAT_ROLE_ID");
 const discordBotToken = defineSecret("DISCORD_BOT_TOKEN");
@@ -90,6 +91,18 @@ function adminAuthConfig() {
   };
 }
 
+function adminAuthConfigWithSingleMemberRole() {
+  return {
+    ...adminAuthConfig(),
+    memberRoleIds: [
+      discordMemberRoleIds.value(),
+      discordMemberRoleId.value(),
+    ]
+      .filter(Boolean)
+      .join(","),
+  };
+}
+
 function adminAuthConfigWithHousecat() {
   return {
     ...adminAuthConfig(),
@@ -97,9 +110,16 @@ function adminAuthConfigWithHousecat() {
   };
 }
 
+function adminAuthConfigWithSingleMemberRoleAndHousecat() {
+  return {
+    ...adminAuthConfigWithSingleMemberRole(),
+    housecatRoleId: discordHousecatRoleId.value(),
+  };
+}
+
 function discordOAuthConfig() {
   return {
-    ...adminAuthConfig(),
+    ...adminAuthConfigWithSingleMemberRole(),
     clientId: discordClientId.value(),
     clientSecret: discordClientSecret.value(),
     redirectUri: discordRedirectUri.value(),
@@ -522,6 +542,7 @@ export const startDiscordAdminOAuth = onRequest(
       discordRedirectUri,
       discordGuildId,
       discordAdminRoleIds,
+      discordMemberRoleId,
       discordMemberRoleIds,
       discordBotToken,
     ],
@@ -541,6 +562,7 @@ export const discordAdminOAuthCallback = onRequest(
       discordRedirectUri,
       discordGuildId,
       discordAdminRoleIds,
+      discordMemberRoleId,
       discordMemberRoleIds,
       discordBotToken,
     ],
@@ -558,6 +580,7 @@ export const getAdminSession = onCall(
     secrets: [
       discordGuildId,
       discordAdminRoleIds,
+      discordMemberRoleId,
       discordMemberRoleIds,
       discordHousecatRoleId,
       discordBotToken,
@@ -566,7 +589,10 @@ export const getAdminSession = onCall(
     region: "us-central1",
   },
   async (request) =>
-    getAdminSessionForToken(request.data, adminAuthConfigWithHousecat()),
+    getAdminSessionForToken(
+      request.data,
+      adminAuthConfigWithSingleMemberRoleAndHousecat(),
+    ),
 );
 
 export const searchMeowketItems = onCall(
@@ -575,6 +601,7 @@ export const searchMeowketItems = onCall(
     secrets: [
       discordGuildId,
       discordAdminRoleIds,
+      discordMemberRoleId,
       discordMemberRoleIds,
       discordBotToken,
     ],
@@ -582,7 +609,10 @@ export const searchMeowketItems = onCall(
     region: "us-central1",
   },
   async (request) => {
-    await requireAdminSession(request.data, adminAuthConfig());
+    await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
     return searchMeowketItemsForAdmin(request.data);
   },
 );
@@ -593,6 +623,7 @@ export const calculateMeowketProfit = onCall(
     secrets: [
       discordGuildId,
       discordAdminRoleIds,
+      discordMemberRoleId,
       discordMemberRoleIds,
       discordBotToken,
     ],
@@ -600,7 +631,10 @@ export const calculateMeowketProfit = onCall(
     region: "us-central1",
   },
   async (request) => {
-    await requireAdminSession(request.data, adminAuthConfig());
+    await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
     return calculateMeowketProfitForAdmin(request.data);
   },
 );

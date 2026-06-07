@@ -6,7 +6,7 @@ The app uses Discord OAuth for browser login and Firebase Functions for authoriz
 
 - `AuthUserMenu` and the admin access state send users to the `startDiscordAdminOAuth` HTTP Function with a relative `returnTo` path.
 - The start Function creates a random OAuth state, stores only `SHA-256(state)` at `/adminOAuthStates/{stateHash}` with the sanitized `returnTo`, sets a SameSite=Lax HTTP-only state cookie, and redirects to Discord with scopes `identify guilds.members.read`.
-- `discordAdminOAuthCallback` validates the returned `state` against the cookie and stored state record, exchanges the OAuth code, fetches the current Discord user and current guild member, and checks the member `roles` array against `DISCORD_ADMIN_ROLE_IDS` and `DISCORD_MEMBER_ROLE_IDS`.
+- `discordAdminOAuthCallback` validates the returned `state` against the cookie and stored state record, exchanges the OAuth code, fetches the current Discord user and current guild member, and checks the member `roles` array against `DISCORD_ADMIN_ROLE_IDS`, `DISCORD_MEMBER_ROLE_IDS`, and `DISCORD_MEMBER_ROLE_ID`.
 - After role verification, the callback reads `/discordLinks/{discordUserId}` and then `/members/{lodestoneId}`. Login is rejected if the Discord account is not linked or the linked character is no longer tracked.
 - On success, the callback creates a random opaque web session token, stores only `SHA-256(token)` at `/adminSessions/{sessionIdHash}`, and redirects to `{returnTo}#admin_session=<token>`.
 - On failure, the callback redirects to `{returnTo}#admin_error=<reason>` when a valid OAuth state exists.
@@ -21,6 +21,7 @@ Required Functions values:
 - `DISCORD_GUILD_ID`
 - `DISCORD_ADMIN_ROLE_IDS`, comma-separated Boss and Underpaw role IDs
 - `DISCORD_MEMBER_ROLE_IDS`, comma-separated non-admin role IDs allowed to log in
+- `DISCORD_MEMBER_ROLE_ID`, single general member role ID allowed to log in and use Meowket Board
 - `DISCORD_HOUSECAT_ROLE_ID`, single role ID allowed to submit calendar event requests
 - `DISCORD_BOT_TOKEN`
 - `ADMIN_APP_ORIGIN`
@@ -34,6 +35,8 @@ Housecat calendar event requests require a normal member session plus the config
 `DISCORD_ADMIN_ROLE_IDS` should be set to the Boss and Underpaw role IDs, currently `1336553728513146930,1336487933967990925`.
 
 `DISCORD_MEMBER_ROLE_IDS` should be set to the non-admin member role IDs, currently `1336488015828357241,1336487958273855550,1375069801244004462`.
+
+`DISCORD_MEMBER_ROLE_ID` should be set to the general member role ID used for Meowket Board access, currently `1348617536048070707`.
 
 ## Session Data
 
@@ -53,7 +56,7 @@ Admin sessions live at `/adminSessions/{sessionIdHash}`:
 
 The browser stores the raw opaque session token in `localStorage` under `admin_session_token` so login survives tab and browser restarts until logout, revocation, role loss, or expiry. Realtime Database stores only the token hash. Default expiry is 730 hours.
 
-`requireMemberSession` validates the token on member callables. It fetches the current guild member with `DISCORD_BOT_TOKEN`, compares live role IDs against `DISCORD_ADMIN_ROLE_IDS` and `DISCORD_MEMBER_ROLE_IDS`, re-reads `/discordLinks/{discordUserId}` and `/members/{lodestoneId}`, refreshes `lastSeenAt`, and deletes the session if the user is no longer in the guild, the role check fails, the Discord link is removed, the member disappears, or the session is expired.
+`requireMemberSession` validates the token on member callables. It fetches the current guild member with `DISCORD_BOT_TOKEN`, compares live role IDs against `DISCORD_ADMIN_ROLE_IDS` and configured member role IDs, re-reads `/discordLinks/{discordUserId}` and `/members/{lodestoneId}`, refreshes `lastSeenAt`, and deletes the session if the user is no longer in the guild, the role check fails, the Discord link is removed, the member disappears, or the session is expired.
 
 `requireAdminSession` wraps `requireMemberSession` and rejects sessions whose live role IDs do not include Boss or Underpaw.
 
@@ -65,6 +68,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - Logged-in users see their linked in-game character name and FC rank. The account popover says `Welcome, {characterName}` and includes logout.
 - Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, and favorite content type. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
+- Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
 - Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
 - Local Vite dev can bypass browser Discord OAuth with `VITE_ADMIN_AUTH_BYPASS=true`. The bypass only opens the admin UI locally because the client also checks `import.meta.env.DEV`; production builds ignore it.
@@ -141,7 +145,7 @@ The override is rejected unless `FUNCTIONS_EMULATOR=true`. It does not change Di
 Recommended Functions local files:
 
 - `functions/.env.local`: set `ADMIN_APP_ORIGIN=http://localhost:5173`.
-- `functions/.secret.local`: set local Discord and API secrets, including `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`, `DISCORD_GUILD_ID`, `DISCORD_ADMIN_ROLE_IDS`, `DISCORD_MEMBER_ROLE_IDS`, `DISCORD_BOT_TOKEN`, FFLogs secrets, and Tomestone token as needed.
+- `functions/.secret.local`: set local Discord and API secrets, including `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`, `DISCORD_GUILD_ID`, `DISCORD_ADMIN_ROLE_IDS`, `DISCORD_MEMBER_ROLE_IDS`, `DISCORD_MEMBER_ROLE_ID`, `DISCORD_BOT_TOKEN`, FFLogs secrets, and Tomestone token as needed.
 
 For local OAuth, the Discord Developer Portal redirect URI and `DISCORD_REDIRECT_URI` must match the Functions emulator callback URL:
 

@@ -3,6 +3,7 @@ import { animate, stagger } from "animejs";
 import {
   Calculator,
   Coins,
+  HandCoins,
   Loader2,
   PackageSearch,
   Plus,
@@ -218,23 +219,12 @@ export function MeowketBoardPage() {
         title="Meowket Board"
         description={
           auth.unauthorized
-            ? "This page requires a linked character and a Boss or Underpaw Discord role."
-            : "Login with Discord to verify your linked character and admin role."
+            ? "This page requires a linked character and the Fat Cat Cartel member Discord role."
+            : "Login with Discord to verify your linked character and member role."
         }
         error={auth.error}
         checking={auth.checking}
         onLogin={auth.login}
-      />
-    );
-  }
-
-  if (auth.session?.isAdmin !== true) {
-    return (
-      <AuthAccessState
-        title="Meowket Board"
-        description="This page requires a Boss or Underpaw Discord role."
-        error="Boss or Underpaw Discord role required."
-        showLogin={false}
       />
     );
   }
@@ -359,7 +349,7 @@ export function MeowketBoardPage() {
       <section className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-1">
           <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
-            <ShoppingCart className="h-7 w-7 text-muted-foreground" />
+            <HandCoins className="h-7 w-7 text-muted-foreground" />
             Meowket Board
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
@@ -970,7 +960,7 @@ function EstimateDetailsCard({
                 Taxed Sophia revenue minus actual buy cost.
               </p>
             </div>
-            <div className="grid gap-2 text-sm md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-center">
+            <div className="grid min-w-0 gap-2 text-sm sm:grid-cols-2 2xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] 2xl:items-center">
               <EquationPart
                 label="Sell revenue"
                 value={formatGil(calculation.sellEstimate.totalRevenue)}
@@ -1318,10 +1308,15 @@ function MaterialsTable({
   }
 
   return (
-    <Table>
+    <ScrollArea
+      className="max-w-full min-h-0 min-w-0"
+      viewportClassName="max-w-full"
+    >
+      <div className="min-w-[58rem] pr-3">
+        <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Material</TableHead>
+          <TableHead className="w-[18rem]">Material</TableHead>
           <TableHead className="text-right">Per craft</TableHead>
           <TableHead className="text-right">Need</TableHead>
           <TableHead className="text-right">Buy</TableHead>
@@ -1439,7 +1434,9 @@ function MaterialsTable({
           );
         })}
       </TableBody>
-    </Table>
+        </Table>
+      </div>
+    </ScrollArea>
   );
 }
 
@@ -1843,11 +1840,12 @@ function EquationPart({
   valueClassName?: string;
 }) {
   return (
-    <div className="rounded-md bg-muted/30 p-2">
+    <div className="min-w-0 rounded-md bg-muted/30 p-2">
       <p className="text-xs text-muted-foreground">{label}</p>
       <MathTooltip content={tooltip}>
         <p
-          className={`font-mono ${strong ? "text-lg font-semibold" : "font-medium"} ${valueClassName ?? ""}`}
+          className={`truncate font-mono ${strong ? "text-base font-semibold xl:text-lg" : "font-medium"} ${valueClassName ?? ""}`}
+          title={value}
         >
           {value}
         </p>
@@ -1858,7 +1856,7 @@ function EquationPart({
 
 function EquationOperator({ value }: { value: string }) {
   return (
-    <span className="hidden text-center text-muted-foreground md:block">
+    <span className="hidden text-center text-muted-foreground 2xl:block">
       {value}
     </span>
   );
