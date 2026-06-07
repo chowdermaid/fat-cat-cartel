@@ -18,6 +18,7 @@ import { MembersPage } from "@/features/members";
 import { MemberProfilePage } from "@/features/member-profile";
 import { CalendarPage } from "@/features/calendar";
 import { CraftingBoardPage } from "@/features/craftingboard";
+import { MeowketBoardPage } from "@/features/meowket-board";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -83,6 +84,12 @@ const craftingBoardRoute = createRoute({
   component: CraftingBoardPage,
 });
 
+const meowketBoardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/meowketboard",
+  component: MeowketBoardPage,
+});
+
 const calendarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calendar",
@@ -118,6 +125,7 @@ const routeTree = rootRoute.addChildren([
   raidStatsRoute,
   mountRouletteRoute,
   craftingBoardRoute,
+  meowketBoardRoute,
   calendarRoute,
   adminRoute,
   membersRoute,

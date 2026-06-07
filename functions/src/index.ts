@@ -45,6 +45,10 @@ import {
   updateMemberProfileAdmin as updateMemberProfile,
   upsertEasterParticipantAdmin as upsertEasterParticipant,
 } from "./admin-mutations";
+import {
+  calculateMeowketProfitForAdmin,
+  searchMeowketItemsForAdmin,
+} from "./meowket-board";
 
 const DEFAULT_DATABASE_URL =
   "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -563,6 +567,42 @@ export const getAdminSession = onCall(
   },
   async (request) =>
     getAdminSessionForToken(request.data, adminAuthConfigWithHousecat()),
+);
+
+export const searchMeowketItems = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return searchMeowketItemsForAdmin(request.data);
+  },
+);
+
+export const calculateMeowketProfit = onCall(
+  {
+    cors: true,
+    secrets: [
+      discordGuildId,
+      discordAdminRoleIds,
+      discordMemberRoleIds,
+      discordBotToken,
+    ],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return calculateMeowketProfitForAdmin(request.data);
+  },
 );
 
 export const logoutAdminSession = onCall(

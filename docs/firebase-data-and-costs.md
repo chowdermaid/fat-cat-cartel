@@ -97,6 +97,8 @@ Functions are exported from `functions/src/index.ts`.
 - `listCalendarEventRequests`: callable admin one-time pending request read.
 - `approveCalendarEventRequest`: callable admin approval; creates a Raid Helper event and deletes the request.
 - `denyCalendarEventRequest`: callable admin denial; deletes the request.
+- `searchMeowketItems`: callable admin XIVAPI craftable item search for Meowket Board. It returns compact item results and writes no Firebase data.
+- `calculateMeowketProfit`: callable admin XIVAPI recipe/material resolver and Universalis price lookup for Meowket Board. Optional child material mode adds bounded XIVAPI recipe lookups, batches item IDs per world, times out external API calls, and writes no Firebase data.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
 

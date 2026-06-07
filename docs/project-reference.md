@@ -15,6 +15,7 @@ Frontend reads live data from Firebase Realtime Database. Local development can 
 - Lucide React for icons.
 - Embla Carousel for carousel UI.
 - ECharts through `echarts` and `echarts-for-react` for raid stats charts.
+- Recharts for Meowket Board shadcn-style charts.
 - AnimeJS v4 for lightweight UI animation.
 - Sonner for toasts.
 - Google Fonts: Nunito Sans body, Nunito through `font-serif`, JetBrains Mono mono.
@@ -52,6 +53,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/fc-collection/leaderboard`: `LeaderboardPage`
 - `/mount-roulette`: `MountRoulettePage`
 - `/craftingboard`: `CraftingBoardPage`
+- `/meowketboard`: `MeowketBoardPage`
 - `/raid-stats`: `RaidStatsPage`
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
@@ -82,6 +84,7 @@ src/
     member-profile/
     members/
     mount-roulette/
+    meowket-board/
     craftingboard/
     pastevents/
     raid-stats/

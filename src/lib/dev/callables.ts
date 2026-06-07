@@ -67,6 +67,80 @@ function cleanText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function mockMeowketSearch(query: string) {
+  const items = [
+    {
+      itemId: 44090,
+      name: "Claro Walnut Lumber",
+      levelItem: 710,
+      recipeId: 35001,
+    },
+    {
+      itemId: 44112,
+      name: "Rroneek Serge",
+      levelItem: 710,
+      recipeId: 35002,
+    },
+    {
+      itemId: 44125,
+      name: "Black Star",
+      levelItem: 710,
+      recipeId: 35003,
+    },
+  ];
+  const normalizedQuery = query.toLowerCase();
+  return items.filter((item) => item.name.toLowerCase().includes(normalizedQuery));
+}
+
+function mockMeowketCalculation(data: Record<string, unknown>) {
+  const itemId = Number(data.itemId);
+  const quantity = Math.max(1, Math.floor(Number(data.quantity) || 1));
+  if (itemId !== 44090) {
+    throw new Error("Local mock recipe is unavailable for this item.");
+  }
+  return {
+    item: {
+      itemId: 44090,
+      recipeId: 35001,
+      name: "Claro Walnut Lumber",
+      requestedQuantity: quantity,
+      crafterJob: "Carpenter",
+      recipeLevel: 99,
+      yieldPerCraft: 1,
+      craftsRequired: quantity,
+    },
+    finalItemPrices: [],
+    materials: [
+      {
+        itemId: 43985,
+        name: "Claro Walnut Log",
+        quantityPerCraft: 5,
+        totalQuantity: 5 * quantity,
+        category: "ingredient",
+        worldPrices: [],
+      },
+      {
+        itemId: 8,
+        name: "Wind Crystal",
+        quantityPerCraft: 8,
+        totalQuantity: 8 * quantity,
+        category: "crystal",
+        worldPrices: [],
+      },
+    ],
+    cheapestShoppingList: [],
+    estimatedMaterialCost: null,
+    sellEstimate: {
+      world: "Sophia",
+      unitPrice: null,
+      totalRevenue: null,
+      source: "unavailable",
+    },
+    estimatedGrossProfit: null,
+    warnings: ["Local mock result. Market prices land in Phase 4."],
+  };
+}
+
 function parseEventPayload(data: Record<string, unknown>): {
   title: string;
   description: string | null;
@@ -175,6 +249,20 @@ function registerDefaultHandlers(): void {
       capabilities: persona.capabilities,
       expiresAt: Number.MAX_SAFE_INTEGER,
     };
+  });
+
+  handlers.set("searchMeowketItems", (data) => {
+    const persona = getSelectedDevPersona();
+    assertCapability(persona, "admin:*");
+    const query = cleanText(data.query);
+    if (query.length < 2) return [];
+    return mockMeowketSearch(query);
+  });
+
+  handlers.set("calculateMeowketProfit", (data) => {
+    const persona = getSelectedDevPersona();
+    assertCapability(persona, "admin:*");
+    return mockMeowketCalculation(data);
   });
 
   handlers.set("createRaidHelperEvent", (data) => {

@@ -8,6 +8,7 @@ import {
   Library,
   Moon,
   ShieldUser,
+  ShoppingCart,
   Sun,
   Users,
   UserPlus,
@@ -44,6 +45,7 @@ const progressItems = [
 const toolItems = [
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
   { label: "Crafting Board", to: "/craftingboard", icon: Hammer },
+  { label: "Meowket Board", to: "/meowketboard", icon: ShoppingCart },
 ] as const;
 
 const bottomItems = [
@@ -91,6 +93,9 @@ function NavLink({
 export function AppSidebar() {
   const { isDark, toggle } = useDarkMode();
   const auth = useAdminAuth();
+  const visibleToolItems = auth.sessionWasAdmin
+    ? toolItems
+    : toolItems.filter((item) => item.to !== "/meowketboard");
 
   return (
     <Sidebar>
@@ -140,8 +145,12 @@ export function AppSidebar() {
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {toolItems.map((item) => (
-                <NavLink key={item.to} {...item} />
+              {visibleToolItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  {...item}
+                  dim={item.to === "/meowketboard" && auth.checking}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
