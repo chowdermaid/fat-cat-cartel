@@ -1798,6 +1798,27 @@ export function MemberProfilePage() {
                 )}
               </div>
             )}
+            {(craftingStats.fulfilledRequests > 0 ||
+              craftingStats.fulfilledItems > 0) && (
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant="outline"
+                  className="h-7 w-fit gap-1.5 px-3 font-normal"
+                >
+                  <Hammer className="h-3.5 w-3.5" />
+                  {craftingStats.fulfilledRequests.toLocaleString()} request
+                  {craftingStats.fulfilledRequests === 1 ? "" : "s"} completed
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="h-7 w-fit gap-1.5 px-3 font-normal"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {craftingStats.fulfilledItems.toLocaleString()} crafted item
+                  {craftingStats.fulfilledItems === 1 ? "" : "s"}
+                </Badge>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1855,19 +1876,6 @@ export function MemberProfilePage() {
           )}
         </div>
       )}
-
-      <div className="anim-section flex max-w-5xl flex-wrap gap-2">
-        <Badge variant="outline" className="h-7 w-fit gap-1.5 px-3 font-normal">
-          <Hammer className="h-3.5 w-3.5" />
-          {craftingStats.fulfilledRequests.toLocaleString()} request
-          {craftingStats.fulfilledRequests === 1 ? "" : "s"} completed
-        </Badge>
-        <Badge variant="outline" className="h-7 w-fit gap-1.5 px-3 font-normal">
-          <Sparkles className="h-3.5 w-3.5" />
-          {craftingStats.fulfilledItems.toLocaleString()} crafted item
-          {craftingStats.fulfilledItems === 1 ? "" : "s"}
-        </Badge>
-      </div>
 
       {effectiveProfile?.bio && (
         <div className="anim-section max-w-3xl pl-1">
