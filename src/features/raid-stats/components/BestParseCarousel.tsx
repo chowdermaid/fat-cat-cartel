@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy } from "lucide-react";
+import { Crown, Trophy } from "lucide-react";
 import {
   formatJobName,
   percentileBadgeClass,
@@ -108,7 +108,7 @@ export function BestParseCarousel({
 
   if (entries.length === 0) return null;
 
-  function renderEntry(entry: BestEntry) {
+  function renderEntry(entry: BestEntry, isTopParse: boolean) {
     return (
       <div className="w-full rounded-lg border bg-muted/30 p-3 space-y-2">
         <div className="flex items-center gap-2">
@@ -126,6 +126,12 @@ export function BestParseCarousel({
               <p className="font-semibold text-sm leading-tight truncate">
                 {entry.name}
               </p>
+              {isTopParse && (
+                <Crown
+                  aria-label="#1 parse"
+                  className="h-3.5 w-3.5 shrink-0 text-amber-400"
+                />
+              )}
               {showFriendBadges && entry.isFriend && (
                 <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
                   Friend
@@ -188,9 +194,9 @@ export function BestParseCarousel({
                 "repeat(auto-fit, minmax(min(100%, 11rem), 11rem))",
             }}
           >
-            {entries.map((entry) => (
+            {entries.map((entry, i) => (
               <div key={entry.id} className="w-44 min-w-0">
-                {renderEntry(entry)}
+                {renderEntry(entry, i === 0)}
               </div>
             ))}
           </div>
@@ -202,9 +208,9 @@ export function BestParseCarousel({
             onMouseLeave={startTimer}
           >
             <div className="flex gap-3">
-              {entries.map((entry) => (
+              {entries.map((entry, i) => (
                 <div key={entry.id} className="min-w-0 basis-44 shrink-0 grow-0">
-                  {renderEntry(entry)}
+                  {renderEntry(entry, i === 0)}
                 </div>
               ))}
             </div>
