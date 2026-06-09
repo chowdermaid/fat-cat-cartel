@@ -72,6 +72,7 @@ Important RTDB paths:
 - Admin UI can edit Easter participants, member profiles, `fcRank`, and manual member entries through callables.
 - Manual member adds may be overwritten by the next Lodestone or FFLogs sync.
 - Discord signup can add Friend records and queue source refreshes.
+- Discord `/clear-channel` writes no RTDB data. It uses Discord API reads and deletes only, with request count proportional to the number of recent messages in the cleared channel.
 
 `database.rules.json` currently allows public reads for app data and denies client writes for admin-owned paths. Treat public reads as an application choice, not a privacy guarantee.
 
@@ -99,6 +100,7 @@ Functions are exported from `functions/src/index.ts`.
 - `denyCalendarEventRequest`: callable admin denial; deletes the request.
 - `searchMeowketItems`: callable admin XIVAPI craftable item search for Meowket Board. It returns compact item results and writes no Firebase data.
 - `calculateMeowketProfit`: callable admin XIVAPI recipe/material resolver and Universalis price lookup for Meowket Board. Optional child material mode adds bounded XIVAPI recipe lookups, batches item IDs per world, times out external API calls, and writes no Firebase data.
+- `discordInteractions`: HTTP Discord slash-command handler for linking, friend signup/status, profile view, and admin-only `/clear-channel`. Clearing a channel writes no Firebase data and calls Discord message APIs in batches.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
 

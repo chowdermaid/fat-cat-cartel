@@ -29,6 +29,7 @@ Frontend reads live data from Firebase Realtime Database. Local development can 
 - Lint app: `npm run lint`.
 - Preview app build: `npm run preview`.
 - Build functions: `cd functions` then `npm run build`.
+- Register Discord slash commands: `cd functions` then `npm run build` then `npm run register:discord`.
 - Deploy: `npm run build && firebase deploy`.
 
 Use real Firebase credentials in `.env` before deploying or testing real Firebase mode. Firebase Hosting serves `dist`, rewrites all app routes to `index.html`, and sets `index.html` to no-cache.

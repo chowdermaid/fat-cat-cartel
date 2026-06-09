@@ -1,12 +1,12 @@
 # Meowket Board Implementation
 
-Meowket Board is a planned admin-only market profitability dashboard at `/meowketboard`. It helps admins estimate whether a craftable FFXIV item is profitable to craft, buy materials for, and sell on the Materia data center.
+Meowket Board is a member-access market profitability tool at `/meowketboard`. It helps Fat Cat Cartel members estimate whether a craftable FFXIV item is profitable to craft, buy materials for, and sell on the Materia data center.
 
 The MVP uses XIVAPI item and recipe data plus Universalis market listings. It must use XIVAPI item IDs as the shared item identifier for Universalis. Do not query Universalis with recipe IDs or item names.
 
 Current implementation status:
 
-- `/meowketboard` exists with admin gating, sidebar nav, craft search, quantity controls, optional child-material expansion, and React session-only cart state.
+- `/meowketboard` exists with Discord member-role gating, sidebar nav, craft search, quantity controls, optional child-material expansion, and React session-only cart state.
 - `searchMeowketItems` returns compact craftable item results from XIVAPI.
 - `calculateMeowketProfit` resolves recipes/materials from XIVAPI, fetches batched Universalis market listings, prices whole marketboard stacks, and returns Sophia sell/profit estimates.
 - Material pricing is stack-aware: the cart buys whole listings only, may accept cheaper surplus, reports short supply, and uses actual checkout cost for profit.
@@ -16,10 +16,10 @@ Current implementation status:
 
 ## Current Scope
 
-- Add an admin-only `/meowketboard` page.
+- Add a Discord member-role protected `/meowketboard` page.
 - Add `Meowket Board` under the existing Tools section in the sidebar.
-- Let an admin search for a craftable item using protected callable `searchMeowketItems`, with the existing `/craftingboard` XIVAPI search behavior and styling as the reference.
-- Let an admin choose one item from a search dialog, enter a quantity, optionally include child materials, mark owned materials, and calculate after-tax profit.
+- Let a member search for a craftable item using protected callable `searchMeowketItems`, with the existing `/craftingboard` XIVAPI search behavior and styling as the reference.
+- Let a member choose one item from a search dialog, enter a quantity, optionally include child materials, mark owned materials, and calculate after-tax profit.
 - Fetch recipe/material data from XIVAPI and market prices from Universalis through protected callable Functions.
 - Keep market and recipe result data in React state only for the current browser session.
 - Exclude shards, crystals, and clusters from materials, shopping list, material cost, and profit math.
@@ -37,10 +37,17 @@ Out of scope for MVP:
 
 ## Route And UI Integration
 
-The page should live at:
+The feature is split by responsibility:
 
 ```text
-src/features/meowket-board/index.tsx
+src/features/meowket-board/
+  index.tsx                  # thin route export
+  types.ts                   # API and cart types
+  constants.ts               # market/cart constants
+  api/meowketFunctions.ts    # callable wrappers and stubs
+  hooks/                     # search, calculation, owned materials, cart, animation
+  utils/                     # cart merge, display math, formatting
+  components/                # page, top panels, materials, summary charts, cart
 ```
 
 Register the route in `src/app/router.tsx`:
@@ -57,7 +64,7 @@ Meowket Board
 
 The sidebar item can be shown with the other Tools links. The page itself must enforce admin access.
 
-The page should use compact dashboard layout patterns from existing admin and tooling surfaces:
+The page should use compact dashboard layout patterns from existing member/admin tooling surfaces:
 
 - Search input with loading state.
 - Search dialog with loading state.
@@ -79,11 +86,11 @@ The page should use compact dashboard layout patterns from existing admin and to
 
 ## Admin Auth And Callables
 
-Use the existing admin auth/session model. Do not create a new auth system.
+Use the existing Discord auth/session model. Do not create a new auth system.
 
 Frontend:
 
-- Gate the page with `useAdminAuth`.
+- Gate the page with `useAdminAuth`, but allow sessions with the configured member role.
 - Show the existing `AuthAccessState` pattern when checking, logged out, or unauthorized.
 - Use `callAdminFunction` for meowket callables.
 - Pass the existing admin session token with callable requests.
@@ -91,7 +98,7 @@ Frontend:
 Functions:
 
 - Export protected callable Functions from `functions/src/index.ts`.
-- Call `requireAdminSession` before any XIVAPI or Universalis work.
+- Call member-role session checks before any XIVAPI or Universalis work.
 - Use `HttpsError` for validation, auth, upstream, and timeout failures.
 - Keep returned payloads compact before sending them back to the browser.
 
@@ -386,13 +393,13 @@ Do not:
 - Add scheduled scans.
 - Add Firebase market rules or paths.
 
-Expected production cost per calculation is one admin callable invocation, one XIVAPI recipe lookup for the selected item, optional extra XIVAPI recipe lookups when child materials are enabled, and batched Universalis requests across the configured worlds. No RTDB market reads or writes should be introduced.
+Expected production cost per calculation is one protected callable invocation, one XIVAPI recipe lookup for the selected item, optional extra XIVAPI recipe lookups when child materials are enabled, and batched Universalis requests across the configured worlds. No RTDB market reads or writes should be introduced.
 
 ## Implementation Phases
 
 Phase 1:
 
-- Add `/meowketboard` admin-only route and page shell.
+- Add `/meowketboard` member-role protected route and page shell.
 - Add sidebar item under Tools.
 - Add search input, quantity input, calculate button, and placeholder result layout.
 - Reference `/craftingboard` search UI/style.
@@ -457,8 +464,8 @@ npm run build
 Manual checks:
 
 - Logged-out user cannot access `/meowketboard`.
-- Non-admin member cannot access `/meowketboard`.
-- Boss or Underpaw admin can access the page.
+- Member role can access `/meowketboard`.
+- Logged-in user without the configured member role cannot access the page.
 - Search waits for input, shows loading, and handles empty/error states.
 - Calculate button requires a selected item and quantity of at least 1.
 - Universalis calls use item IDs, not names or recipe IDs.

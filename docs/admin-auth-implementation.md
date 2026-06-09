@@ -32,6 +32,8 @@ Underpaw users do not need Discord Administrator permission. The backend does no
 
 Housecat calendar event requests require a normal member session plus the configured `DISCORD_HOUSECAT_ROLE_ID`. Housecat authorization does not grant admin access.
 
+The Discord `/clear-channel` command uses the same Boss and Underpaw role IDs from `DISCORD_ADMIN_ROLE_IDS`. It does not grant access from Discord Administrator or Manage Messages permission alone. The command is guild-only, asks for an ephemeral Confirm or Cancel button, and only the admin who started the command can confirm it. Confirming bulk-deletes recent messages from the current channel with `DISCORD_BOT_TOKEN`; Discord's bulk delete API does not delete messages older than 14 days, so older messages may remain. The bot still needs Manage Messages permission in the target channel.
+
 `DISCORD_ADMIN_ROLE_IDS` should be set to the Boss and Underpaw role IDs, currently `1336553728513146930,1336487933967990925`.
 
 `DISCORD_MEMBER_ROLE_IDS` should be set to the non-admin member role IDs, currently `1336488015828357241,1336487958273855550,1375069801244004462`.
@@ -218,3 +220,4 @@ Manual checks:
 - Direct browser RTDB writes fail for admin-owned paths.
 - Public members, collection, raid stats, and Easter scoreboard reads still work.
 - Discord friend signup, linking, status, and profile view slash commands still work. Profile editing slash commands were removed because profile edits now live on the website.
+- Discord `/clear-channel` denies non-admin members, requires confirmation from the initiating admin, cancels without deleting, and reports that messages older than 14 days may remain.

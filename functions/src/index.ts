@@ -828,8 +828,15 @@ export const deleteEasterParticipantAdmin = onCall(
 );
 
 export const discordInteractions = onRequest(
-  { secrets: [discordPublicKey], timeoutSeconds: 15, region: "us-central1" },
+  {
+    secrets: [discordPublicKey, discordAdminRoleIds, discordBotToken],
+    timeoutSeconds: 120,
+    region: "us-central1",
+  },
   async (req, res) => {
-    await handleDiscordInteraction(req, res, discordPublicKey.value());
+    await handleDiscordInteraction(req, res, discordPublicKey.value(), {
+      adminRoleIds: discordAdminRoleIds.value(),
+      botToken: discordBotToken.value(),
+    });
   },
 );

@@ -50,4 +50,9 @@ export const DISCORD_COMMANDS = [
       },
     ],
   },
+  {
+    name: "clear-channel",
+    description: "Clear recent messages from this channel.",
+    dm_permission: false,
+  },
 ] as const;

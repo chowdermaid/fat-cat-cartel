@@ -59,17 +59,25 @@ Task: Refactor [file/component/module].
 Goal:
 - [Why refactor? readability, duplication, bug risk, testability, performance]
 
+Before editing:
+- Inspect current exports, imports, route usage, and nearby docs.
+- Summarize the files that matter and the behavior that must be preserved.
+- Propose a phased extraction order if the file is large.
+
 Rules:
 - Keep behavior identical unless listed below.
 - Do not change routes, DB paths, cache keys, or public props unless needed.
+- Do not change API, auth, or Firebase behavior unless listed below.
 - Prefer local helpers over broad abstractions.
 - Avoid unrelated cleanup.
+- Keep stateful behavior in hooks only when it makes the page/component thinner.
+- Update structure docs if this feature has docs that name files or ownership.
 
 Allowed behavior changes:
 - [None, or list exact changes]
 
 Verification:
-- Run build or targeted check.
+- Run build or targeted check after the refactor, or after each large extraction.
 - Summarize behavior preserved and risk areas.
 ```
 
