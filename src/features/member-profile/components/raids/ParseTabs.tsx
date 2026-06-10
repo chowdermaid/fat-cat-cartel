@@ -1,0 +1,1 @@
+export { ParseTabs } from "../MemberProfilePage";

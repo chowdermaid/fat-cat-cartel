@@ -24,6 +24,20 @@ You are working on Fat Cat Cartel, a React and Firebase FFXIV Free Company websi
 - Keep diffs surgical. Mention unrelated cleanup opportunities instead of doing them.
 - Before editing, know the success criteria and the smallest relevant verification.
 
+## Feature Structure
+
+For new feature folders, and for large feature refactors, prefer the current `src/features/meowket-board` shape:
+
+- `index.tsx`: thin route/page export only.
+- `types.ts`: feature-owned API, UI, and state types.
+- `constants.ts`: stable feature constants.
+- `api/`: callable wrappers, fetchers, stubs, and API-local mapping.
+- `hooks/`: stateful orchestration and reusable feature behavior.
+- `utils/`: pure formatting, math, merging, display, parsing, and sorting helpers.
+- `components/`: page shell plus UI grouped by domain subfolder.
+
+Keep imports explicit. Avoid barrel files except the feature `index.tsx`. Move pure helpers before hooks, then leaf components, larger components, and finally the page shell. Do not change route paths, props, auth, Firebase paths, cache keys, or API behavior during structure-only refactors.
+
 ## Lazy Docs
 
 Read docs only when the task touches that area:

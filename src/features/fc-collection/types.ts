@@ -1,4 +1,30 @@
-import type { CollectibleKey } from "./collectibleConfig";
+import type { LucideIcon } from "lucide-react";
+
+export type CollectibleKey = "mounts" | "minions" | "titles" | "achievements";
+
+export interface CollectibleConfig {
+  key: CollectibleKey;
+  label: string;
+  singular: string;
+  apiPath: string;
+  icon: LucideIcon;
+  rankBy?: "count" | "points";
+  categoryFilter?: string[];
+  fetchLimit?: number;
+}
+
+export type AllCollectibles = Record<CollectibleKey, Collectible[]>;
+
+export interface FCCollectionState {
+  members: FCMember[];
+  allCollectibles: AllCollectibles;
+  membersWithMounts: MemberWithMounts[];
+  memberData: Record<string, MemberCacheData>;
+  lastFetched: number | null;
+  loading: boolean;
+}
+
+export type CollectionScope = "fc" | "all";
 
 export interface CollectibleSource {
   type: string;

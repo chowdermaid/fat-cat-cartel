@@ -38,7 +38,7 @@ That request is non-fatal. If it fails, the function continues and reads whateve
 
 ## Collectible Types
 
-The shared client config lives in `src/features/fc-collection/collectibleConfig.ts`.
+The shared client config lives in `src/features/fc-collection/constants.ts`.
 
 Tracked collection types:
 
@@ -155,7 +155,7 @@ If no job levels are parsed for a character, Lodestone sync leaves existing `job
 
 ## Frontend Data Hook
 
-`useFCCollection` is the shared frontend collection loader.
+`useFCCollection` is the shared frontend collection loader in `src/features/fc-collection/api/useFCCollection.ts`.
 
 It reads:
 

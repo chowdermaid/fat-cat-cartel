@@ -3,11 +3,9 @@ import { animate, stagger } from "animejs";
 import { BarChart2 } from "lucide-react";
 import { useRaidStats } from "./api/useRaidStats";
 import { useMembers } from "@/hooks/useMembers";
-import { CollectionScopeToggle } from "@/features/fc-collection/components/CollectionScopeToggle";
-import {
-  filterByCollectionScope,
-  useCollectionScope,
-} from "@/features/fc-collection/hooks/useCollectionScope";
+import { CollectionScopeToggle } from "@/features/fc-collection/components/scope/CollectionScopeToggle";
+import { useCollectionScope } from "@/features/fc-collection/hooks/useCollectionScope";
+import { filterByCollectionScope } from "@/features/fc-collection/utils/collectionScope";
 import { MemberBoard } from "./components/MemberBoard";
 import { MemberRadarChart } from "./components/MemberRadarChart";
 import { AllStarsCard } from "./components/AllStarsCard";

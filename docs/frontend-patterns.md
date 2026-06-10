@@ -40,7 +40,7 @@ Use this doc when changing UI layout, navigation, components, styling, assets, o
 
 - Members: `useMembers` reads `/members`, caches it, and `MembersPage` groups by rank order: Boss, Underpaw, Housecat, Stray, Friend.
 - Member profiles: read member identity, profile, collection data, collectible names, and raid parse or activity data.
-- FC collection: supports mounts, minions, titles, achievements. Config lives in `collectibleConfig.ts`.
+- FC collection: supports mounts, minions, titles, achievements. Config lives in `constants.ts`.
 - Mount roulette: consumes FC collection mount data, filters by expansion, source, ownership, and selected members.
 - Raid stats: `ZONE_TABS`, `DEFAULT_ZONE_ID`, and zone metadata live under `src/features/raid-stats`.
 - Easter 2026: scoreboard listens live to `/events/easter2026/participants`; admin participant manager writes scores and totals.

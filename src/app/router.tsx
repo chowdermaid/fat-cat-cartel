@@ -7,9 +7,11 @@ import { RootLayout } from "@/components/layouts/RootLayout";
 import { HomePage } from "@/features/home";
 import { Easter2026Page } from "@/features/easter2026";
 import { PastEventsPage } from "@/features/pastevents";
-import { FCCollectionPage } from "@/features/fc-collection";
-import { CollectiblePage } from "@/features/fc-collection/pages/CollectiblePage";
-import { LeaderboardPage } from "@/features/fc-collection/pages/LeaderboardPage";
+import {
+  FCCollectionPage,
+  CollectiblePage,
+  LeaderboardPage,
+} from "@/features/fc-collection";
 import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
 import { RaidStatsPage } from "@/features/raid-stats";

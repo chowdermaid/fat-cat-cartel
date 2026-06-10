@@ -134,7 +134,7 @@ The dashboard also has a read-only fallback: when an older request has no snapsh
 
 ## Request Read Layer
 
-The read layer lives in `src/features/craftingboard/api/useCraftingRequests.ts`.
+The request read and mutation layer lives in `src/features/craftingboard/api/craftingRequests.ts`. Hook state lives in `src/features/craftingboard/hooks/useCraftingRequests.ts`.
 
 It exposes:
 
@@ -142,6 +142,8 @@ It exposes:
 - `readCraftingRequestDashboard()`: one-time reads for open, in-progress, and recent completed dashboard data.
 - `readCraftingRequest(requestId)`: one-time detail read from `/craftingRequests/{requestId}`.
 - `useCraftingRequests()`: hook state with grouped dashboard data, `loading`, `error`, and `isEmpty`.
+
+The route entry at `src/features/craftingboard/index.tsx` is a thin export. Page, dialog, request dashboard, and shared UI components live under `src/features/craftingboard/components`, while stateful orchestration lives under `src/features/craftingboard/hooks` and pure display/data helpers live under `src/features/craftingboard/utils`.
 
 The hook does not use live listeners. Completed dashboard records are filtered client-side to `completedAt` values from the last 30 days even though the future writer should also keep `/craftingRequestIndexes/completedRecent` pruned.
 

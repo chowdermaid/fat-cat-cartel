@@ -81,6 +81,46 @@ Verification:
 - Summarize behavior preserved and risk areas.
 ```
 
+## Refactor Feature To Standard Structure
+
+```text
+Task: Refactor [feature folder] to the standard feature structure.
+
+Goal:
+- Make the route entry thin and group code by responsibility, like `src/features/meowket-board`.
+- Preserve behavior exactly unless listed below.
+
+Before editing:
+- Inspect current feature files, route imports, public exports, API calls, hooks, utils, docs, and tests.
+- Identify current behavior that must not change.
+- Summarize the target file tree before moving code.
+
+Target structure:
+- `index.tsx`: thin route/page export only.
+- `types.ts`: feature-owned API, UI, and state types.
+- `constants.ts`: stable feature constants.
+- `api/`: callable wrappers, fetchers, stubs, and API-local mapping.
+- `hooks/`: stateful orchestration and reusable feature behavior.
+- `utils/`: pure formatting, math, merging, display, parsing, and sorting helpers.
+- `components/`: page shell plus UI grouped by domain subfolder.
+
+Rules:
+- Keep route path, public exports, props, Firebase paths, cache keys, auth checks, and API behavior unchanged unless explicitly allowed.
+- Move pure helpers before stateful hooks, then leaf components, then larger components, then page shell.
+- Do not create broad shared abstractions unless another feature already uses the same pattern.
+- Avoid barrel files except the feature `index.tsx`.
+- Keep imports explicit and prefer `@/` for cross-feature imports.
+- Update feature docs if they name files, ownership, auth, API behavior, or structure.
+
+Allowed behavior changes:
+- [None, or list exact changes]
+
+Verification:
+- Run `npm run build`.
+- If Functions changed, also run `cd functions && npm run build`.
+- Summarize preserved behavior, new structure, and any risk areas.
+```
+
 ## Bug Report
 
 ```text

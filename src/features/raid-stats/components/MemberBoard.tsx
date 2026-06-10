@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BarChart2 } from "lucide-react";
+import { BarChart2, Crown } from "lucide-react";
 import { percentileBadgeClass, formatJobName } from "../constants";
 import { JOB_ICONS } from "../jobIcons";
 import type { MemberData, ZoneEncounter, ContentType } from "../types";
@@ -139,6 +139,12 @@ export function MemberBoard({
                           <div className="w-6 h-6 rounded-full bg-muted shrink-0" />
                         )}
                         <span className="font-medium">{member.name}</span>
+                        {i === 0 && (
+                          <Crown
+                            aria-label="#1 parse"
+                            className="h-3.5 w-3.5 shrink-0 text-amber-400"
+                          />
+                        )}
                         {showFriendBadges && member.isFriend && (
                           <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
                             Friend

@@ -1,28 +1,19 @@
 import { useEffect, useState } from "react";
 import { db, ref, get } from "@/lib/db";
-import { COLLECTIBLE_KEYS } from "../collectibleConfig";
-import type { CollectibleKey } from "../collectibleConfig";
+import { FC_COLLECTION_CACHE_KEY, FC_COLLECTION_CACHE_TTL } from "../constants";
 import type {
+  AllCollectibles,
+  Collectible,
+  CollectibleKey,
+  FCCollectionState,
   FCMember,
   MemberCacheData,
-  Collectible,
-  MemberWithMounts,
 } from "../types";
-import { isFriendRank } from "../hooks/useCollectionScope";
-
-type AllCollectibles = Record<CollectibleKey, Collectible[]>;
-
-interface FCCollectionState {
-  members: FCMember[];
-  allCollectibles: AllCollectibles;
-  membersWithMounts: MemberWithMounts[];
-  memberData: Record<string, MemberCacheData>;
-  lastFetched: number | null;
-  loading: boolean;
-}
-
-const CACHE_KEY = "fcc_collection_v3";
-const CACHE_TTL = 3 * 60 * 60 * 1000;
+import {
+  buildMembersWithMounts,
+  emptyAllCollectibles,
+  normalizeAllCollectibles,
+} from "../utils/collectionData";
 
 type MembersValue = Record<
   string,
@@ -45,63 +36,6 @@ interface CachePayload {
   timestamp: number;
 }
 
-function emptyAllCollectibles(): AllCollectibles {
-  const result = {} as AllCollectibles;
-  for (const key of COLLECTIBLE_KEYS) result[key] = [];
-  return result;
-}
-
-function toSet(raw: unknown): Set<number> {
-  if (!raw) return new Set();
-  const arr: number[] = Array.isArray(raw) ? raw : Object.values(raw as object);
-  return new Set(arr);
-}
-
-function isCollectible(value: unknown): value is Collectible {
-  return value != null && typeof value === "object" && "id" in value;
-}
-
-function normalizeAllCollectibles(
-  raw: Partial<Record<CollectibleKey, unknown>>,
-): AllCollectibles {
-  const result = emptyAllCollectibles();
-  for (const key of COLLECTIBLE_KEYS) {
-    const value = raw[key];
-    if (Array.isArray(value) || (value != null && typeof value === "object")) {
-      result[key] = Object.values(value).filter(isCollectible);
-    }
-  }
-  return result;
-}
-
-function buildMembersWithMounts(
-  members: FCMember[],
-  memberData: Record<string, MemberCacheData>,
-): MemberWithMounts[] {
-  return members.map((m) => {
-    const cache = memberData[m.lodestoneId];
-    const owned = Object.fromEntries(
-      COLLECTIBLE_KEYS.map((key) => [key, toSet(cache?.owned?.[key])]),
-    ) as Record<CollectibleKey, Set<number>>;
-    const previousOwned = Object.fromEntries(
-      COLLECTIBLE_KEYS.map((key) => [
-        key,
-        cache?.previousOwned?.[key]?.count ?? 0,
-      ]),
-    ) as Record<CollectibleKey, number>;
-    return {
-      id: m.id,
-      name: m.name,
-      lodestoneId: m.lodestoneId,
-      fcRank: m.fcRank ?? null,
-      isFriend: isFriendRank(m.fcRank),
-      avatar: cache?.avatar ?? "",
-      owned,
-      previousOwned,
-    };
-  });
-}
-
 export function useFCCollection(): FCCollectionState {
   const [members, setMembers] = useState<FCMember[]>([]);
   const [allCollectibles, setAllCollectibles] =
@@ -115,10 +49,10 @@ export function useFCCollection(): FCCollectionState {
   useEffect(() => {
     // Check localStorage first
     try {
-      const raw = localStorage.getItem(CACHE_KEY);
+      const raw = localStorage.getItem(FC_COLLECTION_CACHE_KEY);
       if (raw) {
         const cached = JSON.parse(raw) as CachePayload;
-        if (Date.now() - cached.timestamp < CACHE_TTL) {
+        if (Date.now() - cached.timestamp < FC_COLLECTION_CACHE_TTL) {
           const id = window.setTimeout(() => {
             setMembers(cached.members);
             setAllCollectibles(normalizeAllCollectibles(cached.allCollectibles));
@@ -131,9 +65,9 @@ export function useFCCollection(): FCCollectionState {
       }
     } catch {
       try {
-        localStorage.removeItem(CACHE_KEY);
+        localStorage.removeItem(FC_COLLECTION_CACHE_KEY);
       } catch {
-        void CACHE_KEY;
+        void FC_COLLECTION_CACHE_KEY;
       }
     }
 
@@ -178,7 +112,7 @@ export function useFCCollection(): FCCollectionState {
         timestamp: Date.now(),
       };
       try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+        localStorage.setItem(FC_COLLECTION_CACHE_KEY, JSON.stringify(payload));
       } catch {
         return;
       }

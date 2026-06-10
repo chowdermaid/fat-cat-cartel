@@ -7,3 +7,13 @@ export interface MemberProfile {
   favoriteMinionId?: number | null;
   favoriteContent?: string | null;
 }
+
+export type ProfileParseType = "savage" | "trial" | "alliance";
+
+export type ActivityChartType = "timeline" | "progress" | "jobs" | "heatmap";
+
+export type CraftingProfileStats = {
+  fulfilledRequests: number;
+  fulfilledItems: number;
+  updatedAt: number | null;
+};
