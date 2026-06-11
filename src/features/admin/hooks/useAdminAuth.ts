@@ -7,40 +7,30 @@ import {
   getSelectedDevPersona,
   subscribeDevPersona,
 } from "@/lib/dev/personas";
-import { adminOAuthStartUrl, callAdminFunction } from "../lib/adminFunctions";
-
-const SESSION_KEY = "admin_session_token";
-const SESSION_ADMIN_KEY = "admin_session_is_admin";
-const SESSION_EVENT = "admin-session-change";
-const LOGIN_TOAST_KEY = "admin_login_toast_pending";
-const LOCAL_DEV_ADMIN_SESSION_TOKEN = "local-dev-admin-session-token-00000001";
-const ADMIN_AUTH_BYPASS =
-  import.meta.env.DEV && import.meta.env.VITE_ADMIN_AUTH_BYPASS === "true";
+import {
+  ADMIN_AUTH_BYPASS,
+  LOCAL_DEV_ADMIN_SESSION_TOKEN,
+  SESSION_KEY,
+  SESSION_EVENT,
+} from "../constants";
+import { adminOAuthStartUrl, callAdminFunction } from "../api/adminFunctions";
+import type { AdminSession, AuthSnapshot } from "../types";
+import {
+  clearLoginToastPending,
+  clearStoredAdminSession,
+  consumeLoginToastPending,
+  markLoginToastPending,
+  storedSessionIsAdmin,
+  storedSessionToken,
+  storeSessionIsAdmin,
+  storeSessionToken,
+} from "../utils/adminAuthStorage";
+import {
+  adminAuthErrorMessage,
+  normalizeAdminAuthError,
+} from "../utils/adminErrors";
 
 let handledOAuthHash = false;
-
-type AdminAuthState = "checking" | "authed" | "login" | "unauthorized";
-
-export interface AdminSession {
-  discordUserId: string;
-  lodestoneId: string;
-  characterName: string;
-  fcRank: string | null;
-  avatarUrl?: string | null;
-  roleIds: string[];
-  isAdmin: boolean;
-  isHousecat: boolean;
-  capabilities?: string[];
-  expiresAt: number;
-}
-
-interface AuthSnapshot {
-  state: AdminAuthState;
-  sessionToken: string | null;
-  session: AdminSession | null;
-  error: string | null;
-  errorCode: string | null;
-}
 
 const subscribers = new Set<() => void>();
 
@@ -85,19 +75,6 @@ function devAuthSnapshot(): AuthSnapshot {
   };
 }
 
-function storedSessionToken(): string | null {
-  return typeof window === "undefined"
-    ? null
-    : localStorage.getItem(SESSION_KEY);
-}
-
-function storedSessionIsAdmin(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    localStorage.getItem(SESSION_ADMIN_KEY) === "true"
-  );
-}
-
 let authSnapshot: AuthSnapshot = DEV_AUTH_LAYER_ENABLED
   ? devAuthSnapshot()
   : {
@@ -118,18 +95,6 @@ let authSnapshot: AuthSnapshot = DEV_AUTH_LAYER_ENABLED
 function updateAuthSnapshot(next: Partial<AuthSnapshot>): void {
   authSnapshot = { ...authSnapshot, ...next };
   subscribers.forEach((subscriber) => subscriber());
-}
-
-function errorMessage(code: string | null): string | null {
-  if (code === "unauthorized") return "Allowed Discord role required.";
-  if (code === "not_linked")
-    return "Link your Lodestone profile first with the Discord /link command, or /friend signup if you are not in the FC.";
-  if (code === "missing_member")
-    return "Your linked character is no longer tracked.";
-  if (code === "invalid_state")
-    return "Discord login expired. Please try again.";
-  if (code === "oauth_failed") return "Discord login failed. Please try again.";
-  return null;
 }
 
 function removeAdminHashParams(): void {
@@ -215,8 +180,8 @@ export function useAdminAuth() {
 
     if (returnedToken && !handledOAuthHash) {
       handledOAuthHash = true;
-      localStorage.setItem(SESSION_KEY, returnedToken);
-      sessionStorage.setItem(LOGIN_TOAST_KEY, "1");
+      storeSessionToken(returnedToken);
+      markLoginToastPending();
       updateAuthSnapshot({
         sessionToken: returnedToken,
         state: "checking",
@@ -230,11 +195,10 @@ export function useAdminAuth() {
 
     if (returnedError && !handledOAuthHash) {
       handledOAuthHash = true;
-      localStorage.removeItem(SESSION_KEY);
-      localStorage.removeItem(SESSION_ADMIN_KEY);
+      clearStoredAdminSession();
       updateAuthSnapshot({ sessionToken: null });
       window.dispatchEvent(new Event(SESSION_EVENT));
-      const message = errorMessage(returnedError) ?? "Discord login failed.";
+      const message = adminAuthErrorMessage(returnedError) ?? "Discord login failed.";
       if (returnedError !== "not_linked") toast.error(message);
       updateAuthSnapshot({
         session: null,
@@ -265,47 +229,24 @@ export function useAdminAuth() {
     callAdminFunction<AdminSession>("getAdminSession", effectiveSessionToken)
       .then((adminSession) => {
         if (cancelled) return;
-        localStorage.setItem(
-          SESSION_ADMIN_KEY,
-          adminSession.isAdmin ? "true" : "false",
-        );
+        storeSessionIsAdmin(adminSession.isAdmin);
         updateAuthSnapshot({
           session: adminSession,
           error: null,
           errorCode: null,
           state: "authed",
         });
-        if (sessionStorage.getItem(LOGIN_TOAST_KEY) === "1") {
-          sessionStorage.removeItem(LOGIN_TOAST_KEY);
+        if (consumeLoginToastPending()) {
           toast.success(`Welcome, ${adminSession.characterName}.`);
         }
       })
       .catch((err) => {
         if (cancelled) return;
-        localStorage.removeItem(SESSION_KEY);
-        localStorage.removeItem(SESSION_ADMIN_KEY);
+        clearStoredAdminSession();
         updateAuthSnapshot({ sessionToken: null });
         window.dispatchEvent(new Event(SESSION_EVENT));
-        const message =
-          err instanceof Error
-            ? err.message
-            : "Boss or Underpaw Discord role required.";
-        const knownMessage = message.includes("Boss or Underpaw")
-          ? "Boss or Underpaw Discord role required."
-          : message.includes("Allowed Discord role")
-            ? "Allowed Discord role required."
-            : message.includes("Link your Lodestone")
-              ? "Link your Lodestone profile first with the Discord /link command, or /friend signup if you are not in the FC."
-              : message.includes("no longer tracked")
-                ? "Your linked character is no longer tracked."
-                : message;
-        const knownErrorCode = knownMessage.includes("Link your Lodestone")
-          ? "not_linked"
-          : knownMessage.includes("no longer tracked")
-            ? "missing_member"
-            : knownMessage.includes("Allowed Discord role")
-              ? "unauthorized"
-              : null;
+        const { message: knownMessage, errorCode: knownErrorCode } =
+          normalizeAdminAuthError(err);
         updateAuthSnapshot({
           session: null,
           error: knownMessage,
@@ -370,9 +311,8 @@ export function useAdminAuth() {
     }
 
     const token = sessionToken;
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem(SESSION_ADMIN_KEY);
-    sessionStorage.removeItem(LOGIN_TOAST_KEY);
+    clearStoredAdminSession();
+    clearLoginToastPending();
     updateAuthSnapshot({ sessionToken: null });
     window.dispatchEvent(new Event(SESSION_EVENT));
     if (ADMIN_AUTH_BYPASS) {

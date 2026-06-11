@@ -73,6 +73,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
 - Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
+- The admin client feature follows the standard feature structure under `src/features/admin`: the route export stays thin in `index.tsx`, callable helpers live in `api/`, stateful orchestration lives in `hooks/`, pure display/cache/auth helpers live in `utils/`, and admin UI is grouped under `components/`.
 - Local Vite dev can bypass browser Discord OAuth with `VITE_ADMIN_AUTH_BYPASS=true`. The bypass only opens the admin UI locally because the client also checks `import.meta.env.DEV`; production builds ignore it.
 - Logout calls `logoutAdminSession`, shows a Sonner toast, clears the local token, and redirects to the home page.
 
@@ -98,7 +99,7 @@ All admin mutations must include `adminSessionToken` and call `requireAdminSessi
 
 Member self profile editing uses `updateOwnMemberProfile`. Housecat event request creation uses `submitCalendarEventRequest`. Both accept the same session token and call `requireMemberSession`; profile edits write only to the linked `/memberProfiles/{lodestoneId}` derived from the verified session. Favorite mount and minion IDs are accepted only when they are present in that member's synced `/fcCollection/memberData/{lodestoneId}/owned` arrays.
 
-The admin and profile UIs use `callAdminFunction` to attach the session token to callable payloads. Stub mode keeps direct local writes for UI development only because `firebaseApp` is null.
+The admin and profile UIs use `callAdminFunction` from `src/features/admin/api/adminFunctions.ts` to attach the session token to callable payloads. Stub mode keeps direct local writes for UI development only because `firebaseApp` is null.
 
 ## Database Rules
 

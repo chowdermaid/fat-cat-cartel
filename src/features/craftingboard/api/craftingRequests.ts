@@ -1,4 +1,4 @@
-import { callAdminFunction } from "@/features/admin/lib/adminFunctions";
+import { callAdminFunction } from "@/features/admin/api/adminFunctions";
 import { db, get, push, ref, update } from "@/lib/db";
 import {
   readDevCraftingRequest,

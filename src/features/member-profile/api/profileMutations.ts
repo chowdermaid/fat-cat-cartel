@@ -1,4 +1,4 @@
-import { callAdminFunction } from "@/features/admin/lib/adminFunctions";
+import { callAdminFunction } from "@/features/admin/api/adminFunctions";
 import { db, ref, set } from "@/lib/db";
 import { firebaseApp } from "@/lib/firebase";
 import type { MemberProfile } from "../types";
