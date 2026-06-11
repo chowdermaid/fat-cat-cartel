@@ -55,6 +55,7 @@ Important RTDB paths:
 - `/calendarEvents/{eventId}`: normalized planner events.
 - `/calendarEventRequests/{requestId}`: temporary Housecat event requests awaiting Boss or Underpaw approval.
 - `/calendarSync/discordPlanner`: Raid Helper sync diagnostics.
+- `/birthdayNotifications/{yyyy-mm-dd}/{lodestoneId}`: scheduled Discord birthday notification guard and send status.
 - `/adminOAuthStates/{stateHash}`: short-lived hashed Discord OAuth state records.
 - `/adminSessions/{sessionIdHash}`: hashed web session records.
 - `/discordLinks/{discordUserId}` and `/discordLinksByLodestone/{lodestoneId}`: Discord link records.
@@ -69,6 +70,7 @@ Important RTDB paths:
 - FC collection refresh writes collectibles and member collection data.
 - Calendar sync writes Raid Helper planner events and diagnostics.
 - Housecat event requests are written by Functions, reviewed by Boss/Underpaw callables, and deleted on approve or deny.
+- Birthday notifications are claimed and marked by Functions so each member can be wished only once per local Sydney date.
 - Admin UI can edit Easter participants, member profiles, `fcRank`, and manual member entries through callables.
 - Manual member adds may be overwritten by the next Lodestone or FFLogs sync.
 - Discord signup can add Friend records and queue source refreshes.
@@ -88,6 +90,7 @@ Functions are exported from `functions/src/index.ts`.
 - `triggerFCCollectionRefresh`: callable admin collection refresh.
 - `importLodestoneMembers`: callable Lodestone roster and portrait sync.
 - `refreshFriendSignup`: scheduled Discord Friend signup worker.
+- `sendBirthdayWishes`: scheduled daily Discord birthday notification worker. It runs at 7:00 AM Australia/Sydney, reads member profiles, members, and Discord links once, writes a small guard/status record per birthday, and posts one Discord message per birthday.
 - `deleteMember`: callable admin deletion.
 - `upsertMember`: callable admin add or restore.
 - `refreshMemberSource`: callable admin per-member source refresh.

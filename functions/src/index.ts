@@ -49,6 +49,7 @@ import {
   calculateMeowketProfitForAdmin,
   searchMeowketItemsForAdmin,
 } from "./meowket-board";
+import { runSendBirthdayWishes } from "./birthday-notifications";
 
 const DEFAULT_DATABASE_URL =
   "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -72,6 +73,7 @@ const discordHousecatRoleId = defineSecret("DISCORD_HOUSECAT_ROLE_ID");
 const discordBotToken = defineSecret("DISCORD_BOT_TOKEN");
 const discordEventChannelId = defineSecret("DISCORD_EVENT_CHANNEL_ID");
 const discordDonChannelId = defineSecret("DISCORD_DON_CHANNEL_ID");
+const discordGeneralChannelId = defineSecret("DISCORD_GENERAL_CHANNEL_ID");
 const raidHelperApiKey = defineSecret("RAID_HELPER_API_KEY");
 const raidHelperTemplateId = defineSecret("RAID_HELPER_TEMPLATE_ID");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
@@ -164,6 +166,13 @@ function craftingRequestDiscordUpdateConfig() {
   return {
     botToken: discordBotToken.value(),
     appOrigin: adminAppOrigin.value(),
+  };
+}
+
+function birthdayNotificationConfig() {
+  return {
+    botToken: discordBotToken.value(),
+    channelId: discordGeneralChannelId.value(),
   };
 }
 
@@ -356,6 +365,19 @@ export const refreshFCCollection = onSchedule(
   { schedule: "0 */3 * * *", timeoutSeconds: 300, region: "us-central1" },
   async () => {
     await runRefreshFCCollection();
+  },
+);
+
+export const sendBirthdayWishes = onSchedule(
+  {
+    schedule: "0 7 * * *",
+    timeZone: "Australia/Sydney",
+    secrets: [discordBotToken, discordGeneralChannelId],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async () => {
+    await runSendBirthdayWishes(birthdayNotificationConfig());
   },
 );
 
