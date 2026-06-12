@@ -7,6 +7,7 @@ export type MeowketItemSearchResult = {
 };
 
 export type SelectedListing = {
+  listingKey: string;
   world: string;
   quantity: number;
   unitPrice: number;
@@ -57,6 +58,7 @@ export type MeowketMaterial = {
   checkoutCost?: number;
   effectiveUnitCost?: number;
   selectedListings?: SelectedListing[];
+  availableListings?: SelectedListing[];
 };
 
 export type SellConfidence = {
@@ -98,6 +100,7 @@ export type MeowketProfitResult = {
       itemId: number;
       name: string;
       key?: string;
+      listingKey?: string;
       quantity: number;
       unitPrice: number;
       totalPrice: number;
@@ -129,7 +132,15 @@ export type MeowketProfitResult = {
 export type ShoppingRouteGroup =
   MeowketProfitResult["cheapestShoppingList"][number];
 export type ShoppingRouteItem = ShoppingRouteGroup["items"][number];
-export type CartShoppingRouteItem = ShoppingRouteItem & { iconUrl?: string };
+export type MeowketCartItemStatus = "open" | "bought" | "missing";
+export type CartShoppingRouteItem = ShoppingRouteItem & {
+  iconUrl?: string;
+  listingKey: string;
+  sourceBatchId: string;
+  status: MeowketCartItemStatus;
+  replacementForKey?: string;
+  note?: string;
+};
 export type CartShoppingRouteGroup = Omit<ShoppingRouteGroup, "items"> & {
   items: CartShoppingRouteItem[];
 };
@@ -152,12 +163,14 @@ export type MeowketCartBatch = {
   warnings: string[];
   materialStatuses: string[];
   shoppingList: CartShoppingRouteGroup[];
+  replacementListings: Record<number, SelectedListing[]>;
 };
 
 export type MeowketCartGroup = {
   world: string;
   items: Array<CartShoppingRouteItem & { key: string }>;
   worldTotal: number;
+  openCount: number;
 };
 
 export type MeowketCartSummary = {

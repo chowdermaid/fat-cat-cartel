@@ -21,12 +21,22 @@ import { CartRouteByWorld } from "./CartRouteByWorld";
 export function MeowketCartPopover({
   batches,
   onClear,
+  onItemBoughtChange,
+  onItemMissing,
   onRemoveBatch,
+  onStopBoughtChange,
   summary,
 }: {
   batches: MeowketCartBatch[];
   onClear: () => void;
+  onItemBoughtChange: (
+    batchId: string,
+    itemKey: string,
+    bought: boolean,
+  ) => void;
+  onItemMissing: (batchId: string, itemKey: string) => void;
   onRemoveBatch: (batchId: string) => void;
+  onStopBoughtChange: (world: string, bought: boolean) => void;
   summary: MeowketCartSummary;
 }) {
   const hasBatches = batches.length > 0;
@@ -62,7 +72,7 @@ export function MeowketCartPopover({
               <div>
                 <p className="font-medium">Cart route</p>
                 <p className="text-xs text-muted-foreground">
-                  Accumulated missing materials across added crafts.
+                  Remaining material stops across added crafts.
                 </p>
                 <CartWarningBadges badges={summary.warningBadges} />
               </div>
@@ -162,7 +172,12 @@ export function MeowketCartPopover({
                   </ScrollArea>
                 </div>
 
-                <CartRouteByWorld groups={summary.groups} />
+                <CartRouteByWorld
+                  groups={summary.groups}
+                  onItemBoughtChange={onItemBoughtChange}
+                  onItemMissing={onItemMissing}
+                  onStopBoughtChange={onStopBoughtChange}
+                />
               </div>
             )}
           </div>

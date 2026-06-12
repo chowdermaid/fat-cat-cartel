@@ -101,7 +101,10 @@ export function MeowketBoardPage() {
     cartBatches,
     cartSummary,
     clearCart,
+    markCartItemMissing,
     removeCartBatch,
+    setCartItemBought,
+    setCartStopBought,
   } = useMeowketCart();
   const topRowRef = useStaggeredEntrance<HTMLDivElement>(
     "[data-meowket-top-card]",
@@ -336,7 +339,10 @@ export function MeowketBoardPage() {
               batches={cartBatches}
               summary={cartSummary}
               onClear={clearCart}
+              onItemBoughtChange={setCartItemBought}
+              onItemMissing={markCartItemMissing}
               onRemoveBatch={removeCartBatch}
+              onStopBoughtChange={setCartStopBought}
             />
           </div>
         </section>
@@ -357,7 +363,10 @@ export function MeowketBoardPage() {
             batches={cartBatches}
             summary={cartSummary}
             onClear={clearCart}
+            onItemBoughtChange={setCartItemBought}
+            onItemMissing={markCartItemMissing}
             onRemoveBatch={removeCartBatch}
+            onStopBoughtChange={setCartStopBought}
           />
         </div>
       )}

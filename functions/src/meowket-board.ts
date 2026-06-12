@@ -108,6 +108,7 @@ type MeowketMaterial = {
   checkoutCost?: number;
   effectiveUnitCost?: number;
   selectedListings?: SelectedListing[];
+  availableListings?: SelectedListing[];
 };
 
 type MeowketWorld = (typeof MARKET_WORLDS)[number];
@@ -137,6 +138,7 @@ type ShoppingListGroup = {
       itemId: number;
       name: string;
       key: string;
+      listingKey: string;
       quantity: number;
       unitPrice: number;
       totalPrice: number;
@@ -207,12 +209,14 @@ type UniversalisListing = {
 };
 
 type PriceListing = {
+  listingKey: string;
   pricePerUnit: number;
   quantity: number;
   world: MeowketWorld;
 };
 
 type SelectedListing = {
+  listingKey: string;
   world: MeowketWorld;
   quantity: number;
   unitPrice: number;
@@ -542,7 +546,7 @@ async function fetchWorldPrices(itemIds: number[]): Promise<ItemWorldPrices> {
       const response = await fetchUniversalisWorldChunk(MARKET_SCOPE, ids, true);
       for (const itemId of ids) {
         const itemData = universalisItemData(response, itemId);
-        priceMap.set(itemId, worldPricesFromUniversalis(itemData));
+        priceMap.set(itemId, worldPricesFromUniversalis(itemData, itemId));
       }
     }),
   );
@@ -1039,6 +1043,7 @@ async function finalItemWorldPrices(
     TARGET_SELL_WORLD,
     universalisItemData(response, itemId),
     TARGET_SELL_WORLD,
+    itemId,
   );
   return prices.map((price) =>
     price.world === TARGET_SELL_WORLD ? sophiaPrice : price,
@@ -1055,9 +1060,10 @@ function universalisItemData(
 
 function worldPricesFromUniversalis(
   itemData: UniversalisItemData | null,
+  itemId: number,
 ): WorldPrice[] {
   return MARKET_WORLDS.map((world) =>
-    worldPriceFromUniversalis(world, itemData, world),
+    worldPriceFromUniversalis(world, itemData, world, itemId),
   );
 }
 
@@ -1065,8 +1071,9 @@ function worldPriceFromUniversalis(
   world: MeowketWorld,
   itemData: UniversalisItemData | null,
   filterWorld?: MeowketWorld,
+  itemId?: number,
 ): WorldPrice {
-  const listings = priceListings(itemData?.listings, filterWorld);
+  const listings = priceListings(itemData?.listings, filterWorld, itemId);
   const hasWorldNames = listingArray(itemData?.listings).some(
     (listing) => worldNameValue(listing.worldName) !== undefined,
   );
@@ -1115,6 +1122,7 @@ function listingArray(value: unknown): UniversalisListing[] {
 function priceListings(
   value: unknown,
   filterWorld?: MeowketWorld,
+  itemId = 0,
 ): PriceListing[] {
   return listingArray(value)
     .map((listing) => {
@@ -1127,14 +1135,21 @@ function priceListings(
       if (pricePerUnit <= 0 || quantity <= 0) return null;
       return { pricePerUnit, quantity, world: listingWorld };
     })
-    .filter((listing): listing is PriceListing => listing !== null)
+    .filter(
+      (listing): listing is Omit<PriceListing, "listingKey"> =>
+        listing !== null,
+    )
     .sort((left, right) => {
       const priceDelta = left.pricePerUnit - right.pricePerUnit;
       if (priceDelta !== 0) return priceDelta;
       const quantityDelta = left.quantity - right.quantity;
       if (quantityDelta !== 0) return quantityDelta;
       return worldSortIndex(left.world) - worldSortIndex(right.world);
-    });
+    })
+    .map((listing, index) => ({
+      ...listing,
+      listingKey: `${itemId}-${listing.world}-${index}-${listing.quantity}-${listing.pricePerUnit}`,
+    }));
 }
 
 function worldPricesForItem(priceMap: ItemWorldPrices, itemId: number): WorldPrice[] {
@@ -1155,12 +1170,17 @@ function materialWithPrices(
     worldPrices.flatMap((price) => price.listings ?? []),
     material.totalQuantity,
   );
+  const availableListings = worldPrices
+    .flatMap((price) => price.listings ?? [])
+    .map(selectedListing)
+    .sort(compareSelectedListings);
   const selectedWorlds = Array.from(
     new Set(cart.selectedListings.map((listing) => listing.world)),
   );
   return {
     ...material,
     worldPrices: pricedWorlds,
+    ...(availableListings.length > 0 ? { availableListings } : {}),
     ...(cart.totalCost !== null
       ? {
           cheapestWorld:
@@ -1339,6 +1359,7 @@ function compareCartCandidate(
 
 function selectedListing(listing: PriceListing): SelectedListing {
   return {
+    listingKey: listing.listingKey,
     world: listing.world,
     quantity: listing.quantity,
     unitPrice: listing.pricePerUnit,
@@ -1501,6 +1522,7 @@ function shoppingList(materials: MeowketMaterial[]): ShoppingListGroup[] {
         itemId: material.itemId,
         name: material.name,
         key: `${material.itemId}-${index}-${listing.world}-${listing.quantity}-${listing.unitPrice}`,
+        listingKey: listing.listingKey,
         quantity: listing.quantity,
         unitPrice: listing.unitPrice,
         totalPrice: listing.totalPrice,

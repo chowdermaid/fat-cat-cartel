@@ -6,6 +6,7 @@ import type {
   MeowketCartGroup,
   MeowketCartSummary,
   MeowketProfitResult,
+  SelectedListing,
   ShoppingRouteGroup,
 } from "../types";
 import { materialSupplyStatus, worldSortIndex } from "./materialDisplay";
@@ -26,6 +27,7 @@ export function buildShoppingRouteGroups(
 
 export function buildCartShoppingList(
   calculation: MeowketProfitResult,
+  batchId: string,
 ): CartShoppingRouteGroup[] {
   const iconsByItemId = new Map(
     calculation.materials.map((material) => [
@@ -36,10 +38,18 @@ export function buildCartShoppingList(
   return buildShoppingRouteGroups(calculation.cheapestShoppingList).map(
     (group) => ({
       ...group,
-      items: group.items.map((item) => ({
-        ...item,
-        iconUrl: iconsByItemId.get(item.itemId),
-      })),
+      items: group.items.map((item) => {
+        const listingKey =
+          item.listingKey ?? item.key ?? fallbackListingKey(group.world, item);
+        return {
+          ...item,
+          key: item.key ?? listingKey,
+          iconUrl: iconsByItemId.get(item.itemId),
+          listingKey,
+          sourceBatchId: batchId,
+          status: "open",
+        };
+      }),
     }),
   );
 }
@@ -72,8 +82,9 @@ export function buildCartBatch(
   index: number,
 ): MeowketCartBatch {
   const addedAt = Date.now();
+  const id = `${calculation.item.itemId}-${calculation.item.requestedQuantity}-${addedAt}-${index}`;
   return {
-    id: `${calculation.item.itemId}-${calculation.item.requestedQuantity}-${addedAt}-${index}`,
+    id,
     addedAt,
     itemId: calculation.item.itemId,
     itemName: calculation.item.name,
@@ -91,7 +102,8 @@ export function buildCartBatch(
     materialStatuses: calculation.materials.map(
       (material) => materialSupplyStatus(material).label,
     ),
-    shoppingList: buildCartShoppingList(calculation),
+    shoppingList: buildCartShoppingList(calculation, id),
+    replacementListings: buildReplacementListings(calculation),
   };
 }
 
@@ -104,20 +116,20 @@ export function buildCartSummary(
       const existingGroup =
         groupsByWorld.get(group.world) ??
         groupsByWorld
-          .set(group.world, { world: group.world, items: [], worldTotal: 0 })
+          .set(group.world, {
+            world: group.world,
+            items: [],
+            worldTotal: 0,
+            openCount: 0,
+          })
           .get(group.world)!;
       for (const item of group.items) {
-        const key = cartItemMergeKey(group.world, item);
-        const existingItem = existingGroup.items.find(
-          (entry) => entry.key === key,
-        );
-        if (existingItem) {
-          existingItem.quantity += item.quantity;
-          existingItem.totalPrice += item.totalPrice;
-        } else {
-          existingGroup.items.push({ ...item, key });
+        const key = item.key ?? cartItemMergeKey(group.world, item);
+        existingGroup.items.push({ ...item, key });
+        if (item.status === "open") {
+          existingGroup.openCount += 1;
+          existingGroup.worldTotal += item.totalPrice;
         }
-        existingGroup.worldTotal += item.totalPrice;
       }
     }
   }
@@ -125,28 +137,79 @@ export function buildCartSummary(
   const groups = buildShoppingRouteGroups(
     Array.from(groupsByWorld.values()).map((group) => ({
       ...group,
-      items: group.items.sort((left, right) =>
-        left.name.localeCompare(right.name),
+      items: group.items.sort(
+        (left, right) =>
+          statusSortIndex(left.status) - statusSortIndex(right.status) ||
+          left.name.localeCompare(right.name),
       ),
     })),
   ) as unknown as MeowketCartGroup[];
 
+  const remainingMaterialCost = groups.reduce(
+    (total, group) => total + group.worldTotal,
+    0,
+  );
+  const sellRevenue = batches.reduce((total, batch) => total + batch.sellRevenue, 0);
+  const netRevenue = batches.reduce((total, batch) => total + batch.netRevenue, 0);
+
   return {
-    materialCost: batches.reduce(
-      (total, batch) => total + batch.materialCost,
-      0,
-    ),
-    sellRevenue: batches.reduce((total, batch) => total + batch.sellRevenue, 0),
-    netRevenue: batches.reduce((total, batch) => total + batch.netRevenue, 0),
-    grossProfit: batches.reduce((total, batch) => total + batch.grossProfit, 0),
-    netProfit: batches.reduce((total, batch) => total + batch.netProfit, 0),
+    materialCost: remainingMaterialCost,
+    sellRevenue,
+    netRevenue,
+    grossProfit: sellRevenue - remainingMaterialCost,
+    netProfit: netRevenue - remainingMaterialCost,
     groups,
     warningBadges: cartWarningBadges(batches),
   };
 }
 
+export function buildReplacementCartItem({
+  batch,
+  listing,
+  missingItem,
+}: {
+  batch: MeowketCartBatch;
+  listing: SelectedListing;
+  missingItem: CartShoppingRouteItem;
+}): CartShoppingRouteItem {
+  return {
+    itemId: missingItem.itemId,
+    name: missingItem.name,
+    key: `${missingItem.itemId}-${listing.listingKey}-replacement-${Date.now()}`,
+    iconUrl: missingItem.iconUrl,
+    listingKey: listing.listingKey,
+    quantity: listing.quantity,
+    unitPrice: listing.unitPrice,
+    totalPrice: listing.totalPrice,
+    sourceBatchId: batch.id,
+    status: "open",
+    replacementForKey: missingItem.listingKey,
+    note: "Replacement.",
+  };
+}
+
+export function allUsedListingKeys(batches: MeowketCartBatch[]) {
+  return new Set(
+    batches.flatMap((batch) =>
+      batch.shoppingList.flatMap((group) =>
+        group.items.map((item) => item.listingKey),
+      ),
+    ),
+  );
+}
+
+export function nextAvailableListing(
+  batch: MeowketCartBatch,
+  itemId: number,
+  usedListingKeys: Set<string>,
+) {
+  return (batch.replacementListings[itemId] ?? []).find(
+    (listing) => !usedListingKeys.has(listing.listingKey),
+  );
+}
+
 function cartItemMergeKey(world: string, item: CartShoppingRouteItem) {
-  return `${world}-${item.itemId}-${item.name}-${item.unitPrice}`;
+  return `${world}-${item.itemId}-${item.name}-${item.unitPrice}-${item.listingKey}`;
 }
 
 function cartWarningBadges(
@@ -200,5 +263,53 @@ function cartWarningBadges(
     });
   }
 
+  if (
+    batches.some((batch) =>
+      batch.shoppingList.some((group) =>
+        group.items.some(
+          (item) =>
+            item.status === "missing" &&
+            item.note === "Missing. Refresh needed.",
+        ),
+      ),
+    )
+  ) {
+    badges.push({
+      label: "Needs refresh",
+      title: "At least one missing listing has no replacement.",
+      variant: "destructive",
+    });
+  }
+
   return badges;
+}
+
+function buildReplacementListings(
+  calculation: MeowketProfitResult,
+): Record<number, SelectedListing[]> {
+  return Object.fromEntries(
+    calculation.materials.map((material) => [
+      material.itemId,
+      [...(material.availableListings ?? [])].sort(compareAvailableListings),
+    ]),
+  );
+}
+
+function compareAvailableListings(left: SelectedListing, right: SelectedListing) {
+  const priceDelta = left.unitPrice - right.unitPrice;
+  if (priceDelta !== 0) return priceDelta;
+  const quantityDelta = left.quantity - right.quantity;
+  if (quantityDelta !== 0) return quantityDelta;
+  return worldSortIndex(left.world) - worldSortIndex(right.world);
+}
+
+function fallbackListingKey(
+  world: string,
+  item: Pick<CartShoppingRouteItem, "itemId" | "quantity" | "unitPrice">,
+) {
+  return `${item.itemId}-${world}-${item.quantity}-${item.unitPrice}`;
+}
+
+function statusSortIndex(status: CartShoppingRouteItem["status"]) {
+  return status === "open" ? 0 : status === "bought" ? 1 : 2;
 }

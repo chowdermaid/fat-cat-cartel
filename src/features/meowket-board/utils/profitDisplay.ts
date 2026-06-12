@@ -72,8 +72,9 @@ export function cartProfitTooltip(summary: MeowketCartSummary) {
 }
 
 export function cartWorldTotalTooltip(group: MeowketCartGroup) {
-  const parts = group.items.map(
-    (item) => `${item.name}: ${formatGil(item.totalPrice)}`,
-  );
+  const parts = group.items
+    .filter((item) => item.status === "open")
+    .map((item) => `${item.name}: ${formatGil(item.totalPrice)}`);
+  if (parts.length === 0) return "No open stacks at this stop.";
   return `${parts.slice(0, 6).join(" + ")}${parts.length > 6 ? " + ..." : ""} = ${formatGil(group.worldTotal)}`;
 }

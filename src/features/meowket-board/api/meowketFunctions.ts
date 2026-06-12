@@ -62,10 +62,34 @@ const LOCAL_MEOWKET_RESULTS: Record<number, MeowketProfitResult> = {
         effectiveUnitCost: 3100,
         selectedListings: [
           {
+            listingKey: "43985-Ravana-0-5-3100",
             world: "Ravana",
             quantity: 5,
             unitPrice: 3100,
             totalPrice: 15500,
+          },
+        ],
+        availableListings: [
+          {
+            listingKey: "43985-Ravana-0-5-3100",
+            world: "Ravana",
+            quantity: 5,
+            unitPrice: 3100,
+            totalPrice: 15500,
+          },
+          {
+            listingKey: "43985-Ravana-1-5-3250",
+            world: "Ravana",
+            quantity: 5,
+            unitPrice: 3250,
+            totalPrice: 16250,
+          },
+          {
+            listingKey: "43985-Sephirot-0-5-3400",
+            world: "Sephirot",
+            quantity: 5,
+            unitPrice: 3400,
+            totalPrice: 17000,
           },
         ],
       },
@@ -89,6 +113,7 @@ const LOCAL_MEOWKET_RESULTS: Record<number, MeowketProfitResult> = {
             itemId: 8,
             name: "Wind Crystal",
             key: "8-0-Bismarck-8-64",
+            listingKey: "8-Bismarck-0-8-64",
             quantity: 8,
             unitPrice: 64,
             totalPrice: 512,
@@ -103,6 +128,7 @@ const LOCAL_MEOWKET_RESULTS: Record<number, MeowketProfitResult> = {
             itemId: 43985,
             name: "Claro Walnut Log",
             key: "43985-0-Ravana-5-3100",
+            listingKey: "43985-Ravana-0-5-3100",
             quantity: 5,
             unitPrice: 3100,
             totalPrice: 15500,
@@ -216,6 +242,11 @@ export async function calculateMeowketProfit(
               craftsRequired,
         effectiveUnitCost: material.cheapestUnitPrice,
         selectedListings: material.selectedListings?.map((listing) => ({
+          ...listing,
+          quantity: listing.quantity * craftsRequired,
+          totalPrice: listing.totalPrice * craftsRequired,
+        })),
+        availableListings: material.availableListings?.map((listing) => ({
           ...listing,
           quantity: listing.quantity * craftsRequired,
           totalPrice: listing.totalPrice * craftsRequired,
