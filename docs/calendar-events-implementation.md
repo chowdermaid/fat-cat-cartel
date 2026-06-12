@@ -39,7 +39,7 @@ Events without an ID, title, or start time are skipped and surfaced under `/cale
 
 ## Client UI
 
-`/calendar` reads `/memberProfiles` for birthdays and `/calendarEvents` for planner events. Planner chips use shadcn tooltips for title, time, location, description, source link, and sync age.
+`/calendar` reads `/memberProfiles` for birthdays and `/calendarEvents` for planner events. The home page also performs one-time reads of those calendar branches for the This Week strip, plus the existing member cache validation used by `useMembers()` for birthday names. Planner chips use shadcn tooltips for title, time, location, description, source link, and sync age.
 
 `/admin` shows a Calendar Sync panel with last success, import and skip counts, recent parse failures, and a manual refresh button.
 

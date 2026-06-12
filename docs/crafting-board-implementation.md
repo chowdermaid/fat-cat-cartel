@@ -193,6 +193,7 @@ Current request flow adds reads only when the dashboard or detail helper runs, a
 Read impact:
 
 - Dashboard load: four one-shot reads for `/craftingRequestIndexes/open`, `/craftingRequestIndexes/inProgress`, `/craftingRequestIndexes/completedRecent`, and `/craftingRequestStats`.
+- Home page Open Errand: one one-shot read for `/craftingRequestIndexes/open`.
 - Request detail: one one-shot read for `/craftingRequests/{requestId}`.
 - Member profile craft stats: one one-shot read for `/craftingRequestStats/memberTotals/{lodestoneId}`.
 - Eligible crafter fallback: reuses `useMembers()` cache. When cache is cold or stale, that hook reads `/membersLastUpdated` and then `/members`; otherwise it adds no extra Firebase download.
