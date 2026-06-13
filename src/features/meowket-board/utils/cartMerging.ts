@@ -113,6 +113,7 @@ export function buildCartSummary(
   const groupsByWorld = new Map<string, MeowketCartGroup>();
   for (const batch of batches) {
     for (const group of batch.shoppingList) {
+      if (group.items.length === 0) continue;
       const existingGroup =
         groupsByWorld.get(group.world) ??
         groupsByWorld
@@ -311,5 +312,8 @@ function fallbackListingKey(
 }
 
 function statusSortIndex(status: CartShoppingRouteItem["status"]) {
-  return status === "open" ? 0 : status === "bought" ? 1 : 2;
+  if (status === "open") return 0;
+  if (status === "bought") return 1;
+  if (status === "removing") return 2;
+  return 3;
 }

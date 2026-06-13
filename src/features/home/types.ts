@@ -21,6 +21,11 @@ export type HomeWeeklyBirthdaySummary = {
   remaining: number;
 };
 
+export type HomeNextBirthdaySummary = {
+  name: string;
+  when: string;
+};
+
 export type HomeWeeklyData = {
   profiles: Record<string, import("@/features/member-profile/types").MemberProfile>;
   plannerEvents: import("@/features/calendar/types").PlannerEvent[];
@@ -35,10 +40,18 @@ export type HomeOpenErrandSummary = {
   commissionStatus: string;
 };
 
+export type HomeCraftingStatus = {
+  openCount: number;
+  inProgressCount: number;
+};
+
 export type HomeNotice = {
   title: string;
   body: string;
   tag: string;
+  dateLabel?: string;
+  timeLabel?: string;
+  location?: string;
 };
 
 export type HomeNoticeItem = HomeNotice & {
@@ -68,4 +81,6 @@ export type HomeSpotlightMember = {
   server: string;
   avatarUrl: string | null;
   fcRank: string | null;
+  totalMounts?: number | null;
+  totalMinions?: number | null;
 };

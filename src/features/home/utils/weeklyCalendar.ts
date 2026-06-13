@@ -3,8 +3,8 @@ import { parseBirthday } from "@/features/calendar/utils/birthday";
 import type { MemberProfile } from "@/features/member-profile/types";
 import type { PlannerEvent } from "@/features/calendar/types";
 import type {
-  HomeNotice,
   HomeNoticeItem,
+  HomeNextBirthdaySummary,
   HomeWeeklyBirthdaySummary,
   HomeWeeklyEventSummary,
 } from "../types";
@@ -21,6 +21,10 @@ const TIME_FORMATTER = new Intl.DateTimeFormat(undefined, {
 const NOTICE_DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
   month: "short",
   day: "numeric",
+});
+const NOTICE_TIME_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  hour: "numeric",
+  minute: "2-digit",
 });
 
 function startOfDay(date: Date): Date {
@@ -113,40 +117,61 @@ export function formatBirthdaySummary(
   return summary.remaining > 0 ? `${names} +${summary.remaining} more` : names;
 }
 
+export function summarizeNextBirthday({
+  members,
+  now = new Date(),
+  profiles,
+}: {
+  members: Record<string, Member>;
+  now?: Date;
+  profiles: Record<string, MemberProfile>;
+}): HomeNextBirthdaySummary | null {
+  const nextBirthday = Object.entries(profiles)
+    .flatMap(([lodestoneId, profile]) => {
+      const birthday = parseBirthday(profile.birthday);
+      const member = members[lodestoneId];
+      if (!birthday || !member) return [];
+      const nextDate = nextBirthdayDate(birthday.month, birthday.day, now);
+      return nextDate ? [{ name: member.name, nextDate }] : [];
+    })
+    .sort((a, b) => {
+      const dateDiff = a.nextDate.getTime() - b.nextDate.getTime();
+      return dateDiff === 0 ? a.name.localeCompare(b.name) : dateDiff;
+    })[0];
+
+  if (!nextBirthday) return null;
+
+  return {
+    name: nextBirthday.name,
+    when: DATE_FORMATTER.format(nextBirthday.nextDate),
+  };
+}
+
 export function summarizeCalendarNotices({
-  fallbackNotices,
-  minimumCount = 9,
   now = new Date(),
   plannerEvents,
 }: {
-  fallbackNotices: readonly HomeNotice[];
-  minimumCount?: number;
   now?: Date;
   plannerEvents: PlannerEvent[];
 }): HomeNoticeItem[] {
-  const calendarNotices = plannerEvents
-    .filter((event) => event.startAt >= now.getTime())
-    .sort((a, b) => a.startAt - b.startAt)
+  return plannerEvents
+    .sort((a, b) => {
+      const aFuture = a.startAt >= now.getTime();
+      const bFuture = b.startAt >= now.getTime();
+      if (aFuture !== bFuture) return aFuture ? -1 : 1;
+      return aFuture ? a.startAt - b.startAt : b.startAt - a.startAt;
+    })
     .map((event) => ({
       title: event.title,
       body:
         event.description?.trim() ||
-        event.location?.trim() ||
         "See calendar for details.",
       tag: NOTICE_DATE_FORMATTER.format(new Date(event.startAt)),
+      dateLabel: NOTICE_DATE_FORMATTER.format(new Date(event.startAt)),
+      timeLabel: event.endAt
+        ? `${NOTICE_TIME_FORMATTER.format(new Date(event.startAt))} - ${NOTICE_TIME_FORMATTER.format(new Date(event.endAt))}`
+        : NOTICE_TIME_FORMATTER.format(new Date(event.startAt)),
+      location: event.location?.trim() || undefined,
       to: "/calendar" as const,
     }));
-
-  if (calendarNotices.length >= minimumCount) return calendarNotices;
-
-  const missingCount = minimumCount - calendarNotices.length;
-  const fallbackFill =
-    fallbackNotices.length === 0
-      ? []
-      : Array.from(
-          { length: missingCount },
-          (_, index) => fallbackNotices[index % fallbackNotices.length],
-        );
-
-  return [...calendarNotices, ...fallbackFill];
 }

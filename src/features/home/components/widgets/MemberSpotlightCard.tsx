@@ -1,16 +1,30 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Mountain, Rabbit, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMembers } from "@/hooks/useMembers";
 import { getInitials, selectDailyMember } from "../../utils/dailySelection";
+import type { HomeWeeklyData } from "../../types";
 import { ClippingCard } from "../newspaper/ClippingCard";
 
-export function MemberSpotlightCard() {
+function excerptBio(bio: string | null | undefined): string | null {
+  const cleanBio = bio?.trim();
+  if (!cleanBio) return null;
+  return cleanBio;
+}
+
+export function MemberSpotlightCard({
+  profiles,
+}: {
+  profiles: HomeWeeklyData["profiles"];
+}) {
   const members = useMembers();
   const memberCount = Object.keys(members).length;
   const spotlightMember = selectDailyMember(members);
+  const bio = spotlightMember
+    ? excerptBio(profiles[spotlightMember.lodestoneId]?.bio)
+    : null;
 
   return (
     <ClippingCard className="gazette-reveal" rotate="right">
@@ -28,7 +42,7 @@ export function MemberSpotlightCard() {
           <>
             <div className="rounded-md border bg-background/70 p-3">
               <div className="grid gap-3 sm:grid-cols-[4.5rem_minmax(0,1fr)]">
-                <div className="rounded-md border border-dashed bg-card/70 p-1">
+                <div className="rounded-md border bg-card/70 p-1">
                   {spotlightMember.avatarUrl ? (
                     <img
                       src={spotlightMember.avatarUrl}
@@ -54,8 +68,36 @@ export function MemberSpotlightCard() {
                   <p className="mt-1 text-xs">
                     {spotlightMember.fcRank ?? "Cartel member"}
                   </p>
+                  {(spotlightMember.totalMounts != null ||
+                    spotlightMember.totalMinions != null) && (
+                    <div className="mt-3 flex min-w-0 gap-2 overflow-hidden">
+                      {spotlightMember.totalMounts != null && (
+                        <Badge
+                          variant="secondary"
+                          className="min-w-0 shrink gap-1"
+                        >
+                          <Mountain className="h-3 w-3 shrink-0" />
+                          {spotlightMember.totalMounts.toLocaleString()} mounts
+                        </Badge>
+                      )}
+                      {spotlightMember.totalMinions != null && (
+                        <Badge
+                          variant="secondary"
+                          className="min-w-0 shrink gap-1"
+                        >
+                          <Rabbit className="h-3 w-3 shrink-0" />
+                          {spotlightMember.totalMinions.toLocaleString()} minions
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
+              {bio && (
+                <p className="mt-3 border-l-4 border-primary/50 pl-3 text-xs italic leading-relaxed">
+                  "{bio}"
+                </p>
+              )}
             </div>
             <Button variant="outline" size="sm" asChild className="w-full">
               <Link
@@ -69,7 +111,7 @@ export function MemberSpotlightCard() {
           </>
         ) : (
           <>
-            <div className="rounded-md border border-dashed bg-background/70 p-3">
+            <div className="rounded-md border bg-background/70 p-3">
               <p className="font-medium text-foreground">
                 {memberCount === 0
                   ? "Spotlight loading"

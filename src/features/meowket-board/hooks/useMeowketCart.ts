@@ -12,6 +12,8 @@ import {
 } from "../utils/cartMerging";
 import { formatGil } from "../utils/formatting";
 
+const CART_ITEM_REMOVE_ANIMATION_MS = 260;
+
 export function useMeowketCart() {
   const [cartBatches, setCartBatches] = useState<MeowketCartBatch[]>([]);
   const cartSummary = useMemo(
@@ -54,6 +56,7 @@ export function useMeowketCart() {
                 ...group,
                 items: group.items.map((item) =>
                   item.key === itemKey && item.status !== "missing"
+                    && item.status !== "removing"
                     ? {
                         ...item,
                         status: bought ? "bought" : "open",
@@ -77,7 +80,7 @@ export function useMeowketCart() {
             : {
                 ...group,
                 items: group.items.map((item) =>
-                  item.status === "missing"
+                  item.status === "missing" || item.status === "removing"
                     ? item
                     : {
                         ...item,
@@ -125,7 +128,7 @@ export function useMeowketCart() {
             item.key === itemKey
               ? {
                   ...item,
-                  status: "missing" as const,
+                  status: "removing" as const,
                   note: replacement ? "Missing." : "Missing. Refresh needed.",
                 }
               : item,
@@ -170,6 +173,22 @@ export function useMeowketCart() {
         };
       });
     });
+
+    window.setTimeout(() => {
+      setCartBatches((current) =>
+        current.map((batch) =>
+          batch.id !== batchId
+            ? batch
+            : {
+                ...batch,
+                shoppingList: batch.shoppingList.map((group) => ({
+                  ...group,
+                  items: group.items.filter((item) => item.key !== itemKey),
+                })),
+              },
+        ),
+      );
+    }, CART_ITEM_REMOVE_ANIMATION_MS);
 
     if (replaced) {
       toast.success(`${itemName} replacement added.`, {

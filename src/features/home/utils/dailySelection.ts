@@ -20,6 +20,23 @@ export function selectDailyFeaturedTool(date = new Date()): HomeFeaturedTool {
   ];
 }
 
+function numericTomestoneTotal(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number(value.replace(/,/g, ""));
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  if (typeof value === "object" && value) {
+    const record = value as Record<string, unknown>;
+    return (
+      numericTomestoneTotal(record.count) ??
+      numericTomestoneTotal(record.total) ??
+      numericTomestoneTotal(record.value)
+    );
+  }
+  return null;
+}
+
 export function selectDailyMember(
   members: Record<string, Member>,
   date = new Date(),
@@ -39,6 +56,8 @@ export function selectDailyMember(
     server: member.server,
     avatarUrl: member.avatarUrl,
     fcRank: member.fcRank,
+    totalMounts: numericTomestoneTotal(member.tomestoneProfile?.totalMounts),
+    totalMinions: numericTomestoneTotal(member.tomestoneProfile?.totalMinions),
   };
 }
 

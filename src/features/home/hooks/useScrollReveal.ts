@@ -7,24 +7,36 @@ export function useScrollReveal(
   useEffect(() => {
     if (!ref.current) return;
 
-    const items = Array.from(ref.current.querySelectorAll(".gazette-reveal"));
-    if (items.length === 0) return;
-
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (reduceMotion) {
-      items.forEach((item) => {
-        (item as HTMLElement).style.opacity = "1";
-        (item as HTMLElement).style.transform = "none";
-      });
-      return;
+    function revealImmediately(item: Element) {
+      (item as HTMLElement).style.opacity = "1";
+      (item as HTMLElement).style.transform = "none";
     }
 
-    items.forEach((item) => {
-      (item as HTMLElement).style.opacity = "0";
-    });
+    if (reduceMotion) {
+      function revealAllItems() {
+        ref.current?.querySelectorAll(".gazette-reveal").forEach((item) => {
+          revealImmediately(item);
+          item.querySelectorAll(".gazette-clipping").forEach(revealImmediately);
+        });
+      }
+
+      revealAllItems();
+
+      const mutationObserver = new MutationObserver(revealAllItems);
+      mutationObserver.observe(ref.current, {
+        childList: true,
+        subtree: true,
+      });
+
+      return () => mutationObserver.disconnect();
+    }
+
+    const observedItems = new WeakSet<Element>();
+    const revealedItems = new WeakSet<Element>();
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,6 +45,7 @@ export function useScrollReveal(
 
           const target = entry.target as HTMLElement;
           observer.unobserve(target);
+          revealedItems.add(target);
 
           animate(target, {
             opacity: [0, 1],
@@ -57,8 +70,26 @@ export function useScrollReveal(
       { rootMargin: "0px 0px -12% 0px", threshold: 0.14 },
     );
 
-    items.forEach((item) => observer.observe(item));
+    function observeNewItems() {
+      ref.current?.querySelectorAll(".gazette-reveal").forEach((item) => {
+        if (observedItems.has(item) || revealedItems.has(item)) return;
+        observedItems.add(item);
+        (item as HTMLElement).style.opacity = "0";
+        observer.observe(item);
+      });
+    }
 
-    return () => observer.disconnect();
+    observeNewItems();
+
+    const mutationObserver = new MutationObserver(observeNewItems);
+    mutationObserver.observe(ref.current, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
   }, [ref]);
 }

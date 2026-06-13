@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:stub": "vite --mode stub",
+    "dev:emulator": "node scripts/dev-emulator.mjs",
+    "dev:auth": "vite --mode auth",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

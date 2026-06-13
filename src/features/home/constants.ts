@@ -22,7 +22,7 @@ export const HOME_GAZETTE = {
   issue: "Issue #060",
   edition: "Sophia Edition",
   dateline: "Plot 60, Ward 1, Sophia",
-  headline: "Today’s Front Page",
+  headline: "House Bulletin",
   metadata: ["Sophia Edition", "Materia Dispatch", "Latest Issue"],
   tagline: "All the news fit to paw at",
 } as const;

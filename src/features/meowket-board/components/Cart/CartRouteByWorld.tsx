@@ -25,7 +25,7 @@ export function CartRouteByWorld({
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
       {groups.map((group, index) => {
         const actionableItems = group.items.filter(
-          (item) => item.status !== "missing",
+          (item) => item.status !== "missing" && item.status !== "removing",
         );
         const bought =
           actionableItems.length > 0 &&

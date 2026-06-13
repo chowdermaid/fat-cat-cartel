@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMembers } from "@/hooks/useMembers";
-import { readHomeOpenErrands } from "../api/openErrand";
+import { readHomeCraftingStatus } from "../api/craftingStatus";
 import { readHomeWeeklyData } from "../api/weeklyCalendar";
-import type { CraftingRequestDashboardRecord } from "@/features/craftingboard/types";
-import type { HomeWeeklyData } from "../types";
-import { HOME_NOTICES } from "../constants";
-import { summarizeOpenErrand } from "../utils/openErrand";
+import type { HomeCraftingStatus, HomeWeeklyData } from "../types";
 import {
   formatBirthdaySummary,
   summarizeCalendarNotices,
+  summarizeNextBirthday,
   summarizeNextWeeklyEvent,
   summarizeWeeklyBirthdays,
 } from "../utils/weeklyCalendar";
@@ -19,9 +17,10 @@ export function useHomeDashboardData() {
     profiles: {},
     plannerEvents: [],
   });
-  const [openErrands, setOpenErrands] = useState<
-    CraftingRequestDashboardRecord[]
-  >([]);
+  const [craftingStatus, setCraftingStatus] = useState<HomeCraftingStatus>({
+    inProgressCount: 0,
+    openCount: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
 
@@ -31,20 +30,20 @@ export function useHomeDashboardData() {
     async function loadWeeklyData() {
       setLoading(true);
       setFailed(false);
-      const [result, nextOpenErrands] = await Promise.all([
+      const [result, nextCraftingStatus] = await Promise.all([
         readHomeWeeklyData(),
-        readHomeOpenErrands(),
+        readHomeCraftingStatus(),
       ]);
       if (cancelled) return;
       setData(result);
-      setOpenErrands(nextOpenErrands);
+      setCraftingStatus(nextCraftingStatus);
       setLoading(false);
     }
 
     loadWeeklyData().catch(() => {
       if (cancelled) return;
       setData({ profiles: {}, plannerEvents: [] });
-      setOpenErrands([]);
+      setCraftingStatus({ inProgressCount: 0, openCount: 0 });
       setFailed(true);
       setLoading(false);
     });
@@ -55,25 +54,35 @@ export function useHomeDashboardData() {
   }, []);
 
   return useMemo(() => {
+    const memberCount = Object.values(members).filter(
+      (member) => member.fcRank !== "Friend",
+    ).length;
     const nextEvent = summarizeNextWeeklyEvent(data.plannerEvents);
     const birthdaySummary = summarizeWeeklyBirthdays({
       members,
       profiles: data.profiles,
     });
-    const openErrand = summarizeOpenErrand(openErrands);
+    const nextBirthday = summarizeNextBirthday({
+      members,
+      profiles: data.profiles,
+    });
 
     return {
       birthdayPeople: birthdaySummary?.people ?? [],
       birthdayText: formatBirthdaySummary(birthdaySummary),
+      craftingStatus,
       failed,
       loading,
+      memberCount,
+      nextBirthdayText: nextBirthday
+        ? `${nextBirthday.name} - ${nextBirthday.when}`
+        : "No birthdays on file.",
       nextEventText: nextEvent?.title ?? "No events posted yet.",
       nextEventWhen: nextEvent?.when ?? "Calendar is clear for now.",
       notices: summarizeCalendarNotices({
-        fallbackNotices: HOME_NOTICES,
         plannerEvents: data.plannerEvents,
       }),
-      openErrand,
+      profiles: data.profiles,
     };
-  }, [data.plannerEvents, data.profiles, failed, loading, members, openErrands]);
+  }, [craftingStatus, data.plannerEvents, data.profiles, failed, loading, members]);
 }

@@ -1,13 +1,31 @@
 import { FcHangoutCard } from "./FcHangoutCard";
-import { FeaturedToolCard } from "./FeaturedToolCard";
 import { MemberSpotlightCard } from "./MemberSpotlightCard";
+import { StatusBoardCard } from "./StatusBoardCard";
+import type { HomeCraftingStatus, HomeWeeklyData } from "../../types";
 
-export function HomeWidgets() {
+export function HomeWidgets({
+  craftingStatus,
+  nextBirthdayText,
+  nextEventText,
+  nextEventWhen,
+  profiles,
+}: {
+  craftingStatus: HomeCraftingStatus;
+  nextBirthdayText: string;
+  nextEventText: string;
+  nextEventWhen: string;
+  profiles: HomeWeeklyData["profiles"];
+}) {
   return (
     <aside className="space-y-4">
-      <MemberSpotlightCard />
+      <MemberSpotlightCard profiles={profiles} />
       <FcHangoutCard />
-      <FeaturedToolCard />
+      <StatusBoardCard
+        craftingStatus={craftingStatus}
+        nextBirthdayText={nextBirthdayText}
+        nextEventText={nextEventText}
+        nextEventWhen={nextEventWhen}
+      />
     </aside>
   );
 }

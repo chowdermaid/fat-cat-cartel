@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+import { animate } from "animejs";
 import { PackageSearch, PackageX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,9 +18,10 @@ export function CartItemRow({
   onBoughtChange: (batchId: string, itemKey: string, bought: boolean) => void;
   onMissing: (batchId: string, itemKey: string) => void;
 }) {
+  const rowRef = useRef<HTMLDivElement>(null);
   const bought = item.status === "bought";
-  const missing = item.status === "missing";
-  const replacement = item.replacementForKey && !missing;
+  const missing = item.status === "missing" || item.status === "removing";
+  const replacement = item.replacementForKey && item.status === "open";
   const rowClassName = missing
     ? "border-destructive/40 bg-destructive/10 text-destructive"
     : replacement
@@ -31,9 +34,41 @@ export function CartItemRow({
     : replacement
       ? "text-emerald-700 dark:text-emerald-300"
       : "text-muted-foreground";
+
+  useEffect(() => {
+    const element = rowRef.current;
+    if (!element || prefersReducedMotion()) return;
+
+    if (item.status === "removing") {
+      animate(element, {
+        opacity: [1, 0],
+        translateX: [0, 16],
+        scale: [1, 0.98],
+        height: [element.offsetHeight, 0],
+        paddingTop: [8, 0],
+        paddingBottom: [8, 0],
+        marginTop: [0, 0],
+        duration: 240,
+        easing: "easeInQuad",
+      });
+      return;
+    }
+
+    if (replacement) {
+      animate(element, {
+        opacity: [0, 1],
+        translateY: [8, 0],
+        scale: [0.98, 1],
+        duration: 300,
+        easing: "easeOutQuad",
+      });
+    }
+  }, [item.status, replacement]);
+
   return (
     <div
-      className={`rounded-md border p-2 ${rowClassName}`}
+      ref={rowRef}
+      className={`overflow-hidden rounded-md border p-2 ${rowClassName}`}
     >
       <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
         <Checkbox
@@ -85,6 +120,13 @@ export function CartItemRow({
         <p className={`mt-1 pl-8 text-xs ${noteClassName}`}>{item.note}</p>
       )}
     </div>
+  );
+}
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }
 

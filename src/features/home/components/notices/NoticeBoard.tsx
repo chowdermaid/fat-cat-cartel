@@ -1,26 +1,57 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Megaphone } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Megaphone,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { HomeNoticeItem } from "../../types";
 import { ClippingCard } from "../newspaper/ClippingCard";
 import { NewspaperSectionLabel } from "../newspaper/NewspaperSectionLabel";
 
-const NOTICES_PER_PAGE = 9;
+const NOTICES_PER_PAGE = 5;
 
-function NoticeContent({ body, tag, title }: HomeNoticeItem) {
+function NoticeContent({
+  body,
+  dateLabel,
+  location,
+  timeLabel,
+  title,
+}: HomeNoticeItem) {
   return (
     <>
       <CardHeader className="pb-3">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <CardTitle className="flex items-center gap-2 font-serif text-xl">
-            <Megaphone className="h-4 w-4 text-primary" />
-            {title}
-          </CardTitle>
-          <Badge variant="outline">{tag}</Badge>
-        </div>
+        <CardTitle className="flex items-center gap-2 font-serif text-xl">
+          <Megaphone className="h-4 w-4 text-primary" />
+          {title}
+        </CardTitle>
+        {(dateLabel || timeLabel || location) && (
+          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs font-medium text-muted-foreground">
+            {dateLabel && (
+              <span className="inline-flex items-center gap-1">
+                <CalendarDays className="h-3 w-3" />
+                {dateLabel}
+              </span>
+            )}
+            {timeLabel && (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {timeLabel}
+              </span>
+            )}
+            {location && (
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {location}
+              </span>
+            )}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <p className="text-sm leading-relaxed text-muted-foreground">{body}</p>
@@ -30,8 +61,6 @@ function NoticeContent({ body, tag, title }: HomeNoticeItem) {
 }
 
 export function NoticeBoard({
-  failed,
-  loading,
   notices,
 }: {
   failed: boolean;
@@ -43,6 +72,7 @@ export function NoticeBoard({
   const displayPage = Math.min(activePage, pageCount - 1);
   const pageStart = displayPage * NOTICES_PER_PAGE;
   const visibleNotices = notices.slice(pageStart, pageStart + NOTICES_PER_PAGE);
+  const hasNotices = notices.length > 0;
   const hasMultiplePages = pageCount > 1;
 
   function noticeCardClassName(index: number): string {
@@ -70,30 +100,46 @@ export function NoticeBoard({
   }
 
   return (
-    <div className="gazette-reveal space-y-4" data-reveal-rotate="-1deg">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <NewspaperSectionLabel kicker="Notice board">
           Front Page Notices
         </NewspaperSectionLabel>
       </div>
       <div className="flex flex-col gap-4 overflow-hidden px-1 py-1">
-        {visibleNotices.map((notice, index) => (
-          <ClippingCard
-            key={`${notice.title}-${notice.tag}-${pageStart + index}`}
-            className={noticeCardClassName(index)}
-          >
-            {notice.to ? (
-              <Link
-                to={notice.to}
-                className="block transition-colors hover:text-primary"
-              >
+        {hasNotices ? (
+          visibleNotices.map((notice, index) => (
+            <ClippingCard
+              key={`${notice.title}-${notice.tag}-${pageStart + index}`}
+              className={`gazette-reveal ${noticeCardClassName(index)}`}
+            >
+              {notice.to ? (
+                <Link
+                  to={notice.to}
+                  className="block transition-colors hover:text-primary"
+                >
+                  <NoticeContent {...notice} />
+                </Link>
+              ) : (
                 <NoticeContent {...notice} />
-              </Link>
-            ) : (
-              <NoticeContent {...notice} />
-            )}
+              )}
+            </ClippingCard>
+          ))
+        ) : (
+          <ClippingCard className="gazette-reveal">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 font-serif text-xl">
+                <Megaphone className="h-4 w-4 text-primary" />
+                No calendar events posted
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Calendar notices will appear here once events are available.
+              </p>
+            </CardContent>
           </ClippingCard>
-        ))}
+        )}
       </div>
       {hasMultiplePages && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed bg-card/60 px-3 py-2">

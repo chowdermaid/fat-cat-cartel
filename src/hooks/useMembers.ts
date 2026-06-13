@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { db, ref, get } from "@/lib/db";
 import type { Member } from "@/types";
 
-const CACHE_KEY = "fcc_members_v3";
+const CACHE_KEY = import.meta.env.VITE_USE_STUBS === "true"
+  ? "fcc_members_v3_stub"
+  : "fcc_members_v3";
 const CACHE_TTL = 3 * 60 * 60 * 1000;
 
 type MembersCache = {

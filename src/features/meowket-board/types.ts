@@ -132,7 +132,7 @@ export type MeowketProfitResult = {
 export type ShoppingRouteGroup =
   MeowketProfitResult["cheapestShoppingList"][number];
 export type ShoppingRouteItem = ShoppingRouteGroup["items"][number];
-export type MeowketCartItemStatus = "open" | "bought" | "missing";
+export type MeowketCartItemStatus = "open" | "bought" | "missing" | "removing";
 export type CartShoppingRouteItem = ShoppingRouteItem & {
   iconUrl?: string;
   listingKey: string;
