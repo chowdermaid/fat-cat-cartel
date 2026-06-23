@@ -32,7 +32,10 @@ export function AuthLoginInstructionsDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92vh] max-w-3xl p-0">
-        <ScrollArea className="max-h-[92vh]">
+        <ScrollArea
+          className="max-h-[92vh]"
+          viewportClassName="max-h-[92vh]"
+        >
           <div className="grid gap-5 p-6">
             <DialogHeader>
               <DialogTitle>Get ready to log in</DialogTitle>

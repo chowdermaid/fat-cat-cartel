@@ -36,8 +36,8 @@ export function EligibleCrafters({
             No eligible FC crafters found from synced job levels.
           </p>
         ) : (
-          <ScrollArea className="max-h-16 pr-2">
-            <div className="flex flex-wrap gap-2">
+          <ScrollArea className="max-h-16" viewportClassName="max-h-16">
+            <div className="flex flex-wrap gap-2 pr-2">
               {crafters.map((crafter) => (
                 <CrafterChip
                   key={`${crafter.lodestoneId}-${crafter.job}`}

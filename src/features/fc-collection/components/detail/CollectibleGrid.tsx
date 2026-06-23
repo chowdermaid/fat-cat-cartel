@@ -307,7 +307,10 @@ export function CollectibleGrid({
       </div>
 
       {/* Table */}
-      <ScrollArea className="rounded-lg border h-[calc(100vh-22rem)] z-1">
+      <ScrollArea
+        className="z-1 h-[calc(100vh-22rem)] rounded-lg border"
+        viewportClassName="h-[calc(100vh-22rem)]"
+      >
         <table className="text-sm w-full">
           <TableHeader>
             <TableRow className="bg-background hover:bg-background border-b">

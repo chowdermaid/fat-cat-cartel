@@ -31,8 +31,8 @@ export function HideAndSeekDialog() {
         <DialogHeader className="px-6 pt-6 pb-0">
           <DialogTitle>Hide &amp; Seek Rules</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[70vh] px-6 pb-6 mt-4">
-          <div className="space-y-6 text-sm">
+        <ScrollArea className="mt-4 h-[70vh]" viewportClassName="h-[70vh]">
+          <div className="space-y-6 px-6 pb-6 text-sm">
             {/* Format */}
             <div className="space-y-1">
               <p>

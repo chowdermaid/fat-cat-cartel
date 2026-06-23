@@ -99,7 +99,7 @@ export function MemberPicker({
           </button>
         </div>
 
-        <ScrollArea className="h-72">
+        <ScrollArea className="h-72" viewportClassName="h-72">
           <div className="flex flex-wrap gap-2 pr-3">
             {members.map((m) => {
               const checked = draft.has(m.id);

@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.firebase/
+emulator-data/
 
 # Editor directories and files
 .vscode/*
@@ -23,6 +25,21 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.*
+!.env.example
 functions/lib/
 functions/.env.fat-cat-cartel
 functions/src/.env.fat-cat-cartel
+
+# Agent and AI tooling
+AGENTS.md
+CLAUDE.md
+CODEX_ECOSYSTEM.md
+PROMPT_PLAYBOOK.md
+.agents/
+.claude/
+.codex/
+.codex-plugins/
+.cursor/
+.github/copilot-instructions.md
+.aider*

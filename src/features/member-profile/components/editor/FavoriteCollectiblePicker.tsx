@@ -99,9 +99,9 @@ export function FavoriteCollectiblePicker({
                 className="pl-9"
               />
             </div>
-            <ScrollArea className="h-[58vh] pr-3">
+            <ScrollArea className="h-[58vh]" viewportClassName="h-[58vh]">
               {filteredOptions.length > 0 ? (
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
+                <div className="grid grid-cols-3 gap-2 pr-3 sm:grid-cols-4 lg:grid-cols-5">
                   {filteredOptions.map((option) => {
                     const isSelected = option.id === value;
                     return (

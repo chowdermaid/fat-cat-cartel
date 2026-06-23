@@ -149,8 +149,11 @@ export function ReviewEventRequestsDialog({
             </p>
           </div>
         ) : (
-          <ScrollArea className="max-h-[62vh] pr-3">
-            <div className="space-y-3">
+          <ScrollArea
+            className="max-h-[62vh]"
+            viewportClassName="max-h-[62vh]"
+          >
+            <div className="space-y-3 pr-3">
               {requests.map((request) => {
                 const selectedRoles = RAID_HELPER_PING_ROLES.filter((role) =>
                   request.roleIds.includes(role.id),

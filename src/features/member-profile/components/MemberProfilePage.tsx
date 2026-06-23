@@ -959,8 +959,8 @@ export function JobUsageDonut({ activities }: { activities: TomestoneActivity[] 
             </span>
           </div>
         </div>
-        <ScrollArea className="h-48 pr-3">
-          <div className="space-y-2">
+        <ScrollArea className="h-48" viewportClassName="h-48">
+          <div className="space-y-2 pr-3">
             {data.map((item, index) => (
               <div key={item.name} className="flex items-center gap-2 text-xs">
                 <span
@@ -1031,8 +1031,11 @@ export function RaidActivityHeatmap({
 
   return (
     <TooltipProvider delayDuration={100}>
-      <ScrollArea className="h-64 rounded-lg border bg-background/30 p-3">
-        <div className="min-w-[21rem] pr-3">
+      <ScrollArea
+        className="h-64 rounded-lg border bg-background/30"
+        viewportClassName="h-64"
+      >
+        <div className="min-w-[21rem] p-3 pr-6">
           <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
             <span>
               {new Intl.DateTimeFormat(undefined, {
@@ -1157,8 +1160,8 @@ export function BestProgressByEncounter({
 
   return (
     <TooltipProvider delayDuration={100}>
-      <ScrollArea className="h-64 pr-3">
-        <div className="space-y-3">
+      <ScrollArea className="h-64" viewportClassName="h-64">
+        <div className="space-y-3 pr-3">
           {rows.map((row) => {
             const cleared = row.clears > 0;
             const hp = cleared ? 0 : row.bestProgress;

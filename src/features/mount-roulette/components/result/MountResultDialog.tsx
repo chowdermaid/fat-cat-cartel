@@ -40,7 +40,7 @@ export function MountResultDialog({
               <p className="text-xs text-center text-muted-foreground">{sourceLabel}</p>
             )}
 
-            <ScrollArea className="h-52">
+            <ScrollArea className="h-52" viewportClassName="h-52">
               <div className="grid grid-cols-2 gap-4 text-sm pr-3">
                 <div>
                   <p className="font-semibold mb-2 text-muted-foreground">Needs this</p>

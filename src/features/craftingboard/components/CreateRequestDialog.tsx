@@ -129,8 +129,11 @@ export function CreateRequestDialog({
             Search an item, preview its recipe, then submit request details.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="h-[min(76vh,52rem)] px-6 pb-6">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,30rem)]">
+        <ScrollArea
+          className="h-[min(76vh,52rem)]"
+          viewportClassName="h-[min(76vh,52rem)]"
+        >
+          <div className="grid gap-5 px-6 pb-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,30rem)]">
             <div className="space-y-5">
               <Card className="h-fit">
                 <CardHeader>
@@ -165,6 +168,7 @@ export function CreateRequestDialog({
                         />
                         <ScrollArea
                           className="h-72"
+                          viewportClassName="h-72"
                           onWheelCapture={handleNestedScrollAreaWheel}
                         >
                           <CommandList className="max-h-none overflow-visible">
@@ -290,10 +294,11 @@ export function CreateRequestDialog({
                   </div>
                 ) : (
                   <ScrollArea
-                    className="h-80 pr-3"
+                    className="h-80"
+                    viewportClassName="h-80"
                     onWheelCapture={handleNestedScrollAreaWheel}
                   >
-                    <div ref={requestItemsRef} className="space-y-2">
+                    <div ref={requestItemsRef} className="space-y-2 pr-3">
                       {items.map((item) => (
                         <div
                           key={item.selectedRecipeId}

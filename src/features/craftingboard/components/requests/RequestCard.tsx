@@ -134,10 +134,11 @@ export function RequestCard({
 
           <ScrollArea
             type="always"
-            className="h-48 border-y bg-muted/10 py-2 pr-3"
+            className="h-48 border-y bg-muted/10"
+            viewportClassName="h-48"
             onWheelCapture={handleNestedScrollAreaWheel}
           >
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-2 py-2 pr-3 sm:grid-cols-2 lg:grid-cols-3">
               {requestItems.map((item) => (
                 <RequestedItem
                   key={`${request.id}-${item.selectedRecipeId}`}

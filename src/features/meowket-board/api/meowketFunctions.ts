@@ -1,8 +1,4 @@
 import { callAdminFunction } from "@/features/admin/api/adminFunctions";
-import {
-  getXivapiIconUrl,
-  searchCraftingRecipes,
-} from "@/features/craftingboard/api/xivapi";
 import { DEV_AUTH_LAYER_ENABLED } from "@/lib/dev/personas";
 import { firebaseApp } from "@/lib/firebase";
 import type {
@@ -336,20 +332,10 @@ export async function calculateMeowketProfit(
 }
 
 async function localSearch(query: string): Promise<MeowketItemSearchResult[]> {
-  try {
-    const items = await searchCraftingRecipes(query);
-    return items.map((item) => ({
-      itemId: item.itemId,
-      name: item.itemName,
-      ...(getXivapiIconUrl(item.itemIcon)
-        ? { iconUrl: getXivapiIconUrl(item.itemIcon) }
-        : {}),
-      recipeId: item.recipes[0]?.recipeId,
-    }));
-  } catch {
-    const normalizedQuery = query.toLowerCase();
-    return MOCK_MEOWKET_SEARCH_RESULTS.filter((item) =>
+  const normalizedQuery = query.toLowerCase();
+  return MOCK_MEOWKET_SEARCH_RESULTS.filter(
+    (item) =>
+      LOCAL_MEOWKET_RESULTS[item.itemId] &&
       item.name.toLowerCase().includes(normalizedQuery),
-    );
-  }
+  );
 }
