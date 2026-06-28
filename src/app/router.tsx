@@ -21,6 +21,7 @@ import { MemberProfilePage } from "@/features/member-profile";
 import { CalendarPage } from "@/features/calendar";
 import { CraftingBoardPage } from "@/features/craftingboard";
 import { MeowketBoardPage } from "@/features/meowket-board";
+import { DmuProgPage } from "@/features/dmu-prog";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -74,6 +75,12 @@ const raidStatsRoute = createRoute({
   component: RaidStatsPage,
 });
 
+const dmuProgRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dmu-prog",
+  component: DmuProgPage,
+});
+
 const mountRouletteRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/mount-roulette",
@@ -125,6 +132,7 @@ const routeTree = rootRoute.addChildren([
   fcTypeRoute,
   fcLeaderboardRoute,
   raidStatsRoute,
+  dmuProgRoute,
   mountRouletteRoute,
   craftingBoardRoute,
   meowketBoardRoute,

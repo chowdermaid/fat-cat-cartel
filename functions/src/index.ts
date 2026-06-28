@@ -1,4 +1,5 @@
 import "./firebase-admin-emulator";
+import { onValueCreated } from "firebase-functions/v2/database";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
 import { defineSecret, defineString } from "firebase-functions/params";
@@ -15,7 +16,7 @@ import {
   createCraftingRequestForMember,
   reopenCraftingRequestForMember,
 } from "./crafting-requests";
-import { processQueuedFriendRefreshJobs } from "./friend-refresh";
+import { processFriendRefreshJob } from "./friend-refresh";
 import { refreshMemberSourceForAdmin } from "./member-source-refresh";
 import {
   approveCalendarEventRequest as approveEventRequest,
@@ -27,6 +28,7 @@ import {
 } from "./sync-discord-planner-events";
 import {
   fetchTomestoneProgressionGraph,
+  runRefreshDmuProgress,
   runRefreshTomestoneRaidStats,
 } from "./refresh-tomestone-raid-stats";
 import {
@@ -58,24 +60,25 @@ admin.initializeApp({
   databaseURL: process.env.FIREBASE_DATABASE_URL ?? DEFAULT_DATABASE_URL,
 });
 
-const fflogsClientId = defineSecret("FFLOGS_CLIENT_ID");
+const fflogsClientId = defineString("FFLOGS_CLIENT_ID");
 const fflogsClientSecret = defineSecret("FFLOGS_CLIENT_SECRET");
 const tomestoneBearerToken = defineSecret("TOMESTONE_BEARER_TOKEN");
-const discordPublicKey = defineSecret("DISCORD_PUBLIC_KEY");
-const discordClientId = defineSecret("DISCORD_CLIENT_ID");
+const dmuProggers = defineString("DMU_PROGGERS", { default: "" });
+const discordPublicKey = defineString("DISCORD_PUBLIC_KEY");
+const discordClientId = defineString("DISCORD_CLIENT_ID");
 const discordClientSecret = defineSecret("DISCORD_CLIENT_SECRET");
-const discordRedirectUri = defineSecret("DISCORD_REDIRECT_URI");
-const discordGuildId = defineSecret("DISCORD_GUILD_ID");
-const discordAdminRoleIds = defineSecret("DISCORD_ADMIN_ROLE_IDS");
-const discordMemberRoleId = defineSecret("DISCORD_MEMBER_ROLE_ID");
-const discordMemberRoleIds = defineSecret("DISCORD_MEMBER_ROLE_IDS");
-const discordHousecatRoleId = defineSecret("DISCORD_HOUSECAT_ROLE_ID");
+const discordRedirectUri = defineString("DISCORD_REDIRECT_URI");
+const discordGuildId = defineString("DISCORD_GUILD_ID");
+const discordAdminRoleIds = defineString("DISCORD_ADMIN_ROLE_IDS");
+const discordMemberRoleId = defineString("DISCORD_MEMBER_ROLE_ID");
+const discordMemberRoleIds = defineString("DISCORD_MEMBER_ROLE_IDS");
+const discordHousecatRoleId = defineString("DISCORD_HOUSECAT_ROLE_ID");
 const discordBotToken = defineSecret("DISCORD_BOT_TOKEN");
-const discordEventChannelId = defineSecret("DISCORD_EVENT_CHANNEL_ID");
-const discordDonChannelId = defineSecret("DISCORD_DON_CHANNEL_ID");
-const discordGeneralChannelId = defineSecret("DISCORD_GENERAL_CHANNEL_ID");
+const discordEventChannelId = defineString("DISCORD_EVENT_CHANNEL_ID");
+const discordDonChannelId = defineString("DISCORD_DON_CHANNEL_ID");
+const discordGeneralChannelId = defineString("DISCORD_GENERAL_CHANNEL_ID");
 const raidHelperApiKey = defineSecret("RAID_HELPER_API_KEY");
-const raidHelperTemplateId = defineSecret("RAID_HELPER_TEMPLATE_ID");
+const raidHelperTemplateId = defineString("RAID_HELPER_TEMPLATE_ID");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
 const raidHelperFallbackLeaderId = defineString(
   "RAID_HELPER_FALLBACK_LEADER_ID",
@@ -124,6 +127,14 @@ function discordOAuthConfig() {
     ...adminAuthConfigWithSingleMemberRole(),
     clientId: discordClientId.value(),
     clientSecret: discordClientSecret.value(),
+    redirectUri: discordRedirectUri.value(),
+    appOrigin: adminAppOrigin.value(),
+  };
+}
+
+function discordOAuthStartConfig() {
+  return {
+    clientId: discordClientId.value(),
     redirectUri: discordRedirectUri.value(),
     appOrigin: adminAppOrigin.value(),
   };
@@ -180,7 +191,7 @@ function birthdayNotificationConfig() {
 export const refreshFFLogs = onSchedule(
   {
     schedule: "0 11 * * *",
-    secrets: [fflogsClientId, fflogsClientSecret],
+    secrets: [fflogsClientSecret],
     timeoutSeconds: 300,
     region: "us-central1",
   },
@@ -191,14 +202,7 @@ export const refreshFFLogs = onSchedule(
 
 export const triggerFFLogsRefresh = onCall(
   {
-    secrets: [
-      fflogsClientId,
-      fflogsClientSecret,
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [fflogsClientSecret, discordBotToken],
     timeoutSeconds: 300,
     region: "us-central1",
   },
@@ -212,12 +216,7 @@ export const triggerFFLogsRefresh = onCall(
 export const deleteMember = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 120,
     region: "us-central1",
   },
@@ -230,12 +229,7 @@ export const deleteMember = onCall(
 export const upsertMember = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -248,15 +242,7 @@ export const upsertMember = onCall(
 export const refreshMemberSource = onCall(
   {
     cors: true,
-    secrets: [
-      fflogsClientId,
-      fflogsClientSecret,
-      tomestoneBearerToken,
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [fflogsClientSecret, tomestoneBearerToken, discordBotToken],
     timeoutSeconds: 180,
     region: "us-central1",
   },
@@ -270,28 +256,9 @@ export const refreshMemberSource = onCall(
   },
 );
 
-// Runs hourly: fetches tracked character raid activity from Tomestone and writes to /raidStats.
-export const refreshTomestoneRaidStats = onSchedule(
-  {
-    schedule: "0 * * * *",
-    secrets: [tomestoneBearerToken],
-    timeoutSeconds: 300,
-    region: "us-central1",
-  },
-  async () => {
-    await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
-  },
-);
-
 export const triggerTomestoneRaidStatsRefresh = onCall(
   {
-    secrets: [
-      tomestoneBearerToken,
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [tomestoneBearerToken, discordBotToken],
     timeoutSeconds: 300,
     region: "us-central1",
   },
@@ -299,6 +266,22 @@ export const triggerTomestoneRaidStatsRefresh = onCall(
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
     return { ok: true };
+  },
+);
+
+export const triggerDmuProgressRefresh = onCall(
+  {
+    secrets: [tomestoneBearerToken, discordBotToken],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    const sourceStatus = await runRefreshDmuProgress(
+      tomestoneBearerToken.value(),
+      dmuProggers.value(),
+    );
+    return { ok: true, sourceStatus };
   },
 );
 
@@ -328,12 +311,7 @@ export const getTomestoneProgressionGraph = onCall(
 
 export const importLodestoneMembers = onCall(
   {
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 300,
     region: "us-central1",
   },
@@ -344,15 +322,39 @@ export const importLodestoneMembers = onCall(
   },
 );
 
-export const refreshFriendSignup = onSchedule(
+export const refreshFriendSignup = onValueCreated(
   {
-    schedule: "*/5 * * * *",
-    secrets: [fflogsClientId, fflogsClientSecret, tomestoneBearerToken],
+    ref: "/friendRefreshQueue/{jobId}",
+    instance: "fat-cat-cartel-default-rtdb",
+    secrets: [fflogsClientSecret, tomestoneBearerToken],
     timeoutSeconds: 300,
-    region: "us-central1",
+    region: "asia-southeast1",
   },
-  async () => {
-    await processQueuedFriendRefreshJobs({
+  async (event) => {
+    const job = event.data.val();
+    if (!job || typeof job !== "object") {
+      await event.data.ref.update({
+        status: "error",
+        finishedAt: Date.now(),
+        error: "Invalid friend refresh job.",
+      });
+      return;
+    }
+
+    const status = (job as { status?: unknown }).status;
+    if (status === "running" || status === "done" || status === "error") {
+      return;
+    }
+    if (status !== "queued") {
+      await event.data.ref.update({
+        status: "error",
+        finishedAt: Date.now(),
+        error: "Invalid friend refresh job status.",
+      });
+      return;
+    }
+
+    await processFriendRefreshJob(event.params.jobId, job, {
       fflogsClientId: fflogsClientId.value(),
       fflogsClientSecret: fflogsClientSecret.value(),
       tomestoneBearerToken: tomestoneBearerToken.value(),
@@ -360,19 +362,11 @@ export const refreshFriendSignup = onSchedule(
   },
 );
 
-// Runs every 3 hours: fetches ffxivcollect data and writes to /fcCollection.
-export const refreshFCCollection = onSchedule(
-  { schedule: "0 */3 * * *", timeoutSeconds: 300, region: "us-central1" },
-  async () => {
-    await runRefreshFCCollection();
-  },
-);
-
 export const sendBirthdayWishes = onSchedule(
   {
     schedule: "0 7 * * *",
     timeZone: "Australia/Sydney",
-    secrets: [discordBotToken, discordGeneralChannelId],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -381,29 +375,43 @@ export const sendBirthdayWishes = onSchedule(
   },
 );
 
-export const syncDiscordPlannerEvents = onSchedule(
+export const dailyMaintenance = onSchedule(
   {
-    schedule: "0 * * * *",
-    secrets: [discordGuildId, discordEventChannelId, raidHelperApiKey],
-    timeoutSeconds: 60,
+    schedule: "0 8 * * *",
+    timeZone: "Australia/Sydney",
+    secrets: [tomestoneBearerToken, raidHelperApiKey],
+    timeoutSeconds: 540,
     region: "us-central1",
   },
   async () => {
-    await runSyncDiscordPlannerEvents(discordPlannerConfig());
+    const jobs = [
+      {
+        name: "refreshTomestoneRaidStats",
+        run: () => runRefreshTomestoneRaidStats(tomestoneBearerToken.value()),
+      },
+      { name: "refreshFCCollection", run: () => runRefreshFCCollection() },
+      {
+        name: "syncDiscordPlannerEvents",
+        run: () => runSyncDiscordPlannerEvents(discordPlannerConfig()),
+      },
+    ];
+    const results = await Promise.allSettled(jobs.map((job) => job.run()));
+
+    results.forEach((result, index) => {
+      const name = jobs[index].name;
+      if (result.status === "fulfilled") {
+        console.log(`[dailyMaintenance] ${name} completed`);
+      } else {
+        console.error(`[dailyMaintenance] ${name} failed`, result.reason);
+      }
+    });
   },
 );
 
 export const triggerDiscordPlannerSync = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-      discordEventChannelId,
-      raidHelperApiKey,
-    ],
+    secrets: [discordBotToken, raidHelperApiKey],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -416,15 +424,7 @@ export const triggerDiscordPlannerSync = onCall(
 export const createRaidHelperEvent = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-      discordEventChannelId,
-      raidHelperApiKey,
-      raidHelperTemplateId,
-    ],
+    secrets: [discordBotToken, raidHelperApiKey],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -441,14 +441,7 @@ export const createRaidHelperEvent = onCall(
 export const submitCalendarEventRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordHousecatRoleId,
-      discordBotToken,
-      discordDonChannelId,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -482,12 +475,7 @@ export const submitCalendarEventRequest = onCall(
 export const listCalendarEventRequests = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -500,15 +488,7 @@ export const listCalendarEventRequests = onCall(
 export const approveCalendarEventRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-      discordEventChannelId,
-      raidHelperApiKey,
-      raidHelperTemplateId,
-    ],
+    secrets: [discordBotToken, raidHelperApiKey],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -521,12 +501,7 @@ export const approveCalendarEventRequest = onCall(
 export const denyCalendarEventRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -540,12 +515,7 @@ export const denyCalendarEventRequest = onCall(
 
 export const triggerFCCollectionRefresh = onCall(
   {
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 300,
     region: "us-central1",
   },
@@ -558,36 +528,17 @@ export const triggerFCCollectionRefresh = onCall(
 
 export const startDiscordAdminOAuth = onRequest(
   {
-    secrets: [
-      discordClientId,
-      discordClientSecret,
-      discordRedirectUri,
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleId,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
     timeoutSeconds: 30,
     region: "us-central1",
   },
   async (req, res) => {
-    await startDiscordOAuth(discordOAuthConfig(), req, res);
+    await startDiscordOAuth(discordOAuthStartConfig(), req, res);
   },
 );
 
 export const discordAdminOAuthCallback = onRequest(
   {
-    secrets: [
-      discordClientId,
-      discordClientSecret,
-      discordRedirectUri,
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleId,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordClientSecret, discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -599,14 +550,7 @@ export const discordAdminOAuthCallback = onRequest(
 export const getAdminSession = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleId,
-      discordMemberRoleIds,
-      discordHousecatRoleId,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -620,13 +564,7 @@ export const getAdminSession = onCall(
 export const searchMeowketItems = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleId,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 30,
     region: "us-central1",
   },
@@ -642,13 +580,7 @@ export const searchMeowketItems = onCall(
 export const calculateMeowketProfit = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleId,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -669,12 +601,7 @@ export const logoutAdminSession = onCall(
 export const updateMemberProfileAdmin = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -687,12 +614,7 @@ export const updateMemberProfileAdmin = onCall(
 export const updateOwnMemberProfile = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -705,13 +627,7 @@ export const updateOwnMemberProfile = onCall(
 export const createCraftingRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-      discordDonChannelId,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -728,12 +644,7 @@ export const createCraftingRequest = onCall(
 export const acceptCraftingRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -750,12 +661,7 @@ export const acceptCraftingRequest = onCall(
 export const completeCraftingRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -772,12 +678,7 @@ export const completeCraftingRequest = onCall(
 export const closeCraftingRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -794,12 +695,7 @@ export const closeCraftingRequest = onCall(
 export const reopenCraftingRequest = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -816,12 +712,7 @@ export const reopenCraftingRequest = onCall(
 export const upsertEasterParticipantAdmin = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -834,12 +725,7 @@ export const upsertEasterParticipantAdmin = onCall(
 export const deleteEasterParticipantAdmin = onCall(
   {
     cors: true,
-    secrets: [
-      discordGuildId,
-      discordAdminRoleIds,
-      discordMemberRoleIds,
-      discordBotToken,
-    ],
+    secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
@@ -851,7 +737,7 @@ export const deleteEasterParticipantAdmin = onCall(
 
 export const discordInteractions = onRequest(
   {
-    secrets: [discordPublicKey, discordAdminRoleIds, discordBotToken],
+    secrets: [discordBotToken],
     timeoutSeconds: 120,
     region: "us-central1",
   },

@@ -15,6 +15,16 @@ export function triggerTomestoneRaidStatsRefresh(adminSessionToken: string) {
   return callAdminFunction("triggerTomestoneRaidStatsRefresh", adminSessionToken, {}, { timeout: 300_000 });
 }
 
+export function triggerDmuProgressRefresh(adminSessionToken: string) {
+  return callAdminFunction<{
+    ok: boolean;
+    sourceStatus: {
+      playersWithProgress: number;
+      eligibleMembers: number;
+    };
+  }>("triggerDmuProgressRefresh", adminSessionToken, {}, { timeout: 300_000 });
+}
+
 export function triggerFFLogsRefresh(adminSessionToken: string) {
   return callAdminFunction("triggerFFLogsRefresh", adminSessionToken, {}, { timeout: 300_000 });
 }

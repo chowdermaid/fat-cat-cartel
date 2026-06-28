@@ -15,11 +15,11 @@ FFLogs functions:
 
 - `refreshFFLogs`: scheduled daily at `0 11 * * *`.
 - `triggerFFLogsRefresh`: callable admin refresh.
-- Secrets: `FFLOGS_CLIENT_ID`, `FFLOGS_CLIENT_SECRET`.
+- Config: `FFLOGS_CLIENT_ID`; secret: `FFLOGS_CLIENT_SECRET`.
 
 Tomestone functions:
 
-- `refreshTomestoneRaidStats`: scheduled hourly.
+- `dailyMaintenance`: scheduled daily at `0 8 * * *` Australia/Sydney and runs the Tomestone refresh alongside FC collection and Discord planner sync.
 - `triggerTomestoneRaidStatsRefresh`: callable admin refresh.
 - `refreshMemberSource`: callable admin per-member refresh. Use source `tomestone` or `fflogs` for raid-related single-member refreshes.
 - `getTomestoneProgressionGraph`: still exported as a callable, but the member profile UI no longer uses it because Tomestone progression graph rows were not reliable as per-activity pull history.
@@ -27,9 +27,9 @@ Tomestone functions:
 
 Related refreshes:
 
-- `refreshFCCollection` and `triggerFCCollectionRefresh`: FFXIV Collect data.
+- `dailyMaintenance` and `triggerFCCollectionRefresh`: FFXIV Collect data.
 - `importLodestoneMembers`: Lodestone roster and portrait sync.
-- `refreshFriendSignup`: scheduled every 5 minutes. It processes queued Discord Friend signup jobs and refreshes Lodestone, FFXIV Collect, Tomestone, and FFLogs data for the signed-up character.
+- `refreshFriendSignup`: runs when `/friendRefreshQueue/{jobId}` is created. It processes the queued Discord Friend signup job and refreshes Lodestone, FFXIV Collect, Tomestone, and FFLogs data for the signed-up character.
 - `deleteMember`: callable admin deletion. It removes a tracked character from generated raid paths and writes an exclusion so later syncs do not reimport the character.
 - `upsertMember`: callable admin add or restore. It creates the member record and clears any existing exclusion.
 
@@ -117,7 +117,7 @@ Tomestone refresh:
 Friend signup refresh:
 
 - Discord signup writes the Friend to `/members/{lodestoneId}` with `fcRank: "Friend"` and queues `/friendRefreshQueue/{jobId}`.
-- The scheduled queue worker refreshes Lodestone identity and job levels, collection ownership, Tomestone activity, and FFLogs parses for that one character.
+- The event-driven queue worker refreshes Lodestone identity and job levels, collection ownership, Tomestone activity, and FFLogs parses for that one character.
 - A failure in one source does not block the other sources. The job result records which sources succeeded or failed.
 - Each source refresh writes `/memberSyncStatus/{lodestoneId}/{source}` with success or error metadata.
 - Discord signup refuses characters that exist in `/memberExclusions`.

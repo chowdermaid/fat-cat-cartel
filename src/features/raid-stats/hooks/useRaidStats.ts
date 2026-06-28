@@ -8,11 +8,19 @@ interface RaidStatsState {
   loading: boolean;
 }
 
-export function useRaidStats(zoneId: number): RaidStatsState {
-  const [data, setData] = useState<ZoneData | null>(() => loadCachedZone(zoneId));
-  const [loading, setLoading] = useState(true);
+export function useRaidStats(zoneId: number | null): RaidStatsState {
+  const [data, setData] = useState<ZoneData | null>(() =>
+    zoneId == null ? null : loadCachedZone(zoneId),
+  );
+  const [loading, setLoading] = useState(zoneId != null);
 
   useEffect(() => {
+    if (zoneId == null) {
+      setData(null);
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     const cached = loadCachedZone(zoneId);
 

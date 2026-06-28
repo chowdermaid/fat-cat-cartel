@@ -68,23 +68,3 @@ export async function processFriendRefreshJob(
     results,
   });
 }
-
-export async function processQueuedFriendRefreshJobs(
-  secrets: {
-    fflogsClientId: string;
-    fflogsClientSecret: string;
-    tomestoneBearerToken: string;
-  },
-): Promise<void> {
-  const queueSnap = await admin.database()
-    .ref("friendRefreshQueue")
-    .orderByChild("status")
-    .equalTo("queued")
-    .limitToFirst(5)
-    .get();
-  const jobs = (queueSnap.val() ?? {}) as Record<string, FriendRefreshJob>;
-
-  for (const [jobId, job] of Object.entries(jobs)) {
-    await processFriendRefreshJob(jobId, job, secrets);
-  }
-}

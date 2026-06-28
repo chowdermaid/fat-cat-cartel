@@ -2,6 +2,7 @@ import {
   Activity,
   ArrowDownUp,
   Database,
+  Drama,
   IdCard,
   RefreshCw,
 } from "lucide-react";
@@ -14,10 +15,12 @@ type MemberSyncToolbarProps = {
   raidLastUpdated: number | null;
   fetchingCollection: boolean;
   fetchingTomestone: boolean;
+  fetchingDmu: boolean;
   fetchingFFLogs: boolean;
   fetchingLodestone: boolean;
   onRefreshCollection: () => void;
   onRefreshTomestone: () => void;
+  onRefreshDmu: () => void;
   onRefreshFFLogs: () => void;
   onImportLodestone: () => void;
 };
@@ -27,15 +30,17 @@ export function MemberSyncToolbar({
   raidLastUpdated,
   fetchingCollection,
   fetchingTomestone,
+  fetchingDmu,
   fetchingFFLogs,
   fetchingLodestone,
   onRefreshCollection,
   onRefreshTomestone,
+  onRefreshDmu,
   onRefreshFFLogs,
   onImportLodestone,
 }: MemberSyncToolbarProps) {
   return (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
       <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-sm font-medium">
@@ -59,6 +64,30 @@ export function MemberSyncToolbar({
             className={cn("h-4 w-4", fetchingCollection && "animate-spin")}
           />
           {fetchingCollection ? "Fetching" : "Refresh"}
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 text-sm font-medium">
+            <Drama className="h-3.5 w-3.5 text-muted-foreground" />
+            DMU Prog
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
+            Configured proggers
+          </p>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onRefreshDmu}
+          disabled={fetchingDmu}
+          className="shrink-0"
+        >
+          <RefreshCw
+            className={cn("h-4 w-4", fetchingDmu && "animate-spin")}
+          />
+          {fetchingDmu ? "Fetching" : "Refresh"}
         </Button>
       </div>
 

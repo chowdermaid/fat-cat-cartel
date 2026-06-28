@@ -49,8 +49,8 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
         ref={sectionRef}
         className="relative z-10 flex h-full flex-1 overflow-visible rounded-lg border bg-card/80 px-5 py-6 shadow-sm sm:px-8 sm:pt-10 lg:px-10"
       >
-        <div className="grid flex-1 items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(11rem,14rem)_minmax(12rem,18rem)]">
-          <div className="hero-item space-y-5 lg:col-start-1">
+        <div className="grid flex-1 items-stretch gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(11rem,14rem)_minmax(12rem,18rem)]">
+          <div className="hero-item space-y-5 xl:col-start-1">
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
                 {HOME_GAZETTE.name}
@@ -98,7 +98,7 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
               </Button>
             </div>
           </div>
-          <div className="hero-item flex h-full flex-col rounded-md border bg-muted/30 p-3 lg:col-start-2 lg:row-span-2">
+          <div className="hero-item hidden h-full flex-col rounded-md border bg-muted/30 p-3 xl:col-start-2 xl:row-span-2 xl:flex">
             <div className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               FC BIO
             </div>
@@ -116,7 +116,7 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
                 </span>
               </div>
             </div>
-            <div className="flex flex-1 flex-wrap content-start gap-2 lg:flex-col lg:flex-nowrap">
+            <div className="flex flex-1 flex-col content-start gap-2">
               {FC_FOCUS_ITEMS.map(({ icon: Icon, label }) => (
                 <Badge
                   key={label}
@@ -129,7 +129,7 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
               ))}
             </div>
           </div>
-          <div className="hero-item relative flex flex-col items-center gap-0 rounded-lg border border-dashed bg-background/60 p-4 lg:col-start-3 lg:row-span-2">
+          <div className="hero-item relative flex flex-col items-center gap-0 rounded-lg border border-dashed bg-background/60 p-4 xl:col-start-3 xl:row-span-2">
             <div className="absolute -right-3 -top-3 z-20 hidden bg-muted sm:block">
               <NewspaperStamp>{HOME_GAZETTE.issue}</NewspaperStamp>
             </div>

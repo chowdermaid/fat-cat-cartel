@@ -251,6 +251,25 @@ function registerDefaultHandlers(): void {
     };
   });
 
+  handlers.set("triggerDmuProgressRefresh", () => {
+    const persona = getSelectedDevPersona();
+    assertCapability(persona, "admin:*");
+    return {
+      ok: true,
+      sourceStatus: {
+        source: "tomestone",
+        checkedAt: Date.now(),
+        trackedMembers: 0,
+        eligibleMembers: 0,
+        playersWithProgress: 0,
+        requestsThisRefresh: 0,
+        failedMembers: 0,
+        pageCapReached: false,
+        failures: [],
+      },
+    };
+  });
+
   handlers.set("searchMeowketItems", (data) => {
     const persona = getSelectedDevPersona();
     assertCapability(persona, "admin:*");

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
-import { BarChart2 } from "lucide-react";
+import { ArrowLeft, BarChart2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { CollectionScopeToggle } from "@/features/fc-collection/components/scope/CollectionScopeToggle";
-import { ZONE_TABS } from "../zones";
 import { useRaidStatsPageState } from "../hooks/useRaidStatsPageState";
 import { timeAgoShort } from "../utils/timeFormatting";
 import { TomestoneActivitySection } from "./activity/TomestoneActivitySection";
@@ -12,7 +12,7 @@ import { BestParseCarousel } from "./parses/BestParseCarousel";
 import { BestPerJobCarousel } from "./parses/BestPerJobCarousel";
 import { MemberBoard } from "./parses/MemberBoard";
 import { MemberRadarChart } from "./parses/MemberRadarChart";
-import { ParseHistogramCard } from "./parses/ParseHistogramCard";
+import { RaidStatsHome } from "./RaidStatsHome";
 import { AllStarsCard } from "./summary/AllStarsCard";
 import { EncounterAveragesCard } from "./summary/EncounterAveragesCard";
 import { GuildSummaryStrip } from "./summary/GuildSummaryStrip";
@@ -28,13 +28,13 @@ export function RaidStatsPage() {
     currentTab,
     data,
     encounters,
-    handleTabChange,
+    handleCategorySelect,
+    handleHomeClick,
     hasVisibleParses,
     includeFriends,
     loading,
     memberCount,
     scopedActivity,
-    scopedHistogram,
     scopedJoinedMembers,
     selectedMember,
     selectedMemberId,
@@ -70,42 +70,49 @@ export function RaidStatsPage() {
         <CollectionScopeToggle scope={scope} onChange={setScope} />
       </div>
 
-      <div className="flex flex-wrap gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
-        {ZONE_TABS.map((tab) => (
-          <RaidStatsTabButton
-            key={tab.type}
-            active={activeTab === tab.type}
-            onClick={() => handleTabChange(tab.type)}
-          >
-            {tab.label}
-          </RaidStatsTabButton>
-        ))}
-      </div>
-
-      {currentTab.zones.length > 1 && (
-        <div className="flex gap-1 flex-wrap">
-          {currentTab.zones.map((zone) => (
-            <RaidStatsTabButton
-              key={zone.id}
+      {!activeTab || !currentTab ? (
+        <RaidStatsHome onSelect={handleCategorySelect} />
+      ) : (
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
               size="sm"
-              active={activeZoneId === zone.id}
-              onClick={() => setActiveZoneId(zone.id)}
+              onClick={handleHomeClick}
+              className="gap-2"
             >
-              {zone.shortName}
-            </RaidStatsTabButton>
-          ))}
+              <ArrowLeft className="h-4 w-4" />
+              All categories
+            </Button>
+          </div>
+
+          {currentTab.zones.length > 1 && (
+            <div className="flex gap-1 flex-wrap">
+              {currentTab.zones.map((zone) => (
+                <RaidStatsTabButton
+                  key={zone.id}
+                  size="sm"
+                  active={activeZoneId === zone.id}
+                  onClick={() => setActiveZoneId(zone.id)}
+                >
+                  {zone.shortName}
+                </RaidStatsTabButton>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {loading ? (
+      {activeTab && currentTab && loading ? (
         <LoadingSkeleton />
-      ) : !data ? (
+      ) : activeTab && currentTab && !data ? (
         <div className="space-y-4">
           <p className="text-muted-foreground">
             No data yet for this zone. The sync hasn't run yet. Check back soon.
           </p>
         </div>
-      ) : !hasVisibleParses && scopedActivity.length === 0 ? (
+      ) : activeTab && currentTab && !hasVisibleParses && scopedActivity.length === 0 ? (
         <div className="rounded-lg border bg-muted/30 px-6 py-10 text-center space-y-2">
           <p className="text-sm font-medium">No raid data found for this zone</p>
           <p className="text-sm text-muted-foreground">
@@ -113,7 +120,7 @@ export function RaidStatsPage() {
             do not have FFLogs or Tomestone activity for this content yet.
           </p>
         </div>
-      ) : (
+      ) : activeTab && currentTab && data ? (
         <div ref={pageRef} className="min-w-0 max-w-full space-y-6">
           <div className="anim-section flex items-end justify-between gap-4 flex-wrap">
             <p className="text-sm text-muted-foreground">
@@ -170,16 +177,6 @@ export function RaidStatsPage() {
                 </div>
               </div>
 
-              {contentType === "savage" && (
-                <div className="anim-section">
-                  <ParseHistogramCard
-                    histogram={scopedHistogram}
-                    encounters={encounters}
-                    contentType={contentType}
-                  />
-                </div>
-              )}
-
               <div className="anim-section grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <AllStarsCard
                   members={scopedJoinedMembers}
@@ -215,7 +212,7 @@ export function RaidStatsPage() {
             />
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

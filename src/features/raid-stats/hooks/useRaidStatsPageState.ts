@@ -2,8 +2,7 @@ import { useMemo, useState } from "react";
 import { useCollectionScope } from "@/features/fc-collection/hooks/useCollectionScope";
 import { filterByCollectionScope } from "@/features/fc-collection/utils/collectionScope";
 import { useMembers } from "@/hooks/useMembers";
-import { DEFAULT_TAB, DEFAULT_ZONE_ID, ZONE_TABS } from "../zones";
-import { buildScopedHistogram } from "../utils/parseBuckets";
+import { ZONE_TABS } from "../zones";
 import { mergeRaidStatsMembers } from "../utils/memberMerging";
 import { useRaidStats } from "./useRaidStats";
 import type { ContentType, MemberData, ZoneEncounter } from "../types";
@@ -11,8 +10,8 @@ import type { ContentType, MemberData, ZoneEncounter } from "../types";
 const EMPTY_ENCOUNTERS: ZoneEncounter[] = [];
 
 export function useRaidStatsPageState() {
-  const [activeTab, setActiveTab] = useState<ContentType>(DEFAULT_TAB);
-  const [activeZoneId, setActiveZoneId] = useState(DEFAULT_ZONE_ID);
+  const [activeTab, setActiveTab] = useState<ContentType | null>(null);
+  const [activeZoneId, setActiveZoneIdState] = useState<number | null>(null);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
   const { scope, setScope, includeFriends } = useCollectionScope();
 
@@ -31,24 +30,33 @@ export function useRaidStatsPageState() {
     );
   }, [joinedMembers, scope]);
 
-  function handleTabChange(type: ContentType) {
+  function handleCategorySelect(type: ContentType) {
     setActiveTab(type);
     const tab = ZONE_TABS.find((t) => t.type === type)!;
-    setActiveZoneId(tab.zones[0].id);
+    setActiveZoneIdState(tab.zones[0].id);
     setSelectedMemberId(null);
   }
 
-  const currentTab = ZONE_TABS.find((t) => t.type === activeTab)!;
+  function handleZoneChange(zoneId: number) {
+    setActiveZoneIdState(zoneId);
+    setSelectedMemberId(null);
+  }
+
+  function handleHomeClick() {
+    setActiveTab(null);
+    setActiveZoneIdState(null);
+    setSelectedMemberId(null);
+  }
+
+  const currentTab = activeTab
+    ? (ZONE_TABS.find((t) => t.type === activeTab) ?? null)
+    : null;
   const encounters = data?.meta.encounters ?? EMPTY_ENCOUNTERS;
-  const contentType = data?.meta.contentType ?? activeTab;
+  const contentType = data?.meta.contentType ?? activeTab ?? "savage";
   const memberCount = Object.keys(scopedJoinedMembers).length;
   const selectedMember = selectedMemberId
     ? (scopedJoinedMembers[selectedMemberId] ?? null)
     : null;
-  const scopedHistogram = useMemo(
-    () => buildScopedHistogram(scopedJoinedMembers, encounters),
-    [scopedJoinedMembers, encounters],
-  );
   const scopedActivity = useMemo(
     () =>
       (data?.recentActivity ?? []).filter(
@@ -71,17 +79,17 @@ export function useRaidStatsPageState() {
     currentTab,
     data,
     encounters,
-    handleTabChange,
+    handleHomeClick,
+    handleCategorySelect,
     hasVisibleParses,
     includeFriends,
     loading,
     memberCount,
     scopedActivity,
-    scopedHistogram,
     scopedJoinedMembers,
     selectedMember,
     selectedMemberId,
-    setActiveZoneId,
+    setActiveZoneId: handleZoneChange,
     setScope,
     setSelectedMemberId,
     scope,

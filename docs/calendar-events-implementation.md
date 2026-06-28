@@ -13,21 +13,21 @@ Normalized planner events include `title`, `description`, `startAt`, `endAt`, `l
 
 ## Functions
 
-- `syncDiscordPlannerEvents`: scheduled hourly. It reads posted events from the Raid Helper server events API, optionally filters to the configured channel, writes `/calendarEvents`, and records diagnostics.
+- `dailyMaintenance`: scheduled daily at `0 8 * * *` Australia/Sydney. It runs the Discord planner sync alongside Tomestone and FC collection refreshes. The sync reads posted events from the Raid Helper server events API, optionally filters to the configured channel, writes `/calendarEvents`, and records diagnostics.
 - `triggerDiscordPlannerSync`: callable admin refresh. It requires `adminSessionToken` and uses the same Raid Helper sync path as the scheduled job.
 - `submitCalendarEventRequest`: callable Housecat request creation. It requires a valid member session with `DISCORD_HOUSECAT_ROLE_ID`, writes `/calendarEventRequests`, posts a DON channel notification, and stores the returned Discord message ID.
 - `listCalendarEventRequests`, `approveCalendarEventRequest`, and `denyCalendarEventRequest`: callable Boss/Underpaw review actions. Approve creates the Raid Helper event with the original requester as leader, writes `/calendarEvents`, edits the DON-channel bot message with an approved tick, and deletes the request. Deny edits the bot message with a denied cross and deletes the request.
 
-Required Functions secrets:
+Required Functions config and secrets:
 
-- `DISCORD_BOT_TOKEN`
-- `DISCORD_GUILD_ID`
-- `DISCORD_EVENT_CHANNEL_ID`
-- `DISCORD_DON_CHANNEL_ID`, required for Housecat request notifications
-- `RAID_HELPER_API_KEY`
-- `RAID_HELPER_TEMPLATE_ID`, required for website-created events
-- `DISCORD_HOUSECAT_ROLE_ID`, required for Housecat event requests
-- `RAID_HELPER_FALLBACK_LEADER_ID`, optional string param used when local dev bypass or a rejected leader ID cannot be used by Raid Helper
+- Secret: `DISCORD_BOT_TOKEN`
+- Config: `DISCORD_GUILD_ID`
+- Config: `DISCORD_EVENT_CHANNEL_ID`
+- Config: `DISCORD_DON_CHANNEL_ID`, required for Housecat request notifications
+- Secret: `RAID_HELPER_API_KEY`
+- Config: `RAID_HELPER_TEMPLATE_ID`, required for website-created events
+- Config: `DISCORD_HOUSECAT_ROLE_ID`, required for Housecat event requests
+- Config: `RAID_HELPER_FALLBACK_LEADER_ID`, optional string param used when local dev bypass or a rejected leader ID cannot be used by Raid Helper
 
 `DISCORD_BOT_TOKEN` is needed for callable Discord session validation, optional role pings, and Housecat request notifications. The scheduled sync itself uses the Raid Helper API key and server ID.
 

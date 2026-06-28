@@ -169,10 +169,10 @@ If Discord posting fails, the Function throws and does not write the crafting re
 
 Required Functions config/secrets for crafting create:
 
-- `DISCORD_BOT_TOKEN`
-- `DISCORD_GUILD_ID`
-- `DISCORD_DON_CHANNEL_ID`
-- `ADMIN_APP_ORIGIN`, optional for local/emulator links
+- Secret: `DISCORD_BOT_TOKEN`
+- Config: `DISCORD_GUILD_ID`
+- Config: `DISCORD_DON_CHANNEL_ID`
+- Config: `ADMIN_APP_ORIGIN`, optional for local/emulator links
 
 Stub mode writes the same canonical and index paths through `src/lib/db.ts` helpers so the dashboard can be tested without Firebase credentials.
 

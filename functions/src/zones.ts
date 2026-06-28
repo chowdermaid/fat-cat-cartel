@@ -161,6 +161,12 @@ export const ZONES: ZoneConfig[] = [
     tomestoneCategory: "ultimates", tomestoneZone: "ultimates", tomestoneExpansion: "dawntrail",
     encounters: [{ id: 1079, key: "fru", label: "FRU", name: "Futures Rewritten", tomestoneCanonicalName: "futures-rewritten-ultimate" }],
   },
+  {
+    id: 76, name: "Dancing Mad", shortName: "DMU",
+    expansion: "dawntrail", contentType: "ultimate",
+    tomestoneCategory: "ultimates", tomestoneZone: "ultimates", tomestoneExpansion: "dawntrail",
+    encounters: [{ id: 1085, key: "dmu", label: "DMU", name: "Dancing Mad", tomestoneCanonicalName: "dancing-mad-ultimate" }],
+  },
 ];
 
 export const ZONES_BY_CONTENT_TYPE = (type: ContentType) => ZONES.filter((z) => z.contentType === type);

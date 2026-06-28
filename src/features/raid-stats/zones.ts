@@ -51,9 +51,7 @@ export const ZONE_TABS: ZoneTab[] = [
       { id: 45, name: "Dragonsong's Reprise",          shortName: "DSR",  contentType: "ultimate" },
       { id: 53, name: "The Omega Protocol",            shortName: "TOP",  contentType: "ultimate" },
       { id: 65, name: "Futures Rewritten",             shortName: "FRU",  contentType: "ultimate" },
+      { id: 76, name: "Dancing Mad",                   shortName: "DMU",  contentType: "ultimate" },
     ],
   },
 ];
-
-export const DEFAULT_ZONE_ID = 73;
-export const DEFAULT_TAB: ContentType = "savage";

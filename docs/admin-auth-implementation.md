@@ -13,18 +13,18 @@ The app uses Discord OAuth for browser login and Firebase Functions for authoriz
 
 ## Secrets And Config
 
-Required Functions values:
+Required Functions config and secrets:
 
-- `DISCORD_CLIENT_ID`
-- `DISCORD_CLIENT_SECRET`
-- `DISCORD_REDIRECT_URI`
-- `DISCORD_GUILD_ID`
-- `DISCORD_ADMIN_ROLE_IDS`, comma-separated Boss and Underpaw role IDs
-- `DISCORD_MEMBER_ROLE_IDS`, comma-separated non-admin role IDs allowed to log in
-- `DISCORD_MEMBER_ROLE_ID`, single general member role ID allowed to log in and use Meowket Board
-- `DISCORD_HOUSECAT_ROLE_ID`, single role ID allowed to submit calendar event requests
-- `DISCORD_BOT_TOKEN`
-- `ADMIN_APP_ORIGIN`
+- Config: `DISCORD_CLIENT_ID`
+- Secret: `DISCORD_CLIENT_SECRET`
+- Config: `DISCORD_REDIRECT_URI`
+- Config: `DISCORD_GUILD_ID`
+- Config: `DISCORD_ADMIN_ROLE_IDS`, comma-separated Boss and Underpaw role IDs
+- Config: `DISCORD_MEMBER_ROLE_IDS`, comma-separated non-admin role IDs allowed to log in
+- Config: `DISCORD_MEMBER_ROLE_ID`, single general member role ID allowed to log in and use Meowket Board
+- Config: `DISCORD_HOUSECAT_ROLE_ID`, single role ID allowed to submit calendar event requests
+- Secret: `DISCORD_BOT_TOKEN`
+- Config: `ADMIN_APP_ORIGIN`
 
 The Discord Developer Portal redirect URI must exactly match `DISCORD_REDIRECT_URI`, which should point at `discordAdminOAuthCallback`.
 
@@ -148,7 +148,8 @@ The override is rejected unless `FUNCTIONS_EMULATOR=true`. It does not change Di
 Recommended Functions local files:
 
 - `functions/.env.local`: set `ADMIN_APP_ORIGIN=http://localhost:5173`.
-- `functions/.secret.local`: set local Discord and API secrets, including `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`, `DISCORD_GUILD_ID`, `DISCORD_ADMIN_ROLE_IDS`, `DISCORD_MEMBER_ROLE_IDS`, `DISCORD_MEMBER_ROLE_ID`, `DISCORD_BOT_TOKEN`, FFLogs secrets, and Tomestone token as needed.
+- `functions/.env.local`: set local non-secret config, including `ADMIN_APP_ORIGIN`, Discord IDs and role IDs, channel IDs, redirect URI, FFLogs client ID, and Raid Helper template ID.
+- `functions/.secret.local`: set local API credentials, including `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN`, `FFLOGS_CLIENT_SECRET`, `TOMESTONE_BEARER_TOKEN`, and `RAID_HELPER_API_KEY` as needed.
 
 For local OAuth, the Discord Developer Portal redirect URI and `DISCORD_REDIRECT_URI` must match the Functions emulator callback URL:
 

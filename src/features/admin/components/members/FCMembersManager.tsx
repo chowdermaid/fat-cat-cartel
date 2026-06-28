@@ -27,6 +27,7 @@ import {
   deleteMember,
   importLodestoneMembers,
   refreshMemberSource,
+  triggerDmuProgressRefresh,
   triggerFCCollectionRefresh,
   triggerFFLogsRefresh,
   triggerTomestoneRaidStatsRefresh,
@@ -73,6 +74,7 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
 
   const [fetchingCollection, setFetchingCollection] = useState(false);
   const [fetchingTomestone, setFetchingTomestone] = useState(false);
+  const [fetchingDmu, setFetchingDmu] = useState(false);
   const [fetchingFFLogs, setFetchingFFLogs] = useState(false);
   const [fetchingLodestone, setFetchingLodestone] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
@@ -122,6 +124,26 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
       toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
     } finally {
       setFetchingTomestone(false);
+    }
+  }
+
+  async function handleRefreshDmu() {
+    if (!firebaseApp || !adminSessionToken) {
+      toast.error("Not available in local dev mode.");
+      return;
+    }
+    setFetchingDmu(true);
+    const id = toast.loading("Refreshing DMU progress...");
+    try {
+      const result = await triggerDmuProgressRefresh(adminSessionToken);
+      toast.success(
+        `DMU refreshed for ${result.sourceStatus.playersWithProgress}/${result.sourceStatus.eligibleMembers} proggers.`,
+        { id },
+      );
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
+    } finally {
+      setFetchingDmu(false);
     }
   }
 
@@ -375,10 +397,12 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
         raidLastUpdated={raidLastUpdated}
         fetchingCollection={fetchingCollection}
         fetchingTomestone={fetchingTomestone}
+        fetchingDmu={fetchingDmu}
         fetchingFFLogs={fetchingFFLogs}
         fetchingLodestone={fetchingLodestone}
         onRefreshCollection={handleRefreshCollection}
         onRefreshTomestone={handleRefreshTomestone}
+        onRefreshDmu={handleRefreshDmu}
         onRefreshFFLogs={handleRefreshFFLogs}
         onImportLodestone={handleImportLodestone}
       />

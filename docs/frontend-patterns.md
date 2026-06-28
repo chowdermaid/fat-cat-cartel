@@ -42,7 +42,7 @@ Use this doc when changing UI layout, navigation, components, styling, assets, o
 - Member profiles: read member identity, profile, collection data, collectible names, and raid parse or activity data.
 - FC collection: supports mounts, minions, titles, achievements. Config lives in `constants.ts`.
 - Mount roulette: consumes FC collection mount data, filters by expansion, source, ownership, and selected members.
-- Raid stats: `ZONE_TABS`, `DEFAULT_ZONE_ID`, and zone metadata live under `src/features/raid-stats`.
+- Raid stats: `ZONE_TABS` and zone metadata live under `src/features/raid-stats`.
 - Easter 2026: scoreboard listens live to `/events/easter2026/participants`; admin participant manager writes scores and totals.
 - Calendar: combines birthdays from `/memberProfiles` with Raid Helper events from `/calendarEvents`.
 - Admin auth: Discord OAuth and Firebase Functions authorize access. See `docs/admin-auth-implementation.md`.

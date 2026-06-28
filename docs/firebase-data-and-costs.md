@@ -84,17 +84,15 @@ Functions are exported from `functions/src/index.ts`.
 
 - `refreshFFLogs`: scheduled FFLogs refresh.
 - `triggerFFLogsRefresh`: callable admin FFLogs refresh.
-- `refreshTomestoneRaidStats`: scheduled Tomestone refresh.
+- `dailyMaintenance`: scheduled daily maintenance refresh for Tomestone raid stats, FC collection, and Discord planner events. It runs at 8:00 AM Australia/Sydney and logs each subtask result.
 - `triggerTomestoneRaidStatsRefresh`: callable admin Tomestone refresh.
-- `refreshFCCollection`: scheduled FFXIV Collect refresh.
 - `triggerFCCollectionRefresh`: callable admin collection refresh.
 - `importLodestoneMembers`: callable Lodestone roster and portrait sync.
-- `refreshFriendSignup`: scheduled Discord Friend signup worker.
+- `refreshFriendSignup`: event-driven Discord Friend signup worker. It runs when `/friendRefreshQueue/{jobId}` is created.
 - `sendBirthdayWishes`: scheduled daily Discord birthday notification worker. It runs at 7:00 AM Australia/Sydney, reads member profiles, members, and Discord links once, writes a small guard/status record per birthday, and posts one Discord message per birthday.
 - `deleteMember`: callable admin deletion.
 - `upsertMember`: callable admin add or restore.
 - `refreshMemberSource`: callable admin per-member source refresh.
-- `syncDiscordPlannerEvents`: scheduled Raid Helper planner sync.
 - `triggerDiscordPlannerSync`: callable admin planner sync.
 - `createRaidHelperEvent`: callable admin event creation.
 - `submitCalendarEventRequest`: callable Housecat event request creation; sends one Discord DON-channel notification.

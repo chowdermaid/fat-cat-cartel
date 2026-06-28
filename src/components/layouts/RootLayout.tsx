@@ -71,19 +71,6 @@ export function RootLayout() {
           <Outlet />
         </main>
         <Toaster richColors position="bottom-right" theme={isDark ? "dark" : "light"} />
-        <footer className="border-t">
-          <div className="px-6 py-6 text-center text-sm text-muted-foreground">
-            © 2026 Fat Cat Cartel · chow is an amazing sage ·{" "}
-            <a
-              href="http://discord.gg/TDdhZgQyCR"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-4 hover:text-foreground transition-colors"
-            >
-              Discord
-            </a>
-          </div>
-        </footer>
       </SidebarInset>
     </SidebarProvider>
   );

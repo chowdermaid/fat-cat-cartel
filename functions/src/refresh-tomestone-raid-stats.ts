@@ -7,6 +7,8 @@ const TOMESTONE_BASE_URL = "https://tomestone.gg/api";
 const ACTIVITY_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const GRAPH_CACHE_TTL = 6 * 60 * 60 * 1000;
 const TOMESTONE_REQUEST_DELAY_MS = 750;
+const DMU_ZONE_ID = 76;
+const DMU_ENCOUNTER_KEY = "dmu";
 
 interface MemberNode {
   name: string;
@@ -128,6 +130,64 @@ interface CompactActivity {
   participantCount: number;
 }
 
+interface DmuProgressPoint {
+  pull: number;
+  startedAt: number | null;
+  durationMs: number | null;
+  bossHpRemaining: number;
+  bestBossHpRemaining: number;
+  phase: string | null;
+  displayPercentText: string | null;
+  displayBossPercent: number | null;
+  displayPhase: string | null;
+  mechanicName: string | null;
+  mechanicId: number | null;
+  mechanicNumber: number | null;
+  mechanicTimeMs: number | null;
+  cssPercentClassName: string | null;
+  reportCode: string | null;
+  reportUrl: string | null;
+  isPublic: boolean | null;
+}
+
+interface DmuProgressPlayer {
+  lodestoneId: string;
+  name: string;
+  server: string | null;
+  avatarUrl: string | null;
+  fcRank: string | null;
+  pullCount: number;
+  timeSpentMs: number;
+  bestProgress: number;
+  bestPull: number;
+  latestActivityAt: number | null;
+  points: DmuProgressPoint[];
+}
+
+interface DmuProgressCache {
+  lastUpdated: number;
+  summary: {
+    pullCount: number;
+    timeSpentMs: number;
+    bestProgress: number | null;
+    bestPull: number | null;
+    bestPlayerName: string | null;
+  };
+  players: Record<string, DmuProgressPlayer>;
+  activities: CompactActivity[];
+  sourceStatus: {
+    source: "tomestone";
+    checkedAt: number;
+    trackedMembers: number;
+    eligibleMembers: number;
+    playersWithProgress: number;
+    requestsThisRefresh: number;
+    failedMembers: number;
+    pageCapReached: boolean;
+    failures: Array<{ lodestoneId: string; message: string }>;
+  };
+}
+
 interface MemberEncounterSummary {
   cleared: boolean;
   firstClearAt: number | null;
@@ -172,6 +232,46 @@ function parsePercent(value: string | null | undefined): number | null {
 function parseGraphPercent(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string") return parsePercent(value);
+  return null;
+}
+
+function parseGraphNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number(value.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+function parseDisplayPercent(value: unknown): {
+  text: string | null;
+  bossPercent: number | null;
+  phase: string | null;
+} {
+  if (typeof value !== "string") {
+    return { text: null, bossPercent: null, phase: null };
+  }
+  const text = value.trim();
+  const match = text.match(/^([\d.]+)%\s*(P\d+)?$/i);
+  const bossPercent = match ? Number(match[1]) : parseGraphPercent(text);
+  return {
+    text,
+    bossPercent: Number.isFinite(bossPercent) ? bossPercent : null,
+    phase: match?.[2]?.toUpperCase() ?? null,
+  };
+}
+
+function parseDurationMs(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value > 10_000 ? Math.round(value) : Math.round(value * 1000);
+  }
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  const parts = trimmed.split(":").map((part) => Number(part));
+  if (parts.some((part) => !Number.isFinite(part))) return null;
+  if (parts.length === 2) return Math.round((parts[0] * 60 + parts[1]) * 1000);
+  if (parts.length === 3) return Math.round((parts[0] * 3600 + parts[1] * 60 + parts[2]) * 1000);
   return null;
 }
 
@@ -319,6 +419,121 @@ async function fetchRecentActivity(
   return recent.sort((a, b) => b.startedAt - a.startedAt);
 }
 
+async function fetchDmuRecentActivityPage(
+  token: string,
+  lodestoneId: string,
+  match: { zone: ZoneConfig; encounter: ZoneEncounter },
+  memberName: string,
+): Promise<{ activities: CompactActivity[]; requests: number }> {
+  const activities: CompactActivity[] = [];
+  console.log(`[tomestone] DMU ${memberName} activity page 1`);
+  const payload = await fetchTomestone<ActivityPayload>(
+    token,
+    `/character/activity/${lodestoneId}?page=1`,
+  );
+  const rows = payload.activity?.activities?.activities?.paginator?.data ?? [];
+  for (const row of rows) {
+    const activity = row.activity;
+    if (!activity || activity.encounter?.canonicalName !== match.encounter.tomestoneCanonicalName) continue;
+    const startedAt = parseTomestoneDate(activity.startTime);
+    if (!startedAt) continue;
+    activities.push({
+      id: String(activity.id ?? `${lodestoneId}-${match.encounter.key}-${startedAt}`),
+      lodestoneId,
+      encounterKey: match.encounter.key,
+      encounterName: activity.encounter?.localizedName ?? match.encounter.name,
+      zoneId: match.zone.id,
+      zoneName: match.zone.name,
+      contentType: match.zone.contentType,
+      job: activity.displayCharacterJobOrSpec?.localizedName ?? null,
+      jobAbbr: activity.displayCharacterJobOrSpec?.abbreviation ?? null,
+      startedAt,
+      endedAt: parseTomestoneDate(activity.endTime),
+      clearCount: activity.killsCount ?? 0,
+      wipeCount: activity.wipesCount ?? 0,
+      bestProgress: parsePercent(activity.bestPercent),
+      killDuration: activity.killDuration ?? null,
+      reportUrl: activity.reportMetadata?.url ?? null,
+      participantCount: activity.characters?.length ?? 0,
+    });
+  }
+  console.log(
+    `[tomestone] DMU ${memberName} activity complete: ${activities.length} row${activities.length === 1 ? "" : "s"}, 1 page request`,
+  );
+  return {
+    activities: activities.sort((a, b) => b.startedAt - a.startedAt),
+    requests: 1,
+  };
+}
+
+async function fetchDmuProgressionRows(
+  token: string,
+  lodestoneId: string,
+  match: { zone: ZoneConfig; encounter: ZoneEncounter },
+  memberName: string,
+): Promise<{ points: DmuProgressPoint[]; requests: number }> {
+  const params = new URLSearchParams({
+    category: match.zone.tomestoneCategory,
+    zone: match.zone.tomestoneZone,
+    encounter: match.encounter.tomestoneCanonicalName,
+    expansion: match.zone.tomestoneExpansion,
+  });
+  const raw = await fetchTomestone<{
+    data?: { graph?: Array<Record<string, unknown>> };
+  }>(token, `/character/progression-graph/${lodestoneId}?${params.toString()}`);
+
+  let bestSoFar: number | null = null;
+  const points = (raw.data?.graph ?? []).map((point, index) => {
+    const progress = parseGraphPercent(
+      point.Pulls ?? point.progress ?? point.percent ?? point.bestPercent ?? point.displayPercent,
+    );
+    if (progress == null) return null;
+    bestSoFar = bestSoFar == null ? progress : Math.min(bestSoFar, progress);
+    const pull = parseGraphNumber(point.pull ?? point.Pull ?? point["Pull #"] ?? point.x) ?? index + 1;
+    const mechanic = point.mechanic && typeof point.mechanic === "object"
+      ? point.mechanic as Record<string, unknown>
+      : null;
+    const display = parseDisplayPercent(point.displayPercent);
+    const reportUrl = typeof point.reportUrl === "string"
+      ? point.reportUrl
+      : typeof point.url === "string"
+        ? point.url
+        : null;
+    return {
+      pull,
+      startedAt: parseTomestoneDate(
+        point.startTime as string | number | null | undefined
+          ?? point.startedAt as string | number | null | undefined,
+      ),
+      durationMs: parseDurationMs(point.duration ?? point.killDuration),
+      bossHpRemaining: progress,
+      bestBossHpRemaining: parseGraphPercent(point["Best Pulls"]) ?? bestSoFar,
+      phase: display.phase ?? (typeof point.phase === "string" ? point.phase : null),
+      displayPercentText: display.text,
+      displayBossPercent: display.bossPercent,
+      displayPhase: display.phase,
+      mechanicName: typeof mechanic?.name === "string" ? mechanic.name : null,
+      mechanicId: parseGraphNumber(mechanic?.id),
+      mechanicNumber: parseGraphNumber(mechanic?.number),
+      mechanicTimeMs: parseDurationMs(mechanic?.time),
+      cssPercentClassName: typeof point.cssPercentClassName === "string" ? point.cssPercentClassName : null,
+      reportCode: typeof point.reportCode === "string"
+        ? point.reportCode
+        : typeof point.code === "string"
+          ? point.code
+          : null,
+      reportUrl,
+      isPublic: typeof point.isPublic === "boolean" ? point.isPublic : null,
+    };
+  }).filter((point): point is DmuProgressPoint => point != null);
+
+  console.log(`[tomestone] DMU ${memberName} graph complete: ${points.length} pull row${points.length === 1 ? "" : "s"}`);
+  return {
+    points: points.sort((a, b) => a.pull - b.pull),
+    requests: 1,
+  };
+}
+
 function mergeProfileClears(
   zoneMembers: Record<number, Record<string, ZoneMemberSummary>>,
   lodestoneId: string,
@@ -407,6 +622,170 @@ function computeMostPlayedJobs(zoneMembers: Record<number, Record<string, ZoneMe
     const best = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
     zoneMembers[Number(zoneId)][lodestoneId].mostPlayedJob = best;
   }
+}
+
+function summarizeDmuPlayers(players: Record<string, DmuProgressPlayer>): DmuProgressCache["summary"] {
+  const values = Object.values(players);
+  const best = values
+    .filter((player) => Number.isFinite(player.bestProgress))
+    .sort((a, b) => a.bestProgress - b.bestProgress)[0];
+  return {
+    pullCount: values.reduce((sum, player) => sum + player.pullCount, 0),
+    timeSpentMs: values.reduce((sum, player) => sum + player.timeSpentMs, 0),
+    bestProgress: best?.bestProgress ?? null,
+    bestPull: best?.bestPull ?? null,
+    bestPlayerName: best?.name ?? null,
+  };
+}
+
+async function buildDmuProgressForMembers(
+  token: string,
+  members: Record<string, MemberNode>,
+  trackedMembersCount = Object.keys(members).length,
+): Promise<Pick<DmuProgressCache, "players" | "activities" | "sourceStatus">> {
+  const match = findZoneAndEncounter(DMU_ZONE_ID, DMU_ENCOUNTER_KEY);
+  if (!match) throw new Error("DMU zone config is missing.");
+
+  const players: Record<string, DmuProgressPlayer> = {};
+  const activities: CompactActivity[] = [];
+  const failures: Array<{ lodestoneId: string; message: string }> = [];
+  let requestsThisRefresh = 0;
+  const eligibleEntries = Object.entries(members);
+
+  await batchRun(eligibleEntries, async ([lodestoneId, member]) => {
+    try {
+      console.log(`[tomestone] DMU ${member.name} start`);
+      const [graphResult, activityResult] = await Promise.all([
+        fetchDmuProgressionRows(token, lodestoneId, match, member.name),
+        fetchDmuRecentActivityPage(token, lodestoneId, match, member.name),
+      ]);
+      requestsThisRefresh += graphResult.requests + activityResult.requests;
+      activities.push(...activityResult.activities);
+      if (graphResult.points.length === 0 && activityResult.activities.length === 0) {
+        console.log(
+          `[tomestone] DMU ${member.name} complete: no progress, ${graphResult.requests + activityResult.requests} request${graphResult.requests + activityResult.requests === 1 ? "" : "s"}`,
+        );
+        return;
+      }
+
+      const points = graphResult.points;
+      const bestPoint = points
+        .filter((point) => Number.isFinite(point.bossHpRemaining))
+        .sort((a, b) => a.bossHpRemaining - b.bossHpRemaining)[0];
+      const activityTime = activityResult.activities.reduce((sum, activity) => {
+        const duration = activity.endedAt != null ? activity.endedAt - activity.startedAt : 0;
+        return duration > 0 ? sum + duration : sum;
+      }, 0);
+      const graphTime = points.reduce((sum, point) => sum + (point.durationMs ?? 0), 0);
+      const latestActivityAt = Math.max(
+        ...[
+          ...activityResult.activities.map((activity) => activity.startedAt),
+          ...points.map((point) => point.startedAt ?? 0),
+        ],
+        0,
+      );
+      players[lodestoneId] = {
+        lodestoneId,
+        name: member.name,
+        server: member.server,
+        avatarUrl: member.avatarUrl ?? null,
+        fcRank: member.fcRank ?? null,
+        pullCount: points.length,
+        timeSpentMs: graphTime || activityTime,
+        bestProgress: bestPoint?.bossHpRemaining ?? 100,
+        bestPull: bestPoint?.pull ?? points.length,
+        latestActivityAt: latestActivityAt > 0 ? latestActivityAt : null,
+        points,
+      };
+      console.log(
+        `[tomestone] DMU ${member.name} complete: ${points.length} pull row${points.length === 1 ? "" : "s"}, ${activityResult.activities.length} activity row${activityResult.activities.length === 1 ? "" : "s"}, ${graphResult.requests + activityResult.requests} request${graphResult.requests + activityResult.requests === 1 ? "" : "s"}`,
+      );
+    } catch (error) {
+      console.warn(
+        `[tomestone] DMU ${member.name} failed: ${
+          error instanceof Error ? error.message : "Unknown Tomestone error"
+        }`,
+      );
+      failures.push({
+        lodestoneId,
+        message: error instanceof Error ? error.message : "Unknown Tomestone error",
+      });
+    }
+  }, 1, TOMESTONE_REQUEST_DELAY_MS);
+
+  return {
+    players,
+    activities: activities.sort((a, b) => b.startedAt - a.startedAt),
+    sourceStatus: {
+      source: "tomestone",
+      checkedAt: Date.now(),
+      trackedMembers: trackedMembersCount,
+      eligibleMembers: eligibleEntries.length,
+      playersWithProgress: Object.keys(players).length,
+      requestsThisRefresh,
+      failedMembers: failures.length,
+      pageCapReached: false,
+      failures: failures.slice(0, 20),
+    },
+  };
+}
+
+async function writeDmuProgressCache(
+  token: string,
+  members: Record<string, MemberNode>,
+  trackedMembersCount = Object.keys(members).length,
+): Promise<DmuProgressCache> {
+  const db = admin.database();
+  const next = await buildDmuProgressForMembers(token, members, trackedMembersCount);
+
+  const now = Date.now();
+  const cache: DmuProgressCache = {
+    lastUpdated: now,
+    summary: summarizeDmuPlayers(next.players),
+    players: next.players,
+    activities: next.activities,
+    sourceStatus: {
+      ...next.sourceStatus,
+      checkedAt: now,
+      playersWithProgress: Object.keys(next.players).length,
+    },
+  };
+  await db.ref("raidStats/dmuProgress").set(cache);
+  return cache;
+}
+
+function parseDmuProggerIds(value: string): string[] {
+  return [...new Set(value
+    .split(",")
+    .map((item) => item.trim())
+    .filter((item) => /^\d+$/.test(item)))];
+}
+
+export async function runRefreshDmuProgress(
+  token: string,
+  dmuProggers: string,
+): Promise<DmuProgressCache["sourceStatus"]> {
+  const ids = parseDmuProggerIds(dmuProggers);
+  if (ids.length === 0) {
+    throw new HttpsError("failed-precondition", "DMU_PROGGERS has no valid Lodestone IDs.");
+  }
+
+  const db = admin.database();
+  const membersSnap = await db.ref("members").get();
+  const allMembers = (membersSnap.val() ?? {}) as Record<string, MemberNode>;
+  const members = Object.fromEntries(
+    ids.flatMap((lodestoneId) => {
+      const member = allMembers[lodestoneId];
+      if (!member) {
+        console.warn(`[tomestone] DMU progger ${lodestoneId} is not in /members; skipping`);
+        return [];
+      }
+      return [[lodestoneId, member]];
+    }),
+  ) as Record<string, MemberNode>;
+
+  const cache = await writeDmuProgressCache(token, members, Object.keys(allMembers).length);
+  return cache.sourceStatus;
 }
 
 async function batchRun<T, R>(
@@ -631,7 +1010,7 @@ export async function fetchTomestoneProgressionGraph(
     data?: { graph?: Array<Record<string, unknown>> };
   }>(token, `/character/progression-graph/${lodestoneId}?${params.toString()}`);
 
-  const graph = (raw.data?.graph ?? []).slice(-120).map((point) => {
+  const graph = (raw.data?.graph ?? []).map((point) => {
     const progress = parseGraphPercent(point.Pulls ?? point.progress ?? point.percent ?? point.bestPercent ?? point.displayPercent);
     return {
       pull: point.pull ?? null,

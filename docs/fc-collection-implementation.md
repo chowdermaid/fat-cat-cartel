@@ -7,7 +7,7 @@ FC collection data is sourced from FFXIV Collect and the app's canonical member 
 - **FFXIV Collect** owns collectible catalogs, public ownership percentages, character avatars, and per-character owned item lists.
 - **Realtime Database `/members`** owns the tracked character list. Members are keyed by Lodestone ID and may include FC ranks, including `Friend`.
 - **Lodestone sync** owns member identity fields and job levels. Job levels are displayed near collection data on member profiles, but they are not FC collection data.
-- **Admin and Discord flows** can add tracked people to `/members`; collection data appears after the next FC collection refresh.
+- **Admin and Discord flows** can add tracked people to `/members`; collection data appears after the next daily maintenance refresh or an immediate per-Friend signup refresh.
 
 The frontend never calls FFXIV Collect directly. Firebase Functions fetch external data and write compact Realtime Database snapshots.
 
@@ -15,14 +15,14 @@ The frontend never calls FFXIV Collect directly. Firebase Functions fetch extern
 
 Collection functions:
 
-- `refreshFCCollection`: scheduled every 3 hours at `0 */3 * * *`.
+- `dailyMaintenance`: scheduled daily at `0 8 * * *` Australia/Sydney and runs the FC collection refresh alongside Tomestone and Discord planner sync.
 - `triggerFCCollectionRefresh`: callable admin refresh.
 - `refreshMemberSource`: callable admin per-member refresh. Use source `collection`.
 - No Firebase Function secrets are required for collection refresh.
 
 Related functions:
 
-- `refreshFriendSignup`: scheduled Discord Friend signup worker. It refreshes collection data for a newly signed-up Friend alongside Lodestone, Tomestone, and FFLogs.
+- `refreshFriendSignup`: event-driven Discord Friend signup worker. It refreshes collection data for a newly signed-up Friend alongside Lodestone, Tomestone, and FFLogs when `/friendRefreshQueue/{jobId}` is created.
 - `deleteMember`: callable admin deletion. It removes generated collection data for the deleted character and writes a member exclusion to prevent later reimport.
 - `upsertMember`: callable admin add or restore. It clears any existing member exclusion.
 
@@ -128,7 +128,7 @@ On a per-member fetch failure, the function keeps the previous owned arrays and 
 Single-member collection refresh:
 
 - `runRefreshFCCollectionMember(lodestoneId)` refreshes collection data for one tracked character.
-- It is used by the Discord Friend signup queue worker so new Friends can get collection data without waiting for the next full 3-hour scheduled refresh.
+- It is used by the Discord Friend signup queue worker so new Friends can get collection data without waiting for the next daily maintenance refresh.
 - It writes `/fcCollection/memberData/{lodestoneId}` only. Catalog refresh remains owned by the full collection refresh.
 
 ## Lodestone Job Levels
@@ -261,7 +261,7 @@ Mount roulette:
 Discord profile status:
 
 - `/friend status` reads `/fcCollection/memberData/{lodestoneId}` to report whether collection cache exists.
-- Friend signup tells users collection data appears after the next collection refresh.
+- Friend signup queues an immediate per-Friend refresh for collection data.
 
 Admin panel:
 

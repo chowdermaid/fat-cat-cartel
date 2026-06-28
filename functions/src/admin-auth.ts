@@ -22,6 +22,11 @@ export interface AdminAuthConfig {
   appOrigin: string;
 }
 
+export type AdminOAuthStartConfig = Pick<
+  AdminAuthConfig,
+  "clientId" | "redirectUri" | "appOrigin"
+>;
+
 export interface AdminSession {
   discordUserId: string;
   lodestoneId: string;
@@ -182,7 +187,9 @@ function redirectToApp(
   return url.toString();
 }
 
-function cookieIsSecure(config: AdminAuthConfig): boolean {
+function cookieIsSecure(
+  config: Pick<AdminAuthConfig, "redirectUri" | "appOrigin">,
+): boolean {
   return (
     config.redirectUri.startsWith("https://") &&
     config.appOrigin.startsWith("https://")
@@ -327,7 +334,7 @@ async function exchangeCode(
 }
 
 export async function startDiscordAdminOAuth(
-  config: AdminAuthConfig,
+  config: AdminOAuthStartConfig,
   req: { query: Record<string, unknown> },
   res: {
     cookie: (
