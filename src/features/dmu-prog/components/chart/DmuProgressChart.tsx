@@ -252,7 +252,7 @@ export function DmuProgressChart({
             {endpointGroups.map((group) => (
               <ReferenceDot
                 key={`${group.pull}-${group.percent}`}
-                x={group.pull}
+                x={group.pull - 2}
                 y={group.percent}
                 ifOverflow="extendDomain"
                 shape={(props) => (
