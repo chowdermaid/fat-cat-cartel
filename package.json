@@ -30,6 +30,7 @@
     "echarts-for-react": "^3.0.6",
     "embla-carousel-react": "^8.6.0",
     "firebase": "^12.11.0",
+    "graphify": "^1.0.0",
     "lucide-react": "^1.16.0",
     "react": "^19.2.4",
     "react-country-flag": "^3.1.0",
