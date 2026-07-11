@@ -738,6 +738,28 @@ function parseEnabled(value: unknown): boolean {
   return value === undefined ? true : value === true;
 }
 
+async function readAccessEntry(
+  discordUserId: string,
+): Promise<GameServerAccessEntry | null> {
+  const snapshot = await admin
+    .database()
+    .ref(`gameServerAccess/${discordUserId}`)
+    .get();
+  const entry = snapshot.val() as Partial<GameServerAccessEntry> | null;
+  if (!entry || typeof entry !== "object") return null;
+  if (entry.discordUserId !== discordUserId) return null;
+  return {
+    discordUserId,
+    displayName:
+      typeof entry.displayName === "string" ? entry.displayName : discordUserId,
+    enabled: entry.enabled === true,
+    notes: typeof entry.notes === "string" && entry.notes ? entry.notes : null,
+    addedBy: typeof entry.addedBy === "string" ? entry.addedBy : "",
+    addedAt: typeof entry.addedAt === "number" ? entry.addedAt : 0,
+    updatedAt: typeof entry.updatedAt === "number" ? entry.updatedAt : 0,
+  };
+}
+
 export async function requireGameServerAccess(
   session: VerifiedAdminSession,
 ): Promise<VerifiedAdminSession & { gameServerAccess: GameServerAccessEntry | null }> {
@@ -745,9 +767,14 @@ export async function requireGameServerAccess(
     return { ...session, gameServerAccess: null };
   }
 
+  const entry = await readAccessEntry(session.discordUserId);
+  if (entry?.enabled) {
+    return { ...session, gameServerAccess: entry };
+  }
+
   throw new HttpsError(
     "permission-denied",
-    "Boss or Underpaw Discord role required.",
+    "Game server whitelist required.",
   );
 }
 

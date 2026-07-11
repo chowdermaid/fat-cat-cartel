@@ -101,7 +101,7 @@ export function AppSidebar() {
     ? toolItems
     : toolItems.filter(
         (item) =>
-          item.to !== "/gameserver" &&
+          (item.to !== "/gameserver" || auth.authed || auth.checking) &&
           (item.to !== "/meowketboard" || auth.authed || auth.checking),
       );
 

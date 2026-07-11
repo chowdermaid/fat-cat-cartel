@@ -153,5 +153,6 @@
   "151": "adminFunctions.ts",
   "152": "adminFunctions.ts",
   "153": "profile.ts",
-  "154": "adminFunctions.ts"
+  "154": "adminFunctions.ts",
+  "155": "verifyDiscordRequest"
 }

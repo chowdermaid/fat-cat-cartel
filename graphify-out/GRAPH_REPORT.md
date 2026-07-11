@@ -1,16 +1,16 @@
 # Graph Report - fat-cat-cartel  (2026-07-11)
 
 ## Corpus Check
-- 387 files · ~2,007,283 words
+- 387 files · ~2,007,400 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2448 nodes · 4821 edges · 155 communities (135 shown, 20 thin omitted)
+- 2449 nodes · 4823 edges · 156 communities (135 shown, 21 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2176d308`
+- Built from commit: `309a7f73`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -154,6 +154,7 @@
 - adminFunctions.ts
 - profile.ts
 - adminFunctions.ts
+- verifyDiscordRequest
 
 ## God Nodes (most connected - your core abstractions)
 1. `formatGil()` - 35 edges
@@ -182,7 +183,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (155 total, 20 thin omitted)
+## Communities (156 total, 21 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -209,12 +210,12 @@ Cohesion: 0.10
 Nodes (36): fetchDmuProgress(), triggerDmuProgressRefresh(), DmuRecentActivity(), DmuChartStats(), DmuChartTooltip(), formatPullDuration(), DmuEndpointAvatarMark(), DmuProgressChart() (+28 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.10
-Nodes (30): hasAnyRole(), ButtonStyle, clearChannelErrorMessage(), ClearChannelResult, clearChannelResultMessage(), clearRecentChannelMessages(), ComponentType, confirmClearChannelComponents() (+22 more)
+Cohesion: 0.11
+Nodes (28): hasAnyRole(), ButtonStyle, clearChannelErrorMessage(), ClearChannelResult, clearChannelResultMessage(), clearRecentChannelMessages(), ComponentType, confirmClearChannelComponents() (+20 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.06
-Nodes (37): ActivityChartType, COLLECTIBLE_META, dayKey(), displayJobName(), EMPTY_PROFILE, EmptyChart(), encodeBirthday(), fmtRdps() (+29 more)
+Nodes (38): ActivityChartType, COLLECTIBLE_META, dayKey(), displayJobName(), EMPTY_PROFILE, EmptyChart(), encodeBirthday(), favoriteOptions() (+30 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.06
@@ -413,8 +414,8 @@ Cohesion: 0.24
 Nodes (9): saveOwnMemberProfile(), useProfileEditor(), ActivityChartType, CraftingProfileStats, MemberProfile, ProfileParseType, encodeBirthday(), parseBirthday() (+1 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.16
-Nodes (12): activityLabel(), buildActivitySummary(), favoriteById(), favoriteContentIcon(), favoriteOptions(), findRarest(), formatBirthday(), isCollectible() (+4 more)
+Cohesion: 0.18
+Nodes (11): activityLabel(), buildActivitySummary(), favoriteById(), favoriteContentIcon(), findRarest(), formatBirthday(), isCollectible(), MemberProfilePage() (+3 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.26
@@ -454,7 +455,7 @@ Nodes (10): CollectiblesData, CraftingProfileStats, DbSnapshot, EMPTY_CRAFTING_S
 
 ### Community 67 - "Community 67"
 Cohesion: 0.27
-Nodes (10): memberSyncError(), decodeHtml(), JOB_ALIASES, LodestoneEntry, parseCharacterPage(), parseJobLevels(), runScrapeLodestone(), srcFromImgTag() (+2 more)
+Nodes (11): memberSyncError(), decodeHtml(), fetchLodestoneCharacter(), JOB_ALIASES, LodestoneEntry, parseCharacterPage(), parseJobLevels(), runScrapeLodestone() (+3 more)
 
 ### Community 68 - "Community 68"
 Cohesion: 0.24
@@ -593,8 +594,8 @@ Cohesion: 0.08
 Nodes (43): callGameServerFunction(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), GameServerCard, GameServerIndexPage() (+35 more)
 
 ### Community 138 - "profile.ts"
-Cohesion: 0.08
-Nodes (39): amzDate(), cleanText(), cloudWatchQuery(), dateStamp(), deleteGameServerAccessForAdmin(), escapeCloudWatchSearch(), GAME_SERVERS, GameServerAccessEntry (+31 more)
+Cohesion: 0.07
+Nodes (48): amzDate(), cleanText(), cloudWatchQuery(), dateStamp(), deleteGameServerAccessForAdmin(), disabledStatus(), escapeCloudWatchSearch(), GAME_SERVERS (+40 more)
 
 ### Community 139 - "Meowket Board Implementation"
 Cohesion: 0.13
@@ -649,12 +650,12 @@ Cohesion: 0.24
 Nodes (11): deleteGameServerAccess(), emptyGameServerAccessEntry(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAuditLog(), updateGameServerSettings(), upsertGameServerAccess() (+3 more)
 
 ### Community 152 - "adminFunctions.ts"
-Cohesion: 0.11
-Nodes (30): assertAwsConfig(), assertServerEnabled(), auditEntryFromValue(), connectAddress(), describePalworldInstance(), disabledStatus(), ec2Client(), getGameServerSettingsForAdmin() (+22 more)
+Cohesion: 0.15
+Nodes (22): assertAwsConfig(), assertServerEnabled(), auditEntryFromValue(), connectAddress(), describePalworldInstance(), ec2Client(), hostForInstance(), listGameServerAuditLog() (+14 more)
 
 ### Community 153 - "profile.ts"
-Cohesion: 0.24
-Nodes (16): CommandResult, fail(), findLinkConflict(), getLinkedLodestoneId(), isValidLodestoneId(), linkDiscordUser(), MemberProfile, signupFriend() (+8 more)
+Cohesion: 0.26
+Nodes (15): CommandResult, fail(), findLinkConflict(), getLinkedLodestoneId(), isValidLodestoneId(), linkDiscordUser(), MemberProfile, signupFriend() (+7 more)
 
 ### Community 154 - "adminFunctions.ts"
 Cohesion: 1.00
@@ -663,16 +664,16 @@ Nodes (3): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId()
 ## Knowledge Gaps
 - **808 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+803 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **21 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `progress()` connect `Community 9` to `Community 8`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
 - **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `firebase` connect `Community 8` to `Community 24`?**
   _High betweenness centrality (0.034) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
   _808 weakly-connected nodes found - possible documentation gaps or missing edges._

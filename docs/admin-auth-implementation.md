@@ -73,7 +73,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, and favorite content type. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
 - Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
-- Linked Boss and Underpaw admin sessions can open `/gameserver`; non-admin members are blocked even if a legacy `/gameServerAccess` entry exists.
+- Linked sessions with a configured member role can open `/gameserver` only when their Discord ID is enabled in `/gameServerAccess`; Boss and Underpaw admin sessions bypass that game-server whitelist.
 - Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
 - The admin client feature follows the standard feature structure under `src/features/admin`: the route export stays thin in `index.tsx`, callable helpers live in `api/`, stateful orchestration lives in `hooks/`, pure display/cache/auth helpers live in `utils/`, and admin UI is grouped under `components/`.

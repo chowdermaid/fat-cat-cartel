@@ -261,10 +261,7 @@ export function PalworldServerPage() {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to refresh Palworld.";
-      if (
-        message.toLowerCase().includes("boss") ||
-        message.toLowerCase().includes("underpaw")
-      ) {
+      if (message.toLowerCase().includes("whitelist")) {
         setAccessDenied(true);
         return null;
       }
@@ -368,8 +365,8 @@ export function PalworldServerPage() {
     return (
       <AuthAccessState
         title="Palworld Server"
-        description="This page is limited to Boss and Underpaw admins."
-        error="Boss or Underpaw Discord role required."
+        description="This page requires Boss or Underpaw access, or an enabled game server whitelist entry."
+        error="Game server whitelist required."
         showLogin={false}
       />
     );
@@ -379,8 +376,8 @@ export function PalworldServerPage() {
     return (
       <AuthAccessState
         title="Palworld Server"
-        description="This page is limited to Boss and Underpaw admins."
-        error="Boss or Underpaw Discord role required."
+        description="This page requires Boss or Underpaw access, or an enabled game server whitelist entry."
+        error="Game server whitelist required."
         showLogin={false}
       />
     );

@@ -12,7 +12,7 @@ export function useGameServerAuth(): GameServerAccessState {
   return {
     authed: auth.authed,
     checking: auth.checking,
-    canUseGameServers: auth.authed && auth.session?.isAdmin === true,
+    canUseGameServers: auth.authed,
     sessionToken: auth.sessionToken,
     session: auth.session,
     login: auth.login,

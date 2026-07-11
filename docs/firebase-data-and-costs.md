@@ -58,7 +58,7 @@ Important RTDB paths:
 - `/birthdayNotifications/{yyyy-mm-dd}/{lodestoneId}`: scheduled Discord birthday notification guard and send status.
 - `/adminOAuthStates/{stateHash}`: short-lived hashed Discord OAuth state records.
 - `/adminSessions/{sessionIdHash}`: hashed web session records.
-- `/gameServerAccess/{discordUserId}`: legacy game-server whitelist entries keyed by Discord ID. Current game-server page access is limited to Boss and Underpaw admins only.
+- `/gameServerAccess/{discordUserId}`: game-server whitelist entries keyed by Discord ID. Boss and Underpaw admins bypass this whitelist in Functions.
 - `/gameServerSettings/{serverId}`: admin-owned game-server availability settings. Palworld uses `enabled`, optional `disabledMessage`, `updatedAt`, and `updatedBy`.
 - `/gameServerIdleState/{serverId}`: small auto-stop state for idle countdown. Palworld stores `idleSince`, `autoStopEligibleAt`, and `updatedAt`.
 - `/gameServerAuditLog/{serverId}/{logId}`: bounded game-server start/stop audit entries. The app keeps the newest 50 entries per server and shows the newest 25 to admins.
@@ -106,9 +106,9 @@ Functions are exported from `functions/src/index.ts`.
 - `searchMeowketItems`: callable admin XIVAPI craftable item search for Meowket Board. It returns compact item results and writes no Firebase data.
 - `calculateMeowketProfit`: callable admin XIVAPI recipe/material resolver and Universalis price lookup for Meowket Board. Optional child material mode adds bounded XIVAPI recipe lookups, batches item IDs per world, times out external API calls, and writes no Firebase data.
 - `discordInteractions`: HTTP Discord slash-command handler for linking, friend signup/status, profile view, and admin-only `/clear-channel`. Clearing a channel writes no Firebase data and calls Discord message APIs in batches.
-- `getGameServers` and `getGameServerStatus`: callable game-server reads. They require an existing linked admin session with Boss or Underpaw admin role. Reads are manual except the bounded start-wait polling after a user clicks Start.
-- `startGameServer` and `stopGameServer`: callable Palworld EC2 controls. They require the same Boss or Underpaw admin access, use AWS credentials only inside Functions, respect `/gameServerSettings/palworld/enabled`, and write one `/gameServerAuditLog/palworld` entry per authorized start/stop request.
-- `listGameServerEvents`: callable game-server audit read for Boss or Underpaw admins. It returns the newest Palworld action entries and does not use AWS credentials.
+- `getGameServers` and `getGameServerStatus`: callable game-server reads. They require the existing linked admin/member session plus Boss/Underpaw admin bypass or enabled `/gameServerAccess` entry. Reads are manual except the bounded start-wait polling after a user clicks Start.
+- `startGameServer` and `stopGameServer`: callable Palworld EC2 controls. They require the same linked-session game-server access, use AWS credentials only inside Functions, respect `/gameServerSettings/palworld/enabled`, and write one `/gameServerAuditLog/palworld` entry per authorized start/stop request.
+- `listGameServerEvents`: callable game-server audit read for allowed game-server users. It returns the newest Palworld action entries and does not use AWS credentials.
 - `getGameServerSettings` and `updateGameServerSettings`: callable admin game-server settings management. Updates write a settings audit entry and do not use AWS credentials.
 - `listGameServerAccess`, `upsertGameServerAccess`, and `deleteGameServerAccess`: callable admin whitelist management.
 - `listGameServerAuditLog`: callable admin audit-log read. It returns the newest Palworld action entries and does not use AWS credentials.

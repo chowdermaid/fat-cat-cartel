@@ -51,10 +51,7 @@ export function GameServerIndexPage() {
         if (cancelled) return;
         const message =
           err instanceof Error ? err.message : "Failed to load game servers.";
-        if (
-          message.toLowerCase().includes("boss") ||
-          message.toLowerCase().includes("underpaw")
-        ) {
+        if (message.toLowerCase().includes("whitelist")) {
           setAccessDenied(true);
           setServerError(null);
           return;
@@ -84,8 +81,8 @@ export function GameServerIndexPage() {
     return (
       <AuthAccessState
         title="Game Servers"
-        description="This page is limited to Boss and Underpaw admins."
-        error="Boss or Underpaw Discord role required."
+        description="This page requires Boss or Underpaw access, or an enabled game server whitelist entry."
+        error="Game server whitelist required."
         showLogin={false}
       />
     );
@@ -95,8 +92,8 @@ export function GameServerIndexPage() {
     return (
       <AuthAccessState
         title="Game Servers"
-        description="This page is limited to Boss and Underpaw admins."
-        error="Boss or Underpaw Discord role required."
+        description="This page requires Boss or Underpaw access, or an enabled game server whitelist entry."
+        error="Game server whitelist required."
         showLogin={false}
       />
     );
