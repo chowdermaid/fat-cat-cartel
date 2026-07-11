@@ -9,6 +9,7 @@ import {
   Home,
   Library,
   Moon,
+  Server,
   ShieldUser,
   Sun,
   Users,
@@ -48,6 +49,7 @@ const toolItems = [
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
   { label: "Crafting Board", to: "/craftingboard", icon: Hammer },
   { label: "Meowket Board", to: "/meowketboard", icon: HandCoins },
+  { label: "Game Servers", to: "/gameserver", icon: Server },
 ] as const;
 
 const bottomItems = [
@@ -98,7 +100,9 @@ export function AppSidebar() {
   const visibleToolItems = auth.sessionWasAdmin
     ? toolItems
     : toolItems.filter(
-        (item) => item.to !== "/meowketboard" || auth.authed || auth.checking,
+        (item) =>
+          item.to !== "/gameserver" &&
+          (item.to !== "/meowketboard" || auth.authed || auth.checking),
       );
 
   return (

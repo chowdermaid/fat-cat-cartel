@@ -2,7 +2,10 @@ import type { Member } from "@/types";
 import type { Participant } from "@/types";
 import type { FavoriteCollectibleOption } from "@/features/member-profile/FavoriteCollectiblePicker";
 
-export type SelectedAdminView = "easter2026" | "fc-members";
+export type SelectedAdminView =
+  | "easter2026"
+  | "fc-members"
+  | "game-server-access";
 
 export type AdminAuthState = "checking" | "authed" | "login" | "unauthorized";
 

@@ -28,6 +28,8 @@ Required Functions config and secrets:
 
 The Discord Developer Portal redirect URI must exactly match `DISCORD_REDIRECT_URI`, which should point at `discordAdminOAuthCallback`.
 
+Game server pages reuse this same linked member/admin OAuth flow. There is no separate game-server OAuth callback and `DISCORD_GAME_SERVER_REDIRECT_URI` is not required.
+
 Underpaw users do not need Discord Administrator permission. The backend does not check Discord permission bits, role names, or FC rank for admin authorization. A user is an admin only when their current Discord guild member role IDs include one of the configured Boss or Underpaw role IDs. Non-admin member roles allow login and self-profile editing, but not admin navigation or admin callables.
 
 Housecat calendar event requests require a normal member session plus the configured `DISCORD_HOUSECAT_ROLE_ID`. Housecat authorization does not grant admin access.
@@ -71,6 +73,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, and favorite content type. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
 - Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
+- Linked Boss and Underpaw admin sessions can open `/gameserver`; non-admin members are blocked even if a legacy `/gameServerAccess` entry exists.
 - Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
 - The admin client feature follows the standard feature structure under `src/features/admin`: the route export stays thin in `index.tsx`, callable helpers live in `api/`, stateful orchestration lives in `hooks/`, pure display/cache/auth helpers live in `utils/`, and admin UI is grouped under `components/`.
@@ -220,6 +223,7 @@ Manual checks:
 - Browser attempts to edit another member's profile fail because self profile updates derive Lodestone ID from the verified session.
 - Logout deletes the server session.
 - Direct browser RTDB writes fail for admin-owned paths.
+- Game-server access requires a linked member/admin session; unlinked Discord users cannot use `/gameserver`.
 - Public members, collection, raid stats, and Easter scoreboard reads still work.
 - Discord friend signup, linking, status, and profile view slash commands still work. Profile editing slash commands were removed because profile edits now live on the website.
 - Discord `/clear-channel` denies non-admin members, requires confirmation from the initiating admin, cancels without deleting, and reports that messages older than 14 days may remain.

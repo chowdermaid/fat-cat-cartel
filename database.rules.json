@@ -49,6 +49,16 @@
       ".write": false
     },
 
+    "gameServerAccess": {
+      ".read": false,
+      ".write": false
+    },
+
+    "gameServerAuditLog": {
+      ".read": false,
+      ".write": false
+    },
+
     "raidStats": {
       ".read": true,
       ".write": false

@@ -52,6 +52,22 @@ import {
   searchMeowketItemsForAdmin,
 } from "./meowket-board";
 import { runSendBirthdayWishes } from "./birthday-notifications";
+import {
+  deleteGameServerAccessForAdmin,
+  getGameServerSettingsForAdmin,
+  getGameServerStatusForSession,
+  listGameServerAuditLogForSession,
+  listGameServerAuditLogForAdmin,
+  listGameServerAccessForAdmin,
+  listGameServersForSession,
+  parsePort,
+  requireGameServerAccess,
+  runAutoStopIdleGameServers,
+  startGameServerForSession,
+  stopGameServerForSession,
+  updateGameServerSettingsForAdmin,
+  upsertGameServerAccessForAdmin,
+} from "./game-servers";
 
 const DEFAULT_DATABASE_URL =
   "https://fat-cat-cartel-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -80,6 +96,15 @@ const discordGeneralChannelId = defineString("DISCORD_GENERAL_CHANNEL_ID");
 const raidHelperApiKey = defineSecret("RAID_HELPER_API_KEY");
 const raidHelperTemplateId = defineString("RAID_HELPER_TEMPLATE_ID");
 const adminAppOrigin = defineString("ADMIN_APP_ORIGIN");
+const awsRegion = defineString("AWS_REGION", { default: "ap-southeast-2" });
+const palworldInstanceId = defineString("PALWORLD_INSTANCE_ID");
+const palworldGamePort = defineString("PALWORLD_GAME_PORT", { default: "8211" });
+const palworldQueryPort = defineString("PALWORLD_QUERY_PORT", { default: "27015" });
+const palworldCloudWatchNamespace = defineString("PALWORLD_CLOUDWATCH_NAMESPACE", {
+  default: "CWAgent",
+});
+const awsAccessKeyId = defineSecret("AWS_ACCESS_KEY_ID");
+const awsSecretAccessKey = defineSecret("AWS_SECRET_ACCESS_KEY");
 const raidHelperFallbackLeaderId = defineString(
   "RAID_HELPER_FALLBACK_LEADER_ID",
   {
@@ -184,6 +209,18 @@ function birthdayNotificationConfig() {
   return {
     botToken: discordBotToken.value(),
     channelId: discordGeneralChannelId.value(),
+  };
+}
+
+function gameServerAwsConfig() {
+  return {
+    region: awsRegion.value(),
+    instanceId: palworldInstanceId.value(),
+    accessKeyId: awsAccessKeyId.value(),
+    secretAccessKey: awsSecretAccessKey.value(),
+    gamePort: parsePort(palworldGamePort.value(), 8211),
+    queryPort: parsePort(palworldQueryPort.value(), 27015),
+    cloudWatchNamespace: palworldCloudWatchNamespace.value() || "CWAgent",
   };
 }
 
@@ -596,6 +633,193 @@ export const calculateMeowketProfit = onCall(
 export const logoutAdminSession = onCall(
   { cors: true, timeoutSeconds: 30, region: "us-central1" },
   async (request) => logoutAdminSessionForToken(request.data),
+);
+
+export const getGameServers = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken, awsAccessKeyId, awsSecretAccessKey],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const accessSession = await requireGameServerAccess(session);
+    return listGameServersForSession(accessSession, gameServerAwsConfig());
+  },
+);
+
+export const getGameServerStatus = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken, awsAccessKeyId, awsSecretAccessKey],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const accessSession = await requireGameServerAccess(session);
+    return getGameServerStatusForSession(
+      request.data,
+      accessSession,
+      gameServerAwsConfig(),
+    );
+  },
+);
+
+export const startGameServer = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken, awsAccessKeyId, awsSecretAccessKey],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const accessSession = await requireGameServerAccess(session);
+    return startGameServerForSession(
+      request.data,
+      accessSession,
+      gameServerAwsConfig(),
+    );
+  },
+);
+
+export const stopGameServer = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken, awsAccessKeyId, awsSecretAccessKey],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const accessSession = await requireGameServerAccess(session);
+    return stopGameServerForSession(
+      request.data,
+      accessSession,
+      gameServerAwsConfig(),
+    );
+  },
+);
+
+export const listGameServerEvents = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const accessSession = await requireGameServerAccess(session);
+    return listGameServerAuditLogForSession(request.data, accessSession);
+  },
+);
+
+export const autoStopIdleGameServers = onSchedule(
+  {
+    schedule: "*/10 * * * *",
+    secrets: [awsAccessKeyId, awsSecretAccessKey],
+    timeoutSeconds: 60,
+    region: "us-central1",
+  },
+  async () => {
+    await runAutoStopIdleGameServers(gameServerAwsConfig());
+  },
+);
+
+export const getGameServerSettings = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return getGameServerSettingsForAdmin();
+  },
+);
+
+export const updateGameServerSettings = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireAdminSession(request.data, adminAuthConfig());
+    return updateGameServerSettingsForAdmin(request.data, session);
+  },
+);
+
+export const listGameServerAccess = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return listGameServerAccessForAdmin();
+  },
+);
+
+export const upsertGameServerAccess = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireAdminSession(request.data, adminAuthConfig());
+    return upsertGameServerAccessForAdmin(request.data, session);
+  },
+);
+
+export const deleteGameServerAccess = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return deleteGameServerAccessForAdmin(request.data);
+  },
+);
+
+export const listGameServerAuditLog = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return listGameServerAuditLogForAdmin(request.data);
+  },
 );
 
 export const updateMemberProfileAdmin = onCall(

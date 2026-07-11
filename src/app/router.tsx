@@ -22,6 +22,10 @@ import { CalendarPage } from "@/features/calendar";
 import { CraftingBoardPage } from "@/features/craftingboard";
 import { MeowketBoardPage } from "@/features/meowket-board";
 import { DmuProgPage } from "@/features/dmu-prog";
+import {
+  GameServerIndexPage,
+  PalworldServerPage,
+} from "@/features/gameserver";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -99,6 +103,18 @@ const meowketBoardRoute = createRoute({
   component: MeowketBoardPage,
 });
 
+const gameServerIndexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gameserver",
+  component: GameServerIndexPage,
+});
+
+const palworldServerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gameserver/palworld",
+  component: PalworldServerPage,
+});
+
 const calendarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calendar",
@@ -136,6 +152,8 @@ const routeTree = rootRoute.addChildren([
   mountRouletteRoute,
   craftingBoardRoute,
   meowketBoardRoute,
+  gameServerIndexRoute,
+  palworldServerRoute,
   calendarRoute,
   adminRoute,
   membersRoute,

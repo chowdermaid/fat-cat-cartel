@@ -3,8 +3,10 @@ import { AuthAccessState } from "@/components/auth/AuthAccessState";
 import { CalendarSyncStatus } from "./calendar/CalendarSyncStatus";
 import { ParticipantManager } from "./easter/ParticipantManager";
 import { FCMembersManager } from "./members/FCMembersManager";
+import { GameServerAccessManager } from "./gameserver/GameServerAccessManager";
 import { AdminHeader } from "./layout/AdminHeader";
 import { EasterEventCard } from "./layout/EasterEventCard";
+import { GameServerAccessCard } from "./layout/GameServerAccessCard";
 import { useAdminAuth } from "../hooks/useAdminAuth";
 import type { SelectedAdminView } from "../types";
 
@@ -62,6 +64,20 @@ export function AdminPage() {
     );
   }
 
+  if (selectedView === "game-server-access") {
+    return (
+      <div className="space-y-6">
+        <AdminHeader
+          title="Game Server Access"
+          description={`Welcome, ${session?.characterName ?? "admin"}. Manage Discord whitelist entries.`}
+          onBack={() => setSelectedView("fc-members")}
+          onLogout={logout}
+        />
+        <GameServerAccessManager adminSessionToken={sessionToken} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <AdminHeader
@@ -74,7 +90,12 @@ export function AdminPage() {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <CalendarSyncStatus adminSessionToken={sessionToken} />
-        <EasterEventCard onManage={() => setSelectedView("easter2026")} />
+        <div className="grid gap-4">
+          <GameServerAccessCard
+            onManage={() => setSelectedView("game-server-access")}
+          />
+          <EasterEventCard onManage={() => setSelectedView("easter2026")} />
+        </div>
       </div>
     </div>
   );

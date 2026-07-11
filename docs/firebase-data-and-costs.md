@@ -58,6 +58,10 @@ Important RTDB paths:
 - `/birthdayNotifications/{yyyy-mm-dd}/{lodestoneId}`: scheduled Discord birthday notification guard and send status.
 - `/adminOAuthStates/{stateHash}`: short-lived hashed Discord OAuth state records.
 - `/adminSessions/{sessionIdHash}`: hashed web session records.
+- `/gameServerAccess/{discordUserId}`: legacy game-server whitelist entries keyed by Discord ID. Current game-server page access is limited to Boss and Underpaw admins only.
+- `/gameServerSettings/{serverId}`: admin-owned game-server availability settings. Palworld uses `enabled`, optional `disabledMessage`, `updatedAt`, and `updatedBy`.
+- `/gameServerIdleState/{serverId}`: small auto-stop state for idle countdown. Palworld stores `idleSince`, `autoStopEligibleAt`, and `updatedAt`.
+- `/gameServerAuditLog/{serverId}/{logId}`: bounded game-server start/stop audit entries. The app keeps the newest 50 entries per server and shows the newest 25 to admins.
 - `/discordLinks/{discordUserId}` and `/discordLinksByLodestone/{lodestoneId}`: Discord link records.
 - `/memberExclusions/{lodestoneId}`: admin-deleted members that should not be reimported.
 - `/friendRefreshQueue/{jobId}`: queued Discord Friend signup refresh jobs.
@@ -102,8 +106,63 @@ Functions are exported from `functions/src/index.ts`.
 - `searchMeowketItems`: callable admin XIVAPI craftable item search for Meowket Board. It returns compact item results and writes no Firebase data.
 - `calculateMeowketProfit`: callable admin XIVAPI recipe/material resolver and Universalis price lookup for Meowket Board. Optional child material mode adds bounded XIVAPI recipe lookups, batches item IDs per world, times out external API calls, and writes no Firebase data.
 - `discordInteractions`: HTTP Discord slash-command handler for linking, friend signup/status, profile view, and admin-only `/clear-channel`. Clearing a channel writes no Firebase data and calls Discord message APIs in batches.
+- `getGameServers` and `getGameServerStatus`: callable game-server reads. They require an existing linked admin session with Boss or Underpaw admin role. Reads are manual except the bounded start-wait polling after a user clicks Start.
+- `startGameServer` and `stopGameServer`: callable Palworld EC2 controls. They require the same Boss or Underpaw admin access, use AWS credentials only inside Functions, respect `/gameServerSettings/palworld/enabled`, and write one `/gameServerAuditLog/palworld` entry per authorized start/stop request.
+- `listGameServerEvents`: callable game-server audit read for Boss or Underpaw admins. It returns the newest Palworld action entries and does not use AWS credentials.
+- `getGameServerSettings` and `updateGameServerSettings`: callable admin game-server settings management. Updates write a settings audit entry and do not use AWS credentials.
+- `listGameServerAccess`, `upsertGameServerAccess`, and `deleteGameServerAccess`: callable admin whitelist management.
+- `listGameServerAuditLog`: callable admin audit-log read. It returns the newest Palworld action entries and does not use AWS credentials.
+- `autoStopIdleGameServers`: scheduled Palworld idle guard. It runs every 10 minutes, skips when Palworld is disabled, and only stops the configured instance after 30 continuous minutes with zero confirmed players.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
+
+## Game Server Cost Notes
+
+- `/gameserver` and `/gameserver/palworld` use callable Functions for on-demand status only.
+- Game-server pages reuse `admin_session_token`; `DISCORD_GAME_SERVER_REDIRECT_URI` is not required.
+- Manual refresh calls one Function, one EC2 describe request, a Palworld query request when running, and CloudWatch metric reads when running.
+- Start polling calls status every 10 seconds for up to 8 minutes after a user clicks Start.
+- Start and stop each call one Function, one or more EC2 requests, and one small audit-log write.
+- The auto-stop scheduler runs every 10 minutes. It resets idle state when the server is not running, when players are online, or when player count is unavailable.
+- There are no client RTDB listeners or frontend AWS SDK imports for game-server control.
+- Required AWS IAM actions are `ec2:DescribeInstances`, `ec2:StartInstances`, `ec2:StopInstances`, and CloudWatch metric read access such as `cloudwatch:GetMetricData`. No terminate or delete operation is implemented.
+- For RAM/disk display, two AWS permission surfaces are required:
+
+Firebase Functions AWS user needs CloudWatch read access:
+
+```json
+{
+  "Sid": "AllowReadCloudWatchMetrics",
+  "Effect": "Allow",
+  "Action": [
+    "cloudwatch:GetMetricData",
+    "cloudwatch:GetMetricStatistics",
+    "cloudwatch:ListMetrics"
+  ],
+  "Resource": "*"
+}
+```
+
+The Palworld EC2 instance role needs CloudWatch Agent write access so RAM/disk metrics are published. Prefer attaching AWS managed policy `CloudWatchAgentServerPolicy` to the instance role. If using an inline policy instead, include:
+
+```json
+{
+  "Sid": "AllowCloudWatchAgentMetrics",
+  "Effect": "Allow",
+  "Action": [
+    "cloudwatch:PutMetricData",
+    "ec2:DescribeVolumes",
+    "ec2:DescribeTags",
+    "logs:PutLogEvents",
+    "logs:CreateLogGroup",
+    "logs:CreateLogStream",
+    "logs:DescribeLogStreams"
+  ],
+  "Resource": "*"
+}
+```
+
+The CloudWatch Agent must publish `mem_used_percent` and `disk_used_percent` under the configured namespace, default `CWAgent`, with an `InstanceId` dimension matching `PALWORLD_INSTANCE_ID`.
 
 ## Related Docs
 

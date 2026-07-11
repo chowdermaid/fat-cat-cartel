@@ -1,11 +1,11 @@
 # Graph Report - fat-cat-cartel  (2026-07-11)
 
 ## Corpus Check
-- 387 files · ~2,007,283 words
+- 387 files · ~2,007,315 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2448 nodes · 4821 edges · 155 communities (135 shown, 20 thin omitted)
+- 2450 nodes · 4825 edges · 154 communities (134 shown, 20 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
@@ -153,7 +153,6 @@
 - adminFunctions.ts
 - adminFunctions.ts
 - profile.ts
-- adminFunctions.ts
 
 ## God Nodes (most connected - your core abstractions)
 1. `formatGil()` - 35 edges
@@ -182,11 +181,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (155 total, 20 thin omitted)
+## Communities (154 total, 20 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (60): CachePayload, CollectiblesValue, DbSnapshot, MembersValue, useFCCollection(), CollectibleDetailDialog(), CollectibleDetailDialogProps, isMount() (+52 more)
+Nodes (59): CachePayload, CollectiblesValue, MembersValue, useFCCollection(), CollectibleDetailDialog(), CollectibleDetailDialogProps, isMount(), animateFilterClick() (+51 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
@@ -245,8 +244,8 @@ Cohesion: 0.15
 Nodes (20): MountRouletteControls(), LoadingSkeleton(), MountRoulettePage(), MountResultDialog(), drawWheel(), SpinWheel(), CAT_POSITIONS, EXPANSIONS (+12 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.14
-Nodes (23): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+15 more)
+Cohesion: 0.11
+Nodes (26): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+18 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.13
@@ -285,8 +284,8 @@ Cohesion: 0.08
 Nodes (25): dependencies, animejs, class-variance-authority, clsx, cmdk, echarts, echarts-for-react, embla-carousel-react (+17 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.15
-Nodes (15): CalendarSyncStatus(), MemberDeleteDialog(), MemberDeleteDialogProps, parseStatus(), useCalendarSyncStatus(), AdminAuthState, AdminPageShellProps, AdminSession (+7 more)
+Cohesion: 0.23
+Nodes (9): CalendarSyncStatus(), MemberSyncToolbar(), MemberSyncToolbarProps, parseStatus(), useCalendarSyncStatus(), CalendarSyncStatusProps, CalendarSyncStatusState, DATE_TIME_FORMATTER (+1 more)
 
 ### Community 26 - "Community 26"
 Cohesion: 0.22
@@ -325,8 +324,8 @@ Cohesion: 0.12
 Nodes (15): useScoreboard(), UseScoreboardResult, EventCard(), EventCardProps, PointRule, PrizeRule, HideAndSeekDialog(), instructionImages (+7 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.15
-Nodes (18): MemberRosterTable(), MemberRosterTableProps, StatusCell(), MemberSyncToolbar(), MemberSyncToolbarProps, MemberSyncStatus, SortKey, SourceSyncStatus (+10 more)
+Cohesion: 0.13
+Nodes (22): MemberRosterTable(), MemberRosterTableProps, StatusCell(), AdminAuthState, AdminMember, AdminPageShellProps, AdminSession, AuthSnapshot (+14 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.16
@@ -385,12 +384,12 @@ Cohesion: 0.23
 Nodes (12): ClassifiedLink(), FeaturedToolCard(), excerptBio(), MemberSpotlightCard(), HOME_FEATURED_TOOLS, HomeSpotlightMember, getDailyIndex(), getInitials() (+4 more)
 
 ### Community 50 - "Community 50"
-Cohesion: 0.15
-Nodes (14): formatDate(), KillTimeline(), Props, AllStars, EncounterKey, EncounterProgress, FirstKillData, ParseBuckets (+6 more)
+Cohesion: 0.13
+Nodes (16): formatDate(), KillTimeline(), Props, AllStars, EncounterKey, EncounterProgress, FirstKillData, ParseBuckets (+8 more)
 
 ### Community 51 - "Community 51"
-Cohesion: 0.17
-Nodes (12): CARD_COPY, CARD_ICONS, Props, RaidStatsHome(), EMPTY_ENCOUNTERS, useRaidStatsPageState(), ParseEntry, MemberIdentity (+4 more)
+Cohesion: 0.21
+Nodes (10): CARD_COPY, CARD_ICONS, Props, RaidStatsHome(), EMPTY_ENCOUNTERS, useRaidStatsPageState(), mergeRaidStatsMembers(), ZONE_TABS (+2 more)
 
 ### Community 52 - "Community 52"
 Cohesion: 0.13
@@ -481,8 +480,8 @@ Cohesion: 0.21
 Nodes (8): AdminPage(), AdminHeader(), AdminHeaderProps, EasterEventCard(), EasterEventCardProps, GameServerAccessCard(), GameServerAccessCardProps, SelectedAdminView
 
 ### Community 74 - "Community 74"
-Cohesion: 0.23
-Nodes (8): deleteEasterParticipantAdmin(), upsertEasterParticipantAdmin(), ParticipantCard(), ParticipantCardProps, ParticipantManager(), ParticipantManagerProps, useEasterParticipants(), LocalParticipant
+Cohesion: 0.18
+Nodes (11): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId(), deleteEasterParticipantAdmin(), upsertEasterParticipantAdmin(), ParticipantCard(), ParticipantCardProps, ParticipantManager() (+3 more)
 
 ### Community 75 - "Community 75"
 Cohesion: 0.36
@@ -589,12 +588,12 @@ Cohesion: 0.11
 Nodes (17): Cache Keys, Collectible Types, Cost Notes, Data Sources, Database Shape, FC Collection Implementation, Firebase Functions, Frontend Data Hook (+9 more)
 
 ### Community 137 - "types.ts"
-Cohesion: 0.08
-Nodes (43): callGameServerFunction(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), GameServerCard, GameServerIndexPage() (+35 more)
+Cohesion: 0.07
+Nodes (44): callGameServerFunction(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), GameServerCard, GameServerIndexPage() (+36 more)
 
 ### Community 138 - "profile.ts"
 Cohesion: 0.08
-Nodes (39): amzDate(), cleanText(), cloudWatchQuery(), dateStamp(), deleteGameServerAccessForAdmin(), escapeCloudWatchSearch(), GAME_SERVERS, GameServerAccessEntry (+31 more)
+Nodes (40): amzDate(), cleanText(), cloudWatchQuery(), dateStamp(), deleteGameServerAccessForAdmin(), escapeCloudWatchSearch(), GAME_SERVERS, GameServerAccessEntry (+32 more)
 
 ### Community 139 - "Meowket Board Implementation"
 Cohesion: 0.13
@@ -656,10 +655,6 @@ Nodes (30): assertAwsConfig(), assertServerEnabled(), auditEntryFromValue(), con
 Cohesion: 0.24
 Nodes (16): CommandResult, fail(), findLinkConflict(), getLinkedLodestoneId(), isValidLodestoneId(), linkDiscordUser(), MemberProfile, signupFriend() (+8 more)
 
-### Community 154 - "adminFunctions.ts"
-Cohesion: 1.00
-Nodes (3): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId()
-
 ## Knowledge Gaps
 - **808 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+803 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -670,14 +665,14 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `progress()` connect `Community 9` to `Community 8`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
 - **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `firebase` connect `Community 8` to `Community 24`?**
   _High betweenness centrality (0.034) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
   _808 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.061748195669607056 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06386554621848739 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.07191358024691358 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
