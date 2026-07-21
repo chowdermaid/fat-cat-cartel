@@ -631,7 +631,7 @@ function registerDefaultHandlers(): void {
     assertGameServerAccess(persona);
     return {
       ok: true,
-      entries: readGameServerAuditStore().slice(0, 8),
+      entries: readGameServerAuditStore().slice(0, 5),
     };
   });
 

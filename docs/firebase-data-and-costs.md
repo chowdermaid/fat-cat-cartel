@@ -109,7 +109,7 @@ Functions are exported from `functions/src/index.ts`.
 - `discordInteractions`: HTTP Discord slash-command handler for linking, friend signup/status, profile view, and admin-only `/clear-channel`. Clearing a channel writes no Firebase data and calls Discord message APIs in batches.
 - `getGameServers` and `getGameServerStatus`: callable game-server reads. They require the existing linked admin/member session plus Boss/Underpaw admin bypass or enabled `/gameServerAccess` entry. Reads are manual except the bounded start-wait polling after a user clicks Start.
 - `startGameServer` and `stopGameServer`: callable Palworld EC2 controls. They require the same linked-session game-server access, use AWS credentials only inside Functions, respect `/gameServerSettings/palworld/enabled`, and write one `/gameServerAuditLog/palworld` entry per authorized start/stop request.
-- `listGameServerEvents`: callable game-server audit read for allowed game-server users. It returns the newest Palworld action entries and does not use AWS credentials.
+- `listGameServerEvents`: callable game-server audit read for allowed game-server users. It returns the newest 5 Palworld action entries and does not use AWS credentials.
 - `getGameServerSettings` and `updateGameServerSettings`: callable admin game-server settings management. Updates write a settings audit entry and do not use AWS credentials.
 - `listGameServerAccess`, `upsertGameServerAccess`, and `deleteGameServerAccess`: callable admin whitelist management.
 - `listGameServerAuditLog`: callable admin audit-log read. It returns the newest Palworld action entries and does not use AWS credentials.

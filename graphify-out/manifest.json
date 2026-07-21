@@ -1760,8 +1760,8 @@
     "semantic_hash": "8432458fcdb71476d0ba34f2288c6ecd"
   },
   "src/lib/dev/callables.ts": {
-    "mtime": 1784187436.440891,
-    "ast_hash": "82bc4da51462b9015a038c03d68e51d0",
+    "mtime": 1784614152.2592013,
+    "ast_hash": "32195dd08d43ba0e740254c5e039bcc3",
     "semantic_hash": ""
   },
   "src/lib/dev/craftingRequests.ts": {
@@ -1880,8 +1880,8 @@
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
-    "mtime": 1784187572.4299002,
-    "ast_hash": "1c6015500a5d407293d9cf11c87b7cda",
+    "mtime": 1784614156.3748114,
+    "ast_hash": "f11f6ac2d9196e42a8147432e23e6d8f",
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
@@ -2340,8 +2340,8 @@
     "semantic_hash": ""
   },
   "functions/src/game-servers.ts": {
-    "mtime": 1784613114.9953556,
-    "ast_hash": "941bbe681943c9bcbde12ce48c81062b",
+    "mtime": 1784614141.5398774,
+    "ast_hash": "8bdca619ba2a8f5a32ad5d2ebf703d48",
     "semantic_hash": ""
   },
   "src/features/admin/api/gameServerAccess.ts": {
