@@ -31,6 +31,7 @@ import {
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
+import { useGameServerAuth } from "@/features/gameserver/hooks/useGameServerAuth";
 import fatcathi from "../../assets/fatcathi.png";
 
 const navItems = [
@@ -97,13 +98,14 @@ function NavLink({
 export function AppSidebar() {
   const { isDark, toggle } = useDarkMode();
   const auth = useAdminAuth();
-  const visibleToolItems = auth.sessionWasAdmin
-    ? toolItems
-    : toolItems.filter(
-        (item) =>
-          (item.to !== "/gameserver" || auth.authed || auth.checking) &&
-          (item.to !== "/meowketboard" || auth.authed || auth.checking),
-      );
+  const gameServerAuth = useGameServerAuth();
+  const visibleToolItems = toolItems.filter((item) => {
+    if (item.to === "/gameserver") {
+      return gameServerAuth.sessionWasAllowedGameServers;
+    }
+    if (auth.sessionWasAdmin) return true;
+    return item.to !== "/meowketboard" || auth.authed || auth.checking;
+  });
 
   return (
     <Sidebar>
@@ -157,7 +159,10 @@ export function AppSidebar() {
                 <NavLink
                   key={item.to}
                   {...item}
-                  dim={item.to === "/meowketboard" && auth.checking}
+                  dim={
+                    (item.to === "/meowketboard" && auth.checking) ||
+                    (item.to === "/gameserver" && gameServerAuth.checking)
+                  }
                 />
               ))}
             </SidebarMenu>

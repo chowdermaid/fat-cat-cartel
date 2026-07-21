@@ -1,9 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, Power, RefreshCw, Save, Trash2 } from "lucide-react";
+import {
+  Activity,
+  Power,
+  RefreshCw,
+  Save,
+  ShieldCheck,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,15 +30,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type {
+  GameServerAccessCandidate,
   GameServerAccessEntry,
   GameServerAuditLogEntry,
   GameServerSettings,
 } from "@/features/gameserver/types";
 import {
   deleteGameServerAccess,
-  emptyGameServerAccessEntry,
   getGameServerSettings,
-  listGameServerAccess,
+  listGameServerAccessCandidates,
   listGameServerAuditLog,
   updateGameServerSettings,
   upsertGameServerAccess,
@@ -39,24 +53,81 @@ function formatTimestamp(value: number): string {
   return new Date(value).toLocaleString();
 }
 
-function validateDraft(draft: GameServerAccessEntry): string | null {
-  if (!/^\d{16,24}$/.test(draft.discordUserId.trim())) {
-    return "Discord ID must be 16-24 digits.";
+function rankLabel(value: string | null): string {
+  return value || "Unranked";
+}
+
+function matchesSearch(candidate: GameServerAccessCandidate, search: string): boolean {
+  const query = search.trim().toLowerCase();
+  if (!query) return true;
+  return [
+    candidate.characterName,
+    candidate.displayName,
+    candidate.discordUserId,
+    candidate.lodestoneId,
+    candidate.fcRank ?? "",
+  ]
+    .join(" ")
+    .toLowerCase()
+    .includes(query);
+}
+
+function MemberIdentity({ candidate }: { candidate: GameServerAccessCandidate }) {
+  return (
+    <div className="flex min-w-0 items-center gap-3">
+      {candidate.avatarUrl ? (
+        <img
+          src={candidate.avatarUrl}
+          alt=""
+          className="h-8 w-8 rounded-full object-cover"
+        />
+      ) : (
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+          <span className="text-xs font-medium">
+            {candidate.characterName.slice(0, 1).toUpperCase()}
+          </span>
+        </div>
+      )}
+      <div className="min-w-0">
+        <div className="truncate font-medium">{candidate.characterName}</div>
+        <div className="truncate text-xs text-muted-foreground">
+          {rankLabel(candidate.fcRank)} · {candidate.discordUserId}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AccessStatusBadge({
+  entry,
+  implicit,
+}: {
+  entry: GameServerAccessEntry | null;
+  implicit?: boolean;
+}) {
+  if (implicit) {
+    return (
+      <Badge variant="secondary" className="gap-1">
+        <ShieldCheck className="h-3.5 w-3.5" />
+        Implicit
+      </Badge>
+    );
   }
-  if (!draft.displayName.trim()) {
-    return "Display name is required.";
-  }
-  return null;
+  if (!entry) return <Badge variant="outline">No access</Badge>;
+  return (
+    <Badge variant={entry.enabled ? "secondary" : "outline"}>
+      {entry.enabled ? "Enabled" : "Disabled"}
+    </Badge>
+  );
 }
 
 export function GameServerAccessManager({
   adminSessionToken,
 }: GameServerAccessManagerProps) {
-  const [entries, setEntries] = useState<GameServerAccessEntry[]>([]);
-  const [draft, setDraft] = useState<GameServerAccessEntry>(
-    emptyGameServerAccessEntry(),
-  );
-  const [loading, setLoading] = useState(false);
+  const [candidates, setCandidates] = useState<GameServerAccessCandidate[]>([]);
+  const [legacyEntries, setLegacyEntries] = useState<GameServerAccessEntry[]>([]);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [loadingAccess, setLoadingAccess] = useState(false);
   const [auditEntries, setAuditEntries] = useState<GameServerAuditLogEntry[]>([]);
   const [loadingAudit, setLoadingAudit] = useState(false);
   const [settings, setSettings] = useState<GameServerSettings | null>(null);
@@ -64,25 +135,38 @@ export function GameServerAccessManager({
   const [disabledMessage, setDisabledMessage] = useState("");
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [savingId, setSavingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const editingExisting = useMemo(
-    () => entries.some((entry) => entry.discordUserId === draft.discordUserId),
-    [draft.discordUserId, entries],
+
+  const filteredCandidates = useMemo(
+    () => candidates.filter((candidate) => matchesSearch(candidate, memberSearch)),
+    [candidates, memberSearch],
+  );
+  const explicitCandidates = useMemo(
+    () =>
+      candidates.filter(
+        (candidate) => !candidate.implicitAccess && candidate.accessEntry,
+      ),
+    [candidates],
+  );
+  const implicitCandidates = useMemo(
+    () => candidates.filter((candidate) => candidate.implicitAccess),
+    [candidates],
   );
 
-  async function loadEntries() {
+  async function loadAccessCandidates() {
     if (!adminSessionToken) return;
-    setLoading(true);
+    setLoadingAccess(true);
     try {
-      const result = await listGameServerAccess(adminSessionToken);
-      setEntries(result.entries);
+      const result = await listGameServerAccessCandidates(adminSessionToken);
+      setCandidates(result.candidates);
+      setLegacyEntries(result.legacyEntries);
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to load whitelist.",
+        err instanceof Error ? err.message : "Failed to load Palworld access.",
       );
     } finally {
-      setLoading(false);
+      setLoadingAccess(false);
     }
   }
 
@@ -119,49 +203,29 @@ export function GameServerAccessManager({
   }
 
   useEffect(() => {
-    void loadEntries();
+    void loadAccessCandidates();
     void loadAuditLog();
     void loadSettings();
   }, [adminSessionToken]);
 
-  function editEntry(entry: GameServerAccessEntry) {
-    setDraft({
-      ...entry,
-      notes: entry.notes ?? null,
-    });
-  }
-
-  function resetDraft() {
-    setDraft(emptyGameServerAccessEntry());
-  }
-
-  async function saveDraft() {
-    if (!adminSessionToken) return;
-    const error = validateDraft(draft);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    setSaving(true);
+  async function addCandidate(candidate: GameServerAccessCandidate) {
+    if (!adminSessionToken || candidate.implicitAccess) return;
+    setSavingId(candidate.discordUserId);
     try {
-      const result = await upsertGameServerAccess(adminSessionToken, {
-        discordUserId: draft.discordUserId.trim(),
-        displayName: draft.displayName.trim(),
-        enabled: draft.enabled,
-        notes: draft.notes?.trim() || null,
+      await upsertGameServerAccess(adminSessionToken, {
+        discordUserId: candidate.discordUserId,
+        displayName: candidate.characterName,
+        enabled: true,
+        notes: null,
       });
-      setEntries((current) =>
-        [...current.filter((entry) => entry.discordUserId !== result.entry.discordUserId), result.entry]
-          .sort((a, b) => a.displayName.localeCompare(b.displayName)),
-      );
-      toast.success(`${result.entry.displayName} saved.`);
-      resetDraft();
+      toast.success(`${candidate.characterName} can access Palworld.`);
+      await loadAccessCandidates();
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to save whitelist entry.",
+        err instanceof Error ? err.message : "Failed to add Palworld access.",
       );
     } finally {
-      setSaving(false);
+      setSavingId(null);
     }
   }
 
@@ -170,11 +234,8 @@ export function GameServerAccessManager({
     setDeletingId(entry.discordUserId);
     try {
       await deleteGameServerAccess(adminSessionToken, entry.discordUserId);
-      setEntries((current) =>
-        current.filter((item) => item.discordUserId !== entry.discordUserId),
-      );
-      if (draft.discordUserId === entry.discordUserId) resetDraft();
       toast.success(`${entry.displayName} removed.`);
+      await loadAccessCandidates();
     } catch (err) {
       toast.error(
         err instanceof Error ? err.message : "Failed to delete whitelist entry.",
@@ -186,6 +247,7 @@ export function GameServerAccessManager({
 
   async function toggleEnabled(entry: GameServerAccessEntry) {
     if (!adminSessionToken) return;
+    setSavingId(entry.discordUserId);
     try {
       const result = await upsertGameServerAccess(adminSessionToken, {
         discordUserId: entry.discordUserId,
@@ -193,18 +255,16 @@ export function GameServerAccessManager({
         enabled: !entry.enabled,
         notes: entry.notes,
       });
-      setEntries((current) =>
-        current.map((item) =>
-          item.discordUserId === entry.discordUserId ? result.entry : item,
-        ),
-      );
       toast.success(
         `${result.entry.displayName} ${result.entry.enabled ? "enabled" : "disabled"}.`,
       );
+      await loadAccessCandidates();
     } catch (err) {
       toast.error(
         err instanceof Error ? err.message : "Failed to update whitelist entry.",
       );
+    } finally {
+      setSavingId(null);
     }
   }
 
@@ -297,84 +357,218 @@ export function GameServerAccessManager({
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Whitelist Entry</CardTitle>
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle>Linked Member Access</CardTitle>
+            <CardDescription>
+              Search linked members and grant explicit Palworld access.
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void loadAccessCandidates()}
+            disabled={loadingAccess}
+          >
+            <RefreshCw className="h-4 w-4" />
+            {loadingAccess ? "Refreshing" : "Refresh"}
+          </Button>
         </CardHeader>
-        <CardContent className="grid gap-3 lg:grid-cols-[minmax(12rem,1fr)_minmax(12rem,1fr)_minmax(14rem,2fr)_auto] lg:items-end">
-          <div className="space-y-1.5">
-            <Label htmlFor="game-server-discord-id">Discord ID</Label>
-            <Input
-              id="game-server-discord-id"
-              value={draft.discordUserId}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  discordUserId: event.target.value,
-                }))
-              }
-              placeholder="123456789012345678"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="game-server-display-name">Display Name</Label>
-            <Input
-              id="game-server-display-name"
-              value={draft.displayName}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  displayName: event.target.value,
-                }))
-              }
-              placeholder="Discord name or nickname"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="game-server-notes">Notes</Label>
-            <Input
-              id="game-server-notes"
-              value={draft.notes ?? ""}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  notes: event.target.value || null,
-                }))
-              }
-              placeholder="Optional"
-            />
-          </div>
-          <div className="flex h-10 items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="game-server-enabled"
-                checked={draft.enabled}
-                onCheckedChange={(checked) =>
-                  setDraft((current) => ({
-                    ...current,
-                    enabled: checked === true,
-                  }))
-                }
-              />
-              <Label htmlFor="game-server-enabled" className="text-sm">
-                Enabled
-              </Label>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2 lg:col-span-4">
-            <Button onClick={() => void saveDraft()} disabled={saving}>
-              <Save className="h-4 w-4" />
-              {saving ? "Saving" : editingExisting ? "Save Changes" : "Add Entry"}
-            </Button>
-            <Button variant="outline" onClick={resetDraft} disabled={saving}>
-              Clear
-            </Button>
-          </div>
+        <CardContent className="space-y-4">
+          <Input
+            value={memberSearch}
+            onChange={(event) => setMemberSearch(event.target.value)}
+            placeholder="Search linked members..."
+          />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Member</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCandidates.map((candidate) => (
+                <TableRow key={candidate.discordUserId}>
+                  <TableCell>
+                    <MemberIdentity candidate={candidate} />
+                  </TableCell>
+                  <TableCell>
+                    <AccessStatusBadge
+                      entry={candidate.accessEntry}
+                      implicit={candidate.implicitAccess}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex justify-end gap-2">
+                      {candidate.implicitAccess ? (
+                        <Button size="sm" variant="ghost" disabled>
+                          <ShieldCheck className="h-4 w-4" />
+                          Included
+                        </Button>
+                      ) : candidate.accessEntry ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={savingId === candidate.discordUserId}
+                          onClick={() => void toggleEnabled(candidate.accessEntry!)}
+                        >
+                          {candidate.accessEntry.enabled ? "Disable" : "Enable"}
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          disabled={savingId === candidate.discordUserId}
+                          onClick={() => void addCandidate(candidate)}
+                        >
+                          <UserPlus className="h-4 w-4" />
+                          Add
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {!filteredCandidates.length && (
+                <TableRow>
+                  <TableCell
+                    colSpan={3}
+                    className="py-8 text-center text-muted-foreground"
+                  >
+                    {loadingAccess
+                      ? "Loading linked members..."
+                      : "No linked members match your search."}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Allowed Discord IDs</CardTitle>
+          <CardTitle>Current Explicit Access</CardTitle>
+          <CardDescription>
+            Non-admin linked members who have a Palworld whitelist entry.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Member</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Notes</TableHead>
+                <TableHead>Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {explicitCandidates.map((candidate) => {
+                const entry = candidate.accessEntry!;
+                return (
+                  <TableRow key={entry.discordUserId}>
+                    <TableCell>
+                      <MemberIdentity candidate={candidate} />
+                    </TableCell>
+                    <TableCell>
+                      <AccessStatusBadge entry={entry} />
+                    </TableCell>
+                    <TableCell className="max-w-64 truncate">
+                      {entry.notes ?? "None"}
+                    </TableCell>
+                    <TableCell>{formatTimestamp(entry.updatedAt)}</TableCell>
+                    <TableCell>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={savingId === entry.discordUserId}
+                          onClick={() => void toggleEnabled(entry)}
+                        >
+                          {entry.enabled ? "Disable" : "Enable"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={deletingId === entry.discordUserId}
+                          onClick={() => void removeEntry(entry)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {!explicitCandidates.length && (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    className="py-8 text-center text-muted-foreground"
+                  >
+                    {loadingAccess
+                      ? "Loading explicit access..."
+                      : "No linked members have explicit access yet."}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Implicit Boss / Underpaw Access</CardTitle>
+          <CardDescription>
+            These linked members can access Palworld through their admin role.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Member</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {implicitCandidates.map((candidate) => (
+                <TableRow key={candidate.discordUserId}>
+                  <TableCell>
+                    <MemberIdentity candidate={candidate} />
+                  </TableCell>
+                  <TableCell>
+                    <AccessStatusBadge entry={candidate.accessEntry} implicit />
+                  </TableCell>
+                </TableRow>
+              ))}
+              {!implicitCandidates.length && (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className="py-8 text-center text-muted-foreground"
+                  >
+                    {loadingAccess
+                      ? "Loading implicit access..."
+                      : "No linked Boss or Underpaw members found."}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Legacy Entries</CardTitle>
+          <CardDescription>
+            Existing whitelist rows that are not linked to a tracked member.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -389,16 +583,14 @@ export function GameServerAccessManager({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {entries.map((entry) => (
+              {legacyEntries.map((entry) => (
                 <TableRow key={entry.discordUserId}>
                   <TableCell className="font-medium">
                     {entry.displayName}
                   </TableCell>
                   <TableCell>{entry.discordUserId}</TableCell>
                   <TableCell>
-                    <Badge variant={entry.enabled ? "secondary" : "outline"}>
-                      {entry.enabled ? "Enabled" : "Disabled"}
-                    </Badge>
+                    <AccessStatusBadge entry={entry} />
                   </TableCell>
                   <TableCell className="max-w-64 truncate">
                     {entry.notes ?? "None"}
@@ -409,13 +601,7 @@ export function GameServerAccessManager({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => editEntry(entry)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
+                        disabled={savingId === entry.discordUserId}
                         onClick={() => void toggleEnabled(entry)}
                       >
                         {entry.enabled ? "Disable" : "Enable"}
@@ -432,13 +618,15 @@ export function GameServerAccessManager({
                   </TableCell>
                 </TableRow>
               ))}
-              {!entries.length && (
+              {!legacyEntries.length && (
                 <TableRow>
                   <TableCell
                     colSpan={6}
                     className="py-8 text-center text-muted-foreground"
                   >
-                    {loading ? "Loading whitelist..." : "No whitelist entries yet."}
+                    {loadingAccess
+                      ? "Loading legacy entries..."
+                      : "No legacy entries."}
                   </TableCell>
                 </TableRow>
               )}

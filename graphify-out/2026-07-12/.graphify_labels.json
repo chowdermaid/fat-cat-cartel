@@ -153,6 +153,9 @@
   "151": "adminFunctions.ts",
   "152": "adminFunctions.ts",
   "153": "profile.ts",
-  "154": "adminFunctions.ts",
-  "155": "verifyDiscordRequest"
+  "154": "updateGameServerSettingsForAdmin",
+  "155": "verifyDiscordRequest",
+  "156": "parseServerId",
+  "157": "updateMonthlyCostSnapshot",
+  "158": "adminAuthConfigWithSingleMemberRole"
 }

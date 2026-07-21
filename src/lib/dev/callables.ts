@@ -7,6 +7,7 @@ import {
 } from "./craftingRequests";
 import {
   DEV_AUTH_LAYER_ENABLED,
+  DEV_PERSONAS,
   devPersonaHasCapability,
   devStorageKey,
   getSelectedDevPersona,
@@ -402,7 +403,7 @@ function assertGameServerAccess(persona: DevPersona): void {
 
 function parseDevDiscordId(value: unknown): string {
   const discordUserId = cleanText(value);
-  if (!/^\d{16,24}$/.test(discordUserId)) {
+  if (!/^\d{16,24}$/.test(discordUserId) && !/^dev-[a-z-]+$/.test(discordUserId)) {
     throw new Error("A valid Discord user ID is required.");
   }
   return discordUserId;
@@ -430,6 +431,31 @@ function writeDevGameServerStatus(status: "running" | "stopped"): void {
   );
 }
 
+function devMonthlyCost() {
+  const now = new Date();
+  const monthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+  const previous = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+  const previousMonthKey = `${previous.getUTCFullYear()}-${String(previous.getUTCMonth() + 1).padStart(2, "0")}`;
+  return {
+    monthlyCost: {
+      monthKey,
+      estimatedComputeAud: 4.25,
+      runningHours: 28.3,
+      hourlyRateAud: 0.15,
+      instanceType: "t3a.large",
+      updatedAt: Date.now(),
+    },
+    previousMonthCost: {
+      monthKey: previousMonthKey,
+      estimatedComputeAud: 12.75,
+      runningHours: 85,
+      hourlyRateAud: 0.15,
+      instanceType: "t3a.large",
+      updatedAt: Date.now() - 24 * 60 * 60 * 1000,
+    },
+  };
+}
+
 function devPalworldStatus(serverId = "palworld") {
   const settings = readGameServerSettingsStore();
   if (!settings.enabled) {
@@ -448,16 +474,33 @@ function devPalworldStatus(serverId = "palworld") {
       launchTime: null,
       playerCount: null,
       maxPlayers: null,
+      players: [],
       memoryUsedPercent: null,
       diskUsedPercent: null,
       idleSince: null,
       autoStopEligibleAt: null,
       telemetryCheckedAt: null,
       telemetryMessage: "Telemetry is disabled while Palworld is off.",
+      monthlyCost: null,
+      previousMonthCost: null,
     };
   }
   const status = readDevGameServerStatus();
   const host = status === "running" ? "127.0.0.1" : null;
+  const costs = devMonthlyCost();
+  const players =
+    status === "running"
+      ? [
+          {
+            name: "Chow",
+            accountName: "chow",
+            playerId: "626327D9000000000000000000000000",
+            userId: "steam_76561198069906492",
+            ping: 19.6,
+            level: 8,
+          },
+        ]
+      : [];
   return {
     ok: true,
     serverId,
@@ -474,14 +517,17 @@ function devPalworldStatus(serverId = "palworld") {
     instanceId: "i-local-palworld",
     instanceType: "t3a.large",
     launchTime: status === "running" ? new Date().toISOString() : null,
-    playerCount: status === "running" ? 0 : null,
-    maxPlayers: status === "running" ? 32 : null,
+    playerCount: status === "running" ? players.length : null,
+    maxPlayers: null,
+    players,
     memoryUsedPercent: status === "running" ? 41.8 : null,
     diskUsedPercent: status === "running" ? 63.2 : null,
     idleSince: status === "running" ? Date.now() - 12 * 60 * 1000 : null,
     autoStopEligibleAt: status === "running" ? Date.now() + 18 * 60 * 1000 : null,
     telemetryCheckedAt: Date.now(),
     telemetryMessage: null,
+    monthlyCost: costs.monthlyCost,
+    previousMonthCost: costs.previousMonthCost,
   };
 }
 
@@ -497,6 +543,40 @@ function registerDefaultHandlers(): void {
       entries: Object.values(readGameServerAccessStore()).sort((a, b) =>
         a.displayName.localeCompare(b.displayName),
       ),
+    };
+  });
+
+  handlers.set("listGameServerAccessCandidates", () => {
+    const persona = getSelectedDevPersona();
+    assertAuthenticated(persona);
+    if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
+    const store = readGameServerAccessStore();
+    const linkedDiscordIds = new Set<string>();
+    const candidates = DEV_PERSONAS
+      .filter((candidate) => candidate.authenticated)
+      .map((candidate) => {
+        linkedDiscordIds.add(candidate.discordUserId);
+        return {
+          lodestoneId: candidate.lodestoneId,
+          discordUserId: candidate.discordUserId,
+          displayName:
+            store[candidate.discordUserId]?.displayName ||
+            candidate.characterName,
+          characterName: candidate.characterName,
+          fcRank: candidate.fcRank,
+          avatarUrl: null,
+          accessEntry: store[candidate.discordUserId] ?? null,
+          implicitAccess:
+            candidate.fcRank === "Boss" || candidate.fcRank === "Underpaw",
+        };
+      })
+      .sort((a, b) => a.characterName.localeCompare(b.characterName));
+    return {
+      ok: true,
+      candidates,
+      legacyEntries: Object.values(store)
+        .filter((entry) => !linkedDiscordIds.has(entry.discordUserId))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName)),
     };
   });
 
@@ -626,6 +706,17 @@ function registerDefaultHandlers(): void {
     };
   });
 
+  handlers.set("getGameServerAccessStatus", () => {
+    const persona = getSelectedDevPersona();
+    assertAuthenticated(persona);
+    const entry = readGameServerAccessStore()[persona.discordUserId];
+    return {
+      ok: true,
+      canUseGameServers: persona.isAdmin || entry?.enabled === true,
+      isAdmin: persona.isAdmin,
+    };
+  });
+
   handlers.set("getGameServerStatus", (data) => {
     const persona = getSelectedDevPersona();
     assertGameServerAccess(persona);
@@ -671,7 +762,8 @@ function registerDefaultHandlers(): void {
         instanceType: "t3a.large",
         launchTime: new Date().toISOString(),
         playerCount: 0,
-        maxPlayers: 32,
+        maxPlayers: null,
+        players: [],
         memoryUsedPercent: 41.8,
         diskUsedPercent: 63.2,
         idleSince: Date.now(),
@@ -702,7 +794,8 @@ function registerDefaultHandlers(): void {
       instanceType: "t3a.large",
       launchTime: new Date().toISOString(),
       playerCount: 0,
-      maxPlayers: 32,
+      maxPlayers: null,
+      players: [],
       memoryUsedPercent: 41.8,
       diskUsedPercent: 63.2,
       idleSince: Date.now(),
@@ -749,6 +842,7 @@ function registerDefaultHandlers(): void {
         launchTime: null,
         playerCount: null,
         maxPlayers: null,
+        players: [],
         memoryUsedPercent: null,
         diskUsedPercent: null,
         idleSince: null,
@@ -780,6 +874,7 @@ function registerDefaultHandlers(): void {
       launchTime: null,
       playerCount: null,
       maxPlayers: null,
+      players: [],
       memoryUsedPercent: null,
       diskUsedPercent: null,
       idleSince: null,

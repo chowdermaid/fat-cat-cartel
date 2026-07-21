@@ -1,5 +1,6 @@
 import { callAdminFunction } from "./adminFunctions";
 import type {
+  GameServerAccessCandidatesResponse,
   GameServerAccessEntry,
   GameServerAccessListResponse,
   GameServerAccessUpsertResponse,
@@ -18,6 +19,13 @@ export type GameServerAccessInput = {
 export function listGameServerAccess(adminSessionToken: string) {
   return callAdminFunction<GameServerAccessListResponse>(
     "listGameServerAccess",
+    adminSessionToken,
+  );
+}
+
+export function listGameServerAccessCandidates(adminSessionToken: string) {
+  return callAdminFunction<GameServerAccessCandidatesResponse>(
+    "listGameServerAccessCandidates",
     adminSessionToken,
   );
 }

@@ -1,7 +1,6 @@
 import { HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { createHash, createHmac } from "node:crypto";
-import * as dgram from "node:dgram";
 import {
   DescribeInstancesCommand,
   EC2Client,
@@ -10,6 +9,11 @@ import {
   type Instance,
   type InstanceStateName,
 } from "@aws-sdk/client-ec2";
+import {
+  GetCommandInvocationCommand,
+  SendCommandCommand,
+  SSMClient,
+} from "@aws-sdk/client-ssm";
 import type { VerifiedAdminSession } from "./admin-auth";
 
 type GameServerId = "palworld";
@@ -48,6 +52,17 @@ type GameServerAccessEntry = {
   updatedAt: number;
 };
 
+type GameServerAccessCandidate = {
+  lodestoneId: string;
+  discordUserId: string;
+  displayName: string;
+  characterName: string;
+  fcRank: string | null;
+  avatarUrl: string | null;
+  accessEntry: GameServerAccessEntry | null;
+  implicitAccess: boolean;
+};
+
 type GameServerSettings = {
   serverId: GameServerId;
   enabled: boolean;
@@ -77,15 +92,34 @@ type GameServerAuditLogEntry = {
 type PalworldTelemetry = {
   playerCount: number | null;
   maxPlayers: number | null;
+  players: PalworldPlayer[];
   memoryUsedPercent: number | null;
   diskUsedPercent: number | null;
   telemetryCheckedAt: number;
   telemetryMessage: string | null;
 };
 
+type PalworldPlayer = {
+  name: string;
+  accountName: string;
+  playerId: string;
+  userId: string;
+  ping: number | null;
+  level: number | null;
+};
+
 type GameServerIdleState = {
   idleSince: number | null;
   autoStopEligibleAt: number | null;
+  updatedAt: number;
+};
+
+type GameServerCostSnapshot = {
+  monthKey: string;
+  estimatedComputeAud: number;
+  runningHours: number;
+  hourlyRateAud: number | null;
+  instanceType: string | null;
   updatedAt: number;
 };
 
@@ -97,6 +131,7 @@ export type GameServerAwsConfig = {
   gamePort: number;
   queryPort: number;
   cloudWatchNamespace: string;
+  adminPassword: string;
 };
 
 type GameServerStatusResult = {
@@ -114,12 +149,15 @@ type GameServerStatusResult = {
   launchTime: string | null;
   playerCount: number | null;
   maxPlayers: number | null;
+  players: PalworldPlayer[];
   memoryUsedPercent: number | null;
   diskUsedPercent: number | null;
   idleSince: number | null;
   autoStopEligibleAt: number | null;
   telemetryCheckedAt: number | null;
   telemetryMessage: string | null;
+  monthlyCost: GameServerCostSnapshot | null;
+  previousMonthCost: GameServerCostSnapshot | null;
 };
 
 const GAME_SERVERS: GameServerDefinition[] = [
@@ -145,13 +183,13 @@ const AUDIT_LOG_LIMIT = 50;
 const AUDIT_LOG_ADMIN_LIMIT = 25;
 const AUDIT_LOG_USER_LIMIT = 8;
 const IDLE_AUTO_STOP_MS = 30 * 60 * 1000;
-const UDP_QUERY_TIMEOUT_MS = 2500;
-const STEAM_QUERY_HEADER = Buffer.from([0xff, 0xff, 0xff, 0xff]);
-const STEAM_A2S_INFO = Buffer.concat([
-  STEAM_QUERY_HEADER,
-  Buffer.from([0x54]),
-  Buffer.from("Source Engine Query\0", "binary"),
-]);
+const SSM_COMMAND_TIMEOUT_SECONDS = 30;
+const SSM_COMMAND_POLL_ATTEMPTS = 12;
+const SSM_COMMAND_POLL_DELAY_MS = 1000;
+const INSTANCE_PRICES_AUD: Record<string, number> = {
+  "t3a.large": 0.15,
+  "t3a.xlarge": 0.3,
+};
 
 function cleanText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -203,6 +241,17 @@ function ec2Client(config: GameServerAwsConfig): EC2Client {
   });
 }
 
+function ssmClient(config: GameServerAwsConfig): SSMClient {
+  assertAwsConfig(config);
+  return new SSMClient({
+    region: config.region,
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+  });
+}
+
 function normalizeState(state: InstanceStateName | string | undefined): GameServerStatus {
   if (
     state === "pending" ||
@@ -224,6 +273,112 @@ function hostForInstance(instance: Instance): string | null {
 
 function connectAddress(host: string | null, gamePort: number): string | null {
   return host ? `${host}:${gamePort}` : null;
+}
+
+function monthKeyForTimestamp(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+function previousMonthKey(monthKey: string): string {
+  const [year, month] = monthKey.split("-").map((part) => Number(part));
+  const date = new Date(Date.UTC(year, month - 2, 1));
+  return monthKeyForTimestamp(date.getTime());
+}
+
+function monthStartUtc(monthKey: string): number {
+  const [year, month] = monthKey.split("-").map((part) => Number(part));
+  return Date.UTC(year, month - 1, 1);
+}
+
+function costSnapshotFromValue(
+  monthKey: string,
+  value: Partial<GameServerCostSnapshot> | null,
+): GameServerCostSnapshot | null {
+  if (!value || typeof value !== "object") return null;
+  return {
+    monthKey,
+    estimatedComputeAud:
+      typeof value.estimatedComputeAud === "number"
+        ? value.estimatedComputeAud
+        : 0,
+    runningHours:
+      typeof value.runningHours === "number" ? value.runningHours : 0,
+    hourlyRateAud:
+      typeof value.hourlyRateAud === "number" ? value.hourlyRateAud : null,
+    instanceType:
+      typeof value.instanceType === "string" && value.instanceType
+        ? value.instanceType
+        : null,
+    updatedAt: typeof value.updatedAt === "number" ? value.updatedAt : 0,
+  };
+}
+
+async function readCostSnapshot(
+  serverId: GameServerId,
+  monthKey: string,
+): Promise<GameServerCostSnapshot | null> {
+  const snapshot = await admin
+    .database()
+    .ref(`gameServerCost/${serverId}/monthly/${monthKey}`)
+    .get();
+  return costSnapshotFromValue(
+    monthKey,
+    snapshot.val() as Partial<GameServerCostSnapshot> | null,
+  );
+}
+
+async function updateMonthlyCostSnapshot(input: {
+  serverId: GameServerId;
+  status: GameServerStatus;
+  launchTime: string | null;
+  instanceType: string | null;
+}): Promise<{
+  current: GameServerCostSnapshot | null;
+  previous: GameServerCostSnapshot | null;
+}> {
+  const now = Date.now();
+  const currentMonth = monthKeyForTimestamp(now);
+  const previousMonth = previousMonthKey(currentMonth);
+  const previous = await readCostSnapshot(input.serverId, previousMonth);
+  const existingCurrent = await readCostSnapshot(input.serverId, currentMonth);
+  if (input.status !== "running" || !input.launchTime || !input.instanceType) {
+    return {
+      current: existingCurrent,
+      previous,
+    };
+  }
+
+  const hourlyRateAud = INSTANCE_PRICES_AUD[input.instanceType] ?? null;
+  if (hourlyRateAud === null) {
+    return {
+      current: existingCurrent,
+      previous,
+    };
+  }
+
+  const launchedAt = new Date(input.launchTime).getTime();
+  const monthStart = monthStartUtc(currentMonth);
+  const lastCountedAt =
+    existingCurrent && existingCurrent.updatedAt > 0
+      ? existingCurrent.updatedAt
+      : Math.max(launchedAt, monthStart);
+  const countedFrom = Math.max(launchedAt, monthStart, lastCountedAt);
+  const deltaHours = Math.max(0, (now - countedFrom) / 1000 / 60 / 60);
+  const runningHours = (existingCurrent?.runningHours ?? 0) + deltaHours;
+  const current: GameServerCostSnapshot = {
+    monthKey: currentMonth,
+    estimatedComputeAud: Math.round(runningHours * hourlyRateAud * 100) / 100,
+    runningHours: Math.round(runningHours * 100) / 100,
+    hourlyRateAud,
+    instanceType: input.instanceType,
+    updatedAt: now,
+  };
+  await admin
+    .database()
+    .ref(`gameServerCost/${input.serverId}/monthly/${currentMonth}`)
+    .set(current);
+  return { current, previous };
 }
 
 function statusMessage(status: GameServerStatus, enabled: boolean): string {
@@ -292,12 +447,15 @@ function disabledStatus(settings: GameServerSettings): GameServerStatusResult {
     launchTime: null,
     playerCount: null,
     maxPlayers: null,
+    players: [],
     memoryUsedPercent: null,
     diskUsedPercent: null,
     idleSince: null,
     autoStopEligibleAt: null,
     telemetryCheckedAt: null,
-    telemetryMessage: "Telemetry is disabled while Palworld is off.",
+    telemetryMessage: null,
+    monthlyCost: null,
+    previousMonthCost: null,
   };
 }
 
@@ -349,85 +507,167 @@ async function writeGameServerAuditLog(input: {
   }
 }
 
-function readNullTerminatedString(buffer: Buffer, offset: number): { value: string; next: number } {
-  let end = offset;
-  while (end < buffer.length && buffer[end] !== 0) end += 1;
+function shellSingleQuote(value: string): string {
+  return `'${value.replace(/'/g, "'\\''")}'`;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function safeString(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+function safeNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function palworldPlayerFromValue(value: unknown): PalworldPlayer | null {
+  if (!value || typeof value !== "object") return null;
+  const input = value as Record<string, unknown>;
   return {
-    value: buffer.subarray(offset, end).toString("utf8"),
-    next: Math.min(end + 1, buffer.length),
+    name: safeString(input.name),
+    accountName: safeString(input.accountName),
+    playerId: safeString(input.playerId),
+    userId: safeString(input.userId),
+    ping: safeNumber(input.ping),
+    level: safeNumber(input.level),
   };
 }
 
-function parseSteamInfoResponse(buffer: Buffer): { playerCount: number; maxPlayers: number } | null {
-  if (buffer.length < 10 || buffer.readInt32LE(0) !== -1 || buffer[4] !== 0x49) {
+function parsePalworldPlayersResponse(text: string): PalworldPlayer[] | null {
+  try {
+    const parsed = JSON.parse(text) as { players?: unknown };
+    if (!Array.isArray(parsed.players)) return null;
+    return parsed.players
+      .map((player) => palworldPlayerFromValue(player))
+      .filter((player): player is PalworldPlayer => player !== null);
+  } catch {
     return null;
   }
-  let offset = 6;
-  for (let index = 0; index < 4; index += 1) {
-    offset = readNullTerminatedString(buffer, offset).next;
-  }
-  offset += 2;
-  if (offset + 2 > buffer.length) return null;
-  return {
-    playerCount: buffer[offset],
-    maxPlayers: buffer[offset + 1],
-  };
 }
 
-function queryUdp(host: string, port: number, payload: Buffer): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const socket = dgram.createSocket("udp4");
-    const timeout = setTimeout(() => {
-      socket.close();
-      reject(new Error("Palworld query timed out."));
-    }, UDP_QUERY_TIMEOUT_MS);
-
-    socket.once("error", (error) => {
-      clearTimeout(timeout);
-      socket.close();
-      reject(error);
-    });
-    socket.once("message", (message) => {
-      clearTimeout(timeout);
-      socket.close();
-      resolve(message);
-    });
-    socket.send(payload, port, host, (error) => {
-      if (error) {
-        clearTimeout(timeout);
-        socket.close();
-        reject(error);
-      }
-    });
-  });
+function isSsmInvocationPendingError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "InvocationDoesNotExist" ||
+      error.message.includes("InvocationDoesNotExist"))
+  );
 }
 
-async function queryPalworldPlayers(host: string, port: number): Promise<{
+async function queryPalworldPlayersViaSsm(config: GameServerAwsConfig): Promise<{
   playerCount: number | null;
   maxPlayers: number | null;
+  players: PalworldPlayer[];
   message: string | null;
 }> {
-  try {
-    let response = await queryUdp(host, port, STEAM_A2S_INFO);
-    if (response.length >= 9 && response.readInt32LE(0) === -1 && response[4] === 0x41) {
-      const challenge = response.subarray(5, 9);
-      response = await queryUdp(host, port, Buffer.concat([STEAM_A2S_INFO, challenge]));
-    }
-    const parsed = parseSteamInfoResponse(response);
-    if (!parsed) {
-      return {
-        playerCount: null,
-        maxPlayers: null,
-        message: "Player count unavailable from Palworld query.",
-      };
-    }
-    return { ...parsed, message: null };
-  } catch (error) {
-    console.error("Failed to query Palworld players", error);
+  if (!config.adminPassword.trim()) {
     return {
       playerCount: null,
       maxPlayers: null,
-      message: "Player count unavailable from Palworld query.",
+      players: [],
+      message: "Player count unavailable. Palworld admin password is not configured.",
+    };
+  }
+
+  const client = ssmClient(config);
+  const password = shellSingleQuote(config.adminPassword);
+  const command = [
+    `PALWORLD_ADMIN_PASSWORD=${password}`,
+    "docker exec palworld-server curl -sS --fail --max-time 5 " +
+      '"http://127.0.0.1:8212/v1/api/players" ' +
+      '-u "admin:${PALWORLD_ADMIN_PASSWORD}"',
+  ].join("\n");
+
+  try {
+    const sent = await client.send(
+      new SendCommandCommand({
+        InstanceIds: [config.instanceId],
+        DocumentName: "AWS-RunShellScript",
+        TimeoutSeconds: SSM_COMMAND_TIMEOUT_SECONDS,
+        Parameters: {
+          commands: [command],
+        },
+      }),
+    );
+    const commandId = sent.Command?.CommandId;
+    if (!commandId) {
+      return {
+        playerCount: null,
+        maxPlayers: null,
+        players: [],
+        message: "Player count unavailable. SSM did not return a command id.",
+      };
+    }
+
+    for (let attempt = 0; attempt < SSM_COMMAND_POLL_ATTEMPTS; attempt += 1) {
+      if (attempt > 0) await sleep(SSM_COMMAND_POLL_DELAY_MS);
+      let invocation;
+      try {
+        invocation = await client.send(
+          new GetCommandInvocationCommand({
+            CommandId: commandId,
+            InstanceId: config.instanceId,
+          }),
+        );
+      } catch (error) {
+        if (isSsmInvocationPendingError(error)) continue;
+        throw error;
+      }
+      if (
+        invocation.Status === "Pending" ||
+        invocation.Status === "InProgress" ||
+        invocation.Status === "Delayed"
+      ) {
+        continue;
+      }
+      if (invocation.Status !== "Success") {
+        console.error("Palworld REST SSM command failed", {
+          status: invocation.Status,
+          statusDetails: invocation.StatusDetails,
+          stderr: invocation.StandardErrorContent?.slice(0, 500),
+        });
+        return {
+          playerCount: null,
+          maxPlayers: null,
+          players: [],
+          message: "Player count unavailable. SSM command did not complete successfully.",
+        };
+      }
+
+      const players = parsePalworldPlayersResponse(
+        invocation.StandardOutputContent ?? "",
+      );
+      if (!players) {
+        return {
+          playerCount: null,
+          maxPlayers: null,
+          players: [],
+          message: "Player count unavailable. Palworld REST response could not be parsed.",
+        };
+      }
+      return {
+        playerCount: players.length,
+        maxPlayers: null,
+        players,
+        message: null,
+      };
+    }
+
+    return {
+      playerCount: null,
+      maxPlayers: null,
+      players: [],
+      message: "Player count unavailable. SSM command timed out.",
+    };
+  } catch (error) {
+    console.error("Failed to query Palworld players via SSM", error);
+    return {
+      playerCount: null,
+      maxPlayers: null,
+      players: [],
+      message: "Player count unavailable. SSM player query failed.",
     };
   }
 }
@@ -577,10 +817,16 @@ async function readCloudWatchTelemetry(config: GameServerAwsConfig): Promise<{
         memoryUsedPercent === null ? null : Math.round(memoryUsedPercent * 10) / 10,
       diskUsedPercent:
         diskUsedPercent === null ? null : Math.round(diskUsedPercent * 10) / 10,
-      message:
-        memoryUsedPercent === null && diskUsedPercent === null
-          ? "RAM and disk metrics are unavailable from CloudWatch."
+      message: [
+        memoryUsedPercent === null
+          ? "RAM metric is unavailable from CloudWatch."
           : null,
+        diskUsedPercent === null
+          ? "Disk metric is unavailable from CloudWatch."
+          : null,
+      ]
+        .filter(Boolean)
+        .join(" ") || null,
     };
   } catch (error) {
     console.error("Failed to read Palworld CloudWatch telemetry", error);
@@ -602,20 +848,22 @@ async function readPalworldTelemetry(
     return {
       playerCount: null,
       maxPlayers: null,
+      players: [],
       memoryUsedPercent: null,
       diskUsedPercent: null,
       telemetryCheckedAt: checkedAt,
-      telemetryMessage: "Telemetry is available while Palworld is running.",
+      telemetryMessage: null,
     };
   }
 
   const [players, cloudWatch] = await Promise.all([
-    queryPalworldPlayers(host, config.queryPort),
+    queryPalworldPlayersViaSsm(config),
     readCloudWatchTelemetry(config),
   ]);
   return {
     playerCount: players.playerCount,
     maxPlayers: players.maxPlayers,
+    players: players.players,
     memoryUsedPercent: cloudWatch.memoryUsedPercent,
     diskUsedPercent: cloudWatch.diskUsedPercent,
     telemetryCheckedAt: checkedAt,
@@ -666,17 +914,26 @@ async function describePalworldInstance(
 
   const status = normalizeState(instance.State?.Name);
   const host = hostForInstance(instance);
+  const instanceType = instance.InstanceType ?? null;
+  const launchTime = instance.LaunchTime?.toISOString() ?? null;
   const telemetry = options.includeTelemetry
     ? await readPalworldTelemetry(config, host, status)
     : {
         playerCount: null,
         maxPlayers: null,
+        players: [],
         memoryUsedPercent: null,
         diskUsedPercent: null,
         telemetryCheckedAt: Date.now(),
         telemetryMessage: null,
       };
   const idleState = await readIdleState("palworld");
+  const cost = await updateMonthlyCostSnapshot({
+    serverId: "palworld",
+    status,
+    launchTime,
+    instanceType,
+  });
   return {
     ok: true,
     serverId: "palworld",
@@ -688,16 +945,19 @@ async function describePalworldInstance(
     enabled: true,
     disabledMessage: null,
     instanceId: instance.InstanceId ?? config.instanceId,
-    instanceType: instance.InstanceType ?? null,
-    launchTime: instance.LaunchTime?.toISOString() ?? null,
+    instanceType,
+    launchTime,
     playerCount: telemetry.playerCount,
     maxPlayers: telemetry.maxPlayers,
+    players: telemetry.players,
     memoryUsedPercent: telemetry.memoryUsedPercent,
     diskUsedPercent: telemetry.diskUsedPercent,
     idleSince: idleState.idleSince,
     autoStopEligibleAt: idleState.autoStopEligibleAt,
     telemetryCheckedAt: telemetry.telemetryCheckedAt,
     telemetryMessage: telemetry.telemetryMessage,
+    monthlyCost: cost.current,
+    previousMonthCost: cost.previous,
   };
 }
 
@@ -738,16 +998,12 @@ function parseEnabled(value: unknown): boolean {
   return value === undefined ? true : value === true;
 }
 
-async function readAccessEntry(
+function accessEntryFromValue(
   discordUserId: string,
-): Promise<GameServerAccessEntry | null> {
-  const snapshot = await admin
-    .database()
-    .ref(`gameServerAccess/${discordUserId}`)
-    .get();
-  const entry = snapshot.val() as Partial<GameServerAccessEntry> | null;
+  entry: Partial<GameServerAccessEntry> | null,
+): GameServerAccessEntry | null {
   if (!entry || typeof entry !== "object") return null;
-  if (entry.discordUserId !== discordUserId) return null;
+  if (entry.discordUserId && entry.discordUserId !== discordUserId) return null;
   return {
     discordUserId,
     displayName:
@@ -758,6 +1014,17 @@ async function readAccessEntry(
     addedAt: typeof entry.addedAt === "number" ? entry.addedAt : 0,
     updatedAt: typeof entry.updatedAt === "number" ? entry.updatedAt : 0,
   };
+}
+
+async function readAccessEntry(
+  discordUserId: string,
+): Promise<GameServerAccessEntry | null> {
+  const snapshot = await admin
+    .database()
+    .ref(`gameServerAccess/${discordUserId}`)
+    .get();
+  const entry = snapshot.val() as Partial<GameServerAccessEntry> | null;
+  return accessEntryFromValue(discordUserId, entry);
 }
 
 export async function requireGameServerAccess(
@@ -776,6 +1043,21 @@ export async function requireGameServerAccess(
     "permission-denied",
     "Game server whitelist required.",
   );
+}
+
+export async function getGameServerAccessStatusForSession(
+  session: VerifiedAdminSession,
+): Promise<{ ok: true; canUseGameServers: boolean; isAdmin: boolean }> {
+  if (session.isAdmin === true) {
+    return { ok: true, canUseGameServers: true, isAdmin: true };
+  }
+
+  const entry = await readAccessEntry(session.discordUserId);
+  return {
+    ok: true,
+    canUseGameServers: entry?.enabled === true,
+    isAdmin: false,
+  };
 }
 
 export async function listGameServersForSession(
@@ -1089,18 +1371,72 @@ export async function listGameServerAccessForAdmin(): Promise<{
   const snapshot = await admin.database().ref("gameServerAccess").get();
   const value = snapshot.val() as Record<string, GameServerAccessEntry> | null;
   const entries = Object.entries(value ?? {})
-    .map(([discordUserId, entry]) => ({
-      discordUserId,
-      displayName:
-        typeof entry.displayName === "string" ? entry.displayName : discordUserId,
-      enabled: entry.enabled === true,
-      notes: typeof entry.notes === "string" && entry.notes ? entry.notes : null,
-      addedBy: typeof entry.addedBy === "string" ? entry.addedBy : "",
-      addedAt: typeof entry.addedAt === "number" ? entry.addedAt : 0,
-      updatedAt: typeof entry.updatedAt === "number" ? entry.updatedAt : 0,
-    }))
+    .map(([discordUserId, entry]) => accessEntryFromValue(discordUserId, entry))
+    .filter((entry): entry is GameServerAccessEntry => entry !== null)
     .sort((a, b) => a.displayName.localeCompare(b.displayName));
   return { ok: true, entries };
+}
+
+export async function listGameServerAccessCandidatesForAdmin(): Promise<{
+  ok: true;
+  candidates: GameServerAccessCandidate[];
+  legacyEntries: GameServerAccessEntry[];
+}> {
+  const [membersSnapshot, linksSnapshot, accessSnapshot] = await Promise.all([
+    admin.database().ref("members").get(),
+    admin.database().ref("discordLinksByLodestone").get(),
+    admin.database().ref("gameServerAccess").get(),
+  ]);
+  const members = (membersSnapshot.val() ?? {}) as Record<
+    string,
+    {
+      name?: unknown;
+      fcRank?: unknown;
+      avatarUrl?: unknown;
+    }
+  >;
+  const links = (linksSnapshot.val() ?? {}) as Record<string, unknown>;
+  const accessValue = (accessSnapshot.val() ?? {}) as Record<
+    string,
+    Partial<GameServerAccessEntry>
+  >;
+  const accessEntries = new Map(
+    Object.entries(accessValue)
+      .map(([discordUserId, entry]) => [
+        discordUserId,
+        accessEntryFromValue(discordUserId, entry),
+      ] as const)
+      .filter(
+        (item): item is readonly [string, GameServerAccessEntry] =>
+          item[1] !== null,
+      ),
+  );
+  const linkedDiscordIds = new Set<string>();
+  const candidates = Object.entries(members)
+    .flatMap(([lodestoneId, member]): GameServerAccessCandidate[] => {
+      const discordUserId = cleanText(links[lodestoneId]);
+      if (!DISCORD_ID_PATTERN.test(discordUserId)) return [];
+      const characterName = cleanText(member.name);
+      if (!characterName) return [];
+      const fcRank = cleanText(member.fcRank) || null;
+      const accessEntry = accessEntries.get(discordUserId) ?? null;
+      linkedDiscordIds.add(discordUserId);
+      return [{
+        lodestoneId,
+        discordUserId,
+        displayName: accessEntry?.displayName || characterName,
+        characterName,
+        fcRank,
+        avatarUrl: cleanText(member.avatarUrl) || null,
+        accessEntry,
+        implicitAccess: fcRank === "Boss" || fcRank === "Underpaw",
+      }];
+    })
+    .sort((a, b) => a.characterName.localeCompare(b.characterName));
+  const legacyEntries = [...accessEntries.values()]
+    .filter((entry) => !linkedDiscordIds.has(entry.discordUserId))
+    .sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return { ok: true, candidates, legacyEntries };
 }
 
 export async function upsertGameServerAccessForAdmin(

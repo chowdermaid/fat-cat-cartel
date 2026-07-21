@@ -220,8 +220,8 @@
     "semantic_hash": "09aa737caac1b43a078e46a3ed091b65"
   },
   "src/components/layouts/AppSidebar.tsx": {
-    "mtime": 1783764017.200639,
-    "ast_hash": "00d37f39d6ba59cdde164688627b085f",
+    "mtime": 1783765042.1549363,
+    "ast_hash": "57f74e8f458c573f346359007c8a4326",
     "semantic_hash": ""
   },
   "src/components/layouts/RootLayout.tsx": {
@@ -1820,13 +1820,13 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/components/GameServerIndexPage.tsx": {
-    "mtime": 1783764031.289578,
-    "ast_hash": "5f2904944cf8adc3339e8a0294dfcf6e",
+    "mtime": 1783765031.9912224,
+    "ast_hash": "e957e1b3a7f6d4dc2ce46fddfc55b14a",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/PalworldServerPage.tsx": {
-    "mtime": 1783764040.583163,
-    "ast_hash": "b8a660c26c6ea551c706ea66c9ea8924",
+    "mtime": 1783765038.0277007,
+    "ast_hash": "c25b52fe663c66e654752f4307a43f9a",
     "semantic_hash": ""
   },
   "src/features/gameserver/constants.ts": {
@@ -1835,8 +1835,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/hooks/useGameServerAuth.ts": {
-    "mtime": 1783764023.5361254,
-    "ast_hash": "b12114d7caea922b3d997b3392c30310",
+    "mtime": 1783765025.8621893,
+    "ast_hash": "1603b8efd8793e30bf355b33c1a0d0ae",
     "semantic_hash": ""
   },
   "src/features/gameserver/index.tsx": {
@@ -1855,8 +1855,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1783764062.1078398,
-    "ast_hash": "9553c5f04fe5da2eb9841048fd878df7",
+    "mtime": 1783765059.4984052,
+    "ast_hash": "5ec4fbb203bf59c7dd81620345d82629",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -1880,8 +1880,8 @@
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
-    "mtime": 1783764057.9221478,
-    "ast_hash": "fcc796cb777ebedbd530d3a6e9dd6436",
+    "mtime": 1783765050.437854,
+    "ast_hash": "a1b9cc2140fb419e90a88803d5086e14",
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
@@ -2340,8 +2340,8 @@
     "semantic_hash": ""
   },
   "functions/src/game-servers.ts": {
-    "mtime": 1783764049.7274241,
-    "ast_hash": "84721b28420a902c366d59ab4e5542f0",
+    "mtime": 1783765020.250795,
+    "ast_hash": "5dd78ee456cd84d1ba7cbecc2f179fcf",
     "semantic_hash": ""
   },
   "src/features/admin/api/gameServerAccess.ts": {

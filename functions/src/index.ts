@@ -54,11 +54,13 @@ import {
 import { runSendBirthdayWishes } from "./birthday-notifications";
 import {
   deleteGameServerAccessForAdmin,
+  getGameServerAccessStatusForSession,
   getGameServerSettingsForAdmin,
   getGameServerStatusForSession,
   listGameServerAuditLogForSession,
   listGameServerAuditLogForAdmin,
   listGameServerAccessForAdmin,
+  listGameServerAccessCandidatesForAdmin,
   listGameServersForSession,
   parsePort,
   requireGameServerAccess,
@@ -102,6 +104,9 @@ const palworldGamePort = defineString("PALWORLD_GAME_PORT", { default: "8211" })
 const palworldQueryPort = defineString("PALWORLD_QUERY_PORT", { default: "27015" });
 const palworldCloudWatchNamespace = defineString("PALWORLD_CLOUDWATCH_NAMESPACE", {
   default: "CWAgent",
+});
+const palworldAdminPassword = defineString("PALWORLD_ADMIN_PASSWORD", {
+  default: "",
 });
 const awsAccessKeyId = defineSecret("AWS_ACCESS_KEY_ID");
 const awsSecretAccessKey = defineSecret("AWS_SECRET_ACCESS_KEY");
@@ -221,6 +226,7 @@ function gameServerAwsConfig() {
     gamePort: parsePort(palworldGamePort.value(), 8211),
     queryPort: parsePort(palworldQueryPort.value(), 27015),
     cloudWatchNamespace: palworldCloudWatchNamespace.value() || "CWAgent",
+    adminPassword: palworldAdminPassword.value(),
   };
 }
 
@@ -635,6 +641,22 @@ export const logoutAdminSession = onCall(
   async (request) => logoutAdminSessionForToken(request.data),
 );
 
+export const getGameServerAccessStatus = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    return getGameServerAccessStatusForSession(session);
+  },
+);
+
 export const getGameServers = onCall(
   {
     cors: true,
@@ -780,6 +802,19 @@ export const listGameServerAccess = onCall(
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return listGameServerAccessForAdmin();
+  },
+);
+
+export const listGameServerAccessCandidates = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return listGameServerAccessCandidatesForAdmin();
   },
 );
 

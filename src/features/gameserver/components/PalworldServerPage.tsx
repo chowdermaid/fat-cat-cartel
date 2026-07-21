@@ -123,6 +123,20 @@ function sessionCostAud(
   };
 }
 
+function formatAud(value: number | null | undefined): string {
+  return typeof value === "number" ? `A$${value.toFixed(2)}` : "Unavailable";
+}
+
+function formatMonthLabel(monthKey: string | null | undefined): string {
+  if (!monthKey) return "This month";
+  const [year, month] = monthKey.split("-").map((part) => Number(part));
+  if (!year || !month) return monthKey;
+  return new Date(Date.UTC(year, month - 1, 1)).toLocaleString(undefined, {
+    month: "short",
+    year: "numeric",
+  });
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
@@ -171,6 +185,7 @@ function actionToStatus(
     launchTime: result.launchTime ?? fallback?.launchTime ?? null,
     playerCount: result.playerCount ?? fallback?.playerCount ?? null,
     maxPlayers: result.maxPlayers ?? fallback?.maxPlayers ?? null,
+    players: result.players ?? fallback?.players ?? [],
     memoryUsedPercent:
       result.memoryUsedPercent ?? fallback?.memoryUsedPercent ?? null,
     diskUsedPercent: result.diskUsedPercent ?? fallback?.diskUsedPercent ?? null,
@@ -180,6 +195,9 @@ function actionToStatus(
     telemetryCheckedAt:
       result.telemetryCheckedAt ?? fallback?.telemetryCheckedAt ?? null,
     telemetryMessage: result.telemetryMessage ?? fallback?.telemetryMessage ?? null,
+    monthlyCost: result.monthlyCost ?? fallback?.monthlyCost ?? null,
+    previousMonthCost:
+      result.previousMonthCost ?? fallback?.previousMonthCost ?? null,
   };
 }
 
@@ -348,6 +366,12 @@ export function PalworldServerPage() {
       ? formatTimestamp(status.autoStopEligibleAt)
       : "Not counting down";
   const currentSessionCost = sessionCostAud(status, now);
+  const monthlyCost = status?.monthlyCost;
+  const previousMonthCost = status?.previousMonthCost;
+
+  if (auth.checking) {
+    return null;
+  }
 
   if (!auth.authed) {
     return (
@@ -362,25 +386,11 @@ export function PalworldServerPage() {
   }
 
   if (accessDenied) {
-    return (
-      <AuthAccessState
-        title="Palworld Server"
-        description="This page requires Boss or Underpaw access, or an enabled game server whitelist entry."
-        error="Game server whitelist required."
-        showLogin={false}
-      />
-    );
+    return null;
   }
 
   if (!auth.canUseGameServers) {
-    return (
-      <AuthAccessState
-        title="Palworld Server"
-        description="This page requires Boss or Underpaw access, or an enabled game server whitelist entry."
-        error="Game server whitelist required."
-        showLogin={false}
-      />
-    );
+    return null;
   }
 
   return (
@@ -444,12 +454,54 @@ export function PalworldServerPage() {
               </div>
             </section>
 
+            {status?.telemetryMessage && (
+              <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-200">
+                {status.telemetryMessage}
+              </div>
+            )}
+
+            {status?.status === "running" && status.players.length > 0 && (
+              <section className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  Online Players
+                </div>
+                <div className="divide-y rounded-md border">
+                  {status.players.map((player) => (
+                    <div
+                      key={player.playerId || player.userId || player.name}
+                      className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate font-medium">
+                          {player.name || "Unknown"}
+                        </div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          {player.accountName || player.userId || "Unknown account"}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>
+                          Lv {player.level ?? "?"}
+                        </span>
+                        <span>
+                          {typeof player.ping === "number"
+                            ? `${Math.round(player.ping)} ms`
+                            : "Ping unavailable"}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Clock3 className="h-4 w-4 text-muted-foreground" />
                 Current Session
               </div>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <div className="rounded-md border px-3 py-3">
                   <div className="text-xs text-muted-foreground">Running for</div>
                   <div className="mt-1 text-lg font-semibold">
@@ -457,9 +509,22 @@ export function PalworldServerPage() {
                   </div>
                 </div>
                 <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">Compute cost</div>
+                  <div className="text-xs text-muted-foreground">Session cost</div>
                   <div className="mt-1 text-lg font-semibold">
                     {currentSessionCost.cost}
+                  </div>
+                </div>
+                <div className="rounded-md border px-3 py-3">
+                  <div className="text-xs text-muted-foreground">
+                    {formatMonthLabel(monthlyCost?.monthKey)}
+                  </div>
+                  <div className="mt-1 text-lg font-semibold">
+                    {formatAud(monthlyCost?.estimatedComputeAud)}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {previousMonthCost
+                      ? `${formatAud(previousMonthCost.estimatedComputeAud)} last month`
+                      : "No previous month saved yet"}
                   </div>
                 </div>
                 <div className="rounded-md border px-3 py-3">

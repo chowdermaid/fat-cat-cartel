@@ -36,11 +36,18 @@ export interface GameServerAccessState {
   authed: boolean;
   checking: boolean;
   canUseGameServers: boolean;
+  sessionWasAllowedGameServers: boolean;
   sessionToken: string | null;
   session: GameServerSession | null;
   login: () => void;
   logout: () => Promise<void>;
   error: string | null;
+}
+
+export interface GameServerAccessStatusResponse {
+  ok: true;
+  canUseGameServers: boolean;
+  isAdmin: boolean;
 }
 
 export interface GameServerAccessEntry {
@@ -56,6 +63,23 @@ export interface GameServerAccessEntry {
 export interface GameServerAccessListResponse {
   ok: true;
   entries: GameServerAccessEntry[];
+}
+
+export interface GameServerAccessCandidate {
+  lodestoneId: string;
+  discordUserId: string;
+  displayName: string;
+  characterName: string;
+  fcRank: string | null;
+  avatarUrl: string | null;
+  accessEntry: GameServerAccessEntry | null;
+  implicitAccess: boolean;
+}
+
+export interface GameServerAccessCandidatesResponse {
+  ok: true;
+  candidates: GameServerAccessCandidate[];
+  legacyEntries: GameServerAccessEntry[];
 }
 
 export interface GameServerAccessUpsertResponse {
@@ -99,6 +123,24 @@ export interface GameServerSettingsResponse {
   settings: GameServerSettings;
 }
 
+export interface GameServerCostSnapshot {
+  monthKey: string;
+  estimatedComputeAud: number;
+  runningHours: number;
+  hourlyRateAud: number | null;
+  instanceType: string | null;
+  updatedAt: number;
+}
+
+export interface PalworldPlayer {
+  name: string;
+  accountName: string;
+  playerId: string;
+  userId: string;
+  ping: number | null;
+  level: number | null;
+}
+
 export interface GameServersResponse {
   ok: true;
   servers: Array<GameServerDefinition & {
@@ -127,12 +169,15 @@ export interface GameServerStatusResponse {
   launchTime: string | null;
   playerCount: number | null;
   maxPlayers: number | null;
+  players: PalworldPlayer[];
   memoryUsedPercent: number | null;
   diskUsedPercent: number | null;
   idleSince: number | null;
   autoStopEligibleAt: number | null;
   telemetryCheckedAt: number | null;
   telemetryMessage: string | null;
+  monthlyCost: GameServerCostSnapshot | null;
+  previousMonthCost: GameServerCostSnapshot | null;
 }
 
 export interface GameServerActionResponse {
@@ -150,10 +195,13 @@ export interface GameServerActionResponse {
   launchTime?: string | null;
   playerCount?: number | null;
   maxPlayers?: number | null;
+  players?: PalworldPlayer[];
   memoryUsedPercent?: number | null;
   diskUsedPercent?: number | null;
   idleSince?: number | null;
   autoStopEligibleAt?: number | null;
   telemetryCheckedAt?: number | null;
   telemetryMessage?: string | null;
+  monthlyCost?: GameServerCostSnapshot | null;
+  previousMonthCost?: GameServerCostSnapshot | null;
 }

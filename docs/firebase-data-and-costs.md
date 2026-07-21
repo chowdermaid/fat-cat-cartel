@@ -58,9 +58,10 @@ Important RTDB paths:
 - `/birthdayNotifications/{yyyy-mm-dd}/{lodestoneId}`: scheduled Discord birthday notification guard and send status.
 - `/adminOAuthStates/{stateHash}`: short-lived hashed Discord OAuth state records.
 - `/adminSessions/{sessionIdHash}`: hashed web session records.
-- `/gameServerAccess/{discordUserId}`: game-server whitelist entries keyed by Discord ID. Boss and Underpaw admins bypass this whitelist in Functions.
+- `/gameServerAccess/{discordUserId}`: game-server whitelist entries keyed by Discord ID. Boss and Underpaw admins bypass this whitelist in Functions. The admin Palworld access manager reads this with `/members` and `/discordLinksByLodestone` through an admin-only callable to show linked-member candidates and legacy entries.
 - `/gameServerSettings/{serverId}`: admin-owned game-server availability settings. Palworld uses `enabled`, optional `disabledMessage`, `updatedAt`, and `updatedBy`.
 - `/gameServerIdleState/{serverId}`: small auto-stop state for idle countdown. Palworld stores `idleSince`, `autoStopEligibleAt`, and `updatedAt`.
+- `/gameServerCost/{serverId}/monthly/{yyyy-mm}`: compact monthly estimated compute cost snapshots. Palworld stores estimated AUD compute cost, running hours, hourly rate, instance type, and update timestamp.
 - `/gameServerAuditLog/{serverId}/{logId}`: bounded game-server start/stop audit entries. The app keeps the newest 50 entries per server and shows the newest 25 to admins.
 - `/discordLinks/{discordUserId}` and `/discordLinksByLodestone/{lodestoneId}`: Discord link records.
 - `/memberExclusions/{lodestoneId}`: admin-deleted members that should not be reimported.
@@ -120,12 +121,14 @@ Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App featur
 
 - `/gameserver` and `/gameserver/palworld` use callable Functions for on-demand status only.
 - Game-server pages reuse `admin_session_token`; `DISCORD_GAME_SERVER_REDIRECT_URI` is not required.
-- Manual refresh calls one Function, one EC2 describe request, a Palworld query request when running, and CloudWatch metric reads when running.
+- Manual refresh calls one Function, one EC2 describe request, one SSM Run Command player REST read when running, and CloudWatch metric reads when running.
+- Status reads increment one small current-month cost snapshot when Palworld is running and the instance type has a configured hourly rate. The previous month snapshot is read for display only.
 - Start polling calls status every 10 seconds for up to 8 minutes after a user clicks Start.
 - Start and stop each call one Function, one or more EC2 requests, and one small audit-log write.
-- The auto-stop scheduler runs every 10 minutes. It resets idle state when the server is not running, when players are online, or when player count is unavailable.
+- The auto-stop scheduler runs every 10 minutes. It uses the same SSM Run Command player REST read, resets idle state when the server is not running, when players are online, or when player count is unavailable, and only stops after 30 continuous minutes with zero confirmed players.
 - There are no client RTDB listeners or frontend AWS SDK imports for game-server control.
-- Required AWS IAM actions are `ec2:DescribeInstances`, `ec2:StartInstances`, `ec2:StopInstances`, and CloudWatch metric read access such as `cloudwatch:GetMetricData`. No terminate or delete operation is implemented.
+- Required AWS IAM actions are `ec2:DescribeInstances`, `ec2:StartInstances`, `ec2:StopInstances`, `ssm:SendCommand`, `ssm:GetCommandInvocation`, and CloudWatch metric read access such as `cloudwatch:GetMetricData`. The EC2 instance must be managed by SSM and able to run `AWS-RunShellScript`. No terminate or delete operation is implemented.
+- Palworld REST player reads use plain Functions config string `PALWORLD_ADMIN_PASSWORD`; this value stays server-side and is never sent to React. The player list returned to the frontend excludes IP addresses.
 - For RAM/disk display, two AWS permission surfaces are required:
 
 Firebase Functions AWS user needs CloudWatch read access:

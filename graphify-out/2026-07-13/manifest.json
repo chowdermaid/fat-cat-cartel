@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1784187381.2332897,
-    "ast_hash": "903f8febfcbc601d757ad41ff0d8fd0a",
+    "mtime": 1783841032.8819163,
+    "ast_hash": "9c4c5e5cbdc5f49d4892857aec5c926e",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -220,8 +220,8 @@
     "semantic_hash": "09aa737caac1b43a078e46a3ed091b65"
   },
   "src/components/layouts/AppSidebar.tsx": {
-    "mtime": 1784612745.1498604,
-    "ast_hash": "8bb6984e4246787686cbc9e37269d572",
+    "mtime": 1783765042.1549363,
+    "ast_hash": "57f74e8f458c573f346359007c8a4326",
     "semantic_hash": ""
   },
   "src/components/layouts/RootLayout.tsx": {
@@ -1760,8 +1760,8 @@
     "semantic_hash": "8432458fcdb71476d0ba34f2288c6ecd"
   },
   "src/lib/dev/callables.ts": {
-    "mtime": 1784187436.440891,
-    "ast_hash": "82bc4da51462b9015a038c03d68e51d0",
+    "mtime": 1783839640.3071704,
+    "ast_hash": "9be8c81c7767bd6fffce8f310d1c8277",
     "semantic_hash": ""
   },
   "src/lib/dev/craftingRequests.ts": {
@@ -1815,18 +1815,18 @@
     "semantic_hash": "03e949fa8de55498870e006ae5d8ee27"
   },
   "src/features/gameserver/api/gameServerFunctions.ts": {
-    "mtime": 1783927062.4765656,
-    "ast_hash": "0542fc235e4bb9d7fcce23e1ea3bcb2d",
+    "mtime": 1783743339.879205,
+    "ast_hash": "fd658815c94435a803e8a6ae14b8ef7f",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/GameServerIndexPage.tsx": {
-    "mtime": 1784189327.9950004,
-    "ast_hash": "aa5750e7d111e9c7a197332e90e3d10b",
+    "mtime": 1783765031.9912224,
+    "ast_hash": "e957e1b3a7f6d4dc2ce46fddfc55b14a",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/PalworldServerPage.tsx": {
-    "mtime": 1784189334.9555945,
-    "ast_hash": "62ead4ef6d869ed34a43a09a5af97c5d",
+    "mtime": 1783840540.8626764,
+    "ast_hash": "c1b7bc575ef7883817346ad9f7a4f415",
     "semantic_hash": ""
   },
   "src/features/gameserver/constants.ts": {
@@ -1835,8 +1835,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/hooks/useGameServerAuth.ts": {
-    "mtime": 1784612739.2507353,
-    "ast_hash": "83a432cb7bda5b686ce85f5dffd23d46",
+    "mtime": 1783765025.8621893,
+    "ast_hash": "1603b8efd8793e30bf355b33c1a0d0ae",
     "semantic_hash": ""
   },
   "src/features/gameserver/index.tsx": {
@@ -1845,8 +1845,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/types.ts": {
-    "mtime": 1784612721.0483968,
-    "ast_hash": "09f3612a59611ead75d0ed4464625492",
+    "mtime": 1783839617.8564374,
+    "ast_hash": "581bee585d76ac4f1f0fc040b38c2801",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1880,8 +1880,8 @@
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
-    "mtime": 1784187572.4299002,
-    "ast_hash": "1c6015500a5d407293d9cf11c87b7cda",
+    "mtime": 1783843576.192555,
+    "ast_hash": "a38cb5ad3eb1fcd9c44aa70d875e8c0c",
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
@@ -2340,18 +2340,18 @@
     "semantic_hash": ""
   },
   "functions/src/game-servers.ts": {
-    "mtime": 1784187374.9672387,
-    "ast_hash": "fd7e6762d46bdfe4b98efbf422a5ed4c",
+    "mtime": 1783844742.5525126,
+    "ast_hash": "671ea52a812dd18c19ec5e2d1da23d2a",
     "semantic_hash": ""
   },
   "src/features/admin/api/gameServerAccess.ts": {
-    "mtime": 1784187395.651613,
-    "ast_hash": "08c864f9ee3da9d94058947cfb0fb96c",
+    "mtime": 1783743345.7136786,
+    "ast_hash": "2b3db78b221ff39377583bddc3c4dc9f",
     "semantic_hash": ""
   },
   "src/features/admin/components/gameserver/GameServerAccessManager.tsx": {
-    "mtime": 1784187550.5815594,
-    "ast_hash": "11b124f8341b723f08bda58e3a694fe3",
+    "mtime": 1783743481.819089,
+    "ast_hash": "b94713973316447d6c03ae82dbf56638",
     "semantic_hash": ""
   },
   "src/features/admin/components/layout/GameServerAccessCard.tsx": {

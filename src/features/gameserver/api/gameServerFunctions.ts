@@ -1,6 +1,7 @@
 import { callAdminFunction } from "@/features/admin/api/adminFunctions";
 import type {
   GameServerActionResponse,
+  GameServerAccessStatusResponse,
   GameServerAuditLogResponse,
   GameServerId,
   GameServersResponse,
@@ -18,6 +19,13 @@ export async function callGameServerFunction<T = unknown>(
     adminSessionToken,
     data,
     options,
+  );
+}
+
+export function getGameServerAccessStatus(sessionToken: string) {
+  return callGameServerFunction<GameServerAccessStatusResponse>(
+    "getGameServerAccessStatus",
+    sessionToken,
   );
 }
 
