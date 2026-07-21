@@ -808,32 +808,22 @@ async function readCloudWatchTelemetry(config: GameServerAwsConfig): Promise<{
   message: string | null;
 }> {
   try {
-    const [memoryUsedPercent, diskUsedPercent] = await Promise.all([
-      metricPercent(config, "mem_used_percent", "average"),
-      metricPercent(config, "disk_used_percent", "maximum"),
-    ]);
+    const memoryUsedPercent = await metricPercent(config, "mem_used_percent", "average");
     return {
       memoryUsedPercent:
         memoryUsedPercent === null ? null : Math.round(memoryUsedPercent * 10) / 10,
-      diskUsedPercent:
-        diskUsedPercent === null ? null : Math.round(diskUsedPercent * 10) / 10,
-      message: [
+      diskUsedPercent: null,
+      message:
         memoryUsedPercent === null
           ? "RAM metric is unavailable from CloudWatch."
           : null,
-        diskUsedPercent === null
-          ? "Disk metric is unavailable from CloudWatch."
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" ") || null,
     };
   } catch (error) {
     console.error("Failed to read Palworld CloudWatch telemetry", error);
     return {
       memoryUsedPercent: null,
       diskUsedPercent: null,
-      message: "RAM and disk metrics are unavailable from CloudWatch.",
+      message: "RAM metric is unavailable from CloudWatch.",
     };
   }
 }

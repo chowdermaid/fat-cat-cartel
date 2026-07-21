@@ -151,6 +151,13 @@
   "149": "Calendar Events Implementation",
   "150": "Game Server Dashboard Progress",
   "151": "adminFunctions.ts",
+  "152": "cloudWatchQuery",
   "153": "BestProgressByEncounter",
+  "154": "queryPalworldPlayersViaSsm",
+  "155": "cleanText",
+  "156": "parseServerId",
+  "157": "updateMonthlyCostSnapshot",
+  "158": "statusForEnabledServer",
+  "159": "adminAuthConfigWithSingleMemberRole",
   "160": "adminFunctions.ts"
 }

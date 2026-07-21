@@ -6,7 +6,6 @@ import {
   Clock3,
   Copy,
   Globe2,
-  HardDrive,
   MemoryStick,
   Power,
   RefreshCw,
@@ -31,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   getGameServerStatus,
   listGameServerEvents,
@@ -48,8 +48,73 @@ import type {
 const START_POLL_INTERVAL_MS = 10_000;
 const START_POLL_MAX_ATTEMPTS = 48;
 const PALWORLD_PASSWORD = "chowiscool";
+
+function PalworldServerLoading() {
+  return (
+    <div className="space-y-6">
+      <section className="space-y-3">
+        <Skeleton className="h-9 w-36" />
+        <Skeleton className="h-9 w-64" />
+      </section>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-36" />
+            <Skeleton className="h-4 w-64 max-w-full" />
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Skeleton className="h-10 w-24" />
+              <Skeleton className="h-10 w-20" />
+              <Skeleton className="h-10 w-20" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-5 w-28" />
+              <Skeleton className="h-4 w-48" />
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-5 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
 const PALWORLD_RAM_GB = 8;
-const PALWORLD_DISK_GB = 30;
 const INSTANCE_PRICES_AUD: Record<string, number> = {
   "t3a.large": 0.15,
   "t3a.xlarge": 0.3,
@@ -393,6 +458,10 @@ export function PalworldServerPage() {
     return null;
   }
 
+  if (!status && loadingStatus) {
+    return <PalworldServerLoading />;
+  }
+
   return (
     <div className="space-y-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
@@ -426,7 +495,7 @@ export function PalworldServerPage() {
                 <Users className="h-4 w-4 text-muted-foreground" />
                 Server
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 <div className="rounded-md border px-3 py-3">
                   <div className="text-xs text-muted-foreground">State</div>
                   <div className={`mt-1 text-lg font-semibold ${stateTone(status?.status)}`}>
@@ -444,12 +513,6 @@ export function PalworldServerPage() {
                   icon={MemoryStick}
                   percent={status?.memoryUsedPercent}
                   capacity={PALWORLD_RAM_GB}
-                />
-                <UsageBar
-                  label="Disk"
-                  icon={HardDrive}
-                  percent={status?.diskUsedPercent}
-                  capacity={PALWORLD_DISK_GB}
                 />
               </div>
             </section>

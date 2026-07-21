@@ -1,16 +1,16 @@
-# Graph Report - fat-cat-cartel  (2026-07-16)
+# Graph Report - fat-cat-cartel  (2026-07-21)
 
 ## Corpus Check
-- 388 files · ~2,034,256 words
+- 388 files · ~2,034,593 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2482 nodes · 4884 edges · 161 communities (141 shown, 20 thin omitted)
+- 2486 nodes · 4890 edges · 161 communities (141 shown, 20 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b6ee983e`
+- Built from commit: `e1152e4c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -151,10 +151,10 @@
 - Calendar Events Implementation
 - Game Server Dashboard Progress
 - adminFunctions.ts
-- queryPalworldPlayersViaSsm
+- cloudWatchQuery
 - BestProgressByEncounter
-- updateGameServerSettingsForAdmin
-- accessEntryFromValue
+- queryPalworldPlayersViaSsm
+- cleanText
 - parseServerId
 - updateMonthlyCostSnapshot
 - statusForEnabledServer
@@ -596,11 +596,11 @@ Nodes (17): Cache Keys, Collectible Types, Cost Notes, Data Sources, Database Sh
 
 ### Community 137 - "types.ts"
 Cohesion: 0.06
-Nodes (51): callGameServerFunction(), getGameServerAccessStatus(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), GameServerCard (+43 more)
+Nodes (53): callGameServerFunction(), getGameServerAccessStatus(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), GameServerCard (+45 more)
 
 ### Community 138 - "profile.ts"
 Cohesion: 0.10
-Nodes (26): amzDate(), cloudWatchQuery(), dateStamp(), escapeCloudWatchSearch(), GAME_SERVERS, GameServerAccessCandidate, GameServerAccessEntry, GameServerAuditAction (+18 more)
+Nodes (23): accessEntryFromValue(), GAME_SERVERS, GameServerAccessCandidate, GameServerAccessEntry, GameServerAuditAction, GameServerAuditLogEntry, GameServerAuditResult, GameServerAwsConfig (+15 more)
 
 ### Community 139 - "Meowket Board Implementation"
 Cohesion: 0.13
@@ -654,21 +654,21 @@ Nodes (10): Current Phase, Deferred Work, Game Server Dashboard Progress, Locked
 Cohesion: 0.17
 Nodes (14): deleteGameServerAccess(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAccessCandidates(), listGameServerAuditLog(), updateGameServerSettings(), upsertGameServerAccess() (+6 more)
 
-### Community 152 - "queryPalworldPlayersViaSsm"
-Cohesion: 0.20
-Nodes (10): isSsmInvocationPendingError(), palworldPlayerFromValue(), parsePalworldPlayersResponse(), queryPalworldPlayersViaSsm(), readCloudWatchTelemetry(), readPalworldTelemetry(), safeNumber(), safeString() (+2 more)
+### Community 152 - "cloudWatchQuery"
+Cohesion: 0.18
+Nodes (11): amzDate(), cloudWatchQuery(), dateStamp(), escapeCloudWatchSearch(), hashHex(), hmac(), metricPercent(), parseCloudWatchValues() (+3 more)
 
 ### Community 153 - "BestProgressByEncounter"
 Cohesion: 0.20
 Nodes (7): activityImpact(), ActivityTimelineChart(), ActivityTooltipContent(), BestProgressByEncounter(), clampPercent(), compactContentType(), formatDate()
 
-### Community 154 - "updateGameServerSettingsForAdmin"
+### Community 154 - "queryPalworldPlayersViaSsm"
+Cohesion: 0.25
+Nodes (8): isSsmInvocationPendingError(), palworldPlayerFromValue(), parsePalworldPlayersResponse(), queryPalworldPlayersViaSsm(), safeNumber(), safeString(), shellSingleQuote(), sleep()
+
+### Community 155 - "cleanText"
 Cohesion: 0.38
 Nodes (7): cleanText(), deleteGameServerAccessForAdmin(), parseDiscordId(), parseDisplayName(), parseEnabled(), parseNotes(), upsertGameServerAccessForAdmin()
-
-### Community 155 - "accessEntryFromValue"
-Cohesion: 0.33
-Nodes (6): accessEntryFromValue(), getGameServerAccessStatusForSession(), listGameServerAccessCandidatesForAdmin(), listGameServerAccessForAdmin(), readAccessEntry(), requireGameServerAccess()
 
 ### Community 156 - "parseServerId"
 Cohesion: 0.40
@@ -699,9 +699,9 @@ Nodes (3): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `progress()` connect `Community 9` to `Community 8`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
   _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**

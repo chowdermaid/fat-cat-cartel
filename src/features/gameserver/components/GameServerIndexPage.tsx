@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getGameServers } from "../api/gameServerFunctions";
 import { useGameServerAuth } from "../hooks/useGameServerAuth";
 import type { GameServerDefinition, GameServerStatus } from "../types";
@@ -24,6 +25,35 @@ function sessionDisplayName(auth: ReturnType<typeof useGameServerAuth>): string 
   return (
     auth.session?.characterName ||
     "Linked member"
+  );
+}
+
+function GameServerIndexLoading() {
+  return (
+    <div className="space-y-6">
+      <section className="space-y-2">
+        <Skeleton className="h-9 w-56" />
+        <Skeleton className="h-4 w-40" />
+      </section>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-36" />
+              <Skeleton className="h-4 w-64 max-w-full" />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <Skeleton className="h-10 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
 
@@ -84,6 +114,10 @@ export function GameServerIndexPage() {
 
   if (!auth.canUseGameServers) {
     return null;
+  }
+
+  if (!servers.length && !serverError) {
+    return <GameServerIndexLoading />;
   }
 
   return (
