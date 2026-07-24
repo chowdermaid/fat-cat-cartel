@@ -20,8 +20,8 @@
     "semantic_hash": "5d7b615184f0150d56950e8dcd3b90f0"
   },
   "functions/package.json": {
-    "mtime": 1783839547.9518917,
-    "ast_hash": "3ba842a58bd0660823c1f49e725054c5",
+    "mtime": 1784878773.5634773,
+    "ast_hash": "fbc442b2ec7a0e435adfeeed4d52426e",
     "semantic_hash": ""
   },
   "functions/scripts/register-discord-commands.js": {
@@ -30,8 +30,8 @@
     "semantic_hash": "7abc52b00397cf8234386eb6a7988173"
   },
   "functions/src/admin-auth.ts": {
-    "mtime": 1783737933.188332,
-    "ast_hash": "659ca7ea856da91d382132055b6be442",
+    "mtime": 1784878772.2046895,
+    "ast_hash": "82c2d63f45f56510267115529cf8ee38",
     "semantic_hash": ""
   },
   "functions/src/admin-mutations.ts": {
@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1784187381.2332897,
-    "ast_hash": "903f8febfcbc601d757ad41ff0d8fd0a",
+    "mtime": 1784878732.6882718,
+    "ast_hash": "525e9e2ba35fb83f3ae0804763518467",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -160,9 +160,9 @@
     "semantic_hash": "615851105fdbc32d13f37443a9422443"
   },
   "package.json": {
-    "mtime": 1783673709.8689117,
-    "ast_hash": "238f85d69ae89e6c4432dca2ef83bcca",
-    "semantic_hash": "238f85d69ae89e6c4432dca2ef83bcca"
+    "mtime": 1784878870.851051,
+    "ast_hash": "daf08c802d8f97d071a4c0620facc5ab",
+    "semantic_hash": ""
   },
   "scripts/dev-emulator.mjs": {
     "mtime": 1781337354.4780738,
@@ -205,14 +205,14 @@
     "semantic_hash": "fb25a816852e5e5eaeebbea5d24f3e3d"
   },
   "src/components/auth/AuthLoginInstructionsDialog.tsx": {
-    "mtime": 1782184120.4002178,
-    "ast_hash": "35bac08b92f317ba349338b99f2e2e76",
-    "semantic_hash": "35bac08b92f317ba349338b99f2e2e76"
+    "mtime": 1784879455.552182,
+    "ast_hash": "53054941079356e3d3312796f39e39d1",
+    "semantic_hash": ""
   },
   "src/components/auth/AuthUserMenu.tsx": {
-    "mtime": 1780797331.8088481,
-    "ast_hash": "294377607f4c8436e6f449109f73e76d",
-    "semantic_hash": "294377607f4c8436e6f449109f73e76d"
+    "mtime": 1784878993.3070226,
+    "ast_hash": "fa480d3c785788ece4ef6128d49292e1",
+    "semantic_hash": ""
   },
   "src/components/dev/DevPersonaControl.tsx": {
     "mtime": 1780202589.7012012,
@@ -415,9 +415,9 @@
     "semantic_hash": "24de313f0b91fc790b247965dcfa896b"
   },
   "src/features/admin/hooks/useAdminAuth.ts": {
-    "mtime": 1781154027.3950584,
-    "ast_hash": "f50ffc9a0b472b1c793f7524dbf6fa6a",
-    "semantic_hash": "f50ffc9a0b472b1c793f7524dbf6fa6a"
+    "mtime": 1784880231.4100718,
+    "ast_hash": "ec6dae698e83c50940cd2bb49e1bab44",
+    "semantic_hash": ""
   },
   "src/features/admin/hooks/useAdminMemberSyncStatuses.ts": {
     "mtime": 1781153523.913438,
@@ -445,8 +445,8 @@
     "semantic_hash": "89e55509dff3b2f7d688c2bffe3d641d"
   },
   "src/features/admin/types.ts": {
-    "mtime": 1783736691.4622264,
-    "ast_hash": "716286a33c3a85d2e4a1c222e94891ca",
+    "mtime": 1784878648.267315,
+    "ast_hash": "e5368f5911fc4328db2fbe0ce73bdb19",
     "semantic_hash": ""
   },
   "src/features/admin/utils/adminAuthStorage.ts": {
@@ -620,9 +620,9 @@
     "semantic_hash": "4d76a9029a2fb8e2d9a871d2128158ec"
   },
   "src/features/craftingboard/components/CraftingBoardPage.tsx": {
-    "mtime": 1781093413.206872,
-    "ast_hash": "031a0d9f40dcea844e56160d221195ef",
-    "semantic_hash": "031a0d9f40dcea844e56160d221195ef"
+    "mtime": 1784878702.4519527,
+    "ast_hash": "2d6095dcf396ab908b48267d169bd342",
+    "semantic_hash": ""
   },
   "src/features/craftingboard/components/CreateRequestDialog.tsx": {
     "mtime": 1782184142.7844238,
@@ -1760,8 +1760,8 @@
     "semantic_hash": "8432458fcdb71476d0ba34f2288c6ecd"
   },
   "src/lib/dev/callables.ts": {
-    "mtime": 1784614152.2592013,
-    "ast_hash": "32195dd08d43ba0e740254c5e039bcc3",
+    "mtime": 1784878750.782748,
+    "ast_hash": "ee3e8154f904e16b1e77dd40d9dbd213",
     "semantic_hash": ""
   },
   "src/lib/dev/craftingRequests.ts": {
@@ -1815,18 +1815,18 @@
     "semantic_hash": "03e949fa8de55498870e006ae5d8ee27"
   },
   "src/features/gameserver/api/gameServerFunctions.ts": {
-    "mtime": 1783927062.4765656,
-    "ast_hash": "0542fc235e4bb9d7fcce23e1ea3bcb2d",
+    "mtime": 1784880230.6070242,
+    "ast_hash": "a8aa42f0a852ce6967d4fb4f4488ae8f",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/GameServerIndexPage.tsx": {
-    "mtime": 1784613008.9182682,
-    "ast_hash": "e89d4e53e0840b34ac195e51e0b63e3a",
+    "mtime": 1784884396.8567276,
+    "ast_hash": "7e62907cbfe0562820154b9464a18400",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/PalworldServerPage.tsx": {
-    "mtime": 1784613102.5566342,
-    "ast_hash": "d1d0ee8e94a9d07b3423c85b577b0d1b",
+    "mtime": 1784883628.5920506,
+    "ast_hash": "12afda04bedaea704e5e9a07295a3c11",
     "semantic_hash": ""
   },
   "src/features/gameserver/constants.ts": {
@@ -1835,8 +1835,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/hooks/useGameServerAuth.ts": {
-    "mtime": 1784612739.2507353,
-    "ast_hash": "83a432cb7bda5b686ce85f5dffd23d46",
+    "mtime": 1784879013.469929,
+    "ast_hash": "5e3bece715bd7cdd93cf4bf427897227",
     "semantic_hash": ""
   },
   "src/features/gameserver/index.tsx": {
@@ -1845,8 +1845,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/types.ts": {
-    "mtime": 1784612721.0483968,
-    "ast_hash": "09f3612a59611ead75d0ed4464625492",
+    "mtime": 1784878651.6847284,
+    "ast_hash": "37e578ca0436eaa5c19d98f85107131b",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1855,8 +1855,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1783765059.4984052,
-    "ast_hash": "5ec4fbb203bf59c7dd81620345d82629",
+    "mtime": 1784878935.9000673,
+    "ast_hash": "8b944f5a31e8e99e173bbbee2e8d91e2",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -2340,18 +2340,18 @@
     "semantic_hash": ""
   },
   "functions/src/game-servers.ts": {
-    "mtime": 1784614141.5398774,
-    "ast_hash": "8bdca619ba2a8f5a32ad5d2ebf703d48",
+    "mtime": 1784878968.01529,
+    "ast_hash": "c8e08e4edc1052dfddcb8350be561181",
     "semantic_hash": ""
   },
   "src/features/admin/api/gameServerAccess.ts": {
-    "mtime": 1784187395.651613,
-    "ast_hash": "08c864f9ee3da9d94058947cfb0fb96c",
+    "mtime": 1784878652.372216,
+    "ast_hash": "0c1d74b84842a23a7cc3d02457c64bb4",
     "semantic_hash": ""
   },
   "src/features/admin/components/gameserver/GameServerAccessManager.tsx": {
-    "mtime": 1784187550.5815594,
-    "ast_hash": "11b124f8341b723f08bda58e3a694fe3",
+    "mtime": 1784879797.2470734,
+    "ast_hash": "6ffca88b516c1651f38152a1c9e4f2af",
     "semantic_hash": ""
   },
   "src/features/admin/components/layout/GameServerAccessCard.tsx": {
@@ -2362,6 +2362,121 @@
   "firebase-export-1783839906411z5MYFo/database_export/fat-cat-cartel-default-rtdb.json": {
     "mtime": 1783839906.552442,
     "ast_hash": "697ff9dfdf0eb838de9f697a2b914ff8",
+    "semantic_hash": ""
+  },
+  "functions/src/authorization-policy.test.ts": {
+    "mtime": 1784878881.5618472,
+    "ast_hash": "21e1f2b8fc0dae27950c00205af491c4",
+    "semantic_hash": ""
+  },
+  "tests/database-rules.test.mjs": {
+    "mtime": 1784878774.693121,
+    "ast_hash": "f190b753cfa990983490b42b7e385de5",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/api/gameServerStubs.ts": {
+    "mtime": 1784882397.5382543,
+    "ast_hash": "1bbb9524df93ed943d55178efae9da8a",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx": {
+    "mtime": 1784881454.1462226,
+    "ast_hash": "cca14d70a93aaaf109257d42b7599b53",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldServerHero.tsx": {
+    "mtime": 1784885722.391512,
+    "ast_hash": "f7cd492819cb666a6f3d522467e29945",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/hooks/usePalworldServerAnimations.ts": {
+    "mtime": 1784885276.0481606,
+    "ast_hash": "21755f4c516ae906f75a81ef626bd6d9",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/palworld-banner.jpg": {
+    "mtime": 1784881278.7513156,
+    "ast_hash": "ebf98e92c526a063dbea340f7c154a73",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldServerUsage.tsx": {
+    "mtime": 1784881833.4587748,
+    "ast_hash": "eb6eb0c9049d860d87ab1117c53fcb13",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldPlayerField.tsx": {
+    "mtime": 1784886326.8214228,
+    "ast_hash": "4aa9899b9c287c4944a0eb94b3eb4c6e",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx": {
+    "mtime": 1784882878.0489495,
+    "ast_hash": "e95a76a51c06b14899bdc06d2886d608",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx": {
+    "mtime": 1784883438.696451,
+    "ast_hash": "9c29d5eed692a046e6b1c20ba4f73cfa",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldCostSummary.tsx": {
+    "mtime": 1784883627.823781,
+    "ast_hash": "9a55fa2651c4e2b52becdcd33913f373",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx": {
+    "mtime": 1784885774.7685184,
+    "ast_hash": "057d4fdf05c3807e82a0cb7febffab2e",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/palworld-live-players-banner.png": {
+    "mtime": 1784885837.3094797,
+    "ast_hash": "5096126ca7e14c1646463e6dd2f92b22",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/bulbasaur.svg": {
+    "mtime": 1784886172.91777,
+    "ast_hash": "57e3f795a7effd7e6e847ed760bc4a1e",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/chansey.svg": {
+    "mtime": 1784886174.4005654,
+    "ast_hash": "fdaf03fb8e5d98e3bbe1c03c3c74a1c8",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/charmander.svg": {
+    "mtime": 1784886198.4313204,
+    "ast_hash": "58529d72eae10919d2c4822963a40937",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/chikorita.svg": {
+    "mtime": 1784886200.6228292,
+    "ast_hash": "bc2f90fff8d6a18c83ff0cb8beb66175",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/jigglypuff.svg": {
+    "mtime": 1784886203.4228146,
+    "ast_hash": "6510ded31066929e5fb3b55f7d4aab98",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/lapras.svg": {
+    "mtime": 1784886201.859456,
+    "ast_hash": "38053bb3123dec950a6e1613d34584e8",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/meowth.svg": {
+    "mtime": 1784886207.210013,
+    "ast_hash": "edb84fe1b8983e815361c08ea58dd6e9",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/piplup.svg": {
+    "mtime": 1784886205.904989,
+    "ast_hash": "179879aafbe880d5d2d737156cc78b44",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/totodile.svg": {
+    "mtime": 1784886204.625337,
+    "ast_hash": "e16d08b50fa612ca82c45466d1a37be3",
     "semantic_hash": ""
   }
 }

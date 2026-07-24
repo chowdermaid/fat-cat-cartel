@@ -205,8 +205,8 @@
     "semantic_hash": "fb25a816852e5e5eaeebbea5d24f3e3d"
   },
   "src/components/auth/AuthLoginInstructionsDialog.tsx": {
-    "mtime": 1784878992.6310966,
-    "ast_hash": "a4b26f9ded617064dda9c838fc2d9896",
+    "mtime": 1784879455.552182,
+    "ast_hash": "53054941079356e3d3312796f39e39d1",
     "semantic_hash": ""
   },
   "src/components/auth/AuthUserMenu.tsx": {
@@ -415,8 +415,8 @@
     "semantic_hash": "24de313f0b91fc790b247965dcfa896b"
   },
   "src/features/admin/hooks/useAdminAuth.ts": {
-    "mtime": 1784878648.9300487,
-    "ast_hash": "8fcdc97aaac9c3eaab36fbac79dceaed",
+    "mtime": 1784880231.4100718,
+    "ast_hash": "ec6dae698e83c50940cd2bb49e1bab44",
     "semantic_hash": ""
   },
   "src/features/admin/hooks/useAdminMemberSyncStatuses.ts": {
@@ -1815,18 +1815,18 @@
     "semantic_hash": "03e949fa8de55498870e006ae5d8ee27"
   },
   "src/features/gameserver/api/gameServerFunctions.ts": {
-    "mtime": 1783927062.4765656,
-    "ast_hash": "0542fc235e4bb9d7fcce23e1ea3bcb2d",
+    "mtime": 1784880230.6070242,
+    "ast_hash": "a8aa42f0a852ce6967d4fb4f4488ae8f",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/GameServerIndexPage.tsx": {
-    "mtime": 1784878650.9930675,
-    "ast_hash": "345fe7a54d4f579fe25caf4f73c72972",
+    "mtime": 1784884396.8567276,
+    "ast_hash": "7e62907cbfe0562820154b9464a18400",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/PalworldServerPage.tsx": {
-    "mtime": 1784878994.0008712,
-    "ast_hash": "5946aa29044eed85db094537e22877ec",
+    "mtime": 1784883628.5920506,
+    "ast_hash": "12afda04bedaea704e5e9a07295a3c11",
     "semantic_hash": ""
   },
   "src/features/gameserver/constants.ts": {
@@ -2350,8 +2350,8 @@
     "semantic_hash": ""
   },
   "src/features/admin/components/gameserver/GameServerAccessManager.tsx": {
-    "mtime": 1784878968.7094154,
-    "ast_hash": "79466d7fce8c7ff37b7244a5fff2c272",
+    "mtime": 1784879797.2470734,
+    "ast_hash": "6ffca88b516c1651f38152a1c9e4f2af",
     "semantic_hash": ""
   },
   "src/features/admin/components/layout/GameServerAccessCard.tsx": {
@@ -2372,6 +2372,111 @@
   "tests/database-rules.test.mjs": {
     "mtime": 1784878774.693121,
     "ast_hash": "f190b753cfa990983490b42b7e385de5",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/api/gameServerStubs.ts": {
+    "mtime": 1784882397.5382543,
+    "ast_hash": "1bbb9524df93ed943d55178efae9da8a",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx": {
+    "mtime": 1784881454.1462226,
+    "ast_hash": "cca14d70a93aaaf109257d42b7599b53",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldServerHero.tsx": {
+    "mtime": 1784885722.391512,
+    "ast_hash": "f7cd492819cb666a6f3d522467e29945",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/hooks/usePalworldServerAnimations.ts": {
+    "mtime": 1784885276.0481606,
+    "ast_hash": "21755f4c516ae906f75a81ef626bd6d9",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/palworld-banner.jpg": {
+    "mtime": 1784881278.7513156,
+    "ast_hash": "ebf98e92c526a063dbea340f7c154a73",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldServerUsage.tsx": {
+    "mtime": 1784881833.4587748,
+    "ast_hash": "eb6eb0c9049d860d87ab1117c53fcb13",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldPlayerField.tsx": {
+    "mtime": 1784886326.8214228,
+    "ast_hash": "4aa9899b9c287c4944a0eb94b3eb4c6e",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx": {
+    "mtime": 1784882878.0489495,
+    "ast_hash": "e95a76a51c06b14899bdc06d2886d608",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx": {
+    "mtime": 1784883438.696451,
+    "ast_hash": "9c29d5eed692a046e6b1c20ba4f73cfa",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldCostSummary.tsx": {
+    "mtime": 1784883627.823781,
+    "ast_hash": "9a55fa2651c4e2b52becdcd33913f373",
+    "semantic_hash": ""
+  },
+  "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx": {
+    "mtime": 1784886416.3953893,
+    "ast_hash": "b8507926fd591f584d8fc8010de02b9d",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/palworld-live-players-banner.png": {
+    "mtime": 1784885837.3094797,
+    "ast_hash": "5096126ca7e14c1646463e6dd2f92b22",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/bulbasaur.svg": {
+    "mtime": 1784886172.91777,
+    "ast_hash": "57e3f795a7effd7e6e847ed760bc4a1e",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/chansey.svg": {
+    "mtime": 1784886174.4005654,
+    "ast_hash": "fdaf03fb8e5d98e3bbe1c03c3c74a1c8",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/charmander.svg": {
+    "mtime": 1784886198.4313204,
+    "ast_hash": "58529d72eae10919d2c4822963a40937",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/chikorita.svg": {
+    "mtime": 1784886200.6228292,
+    "ast_hash": "bc2f90fff8d6a18c83ff0cb8beb66175",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/jigglypuff.svg": {
+    "mtime": 1784886203.4228146,
+    "ast_hash": "6510ded31066929e5fb3b55f7d4aab98",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/lapras.svg": {
+    "mtime": 1784886201.859456,
+    "ast_hash": "38053bb3123dec950a6e1613d34584e8",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/meowth.svg": {
+    "mtime": 1784886207.210013,
+    "ast_hash": "edb84fe1b8983e815361c08ea58dd6e9",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/piplup.svg": {
+    "mtime": 1784886205.904989,
+    "ast_hash": "179879aafbe880d5d2d737156cc78b44",
+    "semantic_hash": ""
+  },
+  "src/assets/gameserver/icons/totodile.svg": {
+    "mtime": 1784886204.625337,
+    "ast_hash": "e16d08b50fa612ca82c45466d1a37be3",
     "semantic_hash": ""
   }
 }

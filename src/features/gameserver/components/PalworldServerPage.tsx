@@ -1,20 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import {
-  Activity,
-  ArrowLeft,
-  Clock3,
-  Copy,
-  Globe2,
-  MemoryStick,
   Power,
-  RefreshCw,
   Server,
-  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthAccessState } from "@/components/auth/AuthAccessState";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,12 +28,19 @@ import {
   stopGameServer,
 } from "../api/gameServerFunctions";
 import { useGameServerAuth } from "../hooks/useGameServerAuth";
+import { usePalworldServerAnimations } from "../hooks/usePalworldServerAnimations";
 import type {
   GameServerActionResponse,
   GameServerAuditLogEntry,
-  GameServerStatus,
   GameServerStatusResponse,
 } from "../types";
+import { PalworldActivityTimeline } from "./palworld/PalworldActivityTimeline";
+import { PalworldConnectionPanel } from "./palworld/PalworldConnectionPanel";
+import { PalworldCostSummary } from "./palworld/PalworldCostSummary";
+import { PalworldPlayerField } from "./palworld/PalworldPlayerField";
+import { PalworldServerHero } from "./palworld/PalworldServerHero";
+import { PalworldServerUsage } from "./palworld/PalworldServerUsage";
+import { PalworldStartupStatus } from "./palworld/PalworldStartupStatus";
 
 const START_POLL_INTERVAL_MS = 10_000;
 const START_POLL_MAX_ATTEMPTS = 48;
@@ -52,10 +49,7 @@ const PALWORLD_PASSWORD = "chowiscool";
 function PalworldServerLoading() {
   return (
     <div className="space-y-6">
-      <section className="space-y-3">
-        <Skeleton className="h-9 w-36" />
-        <Skeleton className="h-9 w-64" />
-      </section>
+      <Skeleton className="h-[25rem] w-full rounded-xl" />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <Card>
@@ -64,26 +58,18 @@ function PalworldServerLoading() {
             <Skeleton className="h-4 w-64 max-w-full" />
           </CardHeader>
           <CardContent className="space-y-5">
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
+            <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
               <Skeleton className="h-16 w-full" />
               <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-20" />
-              <Skeleton className="h-10 w-20" />
             </div>
           </CardContent>
         </Card>
@@ -114,32 +100,9 @@ function PalworldServerLoading() {
     </div>
   );
 }
-const PALWORLD_RAM_GB = 8;
-const INSTANCE_PRICES_AUD: Record<string, number> = {
-  "t3a.large": 0.15,
-  "t3a.xlarge": 0.3,
-};
-
 function formatDateTime(value: string | null | undefined): string {
   if (!value) return "Unavailable";
   return new Date(value).toLocaleString();
-}
-
-function formatTimestamp(value: number | null | undefined): string {
-  if (!value) return "Never";
-  return new Date(value).toLocaleString();
-}
-
-function formatPercent(value: number | null | undefined): string {
-  return typeof value === "number" ? `${value.toFixed(1)}%` : "Unavailable";
-}
-
-function formatUsedAmount(
-  percent: number | null | undefined,
-  capacity: number,
-): string {
-  if (typeof percent !== "number") return `Unavailable of ${capacity} GB`;
-  return `${((percent / 100) * capacity).toFixed(1)} of ${capacity} GB`;
 }
 
 function formatPlayers(status: GameServerStatusResponse | null): string {
@@ -148,74 +111,8 @@ function formatPlayers(status: GameServerStatusResponse | null): string {
   return `${status.playerCount}/${status.maxPlayers}`;
 }
 
-function formatDuration(ms: number): string {
-  if (ms <= 0) return "0m";
-  const totalMinutes = Math.floor(ms / 60_000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours <= 0) return `${minutes}m`;
-  return `${hours}h ${minutes}m`;
-}
-
-function sessionCostAud(
-  status: GameServerStatusResponse | null,
-  now: number,
-): { runningFor: string; cost: string; hourlyRate: string } {
-  const hourlyRate = status?.instanceType
-    ? INSTANCE_PRICES_AUD[status.instanceType]
-    : undefined;
-  if (
-    status?.status !== "running" ||
-    !status.launchTime ||
-    typeof hourlyRate !== "number"
-  ) {
-    return {
-      runningFor: "Not running",
-      cost: "Unavailable",
-      hourlyRate:
-        typeof hourlyRate === "number"
-          ? `A$${hourlyRate.toFixed(2)}/hr`
-          : "Unknown rate",
-    };
-  }
-  const launchedAt = new Date(status.launchTime).getTime();
-  const elapsedMs = Math.max(0, now - launchedAt);
-  const hoursRunning = elapsedMs / 1000 / 60 / 60;
-  return {
-    runningFor: formatDuration(elapsedMs),
-    cost: `~A$${(hoursRunning * hourlyRate).toFixed(2)}`,
-    hourlyRate: `A$${hourlyRate.toFixed(2)}/hr`,
-  };
-}
-
-function formatAud(value: number | null | undefined): string {
-  return typeof value === "number" ? `A$${value.toFixed(2)}` : "Unavailable";
-}
-
-function formatMonthLabel(monthKey: string | null | undefined): string {
-  if (!monthKey) return "This month";
-  const [year, month] = monthKey.split("-").map((part) => Number(part));
-  if (!year || !month) return monthKey;
-  return new Date(Date.UTC(year, month - 1, 1)).toLocaleString(undefined, {
-    month: "short",
-    year: "numeric",
-  });
-}
-
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
-}
-
-function stateTone(status: GameServerStatus | undefined): string {
-  if (status === "running") return "text-emerald-600";
-  if (status === "stopped" || status === "disabled") {
-    return "text-muted-foreground";
-  }
-  if (status === "pending" || status === "stopping") return "text-amber-600";
-  if (status === "terminated" || status === "unavailable") {
-    return "text-destructive";
-  }
-  return "";
 }
 
 function friendlyStatus(status: GameServerStatusResponse | null): string {
@@ -266,44 +163,6 @@ function actionToStatus(
   };
 }
 
-function auditActor(entry: GameServerAuditLogEntry): string {
-  return entry.requestedByDisplayName || entry.requestedByDiscordUserId || "Unknown";
-}
-
-function UsageBar({
-  label,
-  icon: Icon,
-  percent,
-  capacity,
-}: {
-  label: string;
-  icon: typeof MemoryStick;
-  percent: number | null | undefined;
-  capacity: number;
-}) {
-  const width = Math.min(100, Math.max(0, percent ?? 0));
-  return (
-    <div className="rounded-md border px-3 py-3">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Icon className="h-3.5 w-3.5" />
-          {label}
-        </div>
-        <div className="text-xs font-medium">{formatPercent(percent)}</div>
-      </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-emerald-500"
-          style={{ width: `${width}%` }}
-        />
-      </div>
-      <div className="mt-1 text-xs text-muted-foreground">
-        {formatUsedAmount(percent, capacity)}
-      </div>
-    </div>
-  );
-}
-
 export function PalworldServerPage() {
   const auth = useGameServerAuth();
   const [status, setStatus] = useState<GameServerStatusResponse | null>(null);
@@ -317,6 +176,11 @@ export function PalworldServerPage() {
   const [accessDenied, setAccessDenied] = useState(false);
   const [stopConfirmOpen, setStopConfirmOpen] = useState(false);
   const pollCancelledRef = useRef(false);
+  const { rootRef, pulseCopy } = usePalworldServerAnimations(
+    status?.status,
+    actionLoading,
+    status?.status === "running" && Boolean(status.connectAddress),
+  );
 
   async function loadEvents() {
     if (!auth.sessionToken || !auth.canUseGameServers) return;
@@ -401,12 +265,14 @@ export function PalworldServerPage() {
     }
   }
 
-  async function copyText(value: string, successMessage: string) {
+  async function copyText(value: string, successMessage: string): Promise<boolean> {
     try {
       await navigator.clipboard.writeText(value);
       toast.success(successMessage);
+      return true;
     } catch {
       toast.error("Could not copy.");
+      return false;
     }
   }
 
@@ -424,16 +290,7 @@ export function PalworldServerPage() {
     return () => window.clearInterval(interval);
   }, []);
 
-  const controlsDisabled = actionLoading !== null || status?.enabled === false;
   const canCopy = status?.status === "running" && Boolean(status.connectAddress);
-  const autoStopText =
-    status?.autoStopEligibleAt && status.status === "running"
-      ? formatTimestamp(status.autoStopEligibleAt)
-      : "Not counting down";
-  const currentSessionCost = sessionCostAud(status, now);
-  const monthlyCost = status?.monthlyCost;
-  const previousMonthCost = status?.previousMonthCost;
-
   if (auth.checking) {
     return null;
   }
@@ -463,23 +320,17 @@ export function PalworldServerPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <section className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div className="space-y-2">
-          <Button asChild variant="ghost" size="sm" className="w-fit px-0">
-            <Link to="/gameserver">
-              <ArrowLeft className="h-4 w-4" />
-              Game Servers
-            </Link>
-          </Button>
-          <div className="space-y-1">
-            <h1 className="flex items-center gap-2 text-3xl font-bold font-serif">
-              <Server className="h-7 w-7 text-muted-foreground" />
-              Palworld Server
-            </h1>
-          </div>
-        </div>
-      </section>
+    <div ref={rootRef} className="space-y-6">
+      <PalworldServerHero
+        status={status}
+        statusLabel={friendlyStatus(status)}
+        playersLabel={formatPlayers(status)}
+        loadingStatus={loadingStatus}
+        actionLoading={actionLoading}
+        onRefresh={() => void refreshStatus()}
+        onStart={() => void runAction("start")}
+        onStop={() => setStopConfirmOpen(true)}
+      />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <Card>
@@ -490,32 +341,7 @@ export function PalworldServerPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
-            <section className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                Server
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">State</div>
-                  <div className={`mt-1 text-lg font-semibold ${stateTone(status?.status)}`}>
-                    {friendlyStatus(status)}
-                  </div>
-                </div>
-                <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">Players</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {formatPlayers(status)}
-                  </div>
-                </div>
-                <UsageBar
-                  label="RAM"
-                  icon={MemoryStick}
-                  percent={status?.memoryUsedPercent}
-                  capacity={PALWORLD_RAM_GB}
-                />
-              </div>
-            </section>
+            <PalworldServerUsage status={status} now={now} />
 
             {status?.telemetryMessage && (
               <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-200">
@@ -523,81 +349,18 @@ export function PalworldServerPage() {
               </div>
             )}
 
-            {status?.status === "running" && status.players.length > 0 && (
-              <section className="space-y-3">
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  Online Players
-                </div>
-                <div className="divide-y rounded-md border">
-                  {status.players.map((player) => (
-                    <div
-                      key={player.playerId || player.userId || player.name}
-                      className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm"
-                    >
-                      <div className="min-w-0">
-                        <div className="truncate font-medium">
-                          {player.name || "Unknown"}
-                        </div>
-                        <div className="truncate text-xs text-muted-foreground">
-                          {player.accountName || player.userId || "Unknown account"}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>
-                          Lv {player.level ?? "?"}
-                        </span>
-                        <span>
-                          {typeof player.ping === "number"
-                            ? `${Math.round(player.ping)} ms`
-                            : "Ping unavailable"}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
+            {(actionLoading === "start" || status?.status === "pending") && (
+              <PalworldStartupStatus
+                status={status}
+                starting={actionLoading === "start"}
+              />
             )}
 
-            <section className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <Clock3 className="h-4 w-4 text-muted-foreground" />
-                Current Session
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">Running for</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {currentSessionCost.runningFor}
-                  </div>
-                </div>
-                <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">Session cost</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {currentSessionCost.cost}
-                  </div>
-                </div>
-                <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">
-                    {formatMonthLabel(monthlyCost?.monthKey)}
-                  </div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {formatAud(monthlyCost?.estimatedComputeAud)}
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {previousMonthCost
-                      ? `${formatAud(previousMonthCost.estimatedComputeAud)} last month`
-                      : "No previous month saved yet"}
-                  </div>
-                </div>
-                <div className="rounded-md border px-3 py-3">
-                  <div className="text-xs text-muted-foreground">Hourly rate</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {currentSessionCost.hourlyRate}
-                  </div>
-                </div>
-              </div>
-            </section>
+            {status?.status === "running" && (
+              <PalworldPlayerField players={status.players} />
+            )}
+
+            <PalworldCostSummary status={status} now={now} />
 
             <section className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold">
@@ -637,135 +400,38 @@ export function PalworldServerPage() {
                       : "Not yet"}
                   </div>
                 </div>
-                <div className="rounded-md border px-3 py-3">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock3 className="h-3.5 w-3.5" />
-                    Auto-stop at
-                  </div>
-                  <div className="mt-1 text-sm font-medium">{autoStopText}</div>
-                </div>
               </div>
             </section>
 
-            <div className="flex flex-wrap gap-2">
-              <Button
-                disabled={loadingStatus}
-                onClick={() => void refreshStatus()}
-              >
-                <RefreshCw className="h-4 w-4" />
-                {loadingStatus ? "Refreshing" : "Refresh"}
-              </Button>
-              <Button
-                disabled={controlsDisabled || status?.status !== "stopped"}
-                onClick={() => void runAction("start")}
-              >
-                <Power className="h-4 w-4" />
-                {actionLoading === "start" ? "Starting" : "Start"}
-              </Button>
-              <Button
-                disabled={controlsDisabled || status?.status !== "running"}
-                variant="outline"
-                onClick={() => setStopConfirmOpen(true)}
-              >
-                <Power className="h-4 w-4" />
-                {actionLoading === "stop" ? "Stopping" : "Stop"}
-              </Button>
-            </div>
           </CardContent>
         </Card>
 
         <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Globe2 className="h-4 w-4 text-muted-foreground" />
-                Connect
-              </CardTitle>
-              <CardDescription>
-                Copy these when Palworld is ready.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <div className="rounded-md border px-3 py-2">
-                <div className="text-xs text-muted-foreground">Address</div>
-                <div className="mt-1 break-all font-medium">
-                  {status?.connectAddress ?? "Start the server to show address."}
-                </div>
-              </div>
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={() =>
-                  status?.connectAddress &&
-                  void copyText(status.connectAddress, "Connect address copied.")
-                }
-                disabled={!canCopy}
-              >
-                <Copy className="h-4 w-4" />
-                Copy Address
-              </Button>
-              <div className="rounded-md border px-3 py-2">
-                <div className="text-xs text-muted-foreground">Password</div>
-                <div className="mt-1 font-medium">{PALWORLD_PASSWORD}</div>
-              </div>
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={() =>
-                  void copyText(PALWORLD_PASSWORD, "Password copied.")
-                }
-              >
-                <Copy className="h-4 w-4" />
-                Copy Password
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="lg:sticky lg:top-4">
+            <PalworldConnectionPanel
+              address={status?.connectAddress}
+              password={PALWORLD_PASSWORD}
+              ready={canCopy}
+              onCopyAddress={() => {
+                if (!status?.connectAddress) return;
+                void copyText(
+                  status.connectAddress,
+                  "Connect address copied.",
+                ).then((copied) => copied && pulseCopy("address"));
+              }}
+              onCopyPassword={() => {
+                void copyText(PALWORLD_PASSWORD, "Password copied.").then(
+                  (copied) => copied && pulseCopy("password"),
+                );
+              }}
+            />
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Activity className="h-4 w-4 text-muted-foreground" />
-                Latest Events
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => void loadEvents()}
-                disabled={loadingEvents}
-              >
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              {events.map((entry) => (
-                <div key={entry.id} className="rounded-md border px-3 py-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium capitalize">{entry.action}</span>
-                    <Badge
-                      variant={
-                        entry.result === "failed" || entry.result === "blocked"
-                          ? "destructive"
-                          : "secondary"
-                      }
-                    >
-                      {entry.result}
-                    </Badge>
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {auditActor(entry)} - {formatTimestamp(entry.createdAt)}
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {entry.message}
-                  </div>
-                </div>
-              ))}
-              {!events.length && (
-                <div className="rounded-md border border-dashed px-3 py-6 text-center text-muted-foreground">
-                  {loadingEvents ? "Loading events..." : "No recent events."}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <PalworldActivityTimeline
+            entries={events}
+            loading={loadingEvents}
+            onRefresh={() => void loadEvents()}
+          />
         </div>
       </div>
 

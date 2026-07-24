@@ -1,16 +1,16 @@
-# Graph Report - fat-cat-cartel  (2026-07-21)
+# Graph Report - fat-cat-cartel  (2026-07-24)
 
 ## Corpus Check
-- 388 files · ~2,034,541 words
+- 400 files · ~2,116,363 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2486 nodes · 4890 edges · 161 communities (141 shown, 20 thin omitted)
+- 2564 nodes · 5053 edges · 171 communities (151 shown, 20 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e1152e4c`
+- Built from commit: `e1e5036d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -154,12 +154,21 @@
 - cloudWatchQuery
 - BestProgressByEncounter
 - queryPalworldPlayersViaSsm
-- cleanText
-- parseServerId
+- PalworldStartupStatus.tsx
 - updateMonthlyCostSnapshot
 - statusForEnabledServer
-- adminAuthConfigWithSingleMemberRole
+- PalworldActivityTimeline.tsx
 - adminFunctions.ts
+- PalworldPlayerField.tsx
+- PalworldCostSummary.tsx
+- describePalworldInstance
+- requireAdminSession
+- accessEntryFromValue
+- cleanText
+- cloudWatchQuery
+- updateMonthlyCostSnapshot
+- statusForEnabledServer
+- listGameServerAuditLog
 
 ## God Nodes (most connected - your core abstractions)
 1. `formatGil()` - 35 edges
@@ -188,7 +197,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (161 total, 20 thin omitted)
+## Communities (171 total, 20 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -235,8 +244,8 @@ Cohesion: 0.10
 Nodes (35): ALLOWED_RAID_HELPER_PING_ROLE_IDS, approveCalendarEventRequest(), CalendarEventRequest, CalendarEventRequestCreator, CalendarEventRequestNotification, CalendarEventRequestNotificationConfig, CalendarEventRequestRecord, cleanText() (+27 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.12
-Nodes (35): AdminAuthConfig, AdminOAuthStartConfig, AdminSession, applyDevRoleOverride(), assertDevRoleOverrideSafety(), cookieIsSecure(), cookieValue(), DiscordGuildMember (+27 more)
+Cohesion: 0.10
+Nodes (39): AdminAuthConfig, AdminOAuthStartConfig, AdminSession, applyDevRoleOverride(), assertDevRoleOverrideSafety(), authenticatedSessionRecordIsValid(), cookieIsSecure(), cookieValue() (+31 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.10
@@ -380,7 +389,7 @@ Nodes (10): TomestoneActivitySection(), DIFFICULTY_BADGE, Props, RecentKillCard(
 
 ### Community 47 - "Community 47"
 Cohesion: 0.11
-Nodes (17): dependencies, @aws-sdk/client-ec2, @aws-sdk/client-ssm, firebase-admin, firebase-functions, devDependencies, @types/node, typescript (+9 more)
+Nodes (18): dependencies, @aws-sdk/client-ec2, @aws-sdk/client-ssm, firebase-admin, firebase-functions, devDependencies, @types/node, typescript (+10 more)
 
 ### Community 48 - "Community 48"
 Cohesion: 0.17
@@ -399,8 +408,8 @@ Cohesion: 0.17
 Nodes (12): CARD_COPY, CARD_ICONS, Props, RaidStatsHome(), EMPTY_ENCOUNTERS, useRaidStatsPageState(), ParseEntry, MemberIdentity (+4 more)
 
 ### Community 52 - "Community 52"
-Cohesion: 0.13
-Nodes (15): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, tailwindcss, @tailwindcss/vite (+7 more)
+Cohesion: 0.12
+Nodes (16): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, @firebase/rules-unit-testing, globals, tailwindcss (+8 more)
 
 ### Community 53 - "Community 53"
 Cohesion: 0.22
@@ -495,8 +504,8 @@ Cohesion: 0.36
 Nodes (7): FavoriteCollectibleOption, FavoriteCollectiblePicker(), favoriteById(), favoriteOptions(), findRarest(), isCollectible(), ownedPct()
 
 ### Community 76 - "Community 76"
-Cohesion: 0.16
-Nodes (20): assertAwsConfig(), assertServerEnabled(), connectAddress(), describePalworldInstance(), ec2Client(), getGameServerSettingsForAdmin(), hostForInstance(), readGameServerSettings() (+12 more)
+Cohesion: 0.22
+Nodes (13): assertServerEnabled(), getGameServerSettingsForAdmin(), listGameServerAuditLogForSession(), parseServerId(), readGameServerSettings(), sessionDisplayName(), settingsFromValue(), startGameServerForSession() (+5 more)
 
 ### Community 77 - "Community 77"
 Cohesion: 0.22
@@ -507,8 +516,8 @@ Cohesion: 0.36
 Nodes (8): compareCartCandidate(), compareSelectedListings(), fillWholeListings(), greedyWholeListingFill(), materialWithPrices(), materialWorldPrice(), publicWorldPrice(), publicWorldPrices()
 
 ### Community 79 - "Community 79"
-Cohesion: 0.25
-Nodes (8): scripts, build, dev, dev:auth, dev:emulator, dev:stub, lint, preview
+Cohesion: 0.22
+Nodes (9): scripts, build, dev, dev:auth, dev:emulator, dev:stub, lint, preview (+1 more)
 
 ### Community 80 - "Community 80"
 Cohesion: 0.25
@@ -595,12 +604,12 @@ Cohesion: 0.11
 Nodes (17): Cache Keys, Collectible Types, Cost Notes, Data Sources, Database Shape, FC Collection Implementation, Firebase Functions, Frontend Data Hook (+9 more)
 
 ### Community 137 - "types.ts"
-Cohesion: 0.06
-Nodes (53): callGameServerFunction(), getGameServerAccessStatus(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), GameServerCard (+45 more)
+Cohesion: 0.16
+Nodes (12): PalworldConnectionPanel(), PalworldConnectionPanelProps, PalworldServerHero(), PalworldServerHeroProps, stateTheme(), formatDateTime(), formatPlayers(), friendlyStatus() (+4 more)
 
 ### Community 138 - "profile.ts"
-Cohesion: 0.10
-Nodes (23): accessEntryFromValue(), GAME_SERVERS, GameServerAccessCandidate, GameServerAccessEntry, GameServerAuditAction, GameServerAuditLogEntry, GameServerAuditResult, GameServerAwsConfig (+15 more)
+Cohesion: 0.09
+Nodes (31): AuthorizedGameServerSession, escapeCloudWatchSearch(), GAME_SERVERS, GameServerAccessCandidate, GameServerAccessEntry, GameServerAuditAction, GameServerAuditLogEntry, GameServerAuditResult (+23 more)
 
 ### Community 139 - "Meowket Board Implementation"
 Cohesion: 0.13
@@ -615,8 +624,8 @@ Cohesion: 0.18
 Nodes (10): Animation Pattern, App Entry And Shell, Assets, Coding Conventions, Commands, File Structure, Project Reference, Routes (+2 more)
 
 ### Community 142 - "Admin Auth Implementation"
-Cohesion: 0.20
-Nodes (9): Admin Auth Implementation, Client Surfaces, Database Rules, Local Emulator Development, OAuth Flow, Protected Admin Operations, Secrets And Config, Session Data (+1 more)
+Cohesion: 0.18
+Nodes (10): Admin Auth Implementation, Client Surfaces, Database Rules, Local Emulator Development, OAuth Flow, Palworld Entitlements, Protected Admin Operations, Secrets And Config (+2 more)
 
 ### Community 143 - "Database Cleanup Inventory"
 Cohesion: 0.20
@@ -651,47 +660,83 @@ Cohesion: 0.18
 Nodes (10): Current Phase, Deferred Work, Game Server Dashboard Progress, Locked Decisions, Overall Checklist, Phase 1 Checklist, Phase 2 Checklist, Phase 3 Checklist (+2 more)
 
 ### Community 151 - "adminFunctions.ts"
-Cohesion: 0.17
-Nodes (14): deleteGameServerAccess(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAccessCandidates(), listGameServerAuditLog(), updateGameServerSettings(), upsertGameServerAccess() (+6 more)
+Cohesion: 0.19
+Nodes (11): deleteGameServerAccess(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAccessCandidates(), listGameServerAuditLog(), updateGameServerSettings(), upsertGameServerAccess() (+3 more)
 
 ### Community 152 - "cloudWatchQuery"
-Cohesion: 0.18
-Nodes (11): amzDate(), cloudWatchQuery(), dateStamp(), escapeCloudWatchSearch(), hashHex(), hmac(), metricPercent(), parseCloudWatchValues() (+3 more)
+Cohesion: 0.13
+Nodes (14): GAME_SERVERS, GameServerAccessCandidate, GameServerAccessCandidatesResponse, GameServerAccessEntry, GameServerAccessListResponse, GameServerAccessStatusResponse, GameServerAccessUpsertResponse, GameServerCostSnapshot (+6 more)
 
 ### Community 153 - "BestProgressByEncounter"
+Cohesion: 0.22
+Nodes (17): callGameServerFunction(), getGameServers(), getGameServerStatus(), listGameServerEvents(), startGameServer(), stopGameServer(), checkedAt, events (+9 more)
+
+### Community 154 - "queryPalworldPlayersViaSsm"
 Cohesion: 0.20
 Nodes (7): activityImpact(), ActivityTimelineChart(), ActivityTooltipContent(), BestProgressByEncounter(), clampPercent(), compactContentType(), formatDate()
 
-### Community 154 - "queryPalworldPlayersViaSsm"
-Cohesion: 0.25
-Nodes (8): isSsmInvocationPendingError(), palworldPlayerFromValue(), parsePalworldPlayersResponse(), queryPalworldPlayersViaSsm(), safeNumber(), safeString(), shellSingleQuote(), sleep()
-
-### Community 155 - "cleanText"
-Cohesion: 0.38
-Nodes (7): cleanText(), deleteGameServerAccessForAdmin(), parseDiscordId(), parseDisplayName(), parseEnabled(), parseNotes(), upsertGameServerAccessForAdmin()
-
-### Community 156 - "parseServerId"
-Cohesion: 0.40
-Nodes (6): auditEntryFromValue(), listGameServerAuditLog(), listGameServerAuditLogForAdmin(), listGameServerAuditLogForSession(), normalizeState(), parseServerId()
+### Community 155 - "PalworldStartupStatus.tsx"
+Cohesion: 0.28
+Nodes (7): PalworldStartupStatus(), PalworldStartupStatusProps, prefersReducedMotion(), StageState, StartupStage, startupStages(), GameServerStatusResponse
 
 ### Community 157 - "updateMonthlyCostSnapshot"
-Cohesion: 0.40
-Nodes (6): costSnapshotFromValue(), monthKeyForTimestamp(), monthStartUtc(), previousMonthKey(), readCostSnapshot(), updateMonthlyCostSnapshot()
+Cohesion: 0.31
+Nodes (9): autoStopText(), clampPercent(), formatDuration(), PalworldServerUsage(), PalworldServerUsageProps, prefersReducedMotion(), uptimeText(), UsageGauge() (+1 more)
 
 ### Community 158 - "statusForEnabledServer"
-Cohesion: 0.40
-Nodes (5): disabledStatus(), getGameServerStatusForSession(), listGameServersForSession(), statusForEnabledServer(), statusMessage()
+Cohesion: 0.28
+Nodes (9): assertAwsConfig(), connectAddress(), describePalworldInstance(), ec2Client(), hostForInstance(), readIdleState(), runAutoStopIdleGameServers(), ssmClient() (+1 more)
 
-### Community 159 - "adminAuthConfigWithSingleMemberRole"
-Cohesion: 0.40
-Nodes (5): adminAuthConfig(), adminAuthConfigWithHousecat(), adminAuthConfigWithSingleMemberRole(), adminAuthConfigWithSingleMemberRoleAndHousecat(), discordOAuthConfig()
+### Community 159 - "PalworldActivityTimeline.tsx"
+Cohesion: 0.25
+Nodes (10): ACTION_DETAILS, actorName(), formatTime(), PalworldActivityTimeline(), PalworldActivityTimelineProps, prefersReducedMotion(), RESULT_LABELS, resultTone() (+2 more)
 
 ### Community 160 - "adminFunctions.ts"
 Cohesion: 1.00
 Nodes (3): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId()
 
+### Community 162 - "PalworldPlayerField.tsx"
+Cohesion: 0.21
+Nodes (14): DisplayedPlayer, hashText(), initialDisplayedPlayers(), PalworldPlayerField(), PalworldPlayerFieldProps, pingDisplay(), PLAYER_ICONS, playerBaseKey() (+6 more)
+
+### Community 163 - "PalworldCostSummary.tsx"
+Cohesion: 0.31
+Nodes (10): animatedValue(), CostValueKey, formatAud(), formatMonthLabel(), hourlyRate(), INSTANCE_PRICES_AUD, PalworldCostSummary(), PalworldCostSummaryProps (+2 more)
+
+### Community 164 - "describePalworldInstance"
+Cohesion: 0.18
+Nodes (14): getGameServerAccessStatus(), GameServerCard, GameServerIndexPage(), sessionDisplayName(), PalworldServerIndexCard(), PalworldServerIndexCardProps, prefersReducedMotion(), statusPresentation() (+6 more)
+
+### Community 165 - "requireAdminSession"
+Cohesion: 0.29
+Nodes (7): requireAdminSession(), adminAuthConfig(), adminAuthConfigWithHousecat(), adminAuthConfigWithSingleMemberRole(), adminAuthConfigWithSingleMemberRoleAndHousecat(), authenticatedSessionWithLiveAdmin(), discordOAuthConfig()
+
+### Community 166 - "accessEntryFromValue"
+Cohesion: 0.33
+Nodes (7): accessEntryFromValue(), getGameServerAccessStatusForSession(), isGameServerAccessEntryActive(), listGameServerAccessCandidatesForAdmin(), listGameServerAccessForAdmin(), readAccessEntry(), requireGameServerAccess()
+
+### Community 167 - "cleanText"
+Cohesion: 0.38
+Nodes (7): cleanText(), deleteGameServerAccessForAdmin(), parseDiscordId(), parseDisplayName(), parseEnabled(), parseNotes(), upsertGameServerAccessForAdmin()
+
+### Community 168 - "cloudWatchQuery"
+Cohesion: 0.33
+Nodes (6): amzDate(), cloudWatchQuery(), dateStamp(), hashHex(), hmac(), signingKey()
+
+### Community 169 - "updateMonthlyCostSnapshot"
+Cohesion: 0.40
+Nodes (6): costSnapshotFromValue(), monthKeyForTimestamp(), monthStartUtc(), previousMonthKey(), readCostSnapshot(), updateMonthlyCostSnapshot()
+
+### Community 170 - "statusForEnabledServer"
+Cohesion: 0.40
+Nodes (5): disabledStatus(), getGameServerStatusForSession(), listGameServersForSession(), statusForEnabledServer(), statusMessage()
+
+### Community 171 - "listGameServerAuditLog"
+Cohesion: 0.50
+Nodes (4): auditEntryFromValue(), listGameServerAuditLog(), listGameServerAuditLogForAdmin(), normalizeState()
+
 ## Knowledge Gaps
-- **819 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+814 more)
+- **840 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+835 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -699,13 +744,13 @@ Nodes (3): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `progress()` connect `Community 9` to `Community 8`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+  _High betweenness centrality (0.034) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
-  _819 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _840 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.06386554621848739 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**

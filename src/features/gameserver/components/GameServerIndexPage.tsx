@@ -1,25 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Gamepad2, Server, ShieldCheck } from "lucide-react";
+import { Server } from "lucide-react";
 import { AuthAccessState } from "@/components/auth/AuthAccessState";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getGameServers } from "../api/gameServerFunctions";
 import { useGameServerAuth } from "../hooks/useGameServerAuth";
-import type { GameServerDefinition, GameServerStatus } from "../types";
+import type { GameServersResponse } from "../types";
+import { PalworldServerIndexCard } from "./palworld/PalworldServerIndexCard";
 
-type GameServerCard = GameServerDefinition & {
-  status?: GameServerStatus;
-  host?: string | null;
-  controlsAvailable?: boolean;
-};
+type GameServerCard = GameServersResponse["servers"][number];
 
 function sessionDisplayName(auth: ReturnType<typeof useGameServerAuth>): string {
   return (
@@ -39,18 +31,14 @@ function GameServerIndexLoading() {
       </section>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card className="overflow-hidden">
-          <CardHeader>
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-36" />
-              <Skeleton className="h-4 w-64 max-w-full" />
-            </div>
-          </CardHeader>
+          <Skeleton className="h-48 w-full rounded-none" />
           <CardContent className="space-y-4">
-            <div className="grid gap-2">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-4 w-64 max-w-full" />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Skeleton className="h-14 w-full" />
+              <Skeleton className="h-14 w-full" />
             </div>
+            <Skeleton className="h-14 w-full" />
             <Skeleton className="h-10 w-full" />
           </CardContent>
         </Card>
@@ -146,43 +134,7 @@ export function GameServerIndexPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {servers.map((server) => (
-          <Card key={server.id} className="overflow-hidden">
-            <CardHeader>
-              <div className="flex items-start gap-3">
-                <div className="space-y-1">
-                  <CardTitle className="flex items-center gap-2">
-                    <Gamepad2 className="h-5 w-5 text-muted-foreground" />
-                    {server.name}
-                  </CardTitle>
-                  <CardDescription>{server.description}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-2 text-sm">
-                <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                  <span className="text-muted-foreground">Region</span>
-                  <span className="font-medium">{server.region}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                  <span className="text-muted-foreground">Access</span>
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <ShieldCheck className="h-4 w-4" />
-                    Whitelist
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                  <span className="text-muted-foreground">State</span>
-                  <span className="font-medium capitalize">
-                    {server.status ?? "unknown"}
-                  </span>
-                </div>
-              </div>
-              <Button asChild className="w-full">
-                <Link to={server.route}>Open Dashboard</Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <PalworldServerIndexCard key={server.id} server={server} />
         ))}
       </div>
 

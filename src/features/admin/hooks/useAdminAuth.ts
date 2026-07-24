@@ -94,7 +94,9 @@ let authSnapshot: AuthSnapshot = DEV_AUTH_LAYER_ENABLED
             : "login",
       sessionToken: ADMIN_AUTH_BYPASS
         ? LOCAL_DEV_ADMIN_SESSION_TOKEN
-        : storedSessionToken(),
+        : !firebaseApp
+          ? LOCAL_DEV_ADMIN_SESSION_TOKEN
+          : storedSessionToken(),
       session: ADMIN_AUTH_BYPASS || !firebaseApp ? localDevSession : null,
       error: null,
       errorCode: null,
@@ -175,6 +177,7 @@ export function useAdminAuth() {
     if (!firebaseApp) {
       updateAuthSnapshot({
         state: "authed",
+        sessionToken: LOCAL_DEV_ADMIN_SESSION_TOKEN,
         session: localDevSession,
         error: null,
         errorCode: null,

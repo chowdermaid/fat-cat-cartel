@@ -780,7 +780,7 @@
       "source_location": "L653",
       "_origin": "ast",
       "id": "functions_src_admin_auth_requireadminsession",
-      "community": 2,
+      "community": 165,
       "norm_label": "requireadminsession()"
     },
     {
@@ -2700,7 +2700,7 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "functions_src_game_servers_cleantext",
-      "community": 155,
+      "community": 167,
       "norm_label": "cleantext()"
     },
     {
@@ -2730,7 +2730,7 @@
       "source_location": "L220",
       "_origin": "ast",
       "id": "functions_src_game_servers_assertawsconfig",
-      "community": 153,
+      "community": 158,
       "norm_label": "assertawsconfig()"
     },
     {
@@ -2740,7 +2740,7 @@
       "source_location": "L238",
       "_origin": "ast",
       "id": "functions_src_game_servers_ec2client",
-      "community": 153,
+      "community": 158,
       "norm_label": "ec2client()"
     },
     {
@@ -2750,7 +2750,7 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "functions_src_game_servers_ssmclient",
-      "community": 153,
+      "community": 158,
       "norm_label": "ssmclient()"
     },
     {
@@ -2760,7 +2760,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "functions_src_game_servers_normalizestate",
-      "community": 156,
+      "community": 171,
       "norm_label": "normalizestate()"
     },
     {
@@ -2770,7 +2770,7 @@
       "source_location": "L275",
       "_origin": "ast",
       "id": "functions_src_game_servers_hostforinstance",
-      "community": 153,
+      "community": 158,
       "norm_label": "hostforinstance()"
     },
     {
@@ -2780,7 +2780,7 @@
       "source_location": "L279",
       "_origin": "ast",
       "id": "functions_src_game_servers_connectaddress",
-      "community": 153,
+      "community": 158,
       "norm_label": "connectaddress()"
     },
     {
@@ -2790,7 +2790,7 @@
       "source_location": "L283",
       "_origin": "ast",
       "id": "functions_src_game_servers_monthkeyfortimestamp",
-      "community": 157,
+      "community": 169,
       "norm_label": "monthkeyfortimestamp()"
     },
     {
@@ -2800,7 +2800,7 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "functions_src_game_servers_previousmonthkey",
-      "community": 157,
+      "community": 169,
       "norm_label": "previousmonthkey()"
     },
     {
@@ -2810,7 +2810,7 @@
       "source_location": "L294",
       "_origin": "ast",
       "id": "functions_src_game_servers_monthstartutc",
-      "community": 157,
+      "community": 169,
       "norm_label": "monthstartutc()"
     },
     {
@@ -2820,7 +2820,7 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "functions_src_game_servers_costsnapshotfromvalue",
-      "community": 157,
+      "community": 169,
       "norm_label": "costsnapshotfromvalue()"
     },
     {
@@ -2830,7 +2830,7 @@
       "source_location": "L322",
       "_origin": "ast",
       "id": "functions_src_game_servers_readcostsnapshot",
-      "community": 157,
+      "community": 169,
       "norm_label": "readcostsnapshot()"
     },
     {
@@ -2840,7 +2840,7 @@
       "source_location": "L336",
       "_origin": "ast",
       "id": "functions_src_game_servers_updatemonthlycostsnapshot",
-      "community": 157,
+      "community": 169,
       "norm_label": "updatemonthlycostsnapshot()"
     },
     {
@@ -2850,7 +2850,7 @@
       "source_location": "L389",
       "_origin": "ast",
       "id": "functions_src_game_servers_statusmessage",
-      "community": 158,
+      "community": 170,
       "norm_label": "statusmessage()"
     },
     {
@@ -2880,7 +2880,7 @@
       "source_location": "L415",
       "_origin": "ast",
       "id": "functions_src_game_servers_systemsession",
-      "community": 153,
+      "community": 158,
       "norm_label": "systemsession()"
     },
     {
@@ -2910,7 +2910,7 @@
       "source_location": "L450",
       "_origin": "ast",
       "id": "functions_src_game_servers_disabledstatus",
-      "community": 158,
+      "community": 170,
       "norm_label": "disabledstatus()"
     },
     {
@@ -3020,7 +3020,7 @@
       "source_location": "L691",
       "_origin": "ast",
       "id": "functions_src_game_servers_hmac",
-      "community": 152,
+      "community": 168,
       "norm_label": "hmac()"
     },
     {
@@ -3030,7 +3030,7 @@
       "source_location": "L695",
       "_origin": "ast",
       "id": "functions_src_game_servers_hashhex",
-      "community": 152,
+      "community": 168,
       "norm_label": "hashhex()"
     },
     {
@@ -3040,7 +3040,7 @@
       "source_location": "L699",
       "_origin": "ast",
       "id": "functions_src_game_servers_amzdate",
-      "community": 152,
+      "community": 168,
       "norm_label": "amzdate()"
     },
     {
@@ -3050,7 +3050,7 @@
       "source_location": "L703",
       "_origin": "ast",
       "id": "functions_src_game_servers_datestamp",
-      "community": 152,
+      "community": 168,
       "norm_label": "datestamp()"
     },
     {
@@ -3060,7 +3060,7 @@
       "source_location": "L707",
       "_origin": "ast",
       "id": "functions_src_game_servers_signingkey",
-      "community": 152,
+      "community": 168,
       "norm_label": "signingkey()"
     },
     {
@@ -3070,7 +3070,7 @@
       "source_location": "L714",
       "_origin": "ast",
       "id": "functions_src_game_servers_cloudwatchquery",
-      "community": 152,
+      "community": 168,
       "norm_label": "cloudwatchquery()"
     },
     {
@@ -3130,7 +3130,7 @@
       "source_location": "L880",
       "_origin": "ast",
       "id": "functions_src_game_servers_readidlestate",
-      "community": 153,
+      "community": 158,
       "norm_label": "readidlestate()"
     },
     {
@@ -3150,7 +3150,7 @@
       "source_location": "L895",
       "_origin": "ast",
       "id": "functions_src_game_servers_describepalworldinstance",
-      "community": 153,
+      "community": 158,
       "norm_label": "describepalworldinstance()"
     },
     {
@@ -3160,7 +3160,7 @@
       "source_location": "L970",
       "_origin": "ast",
       "id": "functions_src_game_servers_statusforenabledserver",
-      "community": 158,
+      "community": 170,
       "norm_label": "statusforenabledserver()"
     },
     {
@@ -3170,7 +3170,7 @@
       "source_location": "L979",
       "_origin": "ast",
       "id": "functions_src_game_servers_parsediscordid",
-      "community": 155,
+      "community": 167,
       "norm_label": "parsediscordid()"
     },
     {
@@ -3180,7 +3180,7 @@
       "source_location": "L990",
       "_origin": "ast",
       "id": "functions_src_game_servers_parsedisplayname",
-      "community": 155,
+      "community": 167,
       "norm_label": "parsedisplayname()"
     },
     {
@@ -3190,7 +3190,7 @@
       "source_location": "L998",
       "_origin": "ast",
       "id": "functions_src_game_servers_parsenotes",
-      "community": 155,
+      "community": 167,
       "norm_label": "parsenotes()"
     },
     {
@@ -3200,7 +3200,7 @@
       "source_location": "L1003",
       "_origin": "ast",
       "id": "functions_src_game_servers_parseenabled",
-      "community": 155,
+      "community": 167,
       "norm_label": "parseenabled()"
     },
     {
@@ -3210,7 +3210,7 @@
       "source_location": "L1007",
       "_origin": "ast",
       "id": "functions_src_game_servers_accessentryfromvalue",
-      "community": 159,
+      "community": 166,
       "norm_label": "accessentryfromvalue()"
     },
     {
@@ -3220,7 +3220,7 @@
       "source_location": "L1037",
       "_origin": "ast",
       "id": "functions_src_game_servers_isgameserveraccessentryactive",
-      "community": 159,
+      "community": 166,
       "norm_label": "isgameserveraccessentryactive()"
     },
     {
@@ -3230,7 +3230,7 @@
       "source_location": "L1047",
       "_origin": "ast",
       "id": "functions_src_game_servers_readaccessentry",
-      "community": 159,
+      "community": 166,
       "norm_label": "readaccessentry()"
     },
     {
@@ -3240,7 +3240,7 @@
       "source_location": "L1058",
       "_origin": "ast",
       "id": "functions_src_game_servers_requiregameserveraccess",
-      "community": 159,
+      "community": 166,
       "norm_label": "requiregameserveraccess()"
     },
     {
@@ -3250,7 +3250,7 @@
       "source_location": "L1076",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameserveraccessstatusforsession",
-      "community": 159,
+      "community": 166,
       "norm_label": "getgameserveraccessstatusforsession()"
     },
     {
@@ -3260,7 +3260,7 @@
       "source_location": "L1102",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserversforsession",
-      "community": 158,
+      "community": 170,
       "norm_label": "listgameserversforsession()"
     },
     {
@@ -3270,7 +3270,7 @@
       "source_location": "L1125",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameserverstatusforsession",
-      "community": 158,
+      "community": 170,
       "norm_label": "getgameserverstatusforsession()"
     },
     {
@@ -3310,7 +3310,7 @@
       "source_location": "L1406",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserveraccessforadmin",
-      "community": 159,
+      "community": 166,
       "norm_label": "listgameserveraccessforadmin()"
     },
     {
@@ -3320,7 +3320,7 @@
       "source_location": "L1419",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserveraccesscandidatesforadmin",
-      "community": 159,
+      "community": 166,
       "norm_label": "listgameserveraccesscandidatesforadmin()"
     },
     {
@@ -3330,7 +3330,7 @@
       "source_location": "L1481",
       "_origin": "ast",
       "id": "functions_src_game_servers_upsertgameserveraccessforadmin",
-      "community": 155,
+      "community": 167,
       "norm_label": "upsertgameserveraccessforadmin()"
     },
     {
@@ -3340,7 +3340,7 @@
       "source_location": "L1533",
       "_origin": "ast",
       "id": "functions_src_game_servers_deletegameserveraccessforadmin",
-      "community": 155,
+      "community": 167,
       "norm_label": "deletegameserveraccessforadmin()"
     },
     {
@@ -3350,7 +3350,7 @@
       "source_location": "L1542",
       "_origin": "ast",
       "id": "functions_src_game_servers_auditentryfromvalue",
-      "community": 156,
+      "community": 171,
       "norm_label": "auditentryfromvalue()"
     },
     {
@@ -3360,7 +3360,7 @@
       "source_location": "L1583",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserverauditlog",
-      "community": 156,
+      "community": 171,
       "norm_label": "listgameserverauditlog()"
     },
     {
@@ -3370,7 +3370,7 @@
       "source_location": "L1595",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserverauditlogforadmin",
-      "community": 156,
+      "community": 171,
       "norm_label": "listgameserverauditlogforadmin()"
     },
     {
@@ -3410,7 +3410,7 @@
       "source_location": "L1654",
       "_origin": "ast",
       "id": "functions_src_game_servers_runautostopidlegameservers",
-      "community": 153,
+      "community": 158,
       "norm_label": "runautostopidlegameservers()"
     },
     {
@@ -3720,7 +3720,7 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "functions_src_index_adminauthconfig",
-      "community": 2,
+      "community": 165,
       "norm_label": "adminauthconfig()"
     },
     {
@@ -3730,7 +3730,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "functions_src_index_adminauthconfigwithsinglememberrole",
-      "community": 2,
+      "community": 165,
       "norm_label": "adminauthconfigwithsinglememberrole()"
     },
     {
@@ -3740,7 +3740,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "functions_src_index_adminauthconfigwithhousecat",
-      "community": 2,
+      "community": 165,
       "norm_label": "adminauthconfigwithhousecat()"
     },
     {
@@ -3750,7 +3750,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "functions_src_index_adminauthconfigwithsinglememberroleandhousecat",
-      "community": 2,
+      "community": 165,
       "norm_label": "adminauthconfigwithsinglememberroleandhousecat()"
     },
     {
@@ -3760,7 +3760,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "functions_src_index_discordoauthconfig",
-      "community": 2,
+      "community": 165,
       "norm_label": "discordoauthconfig()"
     },
     {
@@ -3770,7 +3770,7 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "functions_src_index_authenticatedsessionwithliveadmin",
-      "community": 2,
+      "community": 165,
       "norm_label": "authenticatedsessionwithliveadmin()"
     },
     {
@@ -6280,7 +6280,7 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_fetchlodestonecharacter",
-      "community": 6,
+      "community": 67,
       "norm_label": "fetchlodestonecharacter()"
     },
     {
@@ -7967,7 +7967,7 @@
       "label": "InstructionSectionProps",
       "file_type": "code",
       "source_file": "src/components/auth/AuthLoginInstructionsDialog.tsx",
-      "source_location": "L123",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "src_components_auth_authlogininstructionsdialog_instructionsectionprops",
       "community": 64,
@@ -7977,7 +7977,7 @@
       "label": "InstructionSection()",
       "file_type": "code",
       "source_file": "src/components/auth/AuthLoginInstructionsDialog.tsx",
-      "source_location": "L129",
+      "source_location": "L125",
       "_origin": "ast",
       "id": "src_components_auth_authlogininstructionsdialog_instructionsection",
       "community": 64,
@@ -9957,7 +9957,7 @@
       "label": "GameServerAccessManagerProps",
       "file_type": "code",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L47",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "src_features_admin_components_gameserver_gameserveraccessmanager_gameserveraccessmanagerprops",
       "community": 151,
@@ -9967,47 +9967,17 @@
       "label": "formatTimestamp()",
       "file_type": "code",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L51",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "src_features_admin_components_gameserver_gameserveraccessmanager_formattimestamp",
       "community": 151,
       "norm_label": "formattimestamp()"
     },
     {
-      "label": "rankLabel()",
-      "file_type": "code",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L56",
-      "_origin": "ast",
-      "id": "src_features_admin_components_gameserver_gameserveraccessmanager_ranklabel",
-      "community": 151,
-      "norm_label": "ranklabel()"
-    },
-    {
-      "label": "matchesSearch()",
-      "file_type": "code",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L60",
-      "_origin": "ast",
-      "id": "src_features_admin_components_gameserver_gameserveraccessmanager_matchessearch",
-      "community": 151,
-      "norm_label": "matchessearch()"
-    },
-    {
-      "label": "MemberIdentity()",
-      "file_type": "code",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L75",
-      "_origin": "ast",
-      "id": "src_features_admin_components_gameserver_gameserveraccessmanager_memberidentity",
-      "community": 151,
-      "norm_label": "memberidentity()"
-    },
-    {
       "label": "AccessStatusBadge()",
       "file_type": "code",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L101",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_features_admin_components_gameserver_gameserveraccessmanager_accessstatusbadge",
       "community": 151,
@@ -10017,7 +9987,7 @@
       "label": "GameServerAccessManager()",
       "file_type": "code",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L127",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "src_features_admin_components_gameserver_gameserveraccessmanager_gameserveraccessmanager",
       "community": 151,
@@ -10160,7 +10130,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberdeletedialog",
-      "community": 35,
+      "community": 15,
       "norm_label": "memberdeletedialog.tsx"
     },
     {
@@ -10170,7 +10140,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberdeletedialog_memberdeletedialogprops",
-      "community": 35,
+      "community": 15,
       "norm_label": "memberdeletedialogprops"
     },
     {
@@ -10180,7 +10150,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberdeletedialog_memberdeletedialog",
-      "community": 35,
+      "community": 15,
       "norm_label": "memberdeletedialog()"
     },
     {
@@ -10427,7 +10397,7 @@
       "label": "updateAuthSnapshot()",
       "file_type": "code",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L103",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "src_features_admin_hooks_useadminauth_updateauthsnapshot",
       "community": 33,
@@ -10437,7 +10407,7 @@
       "label": "removeAdminHashParams()",
       "file_type": "code",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L108",
+      "source_location": "L110",
       "_origin": "ast",
       "id": "src_features_admin_hooks_useadminauth_removeadminhashparams",
       "community": 33,
@@ -10447,7 +10417,7 @@
       "label": "redirectHomeSoon()",
       "file_type": "code",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L114",
+      "source_location": "L116",
       "_origin": "ast",
       "id": "src_features_admin_hooks_useadminauth_redirecthomesoon",
       "community": 33,
@@ -10457,7 +10427,7 @@
       "label": "useAdminAuth()",
       "file_type": "code",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L120",
+      "source_location": "L122",
       "_origin": "ast",
       "id": "src_features_admin_hooks_useadminauth_useadminauth",
       "community": 33,
@@ -10467,7 +10437,7 @@
       "label": "AdminAuth",
       "file_type": "code",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L373",
+      "source_location": "L376",
       "_origin": "ast",
       "id": "src_features_admin_hooks_useadminauth_adminauth",
       "community": 33,
@@ -10780,7 +10750,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_features_admin_types_deletetarget",
-      "community": 35,
+      "community": 15,
       "norm_label": "deletetarget"
     },
     {
@@ -15140,78 +15110,168 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions",
-      "community": 137,
+      "community": 153,
       "norm_label": "gameserverfunctions.ts"
     },
     {
       "label": "callGameServerFunction()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L11",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
-      "community": 137,
+      "community": 153,
       "norm_label": "callgameserverfunction()"
     },
     {
       "label": "getGameServerAccessStatus()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L25",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_getgameserveraccessstatus",
-      "community": 137,
+      "community": 164,
       "norm_label": "getgameserveraccessstatus()"
     },
     {
       "label": "getGameServers()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L32",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_getgameservers",
-      "community": 137,
+      "community": 153,
       "norm_label": "getgameservers()"
     },
     {
       "label": "getGameServerStatus()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L39",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_getgameserverstatus",
-      "community": 137,
+      "community": 153,
       "norm_label": "getgameserverstatus()"
     },
     {
       "label": "startGameServer()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L50",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_startgameserver",
-      "community": 137,
+      "community": 153,
       "norm_label": "startgameserver()"
     },
     {
       "label": "stopGameServer()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L58",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_stopgameserver",
-      "community": 137,
+      "community": 153,
       "norm_label": "stopgameserver()"
     },
     {
       "label": "listGameServerEvents()",
       "file_type": "code",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L66",
+      "source_location": "L81",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverfunctions_listgameserverevents",
-      "community": 137,
+      "community": 153,
       "norm_label": "listgameserverevents()"
+    },
+    {
+      "label": "gameServerStubs.ts",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs",
+      "community": 153,
+      "norm_label": "gameserverstubs.ts"
+    },
+    {
+      "label": "checkedAt",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_checkedat",
+      "community": 153,
+      "norm_label": "checkedat"
+    },
+    {
+      "label": "events",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_events",
+      "community": 153,
+      "norm_label": "events"
+    },
+    {
+      "label": "statusResponse()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_statusresponse",
+      "community": 153,
+      "norm_label": "statusresponse()"
+    },
+    {
+      "label": "stubGameServerAccessStatus()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_stubgameserveraccessstatus",
+      "community": 153,
+      "norm_label": "stubgameserveraccessstatus()"
+    },
+    {
+      "label": "stubGameServers()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L103",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_stubgameservers",
+      "community": 153,
+      "norm_label": "stubgameservers()"
+    },
+    {
+      "label": "stubGameServerStatus()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L132",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_stubgameserverstatus",
+      "community": 153,
+      "norm_label": "stubgameserverstatus()"
+    },
+    {
+      "label": "stubGameServerAction()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L137",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_stubgameserveraction",
+      "community": 153,
+      "norm_label": "stubgameserveraction()"
+    },
+    {
+      "label": "stubGameServerEvents()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L163",
+      "_origin": "ast",
+      "id": "src_features_gameserver_api_gameserverstubs_stubgameserverevents",
+      "community": 153,
+      "norm_label": "stubgameserverevents()"
     },
     {
       "label": "GameServerIndexPage.tsx",
@@ -15220,47 +15280,47 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_gameserverindexpage",
-      "community": 137,
+      "community": 164,
       "norm_label": "gameserverindexpage.tsx"
     },
     {
       "label": "GameServerCard",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L18",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "src_features_gameserver_components_gameserverindexpage_gameservercard",
-      "community": 137,
+      "community": 164,
       "norm_label": "gameservercard"
     },
     {
       "label": "sessionDisplayName()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L24",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "src_features_gameserver_components_gameserverindexpage_sessiondisplayname",
-      "community": 137,
+      "community": 164,
       "norm_label": "sessiondisplayname()"
     },
     {
       "label": "GameServerIndexLoading()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L33",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "src_features_gameserver_components_gameserverindexpage_gameserverindexloading",
-      "community": 137,
+      "community": 164,
       "norm_label": "gameserverindexloading()"
     },
     {
       "label": "GameServerIndexPage()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L62",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "src_features_gameserver_components_gameserverindexpage_gameserverindexpage",
-      "community": 137,
+      "community": 164,
       "norm_label": "gameserverindexpage()"
     },
     {
@@ -15277,137 +15337,47 @@
       "label": "PalworldServerLoading()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L52",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_palworldserverloading",
       "community": 137,
       "norm_label": "palworldserverloading()"
     },
     {
-      "label": "INSTANCE_PRICES_AUD",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L118",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_instance_prices_aud",
-      "community": 137,
-      "norm_label": "instance_prices_aud"
-    },
-    {
       "label": "formatDateTime()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L123",
+      "source_location": "L103",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_formatdatetime",
       "community": 137,
       "norm_label": "formatdatetime()"
     },
     {
-      "label": "formatTimestamp()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L128",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_formattimestamp",
-      "community": 137,
-      "norm_label": "formattimestamp()"
-    },
-    {
-      "label": "formatPercent()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L133",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_formatpercent",
-      "community": 137,
-      "norm_label": "formatpercent()"
-    },
-    {
-      "label": "formatUsedAmount()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L137",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_formatusedamount",
-      "community": 137,
-      "norm_label": "formatusedamount()"
-    },
-    {
       "label": "formatPlayers()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L145",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_formatplayers",
       "community": 137,
       "norm_label": "formatplayers()"
     },
     {
-      "label": "formatDuration()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L151",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_formatduration",
-      "community": 137,
-      "norm_label": "formatduration()"
-    },
-    {
-      "label": "sessionCostAud()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L160",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_sessioncostaud",
-      "community": 137,
-      "norm_label": "sessioncostaud()"
-    },
-    {
-      "label": "formatAud()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L191",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_formataud",
-      "community": 137,
-      "norm_label": "formataud()"
-    },
-    {
-      "label": "formatMonthLabel()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L195",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_formatmonthlabel",
-      "community": 137,
-      "norm_label": "formatmonthlabel()"
-    },
-    {
       "label": "sleep()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L205",
+      "source_location": "L114",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_sleep",
       "community": 137,
       "norm_label": "sleep()"
     },
     {
-      "label": "stateTone()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L209",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_statetone",
-      "community": 137,
-      "norm_label": "statetone()"
-    },
-    {
       "label": "friendlyStatus()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L221",
+      "source_location": "L118",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_friendlystatus",
       "community": 137,
@@ -15417,41 +15387,671 @@
       "label": "actionToStatus()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L234",
+      "source_location": "L131",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_actiontostatus",
       "community": 137,
       "norm_label": "actiontostatus()"
     },
     {
-      "label": "auditActor()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L269",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_auditactor",
-      "community": 137,
-      "norm_label": "auditactor()"
-    },
-    {
-      "label": "UsageBar()",
-      "file_type": "code",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L273",
-      "_origin": "ast",
-      "id": "src_features_gameserver_components_palworldserverpage_usagebar",
-      "community": 137,
-      "norm_label": "usagebar()"
-    },
-    {
       "label": "PalworldServerPage()",
       "file_type": "code",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L307",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
       "community": 137,
       "norm_label": "palworldserverpage()"
+    },
+    {
+      "label": "PalworldActivityTimeline.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "community": 159,
+      "norm_label": "palworldactivitytimeline.tsx"
+    },
+    {
+      "label": "PalworldActivityTimelineProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimelineprops",
+      "community": 159,
+      "norm_label": "palworldactivitytimelineprops"
+    },
+    {
+      "label": "ACTION_DETAILS",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_action_details",
+      "community": 159,
+      "norm_label": "action_details"
+    },
+    {
+      "label": "RESULT_LABELS",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_result_labels",
+      "community": 159,
+      "norm_label": "result_labels"
+    },
+    {
+      "label": "prefersReducedMotion()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_prefersreducedmotion",
+      "community": 159,
+      "norm_label": "prefersreducedmotion()"
+    },
+    {
+      "label": "actorName()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_actorname",
+      "community": 159,
+      "norm_label": "actorname()"
+    },
+    {
+      "label": "formatTime()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_formattime",
+      "community": 159,
+      "norm_label": "formattime()"
+    },
+    {
+      "label": "resultTone()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L75",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_resulttone",
+      "community": 159,
+      "norm_label": "resulttone()"
+    },
+    {
+      "label": "PalworldActivityTimeline()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "community": 159,
+      "norm_label": "palworldactivitytimeline()"
+    },
+    {
+      "label": "PalworldConnectionPanel.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldconnectionpanel",
+      "community": 137,
+      "norm_label": "palworldconnectionpanel.tsx"
+    },
+    {
+      "label": "PalworldConnectionPanelProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldconnectionpanel_palworldconnectionpanelprops",
+      "community": 137,
+      "norm_label": "palworldconnectionpanelprops"
+    },
+    {
+      "label": "PalworldConnectionPanel()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldconnectionpanel_palworldconnectionpanel",
+      "community": 137,
+      "norm_label": "palworldconnectionpanel()"
+    },
+    {
+      "label": "PalworldCostSummary.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "community": 163,
+      "norm_label": "palworldcostsummary.tsx"
+    },
+    {
+      "label": "PalworldCostSummaryProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummaryprops",
+      "community": 163,
+      "norm_label": "palworldcostsummaryprops"
+    },
+    {
+      "label": "INSTANCE_PRICES_AUD",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_instance_prices_aud",
+      "community": 163,
+      "norm_label": "instance_prices_aud"
+    },
+    {
+      "label": "CostValueKey",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_costvaluekey",
+      "community": 163,
+      "norm_label": "costvaluekey"
+    },
+    {
+      "label": "prefersReducedMotion()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_prefersreducedmotion",
+      "community": 163,
+      "norm_label": "prefersreducedmotion()"
+    },
+    {
+      "label": "formatAud()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_formataud",
+      "community": 163,
+      "norm_label": "formataud()"
+    },
+    {
+      "label": "formatMonthLabel()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_formatmonthlabel",
+      "community": 163,
+      "norm_label": "formatmonthlabel()"
+    },
+    {
+      "label": "hourlyRate()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_hourlyrate",
+      "community": 163,
+      "norm_label": "hourlyrate()"
+    },
+    {
+      "label": "sessionCost()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_sessioncost",
+      "community": 163,
+      "norm_label": "sessioncost()"
+    },
+    {
+      "label": "animatedValue()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L64",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_animatedvalue",
+      "community": 163,
+      "norm_label": "animatedvalue()"
+    },
+    {
+      "label": "PalworldCostSummary()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "community": 163,
+      "norm_label": "palworldcostsummary()"
+    },
+    {
+      "label": "PalworldPlayerField.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "community": 162,
+      "norm_label": "palworldplayerfield.tsx"
+    },
+    {
+      "label": "PLAYER_ICONS",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_player_icons",
+      "community": 162,
+      "norm_label": "player_icons"
+    },
+    {
+      "label": "DisplayedPlayer",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_displayedplayer",
+      "community": 162,
+      "norm_label": "displayedplayer"
+    },
+    {
+      "label": "PlayerEntry",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_playerentry",
+      "community": 162,
+      "norm_label": "playerentry"
+    },
+    {
+      "label": "PalworldPlayerFieldProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfieldprops",
+      "community": 162,
+      "norm_label": "palworldplayerfieldprops"
+    },
+    {
+      "label": "prefersReducedMotion()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L40",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_prefersreducedmotion",
+      "community": 162,
+      "norm_label": "prefersreducedmotion()"
+    },
+    {
+      "label": "hashText()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_hashtext",
+      "community": 162,
+      "norm_label": "hashtext()"
+    },
+    {
+      "label": "playerBaseKey()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L56",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_playerbasekey",
+      "community": 162,
+      "norm_label": "playerbasekey()"
+    },
+    {
+      "label": "playerEntries()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_playerentries",
+      "community": 162,
+      "norm_label": "playerentries()"
+    },
+    {
+      "label": "randomPlayerIcon()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L80",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_randomplayericon",
+      "community": 162,
+      "norm_label": "randomplayericon()"
+    },
+    {
+      "label": "initialDisplayedPlayers()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L88",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_initialdisplayedplayers",
+      "community": 162,
+      "norm_label": "initialdisplayedplayers()"
+    },
+    {
+      "label": "pingDisplay()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L100",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_pingdisplay",
+      "community": 162,
+      "norm_label": "pingdisplay()"
+    },
+    {
+      "label": "PlayerIcon()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L120",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_playericon",
+      "community": 162,
+      "norm_label": "playericon()"
+    },
+    {
+      "label": "PalworldPlayerField()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L190",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "community": 162,
+      "norm_label": "palworldplayerfield()"
+    },
+    {
+      "label": "PalworldServerHero.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverhero",
+      "community": 137,
+      "norm_label": "palworldserverhero.tsx"
+    },
+    {
+      "label": "PalworldServerHeroProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverhero_palworldserverheroprops",
+      "community": 137,
+      "norm_label": "palworldserverheroprops"
+    },
+    {
+      "label": "stateTheme()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverhero_statetheme",
+      "community": 137,
+      "norm_label": "statetheme()"
+    },
+    {
+      "label": "PalworldServerHero()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverhero_palworldserverhero",
+      "community": 137,
+      "norm_label": "palworldserverhero()"
+    },
+    {
+      "label": "PalworldServerIndexCard.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "community": 164,
+      "norm_label": "palworldserverindexcard.tsx"
+    },
+    {
+      "label": "PalworldServerIndexCardProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcardprops",
+      "community": 164,
+      "norm_label": "palworldserverindexcardprops"
+    },
+    {
+      "label": "prefersReducedMotion()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverindexcard_prefersreducedmotion",
+      "community": 164,
+      "norm_label": "prefersreducedmotion()"
+    },
+    {
+      "label": "statusPresentation()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverindexcard_statuspresentation",
+      "community": 164,
+      "norm_label": "statuspresentation()"
+    },
+    {
+      "label": "PalworldServerIndexCard()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L84",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcard",
+      "community": 164,
+      "norm_label": "palworldserverindexcard()"
+    },
+    {
+      "label": "PalworldServerUsage.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage",
+      "community": 157,
+      "norm_label": "palworldserverusage.tsx"
+    },
+    {
+      "label": "PalworldServerUsageProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusageprops",
+      "community": 157,
+      "norm_label": "palworldserverusageprops"
+    },
+    {
+      "label": "UsageGaugeProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_usagegaugeprops",
+      "community": 157,
+      "norm_label": "usagegaugeprops"
+    },
+    {
+      "label": "prefersReducedMotion()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_prefersreducedmotion",
+      "community": 157,
+      "norm_label": "prefersreducedmotion()"
+    },
+    {
+      "label": "clampPercent()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_clamppercent",
+      "community": 157,
+      "norm_label": "clamppercent()"
+    },
+    {
+      "label": "formatDuration()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_formatduration",
+      "community": 157,
+      "norm_label": "formatduration()"
+    },
+    {
+      "label": "uptimeText()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_uptimetext",
+      "community": 157,
+      "norm_label": "uptimetext()"
+    },
+    {
+      "label": "autoStopText()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L61",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_autostoptext",
+      "community": 157,
+      "norm_label": "autostoptext()"
+    },
+    {
+      "label": "UsageGauge()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L87",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_usagegauge",
+      "community": 157,
+      "norm_label": "usagegauge()"
+    },
+    {
+      "label": "UsageDetail()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L140",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_usagedetail",
+      "community": 157,
+      "norm_label": "usagedetail()"
+    },
+    {
+      "label": "PalworldServerUsage()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L165",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "community": 157,
+      "norm_label": "palworldserverusage()"
+    },
+    {
+      "label": "PalworldStartupStatus.tsx",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "community": 155,
+      "norm_label": "palworldstartupstatus.tsx"
+    },
+    {
+      "label": "PalworldStartupStatusProps",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatusprops",
+      "community": 155,
+      "norm_label": "palworldstartupstatusprops"
+    },
+    {
+      "label": "StageState",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_stagestate",
+      "community": 155,
+      "norm_label": "stagestate"
+    },
+    {
+      "label": "StartupStage",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstage",
+      "community": 155,
+      "norm_label": "startupstage"
+    },
+    {
+      "label": "prefersReducedMotion()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_prefersreducedmotion",
+      "community": 155,
+      "norm_label": "prefersreducedmotion()"
+    },
+    {
+      "label": "startupStages()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstages",
+      "community": 155,
+      "norm_label": "startupstages()"
+    },
+    {
+      "label": "StageIcon()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_stageicon",
+      "community": 155,
+      "norm_label": "stageicon()"
+    },
+    {
+      "label": "PalworldStartupStatus()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L90",
+      "_origin": "ast",
+      "id": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
+      "community": 155,
+      "norm_label": "palworldstartupstatus()"
     },
     {
       "label": "constants.ts",
@@ -15460,7 +16060,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_constants",
-      "community": 137,
+      "community": 152,
       "norm_label": "constants.ts"
     },
     {
@@ -15470,7 +16070,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_gameserver_constants_game_servers",
-      "community": 137,
+      "community": 152,
       "norm_label": "game_servers"
     },
     {
@@ -15480,7 +16080,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_usegameserverauth",
-      "community": 137,
+      "community": 164,
       "norm_label": "usegameserverauth.ts"
     },
     {
@@ -15490,7 +16090,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_usegameserverauth_displayname",
-      "community": 137,
+      "community": 164,
       "norm_label": "displayname()"
     },
     {
@@ -15500,7 +16100,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_usegameserverauth_storedsessioncanusegameservers",
-      "community": 137,
+      "community": 164,
       "norm_label": "storedsessioncanusegameservers()"
     },
     {
@@ -15510,7 +16110,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_usegameserverauth_storesessioncanusegameservers",
-      "community": 137,
+      "community": 164,
       "norm_label": "storesessioncanusegameservers()"
     },
     {
@@ -15520,8 +16120,38 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth",
-      "community": 137,
+      "community": 164,
       "norm_label": "usegameserverauth()"
+    },
+    {
+      "label": "usePalworldServerAnimations.ts",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_gameserver_hooks_usepalworldserveranimations",
+      "community": 137,
+      "norm_label": "usepalworldserveranimations.ts"
+    },
+    {
+      "label": "reducedMotionPreferred()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "src_features_gameserver_hooks_usepalworldserveranimations_reducedmotionpreferred",
+      "community": 137,
+      "norm_label": "reducedmotionpreferred()"
+    },
+    {
+      "label": "usePalworldServerAnimations()",
+      "file_type": "code",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations",
+      "community": 137,
+      "norm_label": "usepalworldserveranimations()"
     },
     {
       "label": "index.tsx",
@@ -15530,7 +16160,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_index",
-      "community": 137,
+      "community": 164,
       "norm_label": "index.tsx"
     },
     {
@@ -15540,7 +16170,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_types",
-      "community": 137,
+      "community": 152,
       "norm_label": "types.ts"
     },
     {
@@ -15550,7 +16180,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverid",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserverid"
     },
     {
@@ -15570,7 +16200,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverdefinition",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserverdefinition"
     },
     {
@@ -15580,7 +16210,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverport",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserverport"
     },
     {
@@ -15590,7 +16220,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserversession",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserversession"
     },
     {
@@ -15600,7 +16230,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessstate",
-      "community": 137,
+      "community": 164,
       "norm_label": "gameserveraccessstate"
     },
     {
@@ -15610,7 +16240,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessstatusresponse",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserveraccessstatusresponse"
     },
     {
@@ -15620,7 +16250,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessentry",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserveraccessentry"
     },
     {
@@ -15630,7 +16260,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccesslistresponse",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserveraccesslistresponse"
     },
     {
@@ -15640,7 +16270,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccesscandidate",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserveraccesscandidate"
     },
     {
@@ -15650,7 +16280,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccesscandidatesresponse",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserveraccesscandidatesresponse"
     },
     {
@@ -15660,7 +16290,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessupsertresponse",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserveraccessupsertresponse"
     },
     {
@@ -15670,7 +16300,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditaction",
-      "community": 137,
+      "community": 159,
       "norm_label": "gameserverauditaction"
     },
     {
@@ -15680,7 +16310,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditresult",
-      "community": 137,
+      "community": 159,
       "norm_label": "gameserverauditresult"
     },
     {
@@ -15690,7 +16320,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogentry",
-      "community": 137,
+      "community": 153,
       "norm_label": "gameserverauditlogentry"
     },
     {
@@ -15700,7 +16330,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogresponse",
-      "community": 137,
+      "community": 153,
       "norm_label": "gameserverauditlogresponse"
     },
     {
@@ -15710,7 +16340,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserversettings",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserversettings"
     },
     {
@@ -15720,7 +16350,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserversettingsresponse",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameserversettingsresponse"
     },
     {
@@ -15730,7 +16360,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameservercostsnapshot",
-      "community": 137,
+      "community": 152,
       "norm_label": "gameservercostsnapshot"
     },
     {
@@ -15740,7 +16370,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "src_features_gameserver_types_palworldplayer",
-      "community": 137,
+      "community": 162,
       "norm_label": "palworldplayer"
     },
     {
@@ -15750,7 +16380,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserversresponse",
-      "community": 137,
+      "community": 164,
       "norm_label": "gameserversresponse"
     },
     {
@@ -15760,7 +16390,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverstatusresponse",
-      "community": 137,
+      "community": 155,
       "norm_label": "gameserverstatusresponse"
     },
     {
@@ -15770,7 +16400,7 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveractionresponse",
-      "community": 137,
+      "community": 153,
       "norm_label": "gameserveractionresponse"
     },
     {
@@ -16900,7 +17530,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_displayjobname",
-      "community": 154,
+      "community": 7,
       "norm_label": "displayjobname()"
     },
     {
@@ -16910,7 +17540,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_jobiconsrc",
-      "community": 154,
+      "community": 7,
       "norm_label": "jobiconsrc()"
     },
     {
@@ -16980,7 +17610,7 @@
       "source_location": "L244",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_maxlevelforjob",
-      "community": 154,
+      "community": 7,
       "norm_label": "maxlevelforjob()"
     },
     {
@@ -17090,7 +17720,7 @@
       "source_location": "L408",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_parsebirthday",
-      "community": 57,
+      "community": 7,
       "norm_label": "parsebirthday()"
     },
     {
@@ -17120,7 +17750,7 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_formatdate",
-      "community": 7,
+      "community": 154,
       "norm_label": "formatdate()"
     },
     {
@@ -17140,7 +17770,7 @@
       "source_location": "L445",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_jobicon",
-      "community": 154,
+      "community": 7,
       "norm_label": "jobicon()"
     },
     {
@@ -17200,7 +17830,7 @@
       "source_location": "L593",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_compactcontenttype",
-      "community": 7,
+      "community": 154,
       "norm_label": "compactcontenttype()"
     },
     {
@@ -17210,7 +17840,7 @@
       "source_location": "L600",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_activityimpact",
-      "community": 7,
+      "community": 154,
       "norm_label": "activityimpact()"
     },
     {
@@ -17220,7 +17850,7 @@
       "source_location": "L604",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_clamppercent",
-      "community": 7,
+      "community": 154,
       "norm_label": "clamppercent()"
     },
     {
@@ -17250,7 +17880,7 @@
       "source_location": "L641",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_joblevelgroupcard",
-      "community": 154,
+      "community": 7,
       "norm_label": "joblevelgroupcard()"
     },
     {
@@ -17280,7 +17910,7 @@
       "source_location": "L771",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_activitytooltipcontent",
-      "community": 7,
+      "community": 154,
       "norm_label": "activitytooltipcontent()"
     },
     {
@@ -17290,7 +17920,7 @@
       "source_location": "L795",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_activitytimelinechart",
-      "community": 7,
+      "community": 154,
       "norm_label": "activitytimelinechart()"
     },
     {
@@ -17300,7 +17930,7 @@
       "source_location": "L857",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_jobusagedonut",
-      "community": 154,
+      "community": 7,
       "norm_label": "jobusagedonut()"
     },
     {
@@ -17320,7 +17950,7 @@
       "source_location": "L1115",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_bestprogressbyencounter",
-      "community": 7,
+      "community": 154,
       "norm_label": "bestprogressbyencounter()"
     },
     {
@@ -17340,7 +17970,7 @@
       "source_location": "L1284",
       "_origin": "ast",
       "id": "src_features_member_profile_components_memberprofilepage_profileeditordialog",
-      "community": 57,
+      "community": 7,
       "norm_label": "profileeditordialog()"
     },
     {
@@ -17410,7 +18040,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_editor_profileeditordialog",
-      "community": 57,
+      "community": 7,
       "norm_label": "profileeditordialog.tsx"
     },
     {
@@ -17420,7 +18050,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_jobs_jobicon",
-      "community": 154,
+      "community": 7,
       "norm_label": "jobicon.tsx"
     },
     {
@@ -17430,7 +18060,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_jobs_joblevelgroupcard",
-      "community": 154,
+      "community": 7,
       "norm_label": "joblevelgroupcard.tsx"
     },
     {
@@ -17480,7 +18110,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_raids_activitytimelinechart",
-      "community": 7,
+      "community": 154,
       "norm_label": "activitytimelinechart.tsx"
     },
     {
@@ -17490,7 +18120,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_raids_activitytooltipcontent",
-      "community": 7,
+      "community": 154,
       "norm_label": "activitytooltipcontent.tsx"
     },
     {
@@ -17500,7 +18130,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_raids_bestprogressbyencounter",
-      "community": 7,
+      "community": 154,
       "norm_label": "bestprogressbyencounter.tsx"
     },
     {
@@ -17520,7 +18150,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_components_raids_jobusagedonut",
-      "community": 154,
+      "community": 7,
       "norm_label": "jobusagedonut.tsx"
     },
     {
@@ -17850,7 +18480,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_hooks_useprofilepageanimation",
-      "community": 7,
+      "community": 57,
       "norm_label": "useprofilepageanimation.ts"
     },
     {
@@ -17860,7 +18490,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_member_profile_hooks_useprofilepageanimation_useprofilepageanimation",
-      "community": 7,
+      "community": 57,
       "norm_label": "useprofilepageanimation()"
     },
     {
@@ -17880,7 +18510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_profileoptions",
-      "community": 57,
+      "community": 7,
       "norm_label": "profileoptions.ts"
     },
     {
@@ -17890,7 +18520,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_member_profile_profileoptions_profile_timezones",
-      "community": 57,
+      "community": 7,
       "norm_label": "profile_timezones"
     },
     {
@@ -17900,7 +18530,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_features_member_profile_profileoptions_favorite_content_options",
-      "community": 57,
+      "community": 7,
       "norm_label": "favorite_content_options"
     },
     {
@@ -17910,7 +18540,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "src_features_member_profile_profileoptions_timezonelabel",
-      "community": 57,
+      "community": 7,
       "norm_label": "timezonelabel()"
     },
     {
@@ -17920,7 +18550,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_features_member_profile_profileoptions_timezonecountrycode",
-      "community": 57,
+      "community": 7,
       "norm_label": "timezonecountrycode()"
     },
     {
@@ -39995,7 +40625,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/auth/AuthLoginInstructionsDialog.tsx",
-      "source_location": "L129",
+      "source_location": "L125",
       "weight": 1.0,
       "source": "src_components_auth_authlogininstructionsdialog",
       "target": "src_components_auth_authlogininstructionsdialog_instructionsection",
@@ -40005,7 +40635,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/auth/AuthLoginInstructionsDialog.tsx",
-      "source_location": "L123",
+      "source_location": "L119",
       "weight": 1.0,
       "source": "src_components_auth_authlogininstructionsdialog",
       "target": "src_components_auth_authlogininstructionsdialog_instructionsectionprops",
@@ -41861,7 +42491,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L237",
+      "source_location": "L240",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_api_adminfunctions_calladminfunction"
@@ -42247,7 +42877,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_api_gameserveraccess",
@@ -42258,10 +42888,10 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
-      "target": "src_features_admin_api_gameserveraccess_listgameserveraccesscandidates",
+      "target": "src_features_admin_api_gameserveraccess_listgameserveraccess",
       "confidence_score": 1.0
     },
     {
@@ -42269,7 +42899,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_api_gameserveraccess_upsertgameserveraccess",
@@ -42280,7 +42910,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_api_gameserveraccess_deletegameserveraccess",
@@ -42291,18 +42921,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
-      "weight": 1.0,
-      "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
-      "target": "src_features_admin_api_gameserveraccess_listgameserverauditlog",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_api_gameserveraccess_getgameserversettings",
@@ -42313,7 +42932,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L38",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_api_gameserveraccess_updategameserversettings",
@@ -42779,7 +43398,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L101",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_components_gameserver_gameserveraccessmanager_accessstatusbadge",
@@ -42789,7 +43408,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L51",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_components_gameserver_gameserveraccessmanager_formattimestamp",
@@ -42799,7 +43418,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L127",
+      "source_location": "L59",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_components_gameserver_gameserveraccessmanager_gameserveraccessmanager",
@@ -42809,73 +43428,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L47",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
       "target": "src_features_admin_components_gameserver_gameserveraccessmanager_gameserveraccessmanagerprops",
       "confidence_score": 1.0
     },
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L60",
-      "weight": 1.0,
-      "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
-      "target": "src_features_admin_components_gameserver_gameserveraccessmanager_matchessearch",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L75",
-      "weight": 1.0,
-      "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
-      "target": "src_features_admin_components_gameserver_gameserveraccessmanager_memberidentity",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L56",
-      "weight": 1.0,
-      "source": "src_features_admin_components_gameserver_gameserveraccessmanager",
-      "target": "src_features_admin_components_gameserver_gameserveraccessmanager_ranklabel",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L399",
+      "source_location": "L271",
       "weight": 1.0,
       "source": "src_features_admin_components_gameserver_gameserveraccessmanager_gameserveraccessmanager",
       "target": "src_features_admin_components_gameserver_gameserveraccessmanager_formattimestamp",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L94",
-      "weight": 1.0,
-      "source": "src_features_admin_components_gameserver_gameserveraccessmanager_memberidentity",
-      "target": "src_features_admin_components_gameserver_gameserveraccessmanager_ranklabel",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/admin/components/gameserver/GameServerAccessManager.tsx",
-      "source_location": "L150",
-      "weight": 1.0,
-      "source": "src_features_admin_components_gameserver_gameserveraccessmanager_gameserveraccessmanager",
-      "target": "src_features_admin_components_gameserver_gameserveraccessmanager_matchessearch",
       "confidence_score": 1.0
     },
     {
@@ -43901,7 +44468,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L373",
+      "source_location": "L376",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_adminauth",
@@ -43941,7 +44508,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L114",
+      "source_location": "L116",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_redirecthomesoon",
@@ -43951,7 +44518,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L108",
+      "source_location": "L110",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_removeadminhashparams",
@@ -43971,7 +44538,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L103",
+      "source_location": "L105",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_updateauthsnapshot",
@@ -43981,7 +44548,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L120",
+      "source_location": "L122",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_useadminauth",
@@ -44168,7 +44735,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L160",
+      "source_location": "L162",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_devauthsnapshot",
@@ -44179,7 +44746,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L160",
+      "source_location": "L162",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_updateauthsnapshot",
@@ -44190,7 +44757,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L200",
+      "source_location": "L203",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_hooks_useadminauth_removeadminhashparams",
@@ -44202,7 +44769,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L206",
+      "source_location": "L209",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_clearstoredadminsession"
@@ -44213,7 +44780,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L247",
+      "source_location": "L250",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_consumelogintoastpending"
@@ -44224,7 +44791,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L192",
+      "source_location": "L195",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_marklogintoastpending"
@@ -44235,7 +44802,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L369",
+      "source_location": "L372",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_storedsessionisadmin"
@@ -44246,7 +44813,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L221",
+      "source_location": "L224",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_storedsessiontoken"
@@ -44257,7 +44824,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L240",
+      "source_location": "L243",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_storesessionisadmin"
@@ -44268,7 +44835,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L191",
+      "source_location": "L194",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminauthstorage_storesessiontoken"
@@ -44279,7 +44846,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L209",
+      "source_location": "L212",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminerrors_adminautherrormessage"
@@ -44290,7 +44857,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/admin/hooks/useAdminAuth.ts",
-      "source_location": "L257",
+      "source_location": "L260",
       "weight": 1.0,
       "source": "src_features_admin_hooks_useadminauth_useadminauth",
       "target": "src_features_admin_utils_adminerrors_normalizeadminautherror"
@@ -56299,7 +56866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L11",
+      "source_location": "L21",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
@@ -56309,7 +56876,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L25",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_getgameserveraccessstatus",
@@ -56319,7 +56886,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L32",
+      "source_location": "L43",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_getgameservers",
@@ -56329,7 +56896,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L39",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_getgameserverstatus",
@@ -56339,7 +56906,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L66",
+      "source_location": "L81",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_listgameserverevents",
@@ -56349,7 +56916,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L50",
+      "source_location": "L63",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_startgameserver",
@@ -56359,10 +56926,76 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L58",
+      "source_location": "L72",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions",
       "target": "src_features_gameserver_api_gameserverfunctions_stopgameserver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions",
+      "target": "src_features_gameserver_api_gameserverstubs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraccessstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserverevents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameservers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserverstatus",
       "confidence_score": 1.0
     },
     {
@@ -56447,7 +57080,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L14",
+      "source_location": "L9",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_api_gameserverfunctions",
@@ -56458,7 +57091,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L34",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_api_gameserverfunctions",
@@ -56480,7 +57113,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L26",
+      "source_location": "L37",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions_getgameserveraccessstatus",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
@@ -56491,7 +57124,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L33",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions_getgameservers",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
@@ -56502,7 +57135,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L43",
+      "source_location": "L56",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions_getgameserverstatus",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
@@ -56513,7 +57146,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L70",
+      "source_location": "L86",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions_listgameserverevents",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
@@ -56524,7 +57157,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L51",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions_startgameserver",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
@@ -56535,11 +57168,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
-      "source_location": "L59",
+      "source_location": "L74",
       "weight": 1.0,
       "source": "src_features_gameserver_api_gameserverfunctions_stopgameserver",
       "target": "src_features_gameserver_api_gameserverfunctions_callgameserverfunction",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions_getgameserveraccessstatus",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraccessstatus"
     },
     {
       "relation": "imports",
@@ -56564,11 +57208,22 @@
       "target": "src_features_gameserver_api_gameserverfunctions_getgameserveraccessstatus"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions_getgameservers",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameservers"
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L14",
+      "source_location": "L9",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_api_gameserverfunctions_getgameservers",
@@ -56580,50 +57235,94 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L72",
+      "source_location": "L60",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage_gameserverindexpage",
       "target": "src_features_gameserver_api_gameserverfunctions_getgameservers"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions_getgameserverstatus",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserverstatus"
     },
     {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L34",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_api_gameserverfunctions_getgameserverstatus",
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions_startgameserver",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraction"
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L34",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_api_gameserverfunctions_startgameserver",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "calls",
+      "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L34",
+      "confidence_score": 1.0,
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L73",
       "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_api_gameserverfunctions_stopgameserver",
-      "confidence_score": 1.0
+      "source": "src_features_gameserver_api_gameserverfunctions_stopgameserver",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraction"
     },
     {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L34",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_api_gameserverfunctions_stopgameserver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/gameserver/api/gameServerFunctions.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverfunctions_listgameserverevents",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserverevents"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_api_gameserverfunctions_listgameserverevents",
@@ -56632,8 +57331,198 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_checkedat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_events",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_statusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraccessstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L137",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserveraction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L163",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserverevents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameservers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L132",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_api_gameserverstubs_stubgameserverstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types_gameserveractionresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types_gameserverauditlogentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types_gameserverauditlogresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types_gameserversresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types_gameserverstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs",
+      "target": "src_features_gameserver_types_gameserverstatusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs_stubgameserveraction",
+      "target": "src_features_gameserver_api_gameserverstubs_statusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs_stubgameservers",
+      "target": "src_features_gameserver_api_gameserverstubs_statusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/api/gameServerStubs.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "src_features_gameserver_api_gameserverstubs_stubgameserverstatus",
+      "target": "src_features_gameserver_api_gameserverstubs_statusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L18",
+      "source_location": "L14",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_components_gameserverindexpage_gameservercard",
@@ -56643,7 +57532,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L33",
+      "source_location": "L25",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_components_gameserverindexpage_gameserverindexloading",
@@ -56653,7 +57542,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L62",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_components_gameserverindexpage_gameserverindexpage",
@@ -56663,7 +57552,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L24",
+      "source_location": "L16",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_components_gameserverindexpage_sessiondisplayname",
@@ -56674,7 +57563,29 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L15",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_gameserverindexpage",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_gameserverindexpage",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
+      "source_location": "L10",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_hooks_usegameserverauth",
@@ -56685,7 +57596,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L15",
+      "source_location": "L10",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth",
@@ -56696,7 +57607,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L16",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
       "target": "src_features_gameserver_types",
@@ -56707,21 +57618,10 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L16",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage",
-      "target": "src_features_gameserver_types_gameserverdefinition",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_gameserverindexpage",
-      "target": "src_features_gameserver_types_gameserverstatus",
+      "target": "src_features_gameserver_types_gameserversresponse",
       "confidence_score": 1.0
     },
     {
@@ -56740,7 +57640,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L134",
+      "source_location": "L122",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage_gameserverindexpage",
       "target": "src_features_gameserver_components_gameserverindexpage_sessiondisplayname",
@@ -56752,7 +57652,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/gameserver/components/GameServerIndexPage.tsx",
-      "source_location": "L63",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "src_features_gameserver_components_gameserverindexpage_gameserverindexpage",
       "target": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth"
@@ -56769,10 +57669,164 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldconnectionpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldconnectionpanel_palworldconnectionpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldserverhero",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldserverhero_palworldserverhero",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L234",
+      "source_location": "L131",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_actiontostatus",
@@ -56782,27 +57836,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L269",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_auditactor",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L191",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formataud",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L123",
+      "source_location": "L103",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_formatdatetime",
@@ -56812,37 +57846,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L151",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formatduration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L195",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formatmonthlabel",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L133",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formatpercent",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L145",
+      "source_location": "L108",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_formatplayers",
@@ -56852,27 +57856,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L128",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formattimestamp",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L137",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formatusedamount",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L221",
+      "source_location": "L118",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_friendlystatus",
@@ -56882,17 +57866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L118",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_instance_prices_aud",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L52",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_palworldserverloading",
@@ -56902,7 +57876,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L307",
+      "source_location": "L166",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
@@ -56912,40 +57886,10 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L160",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_sessioncostaud",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L205",
+      "source_location": "L114",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_sleep",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L209",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_statetone",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L273",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_usagebar",
       "confidence_score": 1.0
     },
     {
@@ -56953,7 +57897,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L40",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_hooks_usegameserverauth",
@@ -56964,7 +57908,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L40",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth",
@@ -56975,7 +57919,29 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L41",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_hooks_usepalworldserveranimations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworldserverpage",
+      "target": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_types",
@@ -56986,7 +57952,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L41",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_types_gameserveractionresponse",
@@ -56997,7 +57963,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L41",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_types_gameserverauditlogentry",
@@ -57008,18 +57974,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L41",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage",
-      "target": "src_features_gameserver_types_gameserverstatus",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L41",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage",
       "target": "src_features_gameserver_types_gameserverstatusresponse",
@@ -57041,7 +57996,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L629",
+      "source_location": "L392",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_formatdatetime",
@@ -57052,40 +58007,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L431",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formattimestamp",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L292",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_usagebar",
-      "target": "src_features_gameserver_components_palworldserverpage_formatpercent",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L301",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_usagebar",
-      "target": "src_features_gameserver_components_palworldserverpage_formatusedamount",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L508",
+      "source_location": "L327",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_formatplayers",
@@ -57096,62 +58018,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L185",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_sessioncostaud",
-      "target": "src_features_gameserver_components_palworldserverpage_formatduration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L433",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_sessioncostaud",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L585",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formataud",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L582",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_formatmonthlabel",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L501",
-      "weight": 1.0,
-      "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_statetone",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L502",
+      "source_location": "L326",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
       "target": "src_features_gameserver_components_palworldserverpage_friendlystatus",
@@ -57161,12 +58028,12 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L755",
+      "source_location": "L167",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_components_palworldserverpage_auditactor",
-      "confidence_score": 1.0
+      "target": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth"
     },
     {
       "relation": "calls",
@@ -57174,10 +58041,10 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/gameserver/components/PalworldServerPage.tsx",
-      "source_location": "L308",
+      "source_location": "L179",
       "weight": 1.0,
       "source": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
-      "target": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth"
+      "target": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations"
     },
     {
       "relation": "re_exports",
@@ -57188,6 +58055,1115 @@
       "weight": 1.0,
       "source": "src_features_gameserver_index",
       "target": "src_features_gameserver_components_palworldserverpage_palworldserverpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_action_details",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_actorname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_formattime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L102",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimelineprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_result_labels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_resulttone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_types_gameserverauditaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_types_gameserverauditlogentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline",
+      "target": "src_features_gameserver_types_gameserverauditresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L120",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L208",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_actorname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L211",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_formattime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldActivityTimeline.tsx",
+      "source_location": "L172",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
+      "target": "src_features_gameserver_components_palworld_palworldactivitytimeline_resulttone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldconnectionpanel",
+      "target": "src_features_gameserver_components_palworld_palworldconnectionpanel_palworldconnectionpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldConnectionPanel.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldconnectionpanel",
+      "target": "src_features_gameserver_components_palworld_palworldconnectionpanel_palworldconnectionpanelprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_animatedvalue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_costvaluekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_formataud",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_formatmonthlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_hourlyrate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_instance_prices_aud",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummaryprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_sessioncost",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary",
+      "target": "src_features_gameserver_types_gameserverstatusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_animatedvalue",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_formataud",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L191",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_formataud",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L220",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_formatmonthlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_hourlyrate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_sessioncost",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldCostSummary.tsx",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldcostsummary_palworldcostsummary",
+      "target": "src_features_gameserver_components_palworld_palworldcostsummary_animatedvalue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_displayedplayer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_hashtext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_initialdisplayedplayers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L190",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfieldprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_pingdisplay",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_player_icons",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_playerbasekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_playerentries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_playerentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L120",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_playericon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_randomplayericon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield",
+      "target": "src_features_gameserver_types_palworldplayer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L199",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_playericon",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_hashtext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L69",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_playerentries",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_playerbasekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L192",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_playerentries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_initialdisplayedplayers",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_randomplayericon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L224",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_randomplayericon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L195",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_initialdisplayedplayers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L129",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_playericon",
+      "target": "src_features_gameserver_components_palworld_palworldplayerfield_pingdisplay",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero",
+      "target": "src_features_gameserver_components_palworld_palworldserverhero_palworldserverhero",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero",
+      "target": "src_features_gameserver_components_palworld_palworldserverhero_palworldserverheroprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero",
+      "target": "src_features_gameserver_components_palworld_palworldserverhero_statetheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero",
+      "target": "src_features_gameserver_types_gameserverstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero",
+      "target": "src_features_gameserver_types_gameserverstatusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverhero_palworldserverhero",
+      "target": "src_features_gameserver_components_palworld_palworldserverhero_statetheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcardprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_statuspresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_types_gameserversresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard",
+      "target": "src_features_gameserver_types_gameserverstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcard",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerIndexCard.tsx",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverindexcard_palworldserverindexcard",
+      "target": "src_features_gameserver_components_palworld_palworldserverindexcard_statuspresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_autostoptext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_clamppercent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_formatduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L165",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusageprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_uptimetext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L140",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_usagedetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_usagegauge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_usagegaugeprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage",
+      "target": "src_features_gameserver_types_gameserverstatusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L209",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L175",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_clamppercent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_usagegauge",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_clamppercent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_autostoptext",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_formatduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_uptimetext",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_formatduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L200",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_uptimetext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldServerUsage.tsx",
+      "source_location": "L201",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldserverusage_palworldserverusage",
+      "target": "src_features_gameserver_components_palworld_palworldserverusage_autostoptext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatusprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_stageicon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_stagestate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus",
+      "target": "src_features_gameserver_types_gameserverstatusresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_prefersreducedmotion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/components/palworld/PalworldStartupStatus.tsx",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
+      "target": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstages",
       "confidence_score": 1.0
     },
     {
@@ -57326,6 +59302,59 @@
       "weight": 1.0,
       "source": "src_features_gameserver_hooks_usegameserverauth_usegameserverauth",
       "target": "src_features_gameserver_hooks_usegameserverauth_storesessioncanusegameservers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_features_gameserver_hooks_usepalworldserveranimations",
+      "target": "src_features_gameserver_hooks_usepalworldserveranimations_reducedmotionpreferred",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_features_gameserver_hooks_usepalworldserveranimations",
+      "target": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_features_gameserver_hooks_usepalworldserveranimations",
+      "target": "src_features_gameserver_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_features_gameserver_hooks_usepalworldserveranimations",
+      "target": "src_features_gameserver_types_gameserverstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations",
+      "target": "src_features_gameserver_hooks_usepalworldserveranimations_reducedmotionpreferred",
       "confidence_score": 1.0
     },
     {
@@ -77034,5 +79063,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "06016e640b9f0ff635b5ab98af54c33f00a32ba6"
+  "built_at_commit": "e1e5036d6cb7a125cda2a232c95035310ba23f10"
 }
