@@ -17,7 +17,6 @@ type UsageGaugeProps = {
   percent: number | null;
   value: string;
   detail: string;
-  tone: "cyan" | "emerald";
 };
 
 function prefersReducedMotion(): boolean {
@@ -89,12 +88,10 @@ function UsageGauge({
   percent,
   value,
   detail,
-  tone,
 }: UsageGaugeProps) {
   const safePercent = percent === null ? 0 : clampPercent(percent);
   const targetOffset =
     RING_CIRCUMFERENCE - (safePercent / 100) * RING_CIRCUMFERENCE;
-  const strokeClass = tone === "cyan" ? "stroke-cyan-500" : "stroke-emerald-500";
 
   return (
     <div className="pw-usage-item flex min-w-0 flex-col items-start gap-3 rounded-lg border bg-card px-3 py-3 sm:flex-row sm:items-center">
@@ -123,7 +120,7 @@ function UsageGauge({
           strokeLinecap="round"
           strokeDasharray={RING_CIRCUMFERENCE}
           strokeDashoffset={targetOffset}
-          className={strokeClass}
+          className="stroke-cyan-500"
         />
       </svg>
       <div className="min-w-0">
@@ -168,29 +165,10 @@ export function PalworldServerUsage({
 }: PalworldServerUsageProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const isRunning = status?.status === "running";
-  const canShowPlayers =
-    status?.status === "running" || status?.status === "stopped";
   const memoryPercent =
     isRunning && typeof status.memoryUsedPercent === "number"
       ? clampPercent(status.memoryUsedPercent)
       : null;
-  const playerPercent =
-    canShowPlayers &&
-    typeof status?.playerCount === "number" &&
-    typeof status.maxPlayers === "number" &&
-    status.maxPlayers > 0
-      ? clampPercent((status.playerCount / status.maxPlayers) * 100)
-      : null;
-  const playerValue =
-    canShowPlayers && typeof status?.playerCount === "number"
-      ? typeof status.maxPlayers === "number" && status.maxPlayers > 0
-        ? `${status.playerCount} / ${status.maxPlayers}`
-        : `${status.playerCount}`
-      : "Unavailable";
-  const playerDetail =
-    canShowPlayers && typeof status?.maxPlayers === "number" && status.maxPlayers > 0
-      ? `${playerPercent?.toFixed(0) ?? 0}% capacity`
-      : "Capacity unavailable";
   const memoryValue =
     memoryPercent === null ? "Unavailable" : `${memoryPercent.toFixed(1)}%`;
   const memoryDetail =
@@ -227,7 +205,7 @@ export function PalworldServerUsage({
     });
 
     return () => scope.revert();
-  }, [memoryPercent, playerPercent]);
+  }, [memoryPercent]);
 
   useEffect(() => {
     if (!rootRef.current || prefersReducedMotion()) return;
@@ -249,20 +227,12 @@ export function PalworldServerUsage({
         <Activity className="h-4 w-4 text-muted-foreground" />
         <h2 id="server-usage-title">Server Usage</h2>
       </div>
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-3">
         <UsageGauge
           label="RAM"
           percent={memoryPercent}
           value={memoryValue}
           detail={memoryDetail}
-          tone="cyan"
-        />
-        <UsageGauge
-          label="Players"
-          percent={playerPercent}
-          value={playerValue}
-          detail={playerDetail}
-          tone="emerald"
         />
         <UsageDetail
           label="Uptime"

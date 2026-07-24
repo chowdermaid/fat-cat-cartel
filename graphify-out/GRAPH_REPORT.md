@@ -1,7 +1,7 @@
 # Graph Report - fat-cat-cartel  (2026-07-24)
 
 ## Corpus Check
-- 400 files · ~2,116,362 words
+- 400 files · ~2,116,254 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e1e5036d`
+- Built from commit: `c6429200`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -260,8 +260,8 @@ Cohesion: 0.15
 Nodes (20): MountRouletteControls(), LoadingSkeleton(), MountRoulettePage(), MountResultDialog(), drawWheel(), SpinWheel(), CAT_POSITIONS, EXPANSIONS (+12 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.11
-Nodes (26): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+18 more)
+Cohesion: 0.13
+Nodes (23): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+15 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.13
@@ -340,8 +340,8 @@ Cohesion: 0.12
 Nodes (15): useScoreboard(), UseScoreboardResult, EventCard(), EventCardProps, PointRule, PrizeRule, HideAndSeekDialog(), instructionImages (+7 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.13
-Nodes (22): MemberRosterTable(), MemberRosterTableProps, StatusCell(), AdminAuthState, AdminMember, AdminPageShellProps, AdminSession, AuthSnapshot (+14 more)
+Cohesion: 0.11
+Nodes (25): MemberDeleteDialog(), MemberDeleteDialogProps, MemberRosterTable(), MemberRosterTableProps, StatusCell(), AdminAuthState, AdminMember, AdminPageShellProps (+17 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.16
