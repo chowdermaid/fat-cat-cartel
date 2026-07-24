@@ -281,7 +281,11 @@ export function CraftingBoardPage() {
       setFormError("Choose material status.");
       return;
     }
-    if (!auth.session) {
+    if (
+      !auth.session?.isMember ||
+      !auth.session.lodestoneId ||
+      !auth.session.characterName
+    ) {
       setFormError("Member login is required.");
       return;
     }
@@ -340,7 +344,10 @@ export function CraftingBoardPage() {
     }
   }
 
-  const currentMember = auth.session
+  const currentMember =
+    auth.session?.isMember &&
+    auth.session.lodestoneId &&
+    auth.session.characterName
     ? {
         lodestoneId: auth.session.lodestoneId,
         discordUserId: auth.session.discordUserId,

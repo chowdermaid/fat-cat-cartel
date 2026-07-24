@@ -159,6 +159,5 @@
   "157": "updateMonthlyCostSnapshot",
   "158": "statusForEnabledServer",
   "159": "adminAuthConfigWithSingleMemberRole",
-  "160": "adminFunctions.ts",
-  "161": "database-rules.test.mjs"
+  "160": "adminFunctions.ts"
 }

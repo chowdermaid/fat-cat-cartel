@@ -29,11 +29,15 @@ export type AdminOAuthStartConfig = Pick<
 
 export interface AdminSession {
   discordUserId: string;
-  lodestoneId: string;
-  characterName: string;
+  discordUsername?: string | null;
+  discordDisplayName?: string | null;
+  discordAvatarUrl?: string | null;
+  lodestoneId?: string | null;
+  characterName?: string | null;
   fcRank: string | null;
   avatarUrl: string | null;
   roleIds: string[];
+  isMember?: boolean;
   isAdmin?: boolean;
   createdAt: number;
   expiresAt: number;
@@ -61,6 +65,12 @@ interface DiscordGuildMember {
 }
 
 export interface VerifiedAdminSession extends AdminSession {
+  lodestoneId: string;
+  characterName: string;
+  sessionHash: string;
+}
+
+export interface VerifiedAuthenticatedSession extends AdminSession {
   sessionHash: string;
 }
 
@@ -146,6 +156,17 @@ function getSessionToken(data: unknown): string {
     throw new HttpsError("unauthenticated", "Admin session is required.");
   }
   return token;
+}
+
+export function authenticatedSessionRecordIsValid(
+  session: AdminSession | null,
+  now = Date.now(),
+): session is AdminSession {
+  return Boolean(
+    session?.discordUserId &&
+      typeof session.expiresAt === "number" &&
+      session.expiresAt > now,
+  );
 }
 
 function safeEqual(a: string, b: string): boolean {
@@ -245,6 +266,17 @@ async function fetchCurrentUserGuildMember(
   );
 }
 
+async function fetchOptionalCurrentUserGuildMember(
+  accessToken: string,
+  guildId: string,
+): Promise<DiscordGuildMember | null> {
+  try {
+    return await fetchCurrentUserGuildMember(accessToken, guildId);
+  } catch {
+    return null;
+  }
+}
+
 async function fetchGuildMemberWithBot(
   botToken: string,
   guildId: string,
@@ -264,6 +296,11 @@ function roleIdsFromMember(member: DiscordGuildMember): string[] {
         (roleId): roleId is string => typeof roleId === "string",
       )
     : [];
+}
+
+function discordAvatarUrl(user: DiscordUser): string | null {
+  if (!user.id || !user.avatar) return null;
+  return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`;
 }
 
 async function linkedCharacter(discordUserId: string): Promise<{
@@ -425,50 +462,27 @@ export async function finishDiscordAdminOAuth(
     const accessToken = await exchangeCode(config, code);
     const [user, member] = await Promise.all([
       fetchCurrentUser(accessToken),
-      fetchCurrentUserGuildMember(accessToken, config.guildId),
+      fetchOptionalCurrentUserGuildMember(accessToken, config.guildId),
     ]);
     const discordUserId = user.id;
-    const roleIds = roleIdsFromMember(member);
+    if (!discordUserId) {
+      throw new Error("Discord did not return a user ID.");
+    }
+    const roleIds = member ? roleIdsFromMember(member) : [];
     const adminRoleIds = parseRoleIds(config.adminRoleIds);
     const memberRoleIds = parseRoleIds(config.memberRoleIds);
-    const isAdmin = hasAnyRole(roleIds, adminRoleIds);
-    if (!discordUserId || (!isAdmin && !hasAnyRole(roleIds, memberRoleIds))) {
-      res.redirect(
-        redirectToApp(config.appOrigin, returnTo, {
-          admin_error: "unauthorized",
-        }),
-      );
-      return;
-    }
-
-    let character: Awaited<ReturnType<typeof linkedCharacter>>;
-    try {
-      character = await linkedCharacter(discordUserId);
-    } catch (error) {
-      if (
-        error instanceof HttpsError &&
-        error.message.includes("Link your Lodestone")
-      ) {
-        res.redirect(
-          redirectToApp(config.appOrigin, returnTo, {
-            admin_error: "not_linked",
-          }),
-        );
-        return;
+    const hasMemberRole =
+      hasAnyRole(roleIds, adminRoleIds) || hasAnyRole(roleIds, memberRoleIds);
+    let character: Awaited<ReturnType<typeof linkedCharacter>> | null = null;
+    if (hasMemberRole) {
+      try {
+        character = await linkedCharacter(discordUserId);
+      } catch (error) {
+        if (!(error instanceof HttpsError)) throw error;
       }
-      if (
-        error instanceof HttpsError &&
-        error.message.includes("no longer tracked")
-      ) {
-        res.redirect(
-          redirectToApp(config.appOrigin, returnTo, {
-            admin_error: "missing_member",
-          }),
-        );
-        return;
-      }
-      throw error;
     }
+    const isMember = character !== null;
+    const isAdmin = isMember && hasAnyRole(roleIds, adminRoleIds);
 
     const sessionToken = randomToken(48);
     const sessionHash = hashToken(sessionToken);
@@ -478,11 +492,15 @@ export async function finishDiscordAdminOAuth(
       .ref(`adminSessions/${sessionHash}`)
       .set({
         discordUserId,
-        lodestoneId: character.lodestoneId,
-        characterName: character.characterName,
-        fcRank: character.fcRank,
-        avatarUrl: character.avatarUrl,
+        discordUsername: user.username?.trim() || null,
+        discordDisplayName: user.global_name?.trim() || user.username?.trim() || null,
+        discordAvatarUrl: discordAvatarUrl(user),
+        lodestoneId: character?.lodestoneId ?? null,
+        characterName: character?.characterName ?? null,
+        fcRank: character?.fcRank ?? null,
+        avatarUrl: character?.avatarUrl ?? null,
         roleIds,
+        isMember,
         isAdmin,
         createdAt: now,
         expiresAt: now + SESSION_MS,
@@ -504,11 +522,9 @@ export async function finishDiscordAdminOAuth(
   }
 }
 
-export async function requireMemberSession(
+export async function requireAuthenticatedSession(
   data: unknown,
-  config: MemberSessionConfig,
-): Promise<VerifiedAdminSession> {
-  assertDevRoleOverrideSafety();
+): Promise<VerifiedAuthenticatedSession> {
   const token = getSessionToken(data);
   if (
     process.env.FUNCTIONS_EMULATOR === "true" &&
@@ -516,11 +532,15 @@ export async function requireMemberSession(
   ) {
     return {
       discordUserId: "local-dev",
+      discordUsername: "local-dev",
+      discordDisplayName: "Local Admin",
+      discordAvatarUrl: null,
       lodestoneId: "local-dev",
       characterName: "Local Admin",
       fcRank: "Dev",
       avatarUrl: null,
       roleIds: ["local-dev"],
+      isMember: true,
       isAdmin: true,
       createdAt: 0,
       expiresAt: Number.MAX_SAFE_INTEGER,
@@ -535,15 +555,40 @@ export async function requireMemberSession(
   const session = snapshot.val() as AdminSession | null;
   const now = Date.now();
 
-  if (
-    !session?.discordUserId ||
-    typeof session.expiresAt !== "number" ||
-    session.expiresAt <= now
-  ) {
+  if (!authenticatedSessionRecordIsValid(session, now)) {
     await sessionRef.remove();
-    throw new HttpsError("unauthenticated", "Admin session expired.");
+    throw new HttpsError("unauthenticated", "Application session expired.");
   }
 
+  if (!session.lastSeenAt || now - session.lastSeenAt > LAST_SEEN_WRITE_MS) {
+    await sessionRef.update({ lastSeenAt: now });
+  }
+
+  return {
+    ...session,
+    discordUsername: session.discordUsername ?? null,
+    discordDisplayName:
+      session.discordDisplayName ?? session.characterName ?? null,
+    discordAvatarUrl: session.discordAvatarUrl ?? null,
+    lodestoneId: session.lodestoneId ?? null,
+    characterName: session.characterName ?? null,
+    fcRank: session.fcRank ?? null,
+    avatarUrl: session.avatarUrl ?? null,
+    roleIds: Array.isArray(session.roleIds) ? session.roleIds : [],
+    isMember: session.isMember ?? Boolean(session.lodestoneId),
+    isAdmin: session.isAdmin === true,
+    sessionHash,
+  };
+}
+
+export async function requireMemberSession(
+  data: unknown,
+  config: MemberSessionConfig,
+): Promise<VerifiedAdminSession> {
+  assertDevRoleOverrideSafety();
+  const session = await requireAuthenticatedSession(data);
+  const sessionRef = admin.database().ref(`adminSessions/${session.sessionHash}`);
+  const now = Date.now();
   let currentRoleIds: string[];
   try {
     currentRoleIds = roleIdsFromMember(
@@ -554,7 +599,6 @@ export async function requireMemberSession(
       ),
     );
   } catch {
-    await sessionRef.remove();
     throw new HttpsError(
       "permission-denied",
       "Could not verify Discord guild membership.",
@@ -566,7 +610,6 @@ export async function requireMemberSession(
   const isAdmin = hasAnyRole(currentRoleIds, adminRoleIds);
 
   if (!isAdmin && !hasAnyRole(currentRoleIds, memberRoleIds)) {
-    await sessionRef.remove();
     throw new HttpsError("permission-denied", "Allowed Discord role required.");
   }
 
@@ -574,7 +617,6 @@ export async function requireMemberSession(
   try {
     character = await linkedCharacter(session.discordUserId);
   } catch (error) {
-    await sessionRef.remove();
     if (error instanceof HttpsError) throw error;
     throw new HttpsError(
       "failed-precondition",
@@ -590,6 +632,7 @@ export async function requireMemberSession(
       characterName: character.characterName,
       fcRank: character.fcRank,
       avatarUrl: character.avatarUrl,
+      isMember: true,
       isAdmin,
     });
   }
@@ -601,8 +644,9 @@ export async function requireMemberSession(
     ...session,
     ...character,
     roleIds: appRoleIds,
+    isMember: true,
     isAdmin: appIsAdmin,
-    sessionHash,
+    sessionHash: session.sessionHash,
   };
 }
 
@@ -626,27 +670,50 @@ export async function getAdminSession(
 ): Promise<{
   ok: true;
   discordUserId: string;
-  lodestoneId: string;
-  characterName: string;
+  discordUsername: string | null;
+  discordDisplayName: string | null;
+  discordAvatarUrl: string | null;
+  lodestoneId: string | null;
+  characterName: string | null;
   fcRank: string | null;
   avatarUrl: string | null;
   roleIds: string[];
+  isMember: boolean;
   isAdmin: boolean;
   isHousecat: boolean;
   expiresAt: number;
 }> {
-  const session = await requireMemberSession(data, config);
+  const baseSession = await requireAuthenticatedSession(data);
+  let memberSession: VerifiedAdminSession | null = null;
+  try {
+    memberSession = await requireMemberSession(data, config);
+  } catch (error) {
+    if (
+      !(error instanceof HttpsError) ||
+      error.code === "unauthenticated"
+    ) {
+      throw error;
+    }
+  }
+  const session = memberSession ?? baseSession;
   const housecatRoleId = config.housecatRoleId?.trim();
   return {
     ok: true,
     discordUserId: session.discordUserId,
-    lodestoneId: session.lodestoneId,
-    characterName: session.characterName,
-    fcRank: session.fcRank,
+    discordUsername: session.discordUsername ?? null,
+    discordDisplayName: session.discordDisplayName ?? null,
+    discordAvatarUrl: session.discordAvatarUrl ?? null,
+    lodestoneId: memberSession?.lodestoneId ?? null,
+    characterName: memberSession?.characterName ?? null,
+    fcRank: memberSession?.fcRank ?? null,
     avatarUrl: session.avatarUrl ?? null,
     roleIds: session.roleIds,
-    isAdmin: session.isAdmin === true,
-    isHousecat: housecatRoleId ? session.roleIds.includes(housecatRoleId) : false,
+    isMember: memberSession !== null,
+    isAdmin: memberSession?.isAdmin === true,
+    isHousecat:
+      memberSession !== null && housecatRoleId
+        ? memberSession.roleIds.includes(housecatRoleId)
+        : false,
     expiresAt: session.expiresAt,
   };
 }

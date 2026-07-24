@@ -36,11 +36,15 @@ const subscribers = new Set<() => void>();
 
 const localDevSession: AdminSession = {
   discordUserId: "local-dev",
+  discordUsername: "local-dev",
+  discordDisplayName: "Local Admin",
+  discordAvatarUrl: null,
   lodestoneId: "local-dev",
   characterName: "Local Admin",
   fcRank: "Dev",
   avatarUrl: null,
   roleIds: ["local-dev"],
+  isMember: true,
   isAdmin: true,
   isHousecat: false,
   capabilities: ["admin:*"],
@@ -52,11 +56,15 @@ function devSessionFromPersona(): AdminSession | null {
   if (!persona.authenticated) return null;
   return {
     discordUserId: persona.discordUserId,
+    discordUsername: persona.characterName,
+    discordDisplayName: persona.characterName,
+    discordAvatarUrl: null,
     lodestoneId: persona.lodestoneId,
     characterName: persona.characterName,
     fcRank: persona.fcRank,
     avatarUrl: null,
     roleIds: persona.roleIds,
+    isMember: true,
     isAdmin: persona.isAdmin,
     isHousecat: persona.isHousecat,
     capabilities: persona.capabilities,

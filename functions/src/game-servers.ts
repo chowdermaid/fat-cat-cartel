@@ -14,7 +14,10 @@ import {
   SendCommandCommand,
   SSMClient,
 } from "@aws-sdk/client-ssm";
-import type { VerifiedAdminSession } from "./admin-auth";
+import type {
+  VerifiedAdminSession,
+  VerifiedAuthenticatedSession,
+} from "./admin-auth";
 
 type GameServerId = "palworld";
 type GameServerStatus =
@@ -46,9 +49,11 @@ type GameServerAccessEntry = {
   discordUserId: string;
   displayName: string;
   enabled: boolean;
+  expiresAt: number | null;
   notes: string | null;
   addedBy: string;
   addedAt: number;
+  updatedBy: string;
   updatedAt: number;
 };
 
@@ -392,8 +397,19 @@ function statusMessage(status: GameServerStatus, enabled: boolean): string {
   return "Needs admin attention. Status is unavailable.";
 }
 
-function sessionDisplayName(session: VerifiedAdminSession): string | undefined {
-  return session.characterName || undefined;
+type AuthorizedGameServerSession = VerifiedAuthenticatedSession & {
+  gameServerAccess: GameServerAccessEntry | null;
+};
+
+function sessionDisplayName(
+  session: VerifiedAuthenticatedSession,
+): string | undefined {
+  return (
+    session.characterName ||
+    session.discordDisplayName ||
+    session.discordUsername ||
+    undefined
+  );
 }
 
 function systemSession(): VerifiedAdminSession {
@@ -480,7 +496,7 @@ async function writeGameServerAuditLog(input: {
   statusBefore: GameServerStatus;
   statusAfter?: GameServerStatus;
   message: string;
-  session: VerifiedAdminSession;
+  session: VerifiedAuthenticatedSession;
   instanceId?: string | null;
 }): Promise<void> {
   try {
@@ -994,16 +1010,38 @@ function accessEntryFromValue(
 ): GameServerAccessEntry | null {
   if (!entry || typeof entry !== "object") return null;
   if (entry.discordUserId && entry.discordUserId !== discordUserId) return null;
+  const expiresAt =
+    entry.expiresAt === null || entry.expiresAt === undefined
+      ? null
+      : typeof entry.expiresAt === "number" &&
+          Number.isFinite(entry.expiresAt) &&
+          entry.expiresAt > 0
+        ? entry.expiresAt
+        : undefined;
+  if (expiresAt === undefined) return null;
   return {
     discordUserId,
     displayName:
       typeof entry.displayName === "string" ? entry.displayName : discordUserId,
     enabled: entry.enabled === true,
+    expiresAt,
     notes: typeof entry.notes === "string" && entry.notes ? entry.notes : null,
     addedBy: typeof entry.addedBy === "string" ? entry.addedBy : "",
     addedAt: typeof entry.addedAt === "number" ? entry.addedAt : 0,
+    updatedBy:
+      typeof entry.updatedBy === "string" ? entry.updatedBy : "",
     updatedAt: typeof entry.updatedAt === "number" ? entry.updatedAt : 0,
   };
+}
+
+export function isGameServerAccessEntryActive(
+  entry: GameServerAccessEntry | null,
+  now = Date.now(),
+): boolean {
+  return Boolean(
+    entry?.enabled &&
+      (entry.expiresAt === null || entry.expiresAt > now),
+  );
 }
 
 async function readAccessEntry(
@@ -1018,14 +1056,14 @@ async function readAccessEntry(
 }
 
 export async function requireGameServerAccess(
-  session: VerifiedAdminSession,
-): Promise<VerifiedAdminSession & { gameServerAccess: GameServerAccessEntry | null }> {
+  session: VerifiedAuthenticatedSession,
+): Promise<AuthorizedGameServerSession> {
   if (session.isAdmin === true) {
     return { ...session, gameServerAccess: null };
   }
 
   const entry = await readAccessEntry(session.discordUserId);
-  if (entry?.enabled) {
+  if (isGameServerAccessEntryActive(entry)) {
     return { ...session, gameServerAccess: entry };
   }
 
@@ -1036,22 +1074,33 @@ export async function requireGameServerAccess(
 }
 
 export async function getGameServerAccessStatusForSession(
-  session: VerifiedAdminSession,
-): Promise<{ ok: true; canUseGameServers: boolean; isAdmin: boolean }> {
+  session: VerifiedAuthenticatedSession,
+): Promise<{
+  ok: true;
+  canUseGameServers: boolean;
+  isAdmin: boolean;
+  expiresAt: number | null;
+}> {
   if (session.isAdmin === true) {
-    return { ok: true, canUseGameServers: true, isAdmin: true };
+    return {
+      ok: true,
+      canUseGameServers: true,
+      isAdmin: true,
+      expiresAt: null,
+    };
   }
 
   const entry = await readAccessEntry(session.discordUserId);
   return {
     ok: true,
-    canUseGameServers: entry?.enabled === true,
+    canUseGameServers: isGameServerAccessEntryActive(entry),
     isAdmin: false,
+    expiresAt: entry?.expiresAt ?? null,
   };
 }
 
 export async function listGameServersForSession(
-  _session: VerifiedAdminSession,
+  _session: AuthorizedGameServerSession,
   config: GameServerAwsConfig,
 ) {
   const status = await statusForEnabledServer(config);
@@ -1075,7 +1124,7 @@ export async function listGameServersForSession(
 
 export async function getGameServerStatusForSession(
   data: unknown,
-  _session: VerifiedAdminSession,
+  _session: AuthorizedGameServerSession,
   config: GameServerAwsConfig,
 ) {
   const serverId = parseServerId(data);
@@ -1098,7 +1147,7 @@ async function assertServerEnabled(serverId: GameServerId): Promise<void> {
 
 export async function startGameServerForSession(
   data: unknown,
-  session: VerifiedAdminSession,
+  session: AuthorizedGameServerSession,
   config: GameServerAwsConfig,
 ) {
   const serverId = parseServerId(data);
@@ -1228,7 +1277,7 @@ export async function startGameServerForSession(
 
 export async function stopGameServerForSession(
   data: unknown,
-  session: VerifiedAdminSession,
+  session: AuthorizedGameServerSession,
   config: GameServerAwsConfig,
 ) {
   const serverId = parseServerId(data);
@@ -1438,6 +1487,25 @@ export async function upsertGameServerAccessForAdmin(
   const displayName = parseDisplayName(input.displayName);
   const notes = parseNotes(input.notes);
   const enabled = parseEnabled(input.enabled);
+  const expiresAt =
+    input.expiresAt === null || input.expiresAt === undefined
+      ? null
+      : typeof input.expiresAt === "number" &&
+          Number.isInteger(input.expiresAt) &&
+          input.expiresAt > 0
+        ? input.expiresAt
+        : (() => {
+            throw new HttpsError(
+              "invalid-argument",
+              "Expiry must be a timestamp or null.",
+            );
+          })();
+  if (enabled && expiresAt !== null && expiresAt <= Date.now()) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Enabled access must expire in the future.",
+    );
+  }
   const ref = admin.database().ref(`gameServerAccess/${discordUserId}`);
   const existing = (await ref.get()).val() as Partial<GameServerAccessEntry> | null;
   const now = Date.now();
@@ -1445,6 +1513,7 @@ export async function upsertGameServerAccessForAdmin(
     discordUserId,
     displayName,
     enabled,
+    expiresAt,
     notes,
     addedBy:
       typeof existing?.addedBy === "string" && existing.addedBy
@@ -1454,6 +1523,7 @@ export async function upsertGameServerAccessForAdmin(
       typeof existing?.addedAt === "number" && existing.addedAt > 0
         ? existing.addedAt
         : now,
+    updatedBy: adminSession.discordUserId,
     updatedAt: now,
   };
   await ref.set(entry);
@@ -1534,8 +1604,9 @@ export async function listGameServerAuditLogForAdmin(
 
 export async function listGameServerAuditLogForSession(
   data: unknown,
-  _session: VerifiedAdminSession,
+  _session: AuthorizedGameServerSession,
 ): Promise<{ ok: true; entries: GameServerAuditLogEntry[] }> {
+  void _session;
   const serverId =
     typeof data === "object" && data && "serverId" in data
       ? parseServerId(data)

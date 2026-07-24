@@ -24,7 +24,9 @@ type GameServerCard = GameServerDefinition & {
 function sessionDisplayName(auth: ReturnType<typeof useGameServerAuth>): string {
   return (
     auth.session?.characterName ||
-    "Linked member"
+    auth.session?.discordDisplayName ||
+    auth.session?.discordUsername ||
+    "Discord user"
   );
 }
 
@@ -99,7 +101,7 @@ export function GameServerIndexPage() {
       <AuthAccessState
         title="Game Servers"
         description={
-          "Login with your linked member account to view game server access."
+          "Login with Discord to view game server access."
         }
         error={auth.error}
         checking={auth.checking}

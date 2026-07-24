@@ -37,6 +37,7 @@ import {
   hasAnyRole,
   logoutAdminSession as logoutAdminSessionForToken,
   parseRoleIds,
+  requireAuthenticatedSession,
   requireAdminSession,
   requireMemberSession,
   startDiscordAdminOAuth as startDiscordOAuth,
@@ -160,6 +161,18 @@ function discordOAuthConfig() {
     redirectUri: discordRedirectUri.value(),
     appOrigin: adminAppOrigin.value(),
   };
+}
+
+async function authenticatedSessionWithLiveAdmin(data: unknown) {
+  const baseSession = await requireAuthenticatedSession(data);
+  try {
+    return await requireAdminSession(data, adminAuthConfig());
+  } catch (error) {
+    if (error instanceof HttpsError && error.code === "unauthenticated") {
+      throw error;
+    }
+    return { ...baseSession, isAdmin: false };
+  }
 }
 
 function discordOAuthStartConfig() {
@@ -649,10 +662,7 @@ export const getGameServerAccessStatus = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await requireMemberSession(
-      request.data,
-      adminAuthConfigWithSingleMemberRole(),
-    );
+    const session = await authenticatedSessionWithLiveAdmin(request.data);
     return getGameServerAccessStatusForSession(session);
   },
 );
@@ -665,10 +675,7 @@ export const getGameServers = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await requireMemberSession(
-      request.data,
-      adminAuthConfigWithSingleMemberRole(),
-    );
+    const session = await authenticatedSessionWithLiveAdmin(request.data);
     const accessSession = await requireGameServerAccess(session);
     return listGameServersForSession(accessSession, gameServerAwsConfig());
   },
@@ -682,10 +689,7 @@ export const getGameServerStatus = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await requireMemberSession(
-      request.data,
-      adminAuthConfigWithSingleMemberRole(),
-    );
+    const session = await authenticatedSessionWithLiveAdmin(request.data);
     const accessSession = await requireGameServerAccess(session);
     return getGameServerStatusForSession(
       request.data,
@@ -703,10 +707,7 @@ export const startGameServer = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await requireMemberSession(
-      request.data,
-      adminAuthConfigWithSingleMemberRole(),
-    );
+    const session = await authenticatedSessionWithLiveAdmin(request.data);
     const accessSession = await requireGameServerAccess(session);
     return startGameServerForSession(
       request.data,
@@ -724,10 +725,7 @@ export const stopGameServer = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await requireMemberSession(
-      request.data,
-      adminAuthConfigWithSingleMemberRole(),
-    );
+    const session = await authenticatedSessionWithLiveAdmin(request.data);
     const accessSession = await requireGameServerAccess(session);
     return stopGameServerForSession(
       request.data,
@@ -745,10 +743,7 @@ export const listGameServerEvents = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await requireMemberSession(
-      request.data,
-      adminAuthConfigWithSingleMemberRole(),
-    );
+    const session = await authenticatedSessionWithLiveAdmin(request.data);
     const accessSession = await requireGameServerAccess(session);
     return listGameServerAuditLogForSession(request.data, accessSession);
   },

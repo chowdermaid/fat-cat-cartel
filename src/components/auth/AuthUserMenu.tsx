@@ -29,13 +29,18 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
   const [open, setOpen] = useState(false);
   const [loginInstructionsOpen, setLoginInstructionsOpen] = useState(false);
   const [linkHelpOpen, setLinkHelpOpen] = useState(false);
-  const name = session?.characterName ?? "Fat Cat";
-  const rank = session?.fcRank ?? "No rank";
+  const name =
+    session?.characterName ??
+    session?.discordDisplayName ??
+    session?.discordUsername ??
+    "Discord user";
+  const rank = session?.isMember ? (session.fcRank ?? "FC member") : "Discord";
+  const avatarUrl = session?.avatarUrl ?? session?.discordAvatarUrl;
   const showAuthenticatedMenu = authed || Boolean(session);
   const isMissingLinkError = errorCode === "not_linked";
   const helperText = isMissingLinkError
     ? "Discord link setup required."
-    : (error ?? "Lodestone link required.");
+    : (error ?? "Use Discord to continue.");
 
   useEffect(() => {
     if (errorCode === "not_linked") setLinkHelpOpen(true);
@@ -98,9 +103,9 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
           className="h-12 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           data-state={open ? "open" : "closed"}
         >
-          {session?.avatarUrl ? (
+          {avatarUrl ? (
             <img
-              src={session.avatarUrl}
+              src={avatarUrl}
               alt={name}
               className="h-8 w-8 shrink-0 rounded-lg object-cover"
             />
@@ -121,9 +126,9 @@ export function AuthUserMenu({ auth, className }: AuthUserMenuProps) {
         {open && (
           <div className="absolute bottom-0 left-full z-50 ml-2 w-64 max-w-[calc(100vw-2rem)] rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
             <div className="flex items-center gap-2 px-2 py-2">
-              {session?.avatarUrl ? (
+              {avatarUrl ? (
                 <img
-                  src={session.avatarUrl}
+                  src={avatarUrl}
                   alt={name}
                   className="h-8 w-8 rounded-lg object-cover"
                 />

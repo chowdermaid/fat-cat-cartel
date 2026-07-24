@@ -48,15 +48,18 @@ export interface GameServerAccessStatusResponse {
   ok: true;
   canUseGameServers: boolean;
   isAdmin: boolean;
+  expiresAt: number | null;
 }
 
 export interface GameServerAccessEntry {
   discordUserId: string;
   displayName: string;
   enabled: boolean;
+  expiresAt: number | null;
   notes: string | null;
   addedBy: string;
   addedAt: number;
+  updatedBy: string;
   updatedAt: number;
 }
 

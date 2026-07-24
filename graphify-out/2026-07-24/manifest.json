@@ -20,8 +20,8 @@
     "semantic_hash": "5d7b615184f0150d56950e8dcd3b90f0"
   },
   "functions/package.json": {
-    "mtime": 1784878773.5634773,
-    "ast_hash": "fbc442b2ec7a0e435adfeeed4d52426e",
+    "mtime": 1783839547.9518917,
+    "ast_hash": "3ba842a58bd0660823c1f49e725054c5",
     "semantic_hash": ""
   },
   "functions/scripts/register-discord-commands.js": {
@@ -30,8 +30,8 @@
     "semantic_hash": "7abc52b00397cf8234386eb6a7988173"
   },
   "functions/src/admin-auth.ts": {
-    "mtime": 1784878772.2046895,
-    "ast_hash": "82c2d63f45f56510267115529cf8ee38",
+    "mtime": 1783737933.188332,
+    "ast_hash": "659ca7ea856da91d382132055b6be442",
     "semantic_hash": ""
   },
   "functions/src/admin-mutations.ts": {
@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1784878732.6882718,
-    "ast_hash": "525e9e2ba35fb83f3ae0804763518467",
+    "mtime": 1784187381.2332897,
+    "ast_hash": "903f8febfcbc601d757ad41ff0d8fd0a",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -160,9 +160,9 @@
     "semantic_hash": "615851105fdbc32d13f37443a9422443"
   },
   "package.json": {
-    "mtime": 1784878870.851051,
-    "ast_hash": "daf08c802d8f97d071a4c0620facc5ab",
-    "semantic_hash": ""
+    "mtime": 1783673709.8689117,
+    "ast_hash": "238f85d69ae89e6c4432dca2ef83bcca",
+    "semantic_hash": "238f85d69ae89e6c4432dca2ef83bcca"
   },
   "scripts/dev-emulator.mjs": {
     "mtime": 1781337354.4780738,
@@ -205,14 +205,14 @@
     "semantic_hash": "fb25a816852e5e5eaeebbea5d24f3e3d"
   },
   "src/components/auth/AuthLoginInstructionsDialog.tsx": {
-    "mtime": 1784878992.6310966,
-    "ast_hash": "a4b26f9ded617064dda9c838fc2d9896",
-    "semantic_hash": ""
+    "mtime": 1782184120.4002178,
+    "ast_hash": "35bac08b92f317ba349338b99f2e2e76",
+    "semantic_hash": "35bac08b92f317ba349338b99f2e2e76"
   },
   "src/components/auth/AuthUserMenu.tsx": {
-    "mtime": 1784878993.3070226,
-    "ast_hash": "fa480d3c785788ece4ef6128d49292e1",
-    "semantic_hash": ""
+    "mtime": 1780797331.8088481,
+    "ast_hash": "294377607f4c8436e6f449109f73e76d",
+    "semantic_hash": "294377607f4c8436e6f449109f73e76d"
   },
   "src/components/dev/DevPersonaControl.tsx": {
     "mtime": 1780202589.7012012,
@@ -415,9 +415,9 @@
     "semantic_hash": "24de313f0b91fc790b247965dcfa896b"
   },
   "src/features/admin/hooks/useAdminAuth.ts": {
-    "mtime": 1784878648.9300487,
-    "ast_hash": "8fcdc97aaac9c3eaab36fbac79dceaed",
-    "semantic_hash": ""
+    "mtime": 1781154027.3950584,
+    "ast_hash": "f50ffc9a0b472b1c793f7524dbf6fa6a",
+    "semantic_hash": "f50ffc9a0b472b1c793f7524dbf6fa6a"
   },
   "src/features/admin/hooks/useAdminMemberSyncStatuses.ts": {
     "mtime": 1781153523.913438,
@@ -445,8 +445,8 @@
     "semantic_hash": "89e55509dff3b2f7d688c2bffe3d641d"
   },
   "src/features/admin/types.ts": {
-    "mtime": 1784878648.267315,
-    "ast_hash": "e5368f5911fc4328db2fbe0ce73bdb19",
+    "mtime": 1783736691.4622264,
+    "ast_hash": "716286a33c3a85d2e4a1c222e94891ca",
     "semantic_hash": ""
   },
   "src/features/admin/utils/adminAuthStorage.ts": {
@@ -620,9 +620,9 @@
     "semantic_hash": "4d76a9029a2fb8e2d9a871d2128158ec"
   },
   "src/features/craftingboard/components/CraftingBoardPage.tsx": {
-    "mtime": 1784878702.4519527,
-    "ast_hash": "2d6095dcf396ab908b48267d169bd342",
-    "semantic_hash": ""
+    "mtime": 1781093413.206872,
+    "ast_hash": "031a0d9f40dcea844e56160d221195ef",
+    "semantic_hash": "031a0d9f40dcea844e56160d221195ef"
   },
   "src/features/craftingboard/components/CreateRequestDialog.tsx": {
     "mtime": 1782184142.7844238,
@@ -1760,8 +1760,8 @@
     "semantic_hash": "8432458fcdb71476d0ba34f2288c6ecd"
   },
   "src/lib/dev/callables.ts": {
-    "mtime": 1784878750.782748,
-    "ast_hash": "ee3e8154f904e16b1e77dd40d9dbd213",
+    "mtime": 1784614152.2592013,
+    "ast_hash": "32195dd08d43ba0e740254c5e039bcc3",
     "semantic_hash": ""
   },
   "src/lib/dev/craftingRequests.ts": {
@@ -1820,13 +1820,13 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/components/GameServerIndexPage.tsx": {
-    "mtime": 1784878650.9930675,
-    "ast_hash": "345fe7a54d4f579fe25caf4f73c72972",
+    "mtime": 1784613008.9182682,
+    "ast_hash": "e89d4e53e0840b34ac195e51e0b63e3a",
     "semantic_hash": ""
   },
   "src/features/gameserver/components/PalworldServerPage.tsx": {
-    "mtime": 1784878994.0008712,
-    "ast_hash": "5946aa29044eed85db094537e22877ec",
+    "mtime": 1784613102.5566342,
+    "ast_hash": "d1d0ee8e94a9d07b3423c85b577b0d1b",
     "semantic_hash": ""
   },
   "src/features/gameserver/constants.ts": {
@@ -1835,8 +1835,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/hooks/useGameServerAuth.ts": {
-    "mtime": 1784879013.469929,
-    "ast_hash": "5e3bece715bd7cdd93cf4bf427897227",
+    "mtime": 1784612739.2507353,
+    "ast_hash": "83a432cb7bda5b686ce85f5dffd23d46",
     "semantic_hash": ""
   },
   "src/features/gameserver/index.tsx": {
@@ -1845,8 +1845,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/types.ts": {
-    "mtime": 1784878651.6847284,
-    "ast_hash": "37e578ca0436eaa5c19d98f85107131b",
+    "mtime": 1784612721.0483968,
+    "ast_hash": "09f3612a59611ead75d0ed4464625492",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1855,8 +1855,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1784878935.9000673,
-    "ast_hash": "8b944f5a31e8e99e173bbbee2e8d91e2",
+    "mtime": 1783765059.4984052,
+    "ast_hash": "5ec4fbb203bf59c7dd81620345d82629",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -2340,18 +2340,18 @@
     "semantic_hash": ""
   },
   "functions/src/game-servers.ts": {
-    "mtime": 1784878968.01529,
-    "ast_hash": "c8e08e4edc1052dfddcb8350be561181",
+    "mtime": 1784614141.5398774,
+    "ast_hash": "8bdca619ba2a8f5a32ad5d2ebf703d48",
     "semantic_hash": ""
   },
   "src/features/admin/api/gameServerAccess.ts": {
-    "mtime": 1784878652.372216,
-    "ast_hash": "0c1d74b84842a23a7cc3d02457c64bb4",
+    "mtime": 1784187395.651613,
+    "ast_hash": "08c864f9ee3da9d94058947cfb0fb96c",
     "semantic_hash": ""
   },
   "src/features/admin/components/gameserver/GameServerAccessManager.tsx": {
-    "mtime": 1784878968.7094154,
-    "ast_hash": "79466d7fce8c7ff37b7244a5fff2c272",
+    "mtime": 1784187550.5815594,
+    "ast_hash": "11b124f8341b723f08bda58e3a694fe3",
     "semantic_hash": ""
   },
   "src/features/admin/components/layout/GameServerAccessCard.tsx": {
@@ -2362,16 +2362,6 @@
   "firebase-export-1783839906411z5MYFo/database_export/fat-cat-cartel-default-rtdb.json": {
     "mtime": 1783839906.552442,
     "ast_hash": "697ff9dfdf0eb838de9f697a2b914ff8",
-    "semantic_hash": ""
-  },
-  "functions/src/authorization-policy.test.ts": {
-    "mtime": 1784878881.5618472,
-    "ast_hash": "21e1f2b8fc0dae27950c00205af491c4",
-    "semantic_hash": ""
-  },
-  "tests/database-rules.test.mjs": {
-    "mtime": 1784878774.693121,
-    "ast_hash": "f190b753cfa990983490b42b7e385de5",
     "semantic_hash": ""
   }
 }

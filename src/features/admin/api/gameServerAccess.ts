@@ -13,6 +13,7 @@ export type GameServerAccessInput = {
   discordUserId: string;
   displayName: string;
   enabled: boolean;
+  expiresAt: number | null;
   notes: string | null;
 };
 
@@ -90,9 +91,11 @@ export function emptyGameServerAccessEntry(): GameServerAccessEntry {
     discordUserId: "",
     displayName: "",
     enabled: true,
+    expiresAt: null,
     notes: null,
     addedBy: "",
     addedAt: 0,
+    updatedBy: "",
     updatedAt: 0,
   };
 }

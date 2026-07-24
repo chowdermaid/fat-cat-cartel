@@ -46,9 +46,11 @@ type GameServerAccessEntry = {
   discordUserId: string;
   displayName: string;
   enabled: boolean;
+  expiresAt: number | null;
   notes: string | null;
   addedBy: string;
   addedAt: number;
+  updatedBy: string;
   updatedAt: number;
 };
 
@@ -396,7 +398,12 @@ function assertGameServerAccess(persona: DevPersona): void {
   assertAuthenticated(persona);
   if (persona.isAdmin) return;
   const entry = readGameServerAccessStore()[persona.discordUserId];
-  if (!entry?.enabled) {
+  if (
+    !entry?.enabled ||
+    (entry.expiresAt !== null &&
+      entry.expiresAt !== undefined &&
+      entry.expiresAt <= Date.now())
+  ) {
     throw new Error("Game server whitelist required.");
   }
 }
@@ -588,6 +595,8 @@ function registerDefaultHandlers(): void {
     const displayName = parseDevDisplayName(data.displayName);
     const notes = cleanText(data.notes).slice(0, 500) || null;
     const enabled = data.enabled === undefined ? true : data.enabled === true;
+    const expiresAt =
+      typeof data.expiresAt === "number" ? data.expiresAt : null;
     const store = readGameServerAccessStore();
     const existing = store[discordUserId];
     const now = Date.now();
@@ -595,9 +604,11 @@ function registerDefaultHandlers(): void {
       discordUserId,
       displayName,
       enabled,
+      expiresAt,
       notes,
       addedBy: existing?.addedBy || persona.discordUserId,
       addedAt: existing?.addedAt || now,
+      updatedBy: persona.discordUserId,
       updatedAt: now,
     };
     writeGameServerAccessStore({ ...store, [discordUserId]: entry });
@@ -712,8 +723,14 @@ function registerDefaultHandlers(): void {
     const entry = readGameServerAccessStore()[persona.discordUserId];
     return {
       ok: true,
-      canUseGameServers: persona.isAdmin || entry?.enabled === true,
+      canUseGameServers:
+        persona.isAdmin ||
+        (entry?.enabled === true &&
+          (entry.expiresAt === null ||
+            entry.expiresAt === undefined ||
+            entry.expiresAt > Date.now())),
       isAdmin: persona.isAdmin,
+      expiresAt: entry?.expiresAt ?? null,
     };
   });
 

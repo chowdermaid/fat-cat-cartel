@@ -6,7 +6,12 @@ import type { GameServerAccessState } from "../types";
 const GAME_SERVER_ACCESS_KEY = "game_server_session_has_access";
 
 function displayName(auth: ReturnType<typeof useAdminAuth>): string | null {
-  return auth.session?.characterName ?? null;
+  return (
+    auth.session?.characterName ??
+    auth.session?.discordDisplayName ??
+    auth.session?.discordUsername ??
+    null
+  );
 }
 
 function storedSessionCanUseGameServers(): boolean {
@@ -32,15 +37,11 @@ export function useGameServerAuth(): GameServerAccessState {
   useEffect(() => {
     if (auth.checking) return;
     if (!auth.authed || !auth.sessionToken) {
-      setCanUseGameServers(false);
-      setAccessError(null);
       storeSessionCanUseGameServers(false);
       return;
     }
 
     let cancelled = false;
-    setCanUseGameServers(null);
-    setAccessError(null);
     getGameServerAccessStatus(auth.sessionToken)
       .then((result) => {
         if (cancelled) return;
@@ -74,7 +75,7 @@ export function useGameServerAuth(): GameServerAccessState {
   return {
     authed: auth.authed,
     checking: auth.checking || checkingGameServerAccess,
-    canUseGameServers: canUseGameServers === true,
+    canUseGameServers: auth.authed && canUseGameServers === true,
     sessionWasAllowedGameServers,
     sessionToken: auth.sessionToken,
     session: auth.session,

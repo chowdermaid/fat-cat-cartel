@@ -38,15 +38,16 @@ export function AuthLoginInstructionsDialog({
         >
           <div className="grid gap-5 p-6">
             <DialogHeader>
-              <DialogTitle>Get ready to log in</DialogTitle>
+              <DialogTitle>Login with Discord</DialogTitle>
               <DialogDescription>
-                You must be in the discord before authenticating.
+                You can authenticate with Discord, but some pages may remain
+                unavailable until you complete the bot commands in our Discord.
               </DialogDescription>
             </DialogHeader>
 
             <div className="rounded-lg border bg-muted/30 p-4 text-sm leading-6 text-muted-foreground">
               <p>
-                To begin, head to{" "}
+                To unlock member features, head to{" "}
                 <a
                   href={BOT_CHANNEL_URL}
                   target="_blank"

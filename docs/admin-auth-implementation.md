@@ -1,13 +1,13 @@
 # Admin Auth Implementation
 
-The app uses Discord OAuth for browser login and Firebase Functions for authorization. The browser never decides access by itself. A successful web session requires both a Discord account linked to a tracked Lodestone character and a configured Boss, Underpaw, or member Discord role ID. Boss and Underpaw are the only roles that unlock admin access.
+The app uses Discord OAuth for browser login and Firebase Functions for authorization. The browser never decides access by itself. Discord OAuth creates a general application session for any authenticated Discord user. FFXIV member access separately requires current guild membership, an allowed current role, a Discord account linked to a tracked Lodestone character, and a current member record. Boss and Underpaw are the only roles that unlock admin access.
 
 ## OAuth Flow
 
 - `AuthUserMenu` and the admin access state send users to the `startDiscordAdminOAuth` HTTP Function with a relative `returnTo` path.
 - The start Function creates a random OAuth state, stores only `SHA-256(state)` at `/adminOAuthStates/{stateHash}` with the sanitized `returnTo`, sets a SameSite=Lax HTTP-only state cookie, and redirects to Discord with scopes `identify guilds.members.read`.
-- `discordAdminOAuthCallback` validates the returned `state` against the cookie and stored state record, exchanges the OAuth code, fetches the current Discord user and current guild member, and checks the member `roles` array against `DISCORD_ADMIN_ROLE_IDS`, `DISCORD_MEMBER_ROLE_IDS`, and `DISCORD_MEMBER_ROLE_ID`.
-- After role verification, the callback reads `/discordLinks/{discordUserId}` and then `/members/{lodestoneId}`. Login is rejected if the Discord account is not linked or the linked character is no longer tracked.
+- `discordAdminOAuthCallback` validates the returned `state` against the cookie and stored state record, exchanges the OAuth code, and fetches the current Discord user. Guild membership lookup is optional during login so users outside the FFXIV Discord can still authenticate.
+- When the user has a configured member/admin role, the callback also attempts to enrich the session from `/discordLinks/{discordUserId}` and `/members/{lodestoneId}`. Missing roles, links, or member records produce a base Discord session rather than FFXIV access.
 - On success, the callback creates a random opaque web session token, stores only `SHA-256(token)` at `/adminSessions/{sessionIdHash}`, and redirects to `{returnTo}#admin_session=<token>`.
 - On failure, the callback redirects to `{returnTo}#admin_error=<reason>` when a valid OAuth state exists.
 
@@ -47,11 +47,10 @@ The Discord `/clear-channel` command uses the same Boss and Underpaw role IDs fr
 Admin sessions live at `/adminSessions/{sessionIdHash}`:
 
 - `discordUserId`
-- `lodestoneId`
-- `characterName`
-- `fcRank`
-- `avatarUrl`
+- `discordUsername`, `discordDisplayName`, and `discordAvatarUrl` for base identity display
+- Nullable `lodestoneId`, `characterName`, `fcRank`, and `avatarUrl` for linked FFXIV identity
 - `roleIds`
+- `isMember`
 - `isAdmin`
 - `isHousecat` is returned by `getAdminSession` for client gating but is derived from live Discord roles, not stored as an auth authority.
 - `createdAt`
@@ -60,7 +59,9 @@ Admin sessions live at `/adminSessions/{sessionIdHash}`:
 
 The browser stores the raw opaque session token in `localStorage` under `admin_session_token` so login survives tab and browser restarts until logout, revocation, role loss, or expiry. Realtime Database stores only the token hash. Default expiry is 730 hours.
 
-`requireMemberSession` validates the token on member callables. It fetches the current guild member with `DISCORD_BOT_TOKEN`, compares live role IDs against `DISCORD_ADMIN_ROLE_IDS` and configured member role IDs, re-reads `/discordLinks/{discordUserId}` and `/members/{lodestoneId}`, refreshes `lastSeenAt`, and deletes the session if the user is no longer in the guild, the role check fails, the Discord link is removed, the member disappears, or the session is expired.
+`requireAuthenticatedSession` validates the hashed opaque token, Discord user ID, and expiry. It grants no member, admin, Housecat, or Palworld authority.
+
+`requireMemberSession` wraps base authentication for member callables. It fetches the current guild member with `DISCORD_BOT_TOKEN`, compares live role IDs against `DISCORD_ADMIN_ROLE_IDS` and configured member role IDs, and re-reads `/discordLinks/{discordUserId}` and `/members/{lodestoneId}`. Failed member authorization does not destroy an otherwise valid base Discord session.
 
 `requireAdminSession` wraps `requireMemberSession` and rejects sessions whose live role IDs do not include Boss or Underpaw.
 
@@ -70,10 +71,11 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 
 - The sidebar uses the reusable `AuthUserMenu` component. Logged-out users see "Member Login" and "Login with Discord"; clicking starts OAuth.
 - Logged-in users see their linked in-game character name and FC rank. The account popover says `Welcome, {characterName}` and includes logout.
+- Authenticated outsiders display their Discord identity and are not labelled as FFXIV members.
 - Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, and favorite content type. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
 - Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
-- Linked sessions with a configured member role can open `/gameserver` only when their Discord ID is enabled in `/gameServerAccess`; Boss and Underpaw admin sessions bypass that game-server whitelist.
+- Any base session can open Palworld only when its immutable Discord ID has an active, non-expired `/gameServerAccess` entitlement. Boss and Underpaw sessions retain a live-admin bypass.
 - Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
 - The admin client feature follows the standard feature structure under `src/features/admin`: the route export stays thin in `index.tsx`, callable helpers live in `api/`, stateful orchestration lives in `hooks/`, pure display/cache/auth helpers live in `utils/`, and admin UI is grouped under `components/`.
@@ -116,6 +118,10 @@ Public reads remain available where the app needs them. Client writes are denied
 - `/adminSessions`
 
 Functions write these paths through the Admin SDK after server-side role authorization.
+
+## Palworld Entitlements
+
+Palworld entitlements live at `/gameServerAccess/{discordUserId}` and remain private to trusted Functions. Legacy `enabled: true` entries without `expiresAt` remain active and non-expiring. New records can include nullable `expiresAt`, `updatedBy`, notes, grant actor, and timestamps. Missing, disabled, malformed, or expired entries are denied on the next Palworld request. Entitlements never grant FFXIV member or admin access.
 
 ## Local Emulator Development
 

@@ -442,7 +442,7 @@ export function PalworldServerPage() {
     return (
       <AuthAccessState
         title="Palworld Server"
-        description="Login with your linked member account to view Palworld access."
+        description="Login with Discord to view Palworld access."
         error={auth.error}
         checking={auth.checking}
         onLogin={auth.login}

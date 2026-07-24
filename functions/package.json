@@ -4,6 +4,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "test": "npm run build && node --test lib/authorization-policy.test.js",
     "register:discord": "node scripts/register-discord-commands.js"
   },
   "main": "lib/index.js",

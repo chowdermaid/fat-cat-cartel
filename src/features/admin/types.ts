@@ -11,11 +11,15 @@ export type AdminAuthState = "checking" | "authed" | "login" | "unauthorized";
 
 export interface AdminSession {
   discordUserId: string;
-  lodestoneId: string;
-  characterName: string;
+  discordUsername: string | null;
+  discordDisplayName: string | null;
+  discordAvatarUrl: string | null;
+  lodestoneId: string | null;
+  characterName: string | null;
   fcRank: string | null;
   avatarUrl?: string | null;
   roleIds: string[];
+  isMember: boolean;
   isAdmin: boolean;
   isHousecat: boolean;
   capabilities?: string[];
