@@ -584,9 +584,11 @@ export async function requireAuthenticatedSession(
 export async function requireMemberSession(
   data: unknown,
   config: MemberSessionConfig,
+  authenticatedSession?: VerifiedAuthenticatedSession,
 ): Promise<VerifiedAdminSession> {
   assertDevRoleOverrideSafety();
-  const session = await requireAuthenticatedSession(data);
+  const session =
+    authenticatedSession ?? await requireAuthenticatedSession(data);
   const sessionRef = admin.database().ref(`adminSessions/${session.sessionHash}`);
   const now = Date.now();
   let currentRoleIds: string[];
@@ -653,8 +655,13 @@ export async function requireMemberSession(
 export async function requireAdminSession(
   data: unknown,
   config: MemberSessionConfig,
+  authenticatedSession?: VerifiedAuthenticatedSession,
 ): Promise<VerifiedAdminSession> {
-  const session = await requireMemberSession(data, config);
+  const session = await requireMemberSession(
+    data,
+    config,
+    authenticatedSession,
+  );
   if (!session.isAdmin) {
     throw new HttpsError(
       "permission-denied",
@@ -686,7 +693,7 @@ export async function getAdminSession(
   const baseSession = await requireAuthenticatedSession(data);
   let memberSession: VerifiedAdminSession | null = null;
   try {
-    memberSession = await requireMemberSession(data, config);
+    memberSession = await requireMemberSession(data, config, baseSession);
   } catch (error) {
     if (
       !(error instanceof HttpsError) ||

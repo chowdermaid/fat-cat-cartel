@@ -1,7 +1,7 @@
 # Graph Report - fat-cat-cartel  (2026-08-10)
 
 ## Corpus Check
-- 401 files · ~2,119,761 words
+- 401 files · ~2,119,745 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

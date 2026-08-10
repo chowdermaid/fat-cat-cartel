@@ -104,6 +104,11 @@ type PalworldTelemetry = {
   telemetryMessage: string | null;
 };
 
+type GameServerTelemetryResult = PalworldTelemetry & {
+  ok: true;
+  serverId: GameServerId;
+};
+
 type PalworldPlayer = {
   name: string;
   accountName: string;
@@ -892,10 +897,7 @@ async function writeIdleState(serverId: GameServerId, state: GameServerIdleState
   await admin.database().ref(`gameServerIdleState/${serverId}`).set(state);
 }
 
-async function describePalworldInstance(
-  config: GameServerAwsConfig,
-  options: { includeTelemetry: boolean } = { includeTelemetry: true },
-): Promise<GameServerStatusResult> {
+async function readPalworldInstance(config: GameServerAwsConfig): Promise<Instance> {
   let instance: Instance | undefined;
   try {
     const result = await ec2Client(config).send(
@@ -917,6 +919,14 @@ async function describePalworldInstance(
   if (!instance) {
     throw new HttpsError("not-found", "Palworld EC2 instance was not found.");
   }
+  return instance;
+}
+
+async function describePalworldInstance(
+  config: GameServerAwsConfig,
+  options: { includeTelemetry: boolean } = { includeTelemetry: true },
+): Promise<GameServerStatusResult> {
+  const instance = await readPalworldInstance(config);
 
   const status = normalizeState(instance.State?.Name);
   const host = hostForInstance(instance);
@@ -1081,7 +1091,22 @@ export async function getGameServerAccessStatusForSession(
   isAdmin: boolean;
   expiresAt: number | null;
 }> {
-  if (session.isAdmin === true) {
+  return getGameServerAccessStatusForIdentity(
+    session.discordUserId,
+    session.isAdmin === true,
+  );
+}
+
+export async function getGameServerAccessStatusForIdentity(
+  discordUserId: string,
+  isAdmin: boolean,
+): Promise<{
+  ok: true;
+  canUseGameServers: boolean;
+  isAdmin: boolean;
+  expiresAt: number | null;
+}> {
+  if (isAdmin) {
     return {
       ok: true,
       canUseGameServers: true,
@@ -1090,7 +1115,7 @@ export async function getGameServerAccessStatusForSession(
     };
   }
 
-  const entry = await readAccessEntry(session.discordUserId);
+  const entry = await readAccessEntry(discordUserId);
   return {
     ok: true,
     canUseGameServers: isGameServerAccessEntryActive(entry),
@@ -1132,7 +1157,43 @@ export async function getGameServerStatusForSession(
   if (!server) {
     throw new HttpsError("not-found", "Game server was not found.");
   }
-  return statusForEnabledServer(config);
+  return statusForEnabledServer(config, { includeTelemetry: false });
+}
+
+export async function getGameServerTelemetryForSession(
+  data: unknown,
+  _session: AuthorizedGameServerSession,
+  config: GameServerAwsConfig,
+): Promise<GameServerTelemetryResult> {
+  void _session;
+  const serverId = parseServerId(data);
+  const server = GAME_SERVERS.find((item) => item.id === serverId);
+  if (!server) {
+    throw new HttpsError("not-found", "Game server was not found.");
+  }
+  const settings = await readGameServerSettings(serverId);
+  if (!settings.enabled) {
+    return {
+      ok: true,
+      serverId,
+      playerCount: null,
+      maxPlayers: null,
+      players: [],
+      memoryUsedPercent: null,
+      diskUsedPercent: null,
+      telemetryCheckedAt: Date.now(),
+      telemetryMessage: null,
+    };
+  }
+
+  const instance = await readPalworldInstance(config);
+  const status = normalizeState(instance.State?.Name);
+  const telemetry = await readPalworldTelemetry(
+    config,
+    hostForInstance(instance),
+    status,
+  );
+  return { ok: true, serverId, ...telemetry };
 }
 
 async function assertServerEnabled(serverId: GameServerId): Promise<void> {

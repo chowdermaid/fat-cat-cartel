@@ -53,6 +53,7 @@ Admin sessions live at `/adminSessions/{sessionIdHash}`:
 - `isMember`
 - `isAdmin`
 - `isHousecat` is returned by `getAdminSession` for client gating but is derived from live Discord roles, not stored as an auth authority.
+- `canUseGameServers` is returned by `getAdminSession` from the live admin result or the active `/gameServerAccess/{discordUserId}` entitlement so the client does not need a second access bootstrap call.
 - `createdAt`
 - `expiresAt`
 - `lastSeenAt`
@@ -122,6 +123,8 @@ Functions write these paths through the Admin SDK after server-side role authori
 ## Palworld Entitlements
 
 Palworld entitlements live at `/gameServerAccess/{discordUserId}` and remain private to trusted Functions. Legacy `enabled: true` entries without `expiresAt` remain active and non-expiring. New records can include nullable `expiresAt`, `updatedBy`, notes, grant actor, and timestamps. Missing, disabled, malformed, or expired entries are denied on the next Palworld request. Entitlements never grant FFXIV member or admin access.
+
+Game-server callables authorize direct entitlements immediately after base-session validation. They call Discord for live Boss or Underpaw verification only when no direct entitlement exists and an admin bypass may apply.
 
 ## Local Emulator Development
 

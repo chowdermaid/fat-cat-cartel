@@ -31,8 +31,23 @@ import {
 } from "../utils/adminErrors";
 
 let handledOAuthHash = false;
+let sessionRequest: {
+  token: string;
+  promise: Promise<AdminSession>;
+} | null = null;
 
 const subscribers = new Set<() => void>();
+
+function requestAdminSession(token: string): Promise<AdminSession> {
+  if (sessionRequest?.token === token) return sessionRequest.promise;
+  const promise = callAdminFunction<AdminSession>("getAdminSession", token);
+  sessionRequest = { token, promise };
+  const clearRequest = () => {
+    if (sessionRequest?.promise === promise) sessionRequest = null;
+  };
+  void promise.then(clearRequest, clearRequest);
+  return promise;
+}
 
 const localDevSession: AdminSession = {
   discordUserId: "local-dev",
@@ -47,6 +62,7 @@ const localDevSession: AdminSession = {
   isMember: true,
   isAdmin: true,
   isHousecat: false,
+  canUseGameServers: true,
   capabilities: ["admin:*"],
   expiresAt: Number.MAX_SAFE_INTEGER,
 };
@@ -67,6 +83,7 @@ function devSessionFromPersona(): AdminSession | null {
     isMember: true,
     isAdmin: persona.isAdmin,
     isHousecat: persona.isHousecat,
+    canUseGameServers: persona.isAdmin,
     capabilities: persona.capabilities,
     expiresAt: Number.MAX_SAFE_INTEGER,
   };
@@ -235,9 +252,11 @@ export function useAdminAuth() {
       return;
     }
 
+    if (authSnapshot.state === "authed" && authSnapshot.session) return;
+
     let cancelled = false;
     updateAuthSnapshot({ state: "checking" });
-    callAdminFunction<AdminSession>("getAdminSession", effectiveSessionToken)
+    requestAdminSession(effectiveSessionToken)
       .then((adminSession) => {
         if (cancelled) return;
         storeSessionIsAdmin(adminSession.isAdmin);

@@ -22,6 +22,7 @@ export interface AdminSession {
   isMember: boolean;
   isAdmin: boolean;
   isHousecat: boolean;
+  canUseGameServers?: boolean;
   capabilities?: string[];
   expiresAt: number;
 }

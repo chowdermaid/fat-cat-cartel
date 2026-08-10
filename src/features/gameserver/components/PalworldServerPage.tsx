@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Power,
   Server,
@@ -23,6 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getGameServerStatus,
+  getGameServerTelemetry,
   listGameServerEvents,
   startGameServer,
   stopGameServer,
@@ -182,8 +183,8 @@ export function PalworldServerPage() {
     status?.status === "running" && Boolean(status.connectAddress),
   );
 
-  async function loadEvents() {
-    if (!auth.sessionToken || !auth.canUseGameServers) return;
+  const loadEvents = useCallback(async () => {
+    if (!auth.sessionToken) return;
     setLoadingEvents(true);
     try {
       const result = await listGameServerEvents(auth.sessionToken, "palworld");
@@ -195,15 +196,42 @@ export function PalworldServerPage() {
     } finally {
       setLoadingEvents(false);
     }
-  }
+  }, [auth.sessionToken]);
 
-  async function refreshStatus(options?: { quiet?: boolean }) {
-    if (!auth.sessionToken || !auth.canUseGameServers) return null;
+  const loadTelemetry = useCallback(async () => {
+    if (!auth.sessionToken) return;
+    try {
+      const telemetry = await getGameServerTelemetry(
+        auth.sessionToken,
+        "palworld",
+      );
+      setStatus((current) =>
+        current?.status === "running"
+          ? {
+              ...current,
+              playerCount: telemetry.playerCount,
+              maxPlayers: telemetry.maxPlayers,
+              players: telemetry.players,
+              memoryUsedPercent: telemetry.memoryUsedPercent,
+              diskUsedPercent: telemetry.diskUsedPercent,
+              telemetryCheckedAt: telemetry.telemetryCheckedAt,
+              telemetryMessage: telemetry.telemetryMessage,
+            }
+          : current,
+      );
+    } catch {
+      // Basic EC2 status remains usable when optional telemetry is unavailable.
+    }
+  }, [auth.sessionToken]);
+
+  const refreshStatus = useCallback(async (options?: { quiet?: boolean }) => {
+    if (!auth.sessionToken) return null;
     if (!options?.quiet) setLoadingStatus(true);
     try {
       const result = await getGameServerStatus(auth.sessionToken, "palworld");
       setStatus(result);
       setAccessDenied(false);
+      if (result.status === "running") void loadTelemetry();
       return result;
     } catch (err) {
       const message =
@@ -217,7 +245,7 @@ export function PalworldServerPage() {
     } finally {
       if (!options?.quiet) setLoadingStatus(false);
     }
-  }
+  }, [auth.sessionToken, loadTelemetry]);
 
   async function pollUntilReady() {
     for (let attempt = 0; attempt < START_POLL_MAX_ATTEMPTS; attempt += 1) {
@@ -239,7 +267,7 @@ export function PalworldServerPage() {
   }
 
   async function runAction(action: "start" | "stop") {
-    if (!auth.sessionToken || !auth.canUseGameServers) return;
+    if (!auth.sessionToken) return;
     setActionLoading(action);
     pollCancelledRef.current = action !== "start";
     try {
@@ -277,13 +305,13 @@ export function PalworldServerPage() {
   }
 
   useEffect(() => {
-    if (!auth.authed || !auth.sessionToken || !auth.canUseGameServers) return;
+    if (!auth.authed || !auth.sessionToken) return;
     void refreshStatus();
     void loadEvents();
     return () => {
       pollCancelledRef.current = true;
     };
-  }, [auth.authed, auth.canUseGameServers, auth.sessionToken]);
+  }, [auth.authed, auth.sessionToken, loadEvents, refreshStatus]);
 
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), 30_000);
@@ -292,7 +320,7 @@ export function PalworldServerPage() {
 
   const canCopy = status?.status === "running" && Boolean(status.connectAddress);
   if (auth.checking) {
-    return null;
+    return <PalworldServerLoading />;
   }
 
   if (!auth.authed) {
@@ -308,11 +336,14 @@ export function PalworldServerPage() {
   }
 
   if (accessDenied) {
-    return null;
-  }
-
-  if (!auth.canUseGameServers) {
-    return null;
+    return (
+      <AuthAccessState
+        title="Palworld Server"
+        description="Your Discord account does not currently have Palworld access."
+        error="Game server whitelist required."
+        showLogin={false}
+      />
+    );
   }
 
   if (!status && loadingStatus) {

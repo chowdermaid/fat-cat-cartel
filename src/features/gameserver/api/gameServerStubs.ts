@@ -4,6 +4,7 @@ import type {
   GameServerAuditLogResponse,
   GameServerStatus,
   GameServerStatusResponse,
+  GameServerTelemetryResponse,
   GameServersResponse,
 } from "../types";
 
@@ -132,6 +133,21 @@ export function stubGameServers(): Promise<GameServersResponse> {
 export function stubGameServerStatus(): Promise<GameServerStatusResponse> {
   checkedAt = Date.now();
   return Promise.resolve(statusResponse());
+}
+
+export function stubGameServerTelemetry(): Promise<GameServerTelemetryResponse> {
+  const current = statusResponse();
+  return Promise.resolve({
+    ok: true,
+    serverId: current.serverId,
+    playerCount: current.playerCount,
+    maxPlayers: current.maxPlayers,
+    players: current.players,
+    memoryUsedPercent: current.memoryUsedPercent,
+    diskUsedPercent: current.diskUsedPercent,
+    telemetryCheckedAt: current.telemetryCheckedAt ?? Date.now(),
+    telemetryMessage: current.telemetryMessage,
+  });
 }
 
 export function stubGameServerAction(

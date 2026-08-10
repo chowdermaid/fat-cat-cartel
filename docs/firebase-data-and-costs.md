@@ -107,7 +107,8 @@ Functions are exported from `functions/src/index.ts`.
 - `searchMeowketItems`: callable admin XIVAPI craftable item search for Meowket Board. It returns compact item results and writes no Firebase data.
 - `calculateMeowketProfit`: callable admin XIVAPI recipe/material resolver and Universalis price lookup for Meowket Board. Optional child material mode adds bounded XIVAPI recipe lookups, batches item IDs per world, times out external API calls, and writes no Firebase data.
 - `discordInteractions`: HTTP Discord slash-command handler for linking, friend signup/status, profile view, and admin-only `/clear-channel`. Clearing a channel writes no Firebase data and calls Discord message APIs in batches.
-- `getGameServers` and `getGameServerStatus`: callable game-server reads. They require the existing linked admin/member session plus Boss/Underpaw admin bypass or enabled `/gameServerAccess` entry. Reads are manual except the bounded start-wait polling after a user clicks Start.
+- `getGameServers` and `getGameServerStatus`: callable game-server reads. They require a valid base session plus Boss/Underpaw admin bypass or enabled `/gameServerAccess` entry. Reads are manual except the bounded start-wait polling after a user clicks Start.
+- `getGameServerTelemetry`: callable background player and CloudWatch telemetry read. The Palworld page requests it only after the fast status response reports a running instance.
 - `startGameServer` and `stopGameServer`: callable Palworld EC2 controls. They require the same linked-session game-server access, use AWS credentials only inside Functions, respect `/gameServerSettings/palworld/enabled`, and write one `/gameServerAuditLog/palworld` entry per authorized start/stop request.
 - `listGameServerEvents`: callable game-server audit read for allowed game-server users. It returns the newest 5 Palworld action entries and does not use AWS credentials.
 - `getGameServerSettings` and `updateGameServerSettings`: callable admin game-server settings management. Updates write a settings audit entry and do not use AWS credentials.
@@ -121,7 +122,7 @@ Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App featur
 
 - `/gameserver` and `/gameserver/palworld` use callable Functions for on-demand status only.
 - Game-server pages reuse `admin_session_token`; `DISCORD_GAME_SERVER_REDIRECT_URI` is not required.
-- Manual refresh calls one Function, one EC2 describe request, one SSM Run Command player REST read when running, and CloudWatch metric reads when running.
+- Initial and manual refresh render from a fast status Function first, then call a background telemetry Function only when the instance is running. A running-server refresh therefore uses two Function invocations and two EC2 describe requests, followed by one SSM Run Command player REST read and CloudWatch metric reads; the extra lightweight status phase prevents SSM polling from blocking the page render.
 - Status reads increment one small current-month cost snapshot when Palworld is running and the instance type has a configured hourly rate. The previous month snapshot is read for display only.
 - Start polling calls status every 10 seconds for up to 8 minutes after a user clicks Start.
 - Start and stop each call one Function, one or more EC2 requests, and one small audit-log write.

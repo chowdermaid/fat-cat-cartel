@@ -183,6 +183,18 @@ export interface GameServerStatusResponse {
   previousMonthCost: GameServerCostSnapshot | null;
 }
 
+export interface GameServerTelemetryResponse {
+  ok: true;
+  serverId: GameServerId;
+  playerCount: number | null;
+  maxPlayers: number | null;
+  players: PalworldPlayer[];
+  memoryUsedPercent: number | null;
+  diskUsedPercent: number | null;
+  telemetryCheckedAt: number;
+  telemetryMessage: string | null;
+}
+
 export interface GameServerActionResponse {
   ok: boolean;
   serverId: GameServerId;

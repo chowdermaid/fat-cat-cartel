@@ -55,8 +55,9 @@ import {
 import { runSendBirthdayWishes } from "./birthday-notifications";
 import {
   deleteGameServerAccessForAdmin,
-  getGameServerAccessStatusForSession,
+  getGameServerAccessStatusForIdentity,
   getGameServerSettingsForAdmin,
+  getGameServerTelemetryForSession,
   getGameServerStatusForSession,
   listGameServerAuditLogForSession,
   listGameServerAuditLogForAdmin,
@@ -163,15 +164,57 @@ function discordOAuthConfig() {
   };
 }
 
-async function authenticatedSessionWithLiveAdmin(data: unknown) {
+async function authorizedGameServerSession(data: unknown) {
   const baseSession = await requireAuthenticatedSession(data);
+  const directAccessSession = { ...baseSession, isAdmin: false };
+  let directAccessError: HttpsError;
   try {
-    return await requireAdminSession(data, adminAuthConfig());
+    return await requireGameServerAccess(directAccessSession);
+  } catch (error) {
+    if (!(error instanceof HttpsError) || error.code !== "permission-denied") {
+      throw error;
+    }
+    directAccessError = error;
+  }
+
+  try {
+    const adminSession = await requireAdminSession(
+      data,
+      adminAuthConfig(),
+      baseSession,
+    );
+    return requireGameServerAccess(adminSession);
   } catch (error) {
     if (error instanceof HttpsError && error.code === "unauthenticated") {
       throw error;
     }
-    return { ...baseSession, isAdmin: false };
+    throw directAccessError;
+  }
+}
+
+async function gameServerAccessStatus(data: unknown) {
+  const baseSession = await requireAuthenticatedSession(data);
+  const directStatus = await getGameServerAccessStatusForIdentity(
+    baseSession.discordUserId,
+    false,
+  );
+  if (directStatus.canUseGameServers) return directStatus;
+
+  try {
+    const adminSession = await requireAdminSession(
+      data,
+      adminAuthConfig(),
+      baseSession,
+    );
+    return getGameServerAccessStatusForIdentity(
+      adminSession.discordUserId,
+      adminSession.isAdmin === true,
+    );
+  } catch (error) {
+    if (error instanceof HttpsError && error.code === "unauthenticated") {
+      throw error;
+    }
+    return directStatus;
   }
 }
 
@@ -610,11 +653,17 @@ export const getAdminSession = onCall(
     timeoutSeconds: 30,
     region: "us-central1",
   },
-  async (request) =>
-    getAdminSessionForToken(
+  async (request) => {
+    const session = await getAdminSessionForToken(
       request.data,
       adminAuthConfigWithSingleMemberRoleAndHousecat(),
-    ),
+    );
+    const access = await getGameServerAccessStatusForIdentity(
+      session.discordUserId,
+      session.isAdmin,
+    );
+    return { ...session, canUseGameServers: access.canUseGameServers };
+  },
 );
 
 export const searchMeowketItems = onCall(
@@ -661,10 +710,7 @@ export const getGameServerAccessStatus = onCall(
     timeoutSeconds: 30,
     region: "us-central1",
   },
-  async (request) => {
-    const session = await authenticatedSessionWithLiveAdmin(request.data);
-    return getGameServerAccessStatusForSession(session);
-  },
+  async (request) => gameServerAccessStatus(request.data),
 );
 
 export const getGameServers = onCall(
@@ -675,8 +721,7 @@ export const getGameServers = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await authenticatedSessionWithLiveAdmin(request.data);
-    const accessSession = await requireGameServerAccess(session);
+    const accessSession = await authorizedGameServerSession(request.data);
     return listGameServersForSession(accessSession, gameServerAwsConfig());
   },
 );
@@ -689,9 +734,25 @@ export const getGameServerStatus = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await authenticatedSessionWithLiveAdmin(request.data);
-    const accessSession = await requireGameServerAccess(session);
+    const accessSession = await authorizedGameServerSession(request.data);
     return getGameServerStatusForSession(
+      request.data,
+      accessSession,
+      gameServerAwsConfig(),
+    );
+  },
+);
+
+export const getGameServerTelemetry = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken, awsAccessKeyId, awsSecretAccessKey],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const accessSession = await authorizedGameServerSession(request.data);
+    return getGameServerTelemetryForSession(
       request.data,
       accessSession,
       gameServerAwsConfig(),
@@ -707,8 +768,7 @@ export const startGameServer = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await authenticatedSessionWithLiveAdmin(request.data);
-    const accessSession = await requireGameServerAccess(session);
+    const accessSession = await authorizedGameServerSession(request.data);
     return startGameServerForSession(
       request.data,
       accessSession,
@@ -725,8 +785,7 @@ export const stopGameServer = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await authenticatedSessionWithLiveAdmin(request.data);
-    const accessSession = await requireGameServerAccess(session);
+    const accessSession = await authorizedGameServerSession(request.data);
     return stopGameServerForSession(
       request.data,
       accessSession,
@@ -743,8 +802,7 @@ export const listGameServerEvents = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const session = await authenticatedSessionWithLiveAdmin(request.data);
-    const accessSession = await requireGameServerAccess(session);
+    const accessSession = await authorizedGameServerSession(request.data);
     return listGameServerAuditLogForSession(request.data, accessSession);
   },
 );
