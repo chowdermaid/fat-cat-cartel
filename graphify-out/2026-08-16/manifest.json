@@ -20,8 +20,8 @@
     "semantic_hash": "5d7b615184f0150d56950e8dcd3b90f0"
   },
   "functions/package.json": {
-    "mtime": 1786882461.79678,
-    "ast_hash": "0b4429cd3cf9b1c3fa102b14fad85821",
+    "mtime": 1784878773.5634773,
+    "ast_hash": "fbc442b2ec7a0e435adfeeed4d52426e",
     "semantic_hash": ""
   },
   "functions/scripts/register-discord-commands.js": {
@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1786882461.2051504,
-    "ast_hash": "061bae01b53274b7ce8415d5c53f0df5",
+    "mtime": 1786357298.490772,
+    "ast_hash": "95d1f2d594000b2933acc215086ab028",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -1880,8 +1880,8 @@
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
-    "mtime": 1786882462.3715518,
-    "ast_hash": "ef70e642f4e75770dd689a3dc68e4ad5",
+    "mtime": 1786357211.3603532,
+    "ast_hash": "cb04b6ff1394a0c036146a181eaceb9f",
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
@@ -2482,16 +2482,6 @@
   "firebase-export-1784953210164dJQYXR/database_export/fat-cat-cartel-default-rtdb.json": {
     "mtime": 1784953210.3137054,
     "ast_hash": "6c2a8ede23bffedb1a744ff4965cd145",
-    "semantic_hash": ""
-  },
-  "functions/src/scheduled-discord-notifications.test.ts": {
-    "mtime": 1786882489.8812578,
-    "ast_hash": "b7db6b7d1448f010f0197726fce4bbc7",
-    "semantic_hash": ""
-  },
-  "functions/src/scheduled-discord-notifications.ts": {
-    "mtime": 1786882460.0788279,
-    "ast_hash": "b1e45777a87f56f1011c72fad89e7056",
     "semantic_hash": ""
   }
 }

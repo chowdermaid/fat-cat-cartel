@@ -37,7 +37,6 @@ import type {
 } from "../types";
 import { PalworldActivityTimeline } from "./palworld/PalworldActivityTimeline";
 import { PalworldConnectionPanel } from "./palworld/PalworldConnectionPanel";
-import { PalworldCostSummary } from "./palworld/PalworldCostSummary";
 import { PalworldPlayerField } from "./palworld/PalworldPlayerField";
 import { PalworldServerHero } from "./palworld/PalworldServerHero";
 import { PalworldServerUsage } from "./palworld/PalworldServerUsage";
@@ -390,8 +389,6 @@ export function PalworldServerPage() {
             {status?.status === "running" && (
               <PalworldPlayerField players={status.players} />
             )}
-
-            <PalworldCostSummary status={status} now={now} />
 
             <section className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold">

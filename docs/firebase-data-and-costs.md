@@ -94,7 +94,7 @@ Functions are exported from `functions/src/index.ts`.
 - `triggerFCCollectionRefresh`: callable admin collection refresh.
 - `importLodestoneMembers`: callable Lodestone roster and portrait sync.
 - `refreshFriendSignup`: event-driven Discord Friend signup worker. It runs when `/friendRefreshQueue/{jobId}` is created.
-- `sendBirthdayWishes`: scheduled daily Discord birthday notification worker. It runs at 7:00 AM Australia/Sydney, reads member profiles, members, and Discord links once, writes a small guard/status record per birthday, and posts one Discord message per birthday.
+- `sendBirthdayWishes`: shared scheduled Discord notification worker. Its UTC triggers preserve birthday delivery at 7:00 AM Australia/Sydney across daylight saving and send one hardcoded Jumbo Cactpot DM at 7:00 PM fixed AEST each Saturday. Unused daylight-saving triggers exit without Firebase or Discord calls. Birthday runs read member profiles, members, and Discord links once, write a small guard/status record per birthday, and post one Discord message per birthday. The weekly Cactpot reminder adds two small Discord API requests and no Firebase data access.
 - `deleteMember`: callable admin deletion.
 - `upsertMember`: callable admin add or restore.
 - `refreshMemberSource`: callable admin per-member source refresh.

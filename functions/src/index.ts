@@ -52,7 +52,7 @@ import {
   calculateMeowketProfitForAdmin,
   searchMeowketItemsForAdmin,
 } from "./meowket-board";
-import { runSendBirthdayWishes } from "./birthday-notifications";
+import { runScheduledDiscordNotifications } from "./scheduled-discord-notifications";
 import {
   deleteGameServerAccessForAdmin,
   getGameServerAccessStatusForIdentity,
@@ -463,14 +463,18 @@ export const refreshFriendSignup = onValueCreated(
 
 export const sendBirthdayWishes = onSchedule(
   {
-    schedule: "0 7 * * *",
-    timeZone: "Australia/Sydney",
+    schedule: "0 9,20,21 * * *",
+    timeZone: "UTC",
+    retryCount: 0,
     secrets: [discordBotToken],
     timeoutSeconds: 60,
     region: "us-central1",
   },
-  async () => {
-    await runSendBirthdayWishes(birthdayNotificationConfig());
+  async (event) => {
+    await runScheduledDiscordNotifications(
+      birthdayNotificationConfig(),
+      new Date(event.scheduleTime),
+    );
   },
 );
 

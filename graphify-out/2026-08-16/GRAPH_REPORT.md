@@ -1,11 +1,11 @@
 # Graph Report - fat-cat-cartel  (2026-08-16)
 
 ## Corpus Check
-- 403 files · ~2,120,547 words
+- 401 files · ~2,119,751 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2587 nodes · 5109 edges · 164 communities (144 shown, 20 thin omitted)
+- 2576 nodes · 5090 edges · 164 communities (144 shown, 20 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
@@ -194,7 +194,7 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (60): CachePayload, CollectiblesValue, DbSnapshot, MembersValue, useFCCollection(), CollectibleDetailDialog(), CollectibleDetailDialogProps, isMount() (+52 more)
+Nodes (59): CachePayload, CollectiblesValue, MembersValue, useFCCollection(), CollectibleDetailDialog(), CollectibleDetailDialogProps, isMount(), animateFilterClick() (+51 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
@@ -221,8 +221,8 @@ Cohesion: 0.08
 Nodes (43): ButtonStyle, clearChannelErrorMessage(), ClearChannelResult, clearChannelResultMessage(), clearRecentChannelMessages(), ComponentType, confirmClearChannelComponents(), deferredEphemeral() (+35 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.06
-Nodes (37): ActivityChartType, COLLECTIBLE_META, dayKey(), displayJobName(), EMPTY_PROFILE, EmptyChart(), encodeBirthday(), fmtRdps() (+29 more)
+Cohesion: 0.07
+Nodes (33): ActivityChartType, activityImpact(), ActivityTimelineChart(), ActivityTooltipContent(), BestProgressByEncounter(), clampPercent(), COLLECTIBLE_META, compactContentType() (+25 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.06
@@ -254,7 +254,7 @@ Nodes (20): MountRouletteControls(), LoadingSkeleton(), MountRoulettePage(), Mou
 
 ### Community 15 - "Community 15"
 Cohesion: 0.13
-Nodes (17): FCMembersManager(), FCMembersManagerProps, MemberDeleteDialog(), MemberDeleteDialogProps, MemberRosterTable(), RANK_ORDER, useAdminMembers(), useAdminMemberSyncStatuses() (+9 more)
+Nodes (24): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+16 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.13
@@ -293,8 +293,8 @@ Cohesion: 0.08
 Nodes (25): dependencies, animejs, class-variance-authority, clsx, cmdk, echarts, echarts-for-react, embla-carousel-react (+17 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.23
-Nodes (10): CalendarSyncStatus(), MemberSyncToolbar(), MemberSyncToolbarProps, parseStatus(), useCalendarSyncStatus(), CalendarSyncStatusProps, CalendarSyncStatusState, DATE_TIME_FORMATTER (+2 more)
+Cohesion: 0.29
+Nodes (8): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId(), CalendarSyncStatus(), parseStatus(), useCalendarSyncStatus(), CalendarSyncStatusProps, CalendarSyncStatusState
 
 ### Community 26 - "Community 26"
 Cohesion: 0.22
@@ -325,16 +325,16 @@ Cohesion: 0.15
 Nodes (21): deleteEasterParticipantAdmin(), EasterParticipantRequest, FAVORITE_CONTENT_OPTIONS, FC_RANKS, FFXIV_JOBS, isValidBirthday(), ParsedProfile, parseFavoriteId() (+13 more)
 
 ### Community 33 - "Community 33"
-Cohesion: 0.16
-Nodes (21): AdminAuth, devAuthSnapshot(), devSessionFromPersona(), localDevSession, removeAdminHashParams(), requestAdminSession(), subscribers, updateAuthSnapshot() (+13 more)
+Cohesion: 0.18
+Nodes (19): AdminAuth, devAuthSnapshot(), devSessionFromPersona(), localDevSession, removeAdminHashParams(), requestAdminSession(), subscribers, updateAuthSnapshot() (+11 more)
 
 ### Community 34 - "Community 34"
 Cohesion: 0.12
 Nodes (15): useScoreboard(), UseScoreboardResult, EventCard(), EventCardProps, PointRule, PrizeRule, HideAndSeekDialog(), instructionImages (+7 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.17
-Nodes (17): MemberRosterTableProps, StatusCell(), AdminAuthState, AdminMember, AdminPageShellProps, MemberSyncStatus, ParseFailure, ProfileFavoriteOptions (+9 more)
+Cohesion: 0.09
+Nodes (30): MemberDeleteDialog(), MemberDeleteDialogProps, MemberRosterTable(), MemberRosterTableProps, StatusCell(), MemberSyncToolbar(), MemberSyncToolbarProps, FRESHNESS_MS (+22 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.16
@@ -361,8 +361,8 @@ Cohesion: 0.11
 Nodes (17): aliases, components, hooks, lib, ui, utils, iconLibrary, rsc (+9 more)
 
 ### Community 42 - "Community 42"
-Cohesion: 0.12
-Nodes (26): birthdayMessage(), BirthdayNotificationConfig, BirthdayRunResult, BirthdayTarget, claimBirthdayNotification(), cleanText(), DiscordMessageResponse, findBirthdayTargets() (+18 more)
+Cohesion: 0.20
+Nodes (17): birthdayMessage(), BirthdayNotificationConfig, BirthdayRunResult, BirthdayTarget, claimBirthdayNotification(), cleanText(), DiscordMessageResponse, findBirthdayTargets() (+9 more)
 
 ### Community 43 - "Community 43"
 Cohesion: 0.16
@@ -385,8 +385,8 @@ Cohesion: 0.11
 Nodes (18): dependencies, @aws-sdk/client-ec2, @aws-sdk/client-ssm, firebase-admin, firebase-functions, devDependencies, @types/node, typescript (+10 more)
 
 ### Community 48 - "Community 48"
-Cohesion: 0.17
-Nodes (13): MemberProfileDialog(), MemberProfileDialogProps, DAYS, EMPTY_PROFILE, FC_RANKS, FRESHNESS_MS, JOBS, MONTHS (+5 more)
+Cohesion: 0.21
+Nodes (11): MemberProfileDialog(), MemberProfileDialogProps, DAYS, EMPTY_PROFILE, FC_RANKS, JOBS, MONTHS, FCRank (+3 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.23
@@ -421,8 +421,8 @@ Cohesion: 0.24
 Nodes (9): saveOwnMemberProfile(), useProfileEditor(), ActivityChartType, CraftingProfileStats, MemberProfile, ProfileParseType, encodeBirthday(), parseBirthday() (+1 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.16
-Nodes (12): activityLabel(), buildActivitySummary(), favoriteById(), favoriteContentIcon(), favoriteOptions(), findRarest(), formatBirthday(), isCollectible() (+4 more)
+Cohesion: 0.12
+Nodes (17): activityLabel(), buildActivitySummary(), favoriteById(), favoriteContentIcon(), favoriteOptions(), findRarest(), formatBirthday(), isCollectible() (+9 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.26
@@ -497,8 +497,8 @@ Cohesion: 0.36
 Nodes (7): FavoriteCollectibleOption, FavoriteCollectiblePicker(), favoriteById(), favoriteOptions(), findRarest(), isCollectible(), ownedPct()
 
 ### Community 76 - "Community 76"
-Cohesion: 0.20
-Nodes (7): activityImpact(), ActivityTimelineChart(), ActivityTooltipContent(), BestProgressByEncounter(), clampPercent(), compactContentType(), formatDate()
+Cohesion: 0.11
+Nodes (32): assertServerEnabled(), auditEntryFromValue(), connectAddress(), describePalworldInstance(), disabledStatus(), ec2Client(), getGameServerSettingsForAdmin(), getGameServerStatusForSession() (+24 more)
 
 ### Community 77 - "Community 77"
 Cohesion: 0.22
@@ -601,8 +601,8 @@ Cohesion: 0.20
 Nodes (13): callGameServerFunction(), getGameServerAccessStatus(), getGameServerStatus(), getGameServerTelemetry(), listGameServerEvents(), sharedRead(), startGameServer(), PalworldConnectionPanel() (+5 more)
 
 ### Community 138 - "profile.ts"
-Cohesion: 0.05
-Nodes (85): amzDate(), assertAwsConfig(), assertServerEnabled(), auditEntryFromValue(), AuthorizedGameServerSession, cleanText(), cloudWatchQuery(), connectAddress() (+77 more)
+Cohesion: 0.06
+Nodes (55): accessEntryFromValue(), amzDate(), assertAwsConfig(), AuthorizedGameServerSession, cleanText(), cloudWatchQuery(), costSnapshotFromValue(), dateStamp() (+47 more)
 
 ### Community 139 - "Meowket Board Implementation"
 Cohesion: 0.13
@@ -653,8 +653,8 @@ Cohesion: 0.18
 Nodes (10): Current Phase, Deferred Work, Game Server Dashboard Progress, Locked Decisions, Overall Checklist, Phase 1 Checklist, Phase 2 Checklist, Phase 3 Checklist (+2 more)
 
 ### Community 151 - "adminFunctions.ts"
-Cohesion: 0.14
-Nodes (21): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+13 more)
+Cohesion: 0.19
+Nodes (11): deleteGameServerAccess(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAccessCandidates(), listGameServerAuditLog(), updateGameServerSettings(), upsertGameServerAccess() (+3 more)
 
 ### Community 152 - "cloudWatchQuery"
 Cohesion: 0.13
@@ -665,8 +665,8 @@ Cohesion: 0.23
 Nodes (15): pendingReads, stopGameServer(), checkedAt, events, statusResponse(), stubGameServerAccessStatus(), stubGameServerAction(), stubGameServerEvents() (+7 more)
 
 ### Community 154 - "queryPalworldPlayersViaSsm"
-Cohesion: 1.00
-Nodes (3): adminOAuthStartUrl(), functionsEmulatorOrigin(), projectId()
+Cohesion: 0.25
+Nodes (6): displayJobName(), JobIcon(), jobIconSrc(), JobLevelGroupCard(), JobUsageDonut(), maxLevelForJob()
 
 ### Community 155 - "PalworldStartupStatus.tsx"
 Cohesion: 0.19
@@ -697,11 +697,11 @@ Cohesion: 0.26
 Nodes (9): getGameServers(), GameServerCard, GameServerIndexPage(), sessionDisplayName(), displayName(), storedSessionCanUseGameServers(), storeSessionCanUseGameServers(), useGameServerAuth() (+1 more)
 
 ### Community 166 - "accessEntryFromValue"
-Cohesion: 0.21
-Nodes (12): requireAdminSession(), accessEntryFromValue(), getGameServerAccessStatusForIdentity(), getGameServerAccessStatusForSession(), isGameServerAccessEntryActive(), listGameServerAccessForAdmin(), readAccessEntry(), requireGameServerAccess() (+4 more)
+Cohesion: 0.27
+Nodes (10): requireAdminSession(), getGameServerAccessStatusForIdentity(), getGameServerAccessStatusForSession(), isGameServerAccessEntryActive(), readAccessEntry(), requireGameServerAccess(), adminAuthConfig(), adminAuthConfigWithHousecat() (+2 more)
 
 ## Knowledge Gaps
-- **847 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+842 more)
+- **843 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+838 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -709,15 +709,15 @@ Nodes (12): requireAdminSession(), accessEntryFromValue(), getGameServerAccessSt
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `progress()` connect `Community 9` to `Community 8`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.032) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
-  _847 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _843 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.061748195669607056 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06386554621848739 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.07191358024691358 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
