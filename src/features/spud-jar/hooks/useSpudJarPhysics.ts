@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { animate, type JSAnimation } from "animejs";
 import type { Body, Composite, Engine } from "matter-js";
 import {
@@ -11,7 +6,7 @@ import {
   MAX_QUEUED_DROPS,
   MAX_VISIBLE_COINS,
 } from "../constants";
-import type { ComplaintCoinMark, ComplaintCoinView } from "../types";
+import type { ComplaintCoinView } from "../types";
 
 type MatterModule = typeof import("matter-js");
 
@@ -27,8 +22,6 @@ type SpudBodyMetadata = {
   id?: number;
   landed?: boolean;
 };
-
-const COIN_MARKS: ComplaintCoinMark[] = ["plus", "spud", "potato", "grumpy"];
 
 function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(
@@ -95,7 +88,10 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
     const pendingRemovals = new Set<number>();
     const removalTimers = new Map<number, number>();
     const animations = animationsRef.current;
-    let desiredVisibleCount = Math.min(totalRef.current ?? 0, MAX_VISIBLE_COINS);
+    let desiredVisibleCount = Math.min(
+      totalRef.current ?? 0,
+      MAX_VISIBLE_COINS,
+    );
     let width = Math.max(host.clientWidth, 240);
     let height = Math.max(host.clientHeight, 300);
     const bodies = new Map<number, Body>();
@@ -158,15 +154,33 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
         plugin: { spudJar: { kind: "wall" } satisfies SpudBodyMetadata },
       };
       matter.Composite.add(walls, [
-        matter.Bodies.rectangle(width * 0.24, (top + bottom) / 2, 12, wallHeight, {
-          ...options,
-          angle: 0.08,
-        }),
-        matter.Bodies.rectangle(width * 0.76, (top + bottom) / 2, 12, wallHeight, {
-          ...options,
-          angle: -0.08,
-        }),
-        matter.Bodies.rectangle(width / 2, bottom + 5, width * 0.63, 14, options),
+        matter.Bodies.rectangle(
+          width * 0.24,
+          (top + bottom) / 2,
+          12,
+          wallHeight,
+          {
+            ...options,
+            angle: 0.08,
+          },
+        ),
+        matter.Bodies.rectangle(
+          width * 0.76,
+          (top + bottom) / 2,
+          12,
+          wallHeight,
+          {
+            ...options,
+            angle: -0.08,
+          },
+        ),
+        matter.Bodies.rectangle(
+          width / 2,
+          bottom + 5,
+          width * 0.63,
+          14,
+          options,
+        ),
       ]);
       matter.Composite.add(engine.world, walls);
     }
@@ -202,7 +216,10 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
       return body;
     }
 
-    function settledPositions(count: number, radius: number): Array<{ x: number; y: number }> {
+    function settledPositions(
+      count: number,
+      radius: number,
+    ): Array<{ x: number; y: number }> {
       const bottom = height * 0.86;
       const left = width * 0.23;
       const right = width * 0.77;
@@ -227,10 +244,10 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
       clearCoinBodies();
       const radius = coinRadius();
       const positions = settledPositions(visibleCount, radius);
-      const views = positions.map((position, index) => {
+      const views = positions.map((position) => {
         const id = nextCoinId++;
         makeCoinBody(id, position.x, position.y, radius, true);
-        return { id, radius, mark: COIN_MARKS[index % COIN_MARKS.length] };
+        return { id, radius };
       });
       setCoins(views);
     }
@@ -259,10 +276,7 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
       });
       matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.18);
       pendingEntrances.add(id);
-      setCoins((current) => [
-        ...current,
-        { id, radius, mark: COIN_MARKS[(id - 1) % COIN_MARKS.length] },
-      ]);
+      setCoins((current) => [...current, { id, radius }]);
     }
 
     function processDropQueue(): void {
@@ -301,10 +315,13 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
         const excess = bodies.size - target;
         const scheduled = queueBottomRemovals(Math.min(excess, 24));
         if (scheduled < excess) {
-          reconcileTimer = window.setTimeout(() => {
-            reconcileTimer = null;
-            settle(desiredVisibleCount);
-          }, scheduled * 80 + 320);
+          reconcileTimer = window.setTimeout(
+            () => {
+              reconcileTimer = null;
+              settle(desiredVisibleCount);
+            },
+            scheduled * 80 + 320,
+          );
         }
         return;
       }
@@ -413,10 +430,13 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
       }
 
       if (scheduled < excess) {
-        reconcileTimer = window.setTimeout(() => {
-          reconcileTimer = null;
-          settle(desiredVisibleCount);
-        }, scheduled * 80 + 320);
+        reconcileTimer = window.setTimeout(
+          () => {
+            reconcileTimer = null;
+            settle(desiredVisibleCount);
+          },
+          scheduled * 80 + 320,
+        );
       }
     }
 
@@ -445,59 +465,62 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
         Math.max(0, MAX_VISIBLE_COINS - order.length),
       );
       for (let index = 0; index < dropsBeforeBreak; index += 1) spawnCoin();
-      breakTimer = window.setTimeout(() => {
-        breakTimer = null;
-        if (!matter || !engine) return;
-        if (walls) {
-          matter.Composite.remove(engine.world, walls, true);
-          walls = null;
-        }
-        for (const body of bodies.values()) {
-          matter.Body.setStatic(body, false);
-          matter.Sleeping.set(body, false);
-          const direction = body.position.x < width / 2 ? -1 : 1;
-          matter.Body.setVelocity(body, {
-            x: direction * (2.8 + Math.random() * 4.2),
-            y: -4.5 - Math.random() * 4,
-          });
-          matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.55);
-        }
-
-        const visual = jarVisualRef.current;
-        if (visual) {
-          trackAnimation(
-            animate(visual, {
-              translateX: [0, -8, 10, -12, 9, -5, 0],
-              rotate: [0, -2, 3, -4, 3, -2, 0],
-              scale: [1, 1.015, 0.96],
-              opacity: [1, 1, 0],
-              duration: 760,
-              ease: "inOut(3)",
-            }),
-          );
-        }
-
-        breakTimer = window.setTimeout(() => {
+      breakTimer = window.setTimeout(
+        () => {
           breakTimer = null;
-          clearCoinBodies();
-          addWalls();
-          settle(desiredVisibleCount);
-          isBreaking = false;
-          setBreaking(false);
-          const freshVisual = jarVisualRef.current;
-          if (freshVisual) {
+          if (!matter || !engine) return;
+          if (walls) {
+            matter.Composite.remove(engine.world, walls, true);
+            walls = null;
+          }
+          for (const body of bodies.values()) {
+            matter.Body.setStatic(body, false);
+            matter.Sleeping.set(body, false);
+            const direction = body.position.x < width / 2 ? -1 : 1;
+            matter.Body.setVelocity(body, {
+              x: direction * (2.8 + Math.random() * 4.2),
+              y: -4.5 - Math.random() * 4,
+            });
+            matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.55);
+          }
+
+          const visual = jarVisualRef.current;
+          if (visual) {
             trackAnimation(
-              animate(freshVisual, {
-                opacity: [0, 1],
-                scale: [0.9, 1],
-                translateY: [-18, 0],
-                duration: 420,
-                ease: "out(4)",
+              animate(visual, {
+                translateX: [0, -8, 10, -12, 9, -5, 0],
+                rotate: [0, -2, 3, -4, 3, -2, 0],
+                scale: [1, 1.015, 0.96],
+                opacity: [1, 1, 0],
+                duration: 760,
+                ease: "inOut(3)",
               }),
             );
           }
-        }, 780);
-      }, dropsBeforeBreak > 0 ? 520 : 0);
+
+          breakTimer = window.setTimeout(() => {
+            breakTimer = null;
+            clearCoinBodies();
+            addWalls();
+            settle(desiredVisibleCount);
+            isBreaking = false;
+            setBreaking(false);
+            const freshVisual = jarVisualRef.current;
+            if (freshVisual) {
+              trackAnimation(
+                animate(freshVisual, {
+                  opacity: [0, 1],
+                  scale: [0.9, 1],
+                  translateY: [-18, 0],
+                  duration: 420,
+                  ease: "out(4)",
+                }),
+              );
+            }
+          }, 780);
+        },
+        dropsBeforeBreak > 0 ? 520 : 0,
+      );
     }
 
     function renderFrame(now: number): void {
@@ -527,11 +550,15 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
       animationFrame = requestAnimationFrame(renderFrame);
     }
 
-    function collisionHandler(event: { pairs: Array<{ bodyA: Body; bodyB: Body }> }): void {
+    function collisionHandler(event: {
+      pairs: Array<{ bodyA: Body; bodyB: Body }>;
+    }): void {
       if (reducedMotion) return;
       for (const pair of event.pairs) {
         const candidates = [pair.bodyA, pair.bodyB];
-        const coin = candidates.find((body) => bodyMetadata(body)?.kind === "coin");
+        const coin = candidates.find(
+          (body) => bodyMetadata(body)?.kind === "coin",
+        );
         if (!coin || coin.position.y < height * 0.35) continue;
         const metadata = bodyMetadata(coin);
         if (!metadata || metadata.landed) continue;
@@ -570,7 +597,11 @@ export function useSpudJarPhysics(total: number | null, cycle: number | null) {
     const resizeObserver = new ResizeObserver(() => {
       const nextWidth = Math.max(host.clientWidth, 240);
       const nextHeight = Math.max(host.clientHeight, 300);
-      if (Math.abs(nextWidth - previousWidth) < 2 && Math.abs(nextHeight - previousHeight) < 2) return;
+      if (
+        Math.abs(nextWidth - previousWidth) < 2 &&
+        Math.abs(nextHeight - previousHeight) < 2
+      )
+        return;
       previousWidth = width = nextWidth;
       previousHeight = height = nextHeight;
       clearDropTimer();

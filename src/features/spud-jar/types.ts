@@ -13,10 +13,7 @@ export type SpudJarMutationResult = {
   cycle: number;
 };
 
-export type ComplaintCoinMark = "plus" | "spud" | "potato" | "grumpy";
-
 export type ComplaintCoinView = {
   id: number;
-  mark: ComplaintCoinMark;
   radius: number;
 };

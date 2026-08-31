@@ -1,12 +1,8 @@
-import type { ComplaintCoinMark } from "../types";
-
 type PotatoCoinIconProps = {
-  mark?: ComplaintCoinMark;
   className?: string;
 };
 
 export function PotatoCoinIcon({
-  mark = "plus",
   className = "h-full w-full",
 }: PotatoCoinIconProps) {
   return (
@@ -19,29 +15,9 @@ export function PotatoCoinIcon({
       />
       <circle cx="20" cy="23" r="2.2" fill="#A46E25" />
       <circle cx="45" cy="39" r="2.4" fill="#A46E25" />
-      {mark === "plus" && (
-        <text x="32" y="41" textAnchor="middle" fontSize="25" fontWeight="900" fill="#4A2B1F">
-          +1
-        </text>
-      )}
-      {mark === "spud" && (
-        <text x="32" y="38" textAnchor="middle" fontSize="13" fontWeight="900" fill="#4A2B1F">
-          SPUD
-        </text>
-      )}
-      {mark === "potato" && (
-        <path
-          d="M24 21c5-4 14-3 17 2 4 6 1 15-6 18-7 2-14-2-14-9 0-5 0-8 3-11Z"
-          fill="#F8E6C8"
-          stroke="#4A2B1F"
-          strokeWidth="2.5"
-        />
-      )}
-      {mark === "grumpy" && (
-        <g fill="none" stroke="#4A2B1F" strokeLinecap="round" strokeWidth="3">
-          <path d="m20 27 8 3M44 27l-8 3M23 43c5-4 13-4 18 0" />
-        </g>
-      )}
+      <g fill="none" stroke="#4A2B1F" strokeLinecap="round" strokeWidth="3">
+        <path d="m20 27 8 3M44 27l-8 3M23 43c5-4 13-4 18 0" />
+      </g>
     </svg>
   );
 }
