@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   BarChart2,
   CalendarDays,
+  Coins,
   Dices,
   Drama,
   Hammer,
@@ -50,6 +51,7 @@ const toolItems = [
   { label: "Mount Roulette", to: "/mount-roulette", icon: Dices },
   { label: "Crafting Board", to: "/craftingboard", icon: Hammer },
   { label: "Meowket Board", to: "/meowketboard", icon: HandCoins },
+  { label: "Spud Jar", to: "/spud-jar", icon: Coins },
   { label: "Game Servers", to: "/gameserver", icon: Server },
 ] as const;
 

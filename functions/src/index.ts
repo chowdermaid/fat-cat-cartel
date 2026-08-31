@@ -52,6 +52,7 @@ import {
   calculateMeowketProfitForAdmin,
   searchMeowketItemsForAdmin,
 } from "./meowket-board";
+import { mutateSpudJar, parseSpudJarBatchCount } from "./spud-jar";
 import { runScheduledDiscordNotifications } from "./scheduled-discord-notifications";
 import {
   deleteGameServerAccessForAdmin,
@@ -937,6 +938,53 @@ export const updateOwnMemberProfile = onCall(
   async (request) => {
     const session = await requireMemberSession(request.data, adminAuthConfig());
     return updateOwnProfile(request.data, session.lodestoneId);
+  },
+);
+
+export const addSpudJarComplaints = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const count = parseSpudJarBatchCount(request.data);
+    return mutateSpudJar("add", session.discordUserId, count);
+  },
+);
+
+export const undoSpudJarComplaint = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireMemberSession(
+      request.data,
+      adminAuthConfigWithSingleMemberRole(),
+    );
+    const count = parseSpudJarBatchCount(request.data);
+    return mutateSpudJar("undo", session.discordUserId, count);
+  },
+);
+
+export const resetSpudJar = onCall(
+  {
+    cors: true,
+    secrets: [discordBotToken],
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const session = await requireAdminSession(request.data, adminAuthConfig());
+    return mutateSpudJar("reset", session.discordUserId);
   },
 );
 

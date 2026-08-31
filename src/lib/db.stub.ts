@@ -954,6 +954,14 @@ let store: Record<string, unknown> = {
   craftingRequestStats: {
     completedTotal: 12,
   },
+  tools: {
+    spudJar: {
+      total: 37,
+      cycle: 0,
+      updatedAt: NOW - 20 * 60_000,
+      updatedBy: "stub-axo",
+    },
+  },
   events: {
     easter2026: {
       participants: {
@@ -1088,4 +1096,17 @@ export function stubRemove(r: StubRef): Promise<void> {
     : "";
   notifyPath(parent);
   return Promise.resolve();
+}
+
+export function stubRunTransaction(
+  r: StubRef,
+  update: (current: unknown) => unknown,
+): Promise<{ committed: boolean; snapshot: StubSnapshot }> {
+  const next = update(getAtPath(r.path));
+  if (next === undefined) {
+    return Promise.resolve({ committed: false, snapshot: makeSnapshot(r.path) });
+  }
+  setAtPath(r.path, next);
+  notifyPath(r.path);
+  return Promise.resolve({ committed: true, snapshot: makeSnapshot(r.path) });
 }

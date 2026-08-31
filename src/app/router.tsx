@@ -21,6 +21,7 @@ import { MemberProfilePage } from "@/features/member-profile";
 import { CalendarPage } from "@/features/calendar";
 import { CraftingBoardPage } from "@/features/craftingboard";
 import { MeowketBoardPage } from "@/features/meowket-board";
+import { SpudJarPage } from "@/features/spud-jar";
 import { DmuProgPage } from "@/features/dmu-prog";
 import {
   GameServerIndexPage,
@@ -103,6 +104,12 @@ const meowketBoardRoute = createRoute({
   component: MeowketBoardPage,
 });
 
+const spudJarRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/spud-jar",
+  component: SpudJarPage,
+});
+
 const gameServerIndexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/gameserver",
@@ -152,6 +159,7 @@ const routeTree = rootRoute.addChildren([
   mountRouletteRoute,
   craftingBoardRoute,
   meowketBoardRoute,
+  spudJarRoute,
   gameServerIndexRoute,
   palworldServerRoute,
   calendarRoute,

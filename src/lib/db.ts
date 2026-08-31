@@ -17,6 +17,7 @@ import {
   update as fbUpdate,
   push as fbPush,
   remove as fbRemove,
+  runTransaction as fbRunTransaction,
 } from "firebase/database";
 
 import {
@@ -28,6 +29,7 @@ import {
   stubUpdate,
   stubPush,
   stubRemove,
+  stubRunTransaction,
 } from "./db.stub";
 
 const USE_STUBS = import.meta.env.VITE_USE_STUBS === "true";
@@ -42,3 +44,6 @@ export const set: AnyFn = USE_STUBS ? stubSet : fbSet;
 export const update: AnyFn = USE_STUBS ? stubUpdate : fbUpdate;
 export const push: AnyFn = USE_STUBS ? stubPush : fbPush;
 export const remove: AnyFn = USE_STUBS ? stubRemove : fbRemove;
+export const runTransaction: AnyFn = USE_STUBS
+  ? stubRunTransaction
+  : fbRunTransaction;

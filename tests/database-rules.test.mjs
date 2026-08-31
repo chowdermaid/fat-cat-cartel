@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test, { after, before } from "node:test";
 import {
   assertFails,
+  assertSucceeds,
   initializeTestEnvironment,
 } from "@firebase/rules-unit-testing";
 import { get, ref, set } from "firebase/database";
@@ -36,3 +37,21 @@ for (const path of [
     assert.ok(true);
   });
 }
+
+test("public can read Spud Jar but cannot write it", async () => {
+  await environment.withSecurityRulesDisabled(async (context) => {
+    await set(ref(context.database(), "tools/spudJar"), {
+      total: 7,
+      updatedAt: 1,
+      updatedBy: "member-1",
+    });
+  });
+  const database = environment.unauthenticatedContext().database();
+  await assertSucceeds(get(ref(database, "tools/spudJar")));
+  await assertFails(set(ref(database, "tools/spudJar"), { total: 8 }));
+});
+
+test("authenticated browser cannot write Spud Jar", async () => {
+  const database = environment.authenticatedContext("member-1").database();
+  await assertFails(set(ref(database, "tools/spudJar"), { total: 8 }));
+});

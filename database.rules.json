@@ -112,6 +112,13 @@
       ".write": false
     },
 
+    "tools": {
+      "spudJar": {
+        ".read": true,
+        ".write": false
+      }
+    },
+
     "events": {
       ".read": true,
       "easter2026": {

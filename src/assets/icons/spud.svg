@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 102.21 97.01">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        stroke: #443232;
+      }
+
+      .cls-1, .cls-3, .cls-5 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-6, .cls-3 {
+        isolation: isolate;
+      }
+
+      .cls-2 {
+        stroke-width: 4px;
+      }
+
+      .cls-2, .cls-4 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .cls-2, .cls-4, .cls-5 {
+        fill: none;
+      }
+
+      .cls-3 {
+        fill: #020202;
+        mix-blend-mode: overlay;
+        opacity: .3;
+      }
+
+      .cls-4 {
+        stroke-width: 3px;
+      }
+
+      .cls-5 {
+        stroke-width: 5px;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="39.25" y1="33.28" x2="78.58" y2="87.26" gradientTransform="translate(39.28 120.42) rotate(-35.58) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#edbf57"/>
+      <stop offset="1" stop-color="#ffd094"/>
+    </linearGradient>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <polyline class="cls-5" points="35.25 25.25 20.95 12.74 20.95 .81"/>
+    <g class="cls-6">
+      <g id="_イヤー_1" data-name=" イヤー 1">
+        <g>
+          <path class="cls-1" d="M55.9,87.58c38.18-19.5,29.79-61.61,1.92-73.41-4.74-2-10.18-1.98-14.66.56-7.88,4.48-9.41,13.9-10.71,26.85-.54,5.42-7.82,13.89-9.34,19.11-5.42,18.53,14.61,36.17,32.8,26.88h0Z"/>
+          <path class="cls-3" d="M58.37,14.41c21.65,15.45,25.25,51.62-9.3,69.27-6.15,3.14-12.52,3.2-18.04,1.18,6.59,5.33,15.95,7.27,24.87,2.71,37.92-19.37,29.89-61.04,2.48-73.16h0Z"/>
+          <path class="cls-4" d="M44.41,40.84c1.04,1.41,3.14.74,4.64-.8"/>
+          <path class="cls-4" d="M49.15,77.22c-.51-2.23-4.49-3.2-5.97-1.45"/>
+          <path class="cls-4" d="M70.27,50.73c-1.51.37-2.46,2.2-2.5,3.91"/>
+          <path class="cls-2" d="M55.9,87.58c38.18-19.5,29.79-61.61,1.92-73.41-4.74-2-10.18-1.98-14.66.56-7.88,4.48-9.41,13.9-10.71,26.85-.54,5.42-7.82,13.89-9.34,19.11-5.42,18.53,14.61,36.17,32.8,26.88h0Z"/>
+        </g>
+      </g>
+    </g>
+    <polyline class="cls-5" points="74.36 27.48 87.77 14.41 86.93 .15"/>
+    <polyline class="cls-5" points="32.61 40.04 11.27 28.81 4.27 6.81"/>
+    <polyline class="cls-5" points="81.06 41.38 99.1 25.25 99.71 7.37"/>
+    <polyline class="cls-5" points="28.1 50.73 8.6 45.81 2.43 72.15"/>
+    <polyline class="cls-5" points="81.59 52.69 97.1 62.31 99.27 90.13"/>
+    <polyline class="cls-5" points="22.2 66.31 10.77 72.15 7.6 93.65"/>
+    <polyline class="cls-5" points="71.36 76.04 82.93 82.98 87.77 96.15"/>
+  </g>
+</svg>

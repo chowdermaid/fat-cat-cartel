@@ -17,6 +17,7 @@ Frontend reads live data from Firebase Realtime Database. Local development can 
 - ECharts through `echarts` and `echarts-for-react` for raid stats charts.
 - Recharts for Meowket Board shadcn-style charts.
 - AnimeJS v4 for lightweight UI animation.
+- Matter.js for lazy-loaded Spud Jar coin physics.
 - Sonner for toasts.
 - Google Fonts: Nunito Sans body, Nunito through `font-serif`, JetBrains Mono mono.
 - Dark mode defaults to dark unless `localStorage.theme` is `"light"`.
@@ -55,6 +56,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/mount-roulette`: `MountRoulettePage`
 - `/craftingboard`: `CraftingBoardPage`
 - `/meowketboard`: `MeowketBoardPage`
+- `/spud-jar`: `SpudJarPage`
 - `/raid-stats`: `RaidStatsPage`
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
@@ -86,6 +88,7 @@ src/
     members/
     mount-roulette/
     meowket-board/
+    spud-jar/
     craftingboard/
     pastevents/
     raid-stats/

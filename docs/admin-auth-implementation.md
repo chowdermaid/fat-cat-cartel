@@ -105,6 +105,8 @@ All admin mutations must include `adminSessionToken` and call `requireAdminSessi
 
 Member self profile editing uses `updateOwnMemberProfile`. Housecat event request creation uses `submitCalendarEventRequest`. Both accept the same session token and call `requireMemberSession`; profile edits write only to the linked `/memberProfiles/{lodestoneId}` derived from the verified session. Favorite mount and minion IDs are accepted only when they are present in that member's synced `/fcCollection/memberData/{lodestoneId}/owned` arrays.
 
+Spud Jar mutations use `addSpudJarComplaints`, `undoSpudJarComplaint`, and `resetSpudJar`. Add and undo call `requireMemberSession`; reset calls `requireAdminSession` and is visible only to Boss/Underpaw sessions. Each callable derives `updatedBy` from the verified Discord identity and atomically updates only `/tools/spudJar`. Batched additions and removals accept an integer count from 1 through 1,000. Public visitors can read the jar but do not receive mutation controls.
+
 The admin and profile UIs use `callAdminFunction` from `src/features/admin/api/adminFunctions.ts` to attach the session token to callable payloads. Stub mode keeps direct local writes for UI development only because `firebaseApp` is null.
 
 ## Database Rules

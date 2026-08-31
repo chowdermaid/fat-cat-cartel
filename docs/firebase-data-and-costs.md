@@ -63,6 +63,7 @@ Important RTDB paths:
 - `/gameServerIdleState/{serverId}`: small auto-stop state for idle countdown. Palworld stores `idleSince`, `autoStopEligibleAt`, and `updatedAt`.
 - `/gameServerCost/{serverId}/monthly/{yyyy-mm}`: compact monthly estimated compute cost snapshots. Palworld stores estimated AUD compute cost, running hours, hourly rate, instance type, and update timestamp.
 - `/gameServerAuditLog/{serverId}/{logId}`: bounded game-server start/stop audit entries. The app keeps the newest 50 entries per server and shows the newest 25 to admins.
+- `/tools/spudJar`: public complaint jar with current `total`, completed `cycle`, `updatedAt`, and stable `updatedBy` Discord identity. Browsers can read it but cannot write it directly.
 - `/discordLinks/{discordUserId}` and `/discordLinksByLodestone/{lodestoneId}`: Discord link records.
 - `/memberExclusions/{lodestoneId}`: admin-deleted members that should not be reimported.
 - `/friendRefreshQueue/{jobId}`: queued Discord Friend signup refresh jobs.
@@ -77,6 +78,7 @@ Important RTDB paths:
 - Housecat event requests are written by Functions, reviewed by Boss/Underpaw callables, and deleted on approve or deny.
 - Birthday notifications are claimed and marked by Functions so each member can be wished only once per local Sydney date.
 - Admin UI can edit Easter participants, member profiles, `fcRank`, and manual member entries through callables.
+- Verified FC members can add and undo Spud Jar complaints. Only Boss/Underpaw sessions can reset it. Each operation uses one atomic transaction and stores no complaint history.
 - Manual member adds may be overwritten by the next Lodestone or FFLogs sync.
 - Discord signup can add Friend records and queue source refreshes.
 - Discord `/clear-channel` writes no RTDB data. It uses Discord API reads and deletes only, with request count proportional to the number of recent messages in the cleared channel.
@@ -115,8 +117,17 @@ Functions are exported from `functions/src/index.ts`.
 - `listGameServerAccess`, `upsertGameServerAccess`, and `deleteGameServerAccess`: callable admin whitelist management.
 - `listGameServerAuditLog`: callable admin audit-log read. It returns the newest Palworld action entries and does not use AWS credentials.
 - `autoStopIdleGameServers`: scheduled Palworld idle guard. It runs every 10 minutes, skips when Palworld is disabled, and only stops the configured instance after 30 continuous minutes with zero confirmed players.
+- `addSpudJarComplaints` and `undoSpudJarComplaint`: member-authorized atomic updates to `/tools/spudJar`. Additions and removals accept a validated batch of 1 through 1,000 complaints. `resetSpudJar` is a Boss/Underpaw-only atomic reset.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
+
+## Spud Jar Cost Notes
+
+- Each open `/spud-jar` page keeps one live listener on the small `/tools/spudJar` record. This realtime read is core to cross-session coin drops and replaces polling.
+- The browser animates and counts every add or remove click immediately while silently batching the net backend change. Every click restarts a trailing three-second timer; opposite unflushed clicks cancel locally, and no max-wait or click-count trigger can submit while changes are still arriving. The signed unflushed change is stored per user in session storage and validated up to 1,000 complaints in either direction. In-flight local changes bridge the Function response and RTDB listener so persisted batches do not replay animations. Each flushed batch uses one callable invocation, one live Discord member-role validation, and one small RTDB transaction.
+- Batched removal can cross a visual jar boundary without losing the lifetime count. Boss/Underpaw UI also exposes a separated, confirmed reset control.
+- The jar stores one aggregate record only. Historical complaints do not add bodies, database children, or growing downloads. At 105 coins, the atomic add advances `cycle`, carries any batch overflow into `total`, and the UI breaks the full jar before rendering a new one. The displayed lifetime counter is `cycle * 105 + total`, so only visible coins reset at capacity. Legacy totals above 105 normalize into cycles on read and persist in normalized form on the next mutation.
+- Matter.js is MIT licensed and loaded as a separate browser chunk only when the Spud Jar physics hook mounts. Coin Jar Pro source and assets are not reused.
 
 ## Game Server Cost Notes
 
