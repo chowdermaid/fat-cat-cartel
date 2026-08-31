@@ -7,7 +7,6 @@ type SpudJarProps = {
   jarRef: RefObject<HTMLDivElement | null>;
   jarVisualRef: RefObject<HTMLDivElement | null>;
   bindCoinElement: (id: number, element: HTMLDivElement | null) => void;
-  loading: boolean;
   breaking: boolean;
 };
 
@@ -16,7 +15,6 @@ export function SpudJar({
   jarRef,
   jarVisualRef,
   bindCoinElement,
-  loading,
   breaking,
 }: SpudJarProps) {
   return (
@@ -97,14 +95,6 @@ export function SpudJar({
               <path d="m125 343 29 20-12 48" />
             </g>
           </svg>
-
-          {loading && (
-            <div className="absolute inset-0 z-40 flex items-center justify-center">
-              <div className="rounded-lg border bg-background/90 px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm animate-pulse">
-                Consulting ledger…
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

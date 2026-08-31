@@ -2510,8 +2510,8 @@
     "semantic_hash": ""
   },
   "src/features/spud-jar/components/ComplaintCoin.tsx": {
-    "mtime": 1788164241.2667289,
-    "ast_hash": "8ba3fdfd5192b0afeb4b56ec349aef3d",
+    "mtime": 1788098246.6252034,
+    "ast_hash": "526ce74e9f99771a7d849dc0bda882de",
     "semantic_hash": ""
   },
   "src/features/spud-jar/components/ComplaintControls.tsx": {
@@ -2525,8 +2525,8 @@
     "semantic_hash": ""
   },
   "src/features/spud-jar/components/SpudJar.tsx": {
-    "mtime": 1788164905.02467,
-    "ast_hash": "afd87c017f63caaa9dd4bcf3c6c032aa",
+    "mtime": 1788162233.4191558,
+    "ast_hash": "81d1035e904c9bf88c007f0ad129b938",
     "semantic_hash": ""
   },
   "src/features/spud-jar/components/SpudJarEmptyState.tsx": {
@@ -2535,13 +2535,13 @@
     "semantic_hash": ""
   },
   "src/features/spud-jar/components/SpudJarPage.tsx": {
-    "mtime": 1788164906.082746,
-    "ast_hash": "e943387227363eb8cf353ebac020e80b",
+    "mtime": 1788162792.121346,
+    "ast_hash": "8c3962208472c2428c5374874b8423d1",
     "semantic_hash": ""
   },
   "src/features/spud-jar/constants.ts": {
-    "mtime": 1788164567.9896617,
-    "ast_hash": "351f6a3cec79cf30147334f5d10a4fbb",
+    "mtime": 1788162818.2230127,
+    "ast_hash": "93cb7d0b6a253ee8f7389b58d1cd1ece",
     "semantic_hash": ""
   },
   "src/features/spud-jar/hooks/useSpudJarData.ts": {
@@ -2550,8 +2550,8 @@
     "semantic_hash": ""
   },
   "src/features/spud-jar/hooks/useSpudJarPhysics.ts": {
-    "mtime": 1788164167.0674682,
-    "ast_hash": "5a2b54076bc92a9853e4948a60832d24",
+    "mtime": 1788163567.8226454,
+    "ast_hash": "d976947983c1e7105bd7e604b3afa88b",
     "semantic_hash": ""
   },
   "src/features/spud-jar/index.tsx": {
@@ -2560,13 +2560,13 @@
     "semantic_hash": ""
   },
   "src/features/spud-jar/types.ts": {
-    "mtime": 1788164119.1337843,
-    "ast_hash": "6a407ad45a5e6b22f8a375523afbb04a",
+    "mtime": 1788098170.4655695,
+    "ast_hash": "07f7b1bb5c48fd0cedd873af61188a95",
     "semantic_hash": ""
   },
   "src/features/spud-jar/components/PotatoCoinIcon.tsx": {
-    "mtime": 1788164131.3908942,
-    "ast_hash": "57cc230b51b6cdd077b23b64074ff2d8",
+    "mtime": 1788098245.7488558,
+    "ast_hash": "80fbd5e2c0630ba01e8f1e84798e76c9",
     "semantic_hash": ""
   },
   "src/assets/icons/spud.svg": {

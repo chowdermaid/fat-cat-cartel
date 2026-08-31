@@ -1,16 +1,16 @@
 # Graph Report - fat-cat-cartel  (2026-08-31)
 
 ## Corpus Check
-- 418 files · ~2,127,296 words
+- 418 files · ~2,127,116 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2646 nodes · 5212 edges · 166 communities (146 shown, 20 thin omitted)
+- 2648 nodes · 5217 edges · 166 communities (146 shown, 20 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `843b8951`
+- Built from commit: `eee46731`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -684,7 +684,7 @@ Nodes (9): autoStopText(), clampPercent(), formatDuration(), PalworldServerUsage
 
 ### Community 158 - "SpudJarPage.tsx"
 Cohesion: 0.08
-Nodes (29): CALLABLE_BY_ACTION, localRecord(), mutateSpudJar(), ComplaintCoin(), ComplaintCoinProps, ComplaintControls(), ComplaintControlsProps, ComplaintCounter() (+21 more)
+Nodes (31): CALLABLE_BY_ACTION, localRecord(), mutateSpudJar(), ComplaintCoin(), ComplaintCoinProps, ComplaintControls(), ComplaintControlsProps, ComplaintCounter() (+23 more)
 
 ### Community 159 - "PalworldActivityTimeline.tsx"
 Cohesion: 0.23
@@ -711,7 +711,7 @@ Cohesion: 0.39
 Nodes (6): mutateSpudJar(), nextSpudJarRecord(), parseSpudJarBatchCount(), readCurrent(), SpudJarAction, SpudJarRecord
 
 ## Knowledge Gaps
-- **866 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+861 more)
+- **867 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+862 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -725,7 +725,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
-  _866 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _867 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.06386554621848739 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**

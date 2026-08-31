@@ -44,14 +44,18 @@ export function SpudJarPage() {
         </div>
       )}
 
-      <section className="grid items-center gap-6 lg:grid-cols-[minmax(24rem,1.4fr)_minmax(18rem,0.8fr)] lg:gap-10">
+      <section
+        aria-hidden={jar.displayTotal === null ? true : undefined}
+        className={`grid items-center gap-6 lg:grid-cols-[minmax(24rem,1.4fr)_minmax(18rem,0.8fr)] lg:gap-10 ${
+          jar.displayTotal === null ? "invisible" : ""
+        }`}
+      >
         <div className="min-w-0">
           <SpudJar
             coins={physics.coins}
             jarRef={physics.jarRef}
             jarVisualRef={physics.jarVisualRef}
             bindCoinElement={physics.bindCoinElement}
-            loading={jar.loading}
             breaking={physics.breaking}
           />
           {jar.displayJarTotal === 0 && (
