@@ -1,5 +1,5 @@
 export const SPUD_JAR_PATH = "tools/spudJar";
-export const SPUD_JAR_CAPACITY = 105;
+export const SPUD_JAR_CAPACITY = 250;
 export const MAX_VISIBLE_COINS = SPUD_JAR_CAPACITY;
 export const MAX_QUEUED_DROPS = 24;
 export const DROP_STAGGER_MS = 120;
