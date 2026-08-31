@@ -5,8 +5,8 @@
     "semantic_hash": "6148dd831df5d7db22cfc3425f527fb2"
   },
   "database.rules.json": {
-    "mtime": 1783737937.0956197,
-    "ast_hash": "30a4c492bb93db3cb2bc186ecb5209fe",
+    "mtime": 1788095944.3935444,
+    "ast_hash": "e49e298d2675806b23d9631a1e1ec7fd",
     "semantic_hash": ""
   },
   "eslint.config.js": {
@@ -20,8 +20,8 @@
     "semantic_hash": "5d7b615184f0150d56950e8dcd3b90f0"
   },
   "functions/package.json": {
-    "mtime": 1786882461.79678,
-    "ast_hash": "0b4429cd3cf9b1c3fa102b14fad85821",
+    "mtime": 1788095943.5251071,
+    "ast_hash": "ebeb58d28be0a32663df2cf3945f4e27",
     "semantic_hash": ""
   },
   "functions/scripts/register-discord-commands.js": {
@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1786882461.2051504,
-    "ast_hash": "061bae01b53274b7ce8415d5c53f0df5",
+    "mtime": 1788162635.4292862,
+    "ast_hash": "8013430db97777f0167db353ab4b03a2",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -160,8 +160,8 @@
     "semantic_hash": "615851105fdbc32d13f37443a9422443"
   },
   "package.json": {
-    "mtime": 1784878870.851051,
-    "ast_hash": "daf08c802d8f97d071a4c0620facc5ab",
+    "mtime": 1788096014.991395,
+    "ast_hash": "dc5e0a66988704a373dcc367c596c576",
     "semantic_hash": ""
   },
   "scripts/dev-emulator.mjs": {
@@ -190,8 +190,8 @@
     "semantic_hash": "ffc66b08419b1e517f8640368d378fda"
   },
   "src/app/router.tsx": {
-    "mtime": 1783736173.2158158,
-    "ast_hash": "80ca08670d760e66c53ad209d146f155",
+    "mtime": 1788096432.4272797,
+    "ast_hash": "2f622aa6330a9776ce112e1b4dc124ea",
     "semantic_hash": ""
   },
   "src/components/auth/AuthAccessState.tsx": {
@@ -220,8 +220,8 @@
     "semantic_hash": "09aa737caac1b43a078e46a3ed091b65"
   },
   "src/components/layouts/AppSidebar.tsx": {
-    "mtime": 1784612745.1498604,
-    "ast_hash": "8bb6984e4246787686cbc9e37269d572",
+    "mtime": 1788099846.6673574,
+    "ast_hash": "fefb75b56426dcdcabae84d7e6673627",
     "semantic_hash": ""
   },
   "src/components/layouts/RootLayout.tsx": {
@@ -1750,14 +1750,14 @@
     "semantic_hash": "82564c024de5ea4bf8ce2a4c800cbfc2"
   },
   "src/lib/db.stub.ts": {
-    "mtime": 1782641809.0794835,
-    "ast_hash": "4dba3677ae7f4ad7335950ff2d41a777",
-    "semantic_hash": "4dba3677ae7f4ad7335950ff2d41a777"
+    "mtime": 1788098174.1440713,
+    "ast_hash": "77984d651063b7ae34bf941a951832f7",
+    "semantic_hash": ""
   },
   "src/lib/db.ts": {
-    "mtime": 1780301431.4483342,
-    "ast_hash": "8432458fcdb71476d0ba34f2288c6ecd",
-    "semantic_hash": "8432458fcdb71476d0ba34f2288c6ecd"
+    "mtime": 1788095940.1168528,
+    "ast_hash": "66386f00b35f3aecb935f0e13e4969f7",
+    "semantic_hash": ""
   },
   "src/lib/dev/callables.ts": {
     "mtime": 1784878750.782748,
@@ -1855,8 +1855,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1786357210.6488073,
-    "ast_hash": "f8b99a131d4e1f7ae4e0c37f1c4d7594",
+    "mtime": 1788162795.5843904,
+    "ast_hash": "99530fe5a2b3ec0e526331a05d87184c",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -1880,8 +1880,8 @@
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
-    "mtime": 1786882462.3715518,
-    "ast_hash": "ef70e642f4e75770dd689a3dc68e4ad5",
+    "mtime": 1788162794.448212,
+    "ast_hash": "ef02cbdccfaaa14de53bd6514055de08",
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
@@ -1895,8 +1895,8 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1780901462.3223376,
-    "ast_hash": "81a2284b86a5cc482c464a5eaef96ee9",
+    "mtime": 1788096581.050891,
+    "ast_hash": "9b78a72c3464fb1c58e91ea48541d190",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
@@ -2370,8 +2370,8 @@
     "semantic_hash": ""
   },
   "tests/database-rules.test.mjs": {
-    "mtime": 1784878774.693121,
-    "ast_hash": "f190b753cfa990983490b42b7e385de5",
+    "mtime": 1788095945.2073355,
+    "ast_hash": "cde3b00d4b7f46dde3e8ccaa8b025e90",
     "semantic_hash": ""
   },
   "src/features/gameserver/api/gameServerStubs.ts": {
@@ -2490,8 +2490,88 @@
     "semantic_hash": ""
   },
   "functions/src/scheduled-discord-notifications.ts": {
-    "mtime": 1786882460.0788279,
-    "ast_hash": "b1e45777a87f56f1011c72fad89e7056",
+    "mtime": 1786883052.8939133,
+    "ast_hash": "eab003a128862e54e237c5966a9c06c8",
+    "semantic_hash": ""
+  },
+  "functions/src/spud-jar.test.ts": {
+    "mtime": 1788162637.6683898,
+    "ast_hash": "04635e899707f11e94159dce7baafdfb",
+    "semantic_hash": ""
+  },
+  "functions/src/spud-jar.ts": {
+    "mtime": 1788162634.4942906,
+    "ast_hash": "429183bbf416918e7a1b6dde892e0929",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/api/spudJarApi.ts": {
+    "mtime": 1788162636.5173383,
+    "ast_hash": "71c780b9646c1ec31f7c68f4a1de803c",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/ComplaintCoin.tsx": {
+    "mtime": 1788098246.6252034,
+    "ast_hash": "526ce74e9f99771a7d849dc0bda882de",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/ComplaintControls.tsx": {
+    "mtime": 1788162790.9389615,
+    "ast_hash": "7ed793ca56a6dca45f7e21012d70eb55",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/ComplaintCounter.tsx": {
+    "mtime": 1788101105.991875,
+    "ast_hash": "1e4986ca91b2e590d6208bed0c91755f",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/SpudJar.tsx": {
+    "mtime": 1788162233.4191558,
+    "ast_hash": "81d1035e904c9bf88c007f0ad129b938",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/SpudJarEmptyState.tsx": {
+    "mtime": 1788099464.846877,
+    "ast_hash": "1f6625ed2a2b21a3fdc89203fb79be52",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/SpudJarPage.tsx": {
+    "mtime": 1788162792.121346,
+    "ast_hash": "8c3962208472c2428c5374874b8423d1",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/constants.ts": {
+    "mtime": 1788162818.2230127,
+    "ast_hash": "93cb7d0b6a253ee8f7389b58d1cd1ece",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/hooks/useSpudJarData.ts": {
+    "mtime": 1788162789.7856047,
+    "ast_hash": "6ce50662f7d1e9f63423c2166610c832",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/hooks/useSpudJarPhysics.ts": {
+    "mtime": 1788163567.8226454,
+    "ast_hash": "d976947983c1e7105bd7e604b3afa88b",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/index.tsx": {
+    "mtime": 1788096423.3733778,
+    "ast_hash": "3e0f7e12c1f1ca7eb843c4574efb10c0",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/types.ts": {
+    "mtime": 1788098170.4655695,
+    "ast_hash": "07f7b1bb5c48fd0cedd873af61188a95",
+    "semantic_hash": ""
+  },
+  "src/features/spud-jar/components/PotatoCoinIcon.tsx": {
+    "mtime": 1788098245.7488558,
+    "ast_hash": "80fbd5e2c0630ba01e8f1e84798e76c9",
+    "semantic_hash": ""
+  },
+  "src/assets/icons/spud.svg": {
+    "mtime": 1788100946.4726567,
+    "ast_hash": "86f8d2fd2fc5955755e9d103e1efec75",
     "semantic_hash": ""
   }
 }
