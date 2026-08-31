@@ -16,7 +16,7 @@ export function ComplaintCoin({ coin, bindElement }: ComplaintCoinProps) {
       style={{ width: size, height: size }}
     >
       <div className="spud-coin-art h-full w-full will-change-transform">
-        <PotatoCoinIcon mark={coin.mark} className="h-full w-full drop-shadow-sm" />
+        <PotatoCoinIcon className="h-full w-full drop-shadow-sm" />
       </div>
     </div>
   );
