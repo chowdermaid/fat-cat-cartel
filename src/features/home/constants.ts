@@ -7,6 +7,40 @@ import type {
   HomeStaticWeekItem,
 } from "./types";
 
+export const CLUBHOUSE = {
+  maxVisible: 15,
+  narrowVisible: 15,
+  narrowWidth: 640,
+  portraitSize: 52,
+  narrowPortraitSize: 44,
+  sceneHeight: 520,
+  narrowSceneHeight: 480,
+  artwork: { width: 1983, height: 793 },
+  carpet: [{ x: 0.132, y: 0.605 }, { x: 0.868, y: 0.605 }, { x: 1.04, y: 0.96 }, { x: -0.04, y: 0.96 }],
+  door: { x: 0.09, y: 0.475 },
+  carpetEntry: { x: 0.17, y: 0.67 },
+  doorwaySpeed: { min: 38, max: 48 },
+  hatWidth: 1.4,
+  hatLeft: -0.2,
+  hatTop: -0.6,
+  hatAspectRatio: 560 / 800,
+  hatOrigin: { x: 0.5, y: 110 / 168 },
+  hatEmbeddedTilt: -15,
+  hatTilt: { min: -25, max: 10 },
+  tooltipDelayMs: 250,
+  edgeClearance: 16,
+  nameWidth: 144,
+  nameBottom: 30,
+  region: { left: 0, right: 1, top: 0, bottom: 1 },
+  speed: { min: 18, max: 28 },
+  idleMs: { min: 1500, max: 4000 },
+  replacementMs: { min: 15000, max: 25000 },
+  fadeMs: 300,
+  bobPx: 2,
+  startStaggerMs: 180,
+  destinationSamples: 32,
+} as const;
+
 export const HOME_STATIC_WEEK_ITEMS: readonly HomeStaticWeekItem[] = [
   {
     label: "Public Notice",

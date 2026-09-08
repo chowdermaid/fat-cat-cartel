@@ -13,9 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { HOME_GAZETTE } from "../../constants";
 import { useHomeAnimations } from "../../hooks/useHomeAnimations";
-import { NewspaperStamp } from "../newspaper/NewspaperStamp";
 import omgpeets from "../../../../assets/fatcat/omgpeets.png";
-import fatcatthrone from "../../../../assets/fatcatthrone.png";
+import type { ClubhouseProps } from "../../types";
+import { CartelClubhouse } from "../clubhouse/CartelClubhouse";
 
 const FC_FOCUS_ITEMS: {
   icon: LucideIcon;
@@ -28,7 +28,7 @@ const FC_FOCUS_ITEMS: {
   { icon: Dices, label: "Roulettes" },
 ];
 
-export function HomeHero({ memberCount }: { memberCount: number }) {
+export function HomeHero({ memberCount, members, profiles }: { memberCount: number } & ClubhouseProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useHomeAnimations(sectionRef, ".hero-item", 20, 0, 120, 600);
@@ -49,8 +49,8 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
         ref={sectionRef}
         className="relative z-10 flex h-full flex-1 overflow-visible rounded-lg border bg-card/80 px-5 py-6 shadow-sm sm:px-8 sm:pt-10 lg:px-10"
       >
-        <div className="grid flex-1 items-stretch gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(11rem,14rem)_minmax(12rem,18rem)]">
-          <div className="hero-item space-y-5 xl:col-start-1">
+        <div className="grid flex-1 items-stretch gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+          <div className="hero-item min-w-0 space-y-5">
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
                 {HOME_GAZETTE.name}
@@ -76,13 +76,38 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
                 </span>
               ))}
             </div>
-            <p className="max-w-3xl border-b border-dashed pb-3 font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
-              {HOME_GAZETTE.headline}
-            </p>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              News from the house: events, notices, tools, and very legal
-              operations.
-            </p>
+            <div className="space-y-4 border-b border-dashed pb-5">
+              <h2 className="text-xs font-semibold text-muted-foreground">
+                Our legal endeavors
+              </h2>
+              <ul className="flex flex-wrap gap-x-5 gap-y-3">
+                {FC_FOCUS_ITEMS.map(({ icon: Icon, label }) => (
+                  <li
+                    key={label}
+                    className="flex items-center gap-2 text-xs font-medium"
+                  >
+                    <Icon
+                      className="h-3.5 w-3.5 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    {label}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-1 text-xs">
+                <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                  <Users className="h-3.5 w-3.5" aria-hidden="true" />
+                  {memberCount} {memberCount === 1 ? "member" : "members"}
+                </span>
+                <Link
+                  to="/members"
+                  className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  Meet the crew
+                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <a
@@ -98,44 +123,8 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
               </Button>
             </div>
           </div>
-          <div className="hero-item flex flex-col gap-4 border-t pt-5 xl:col-start-2 xl:row-span-2 xl:self-start xl:border-l xl:border-t-0 xl:pl-5 xl:pt-0">
-            <h2 className="text-xs font-semibold text-muted-foreground">
-              FC Bio
-            </h2>
-            <ul className="flex flex-wrap gap-x-5 gap-y-3">
-              {FC_FOCUS_ITEMS.map(({ icon: Icon, label }) => (
-                <li key={label} className="flex items-center gap-2 text-xs font-medium">
-                  <Icon className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
-                  {label}
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-1 text-xs">
-              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                <Users className="h-3.5 w-3.5" aria-hidden="true" />
-                {memberCount} {memberCount === 1 ? "member" : "members"}
-              </span>
-              <Link
-                to="/members"
-                className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                Meet the crew
-                <ArrowRight className="h-3 w-3" aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
-          <div className="hero-item relative flex flex-col items-center gap-0 rounded-lg border border-dashed bg-background/60 p-4 xl:col-start-3 xl:row-span-2">
-            <div className="absolute -right-3 -top-3 z-20 hidden bg-muted sm:block">
-              <NewspaperStamp>{HOME_GAZETTE.issue}</NewspaperStamp>
-            </div>
-            <img
-              src={fatcatthrone}
-              className="h-auto w-full max-w-72"
-              alt="Fat Cat Cartel"
-            />
-            <p className="-mt-7 border-t border-dashed px-2 pt-2 text-center text-xs italic text-muted-foreground/80">
-              Drawn by our Dull Hafnir.
-            </p>
+          <div className="min-w-0">
+            <CartelClubhouse members={members} profiles={profiles} />
           </div>
         </div>
       </section>

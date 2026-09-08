@@ -92,6 +92,18 @@ const STUB_MEMBERS = {
   "11111006": { name: "Blue Belladonna", server: "Sophia", avatarUrl: null, fcRank: "Stray", tomestoneProfile: { datacenter: "Materia", achievementPoints: 13200, totalMounts: 83, totalMinions: 142 } },
   "11111007": { name: "Hane Miko",       server: "Sophia", avatarUrl: null, fcRank: "Stray", tomestoneProfile: { datacenter: "Materia", achievementPoints: 11940, totalMounts: 77, totalMinions: 133 } },
   "11111008": { name: "Jellyfish Cat",   server: "Sophia", avatarUrl: null, fcRank: "Friend", tomestoneProfile: { datacenter: "Materia", achievementPoints: 10110, totalMounts: 64, totalMinions: 118 } },
+  "11111009": { name: "Stub Biscuit", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111010": { name: "Stub Noodle", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111011": { name: "Stub Mochi", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111012": { name: "Stub Truffle", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111013": { name: "Stub Pickle", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111014": { name: "Stub Waffle", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111015": { name: "Stub Dumpling", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111016": { name: "Stub Crumpet", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
+  "11111017": { name: "Stub Pudding", server: "Sophia", avatarUrl: null, fcRank: "Stray" },
+  "11111018": { name: "Stub Marshmallow", server: "Sophia", avatarUrl: null, fcRank: "Stray" },
+  "11111019": { name: "Stub Custard", server: "Sophia", avatarUrl: null, fcRank: "Friend" },
+  "11111020": { name: "Stub Shortbread", server: "Sophia", avatarUrl: null, fcRank: "Friend" },
 };
 
 const STUB_PARSES = {
@@ -781,6 +793,7 @@ const STUB_CRAFTING_INDEXES = {
 
 let store: Record<string, unknown> = {
   members: STUB_MEMBERS,
+  membersLastUpdated: Date.UTC(2026, 8, 9),
   fcCollection: {
     collectibles: {
       lastFetched: Date.now() - 900_000,
@@ -792,6 +805,18 @@ let store: Record<string, unknown> = {
     memberData: STUB_MEMBER_DATA,
   },
     memberProfiles: {
+      "11111009": { bio: "Development fixture: always volunteers to test the snack table." },
+      "11111010": { bio: "Development fixture: takes the scenic route to every gathering." },
+      "11111011": { bio: null },
+      "11111012": { bio: "Development fixture: brings extra tea for the party." },
+      "11111013": { bio: "Development fixture: keeps an emergency glamour in every bag." },
+      "11111014": { bio: "Development fixture: reports suspiciously good waffle supplies." },
+      "11111015": { bio: "Development fixture: insists every map leads to dinner." },
+      "11111016": { bio: "Development fixture: keeper of the spare umbrellas." },
+      "11111017": { bio: "Development fixture: still learning which door leads outside." },
+      "11111018": { bio: "Development fixture for long biographies. This member likes leisurely walks, treasure maps, and explaining their entire collection of imaginary hats.\n\nThey always bring a notebook to record the best snacks and the most scenic routes. Sometimes the notes become a very long story about a perfectly ordinary afternoon in the Clubhouse. This sample checks wrapping and scrolling in a small viewport while the portrait stays still.\n\nNo real member information is represented by this fixture." },
+      "11111019": { bio: "" },
+      "11111020": { bio: "Development fixture: drops by for tea and friendly chaos." },
       "11111001": {
         bio: "Main tank of the FC. Chow is basically holding the group together with their bare hands.",
         birthday: "03-15",

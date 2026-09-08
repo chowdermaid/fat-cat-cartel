@@ -74,6 +74,7 @@ export function useHomeDashboardData() {
       failed,
       loading,
       memberCount,
+      members,
       nextBirthdayText: nextBirthday
         ? `${nextBirthday.name} - ${nextBirthday.when}`
         : "No birthdays on file.",

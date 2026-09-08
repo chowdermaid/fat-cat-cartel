@@ -1,4 +1,45 @@
 import type { LucideIcon } from "lucide-react";
+import type { Member } from "@/types";
+import type { JSAnimation, Timer } from "animejs";
+
+export type ClubhouseProps = {
+  members: Record<string, Member>;
+  profiles: HomeWeeklyData["profiles"];
+};
+
+export type ClubhouseQueue = { visible: string[]; waiting: string[] };
+export type ClubhousePoint = { x: number; y: number };
+export type ClubhouseBounds = { left: number; top: number; width: number; height: number };
+export type ClubhouseProtection = "hover" | "focus" | "tooltip";
+export type ClubhouseEnvironment = {
+  hidden: boolean;
+  offscreen: boolean;
+  reducedMotion: boolean;
+};
+export type ClubhouseLayout = { narrow: boolean; size: number; limit: number; height: number };
+export type ClubhouseGeometry = {
+  height: number;
+  bounds: ClubhouseBounds;
+  carpet: ClubhousePoint[];
+  walkPolygon: ClubhousePoint[];
+  door: ClubhousePoint;
+  carpetEntry: ClubhousePoint;
+};
+export type ClubhouseActor = {
+  point: ClubhousePoint;
+  destination: ClubhousePoint;
+  protection: Set<ClubhouseProtection>;
+  element: HTMLDivElement | null;
+  body: HTMLElement | null;
+  fade: HTMLElement | null;
+  movement?: JSAnimation;
+  bob?: JSAnimation;
+  transition?: JSAnimation;
+  idle?: Timer;
+  entering: boolean;
+  journey: "arriving" | "departing" | "returning" | null;
+  route: ClubhousePoint[];
+};
 
 export type HomeStaticWeekItem = {
   label: string;

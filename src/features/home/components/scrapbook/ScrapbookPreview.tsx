@@ -3,13 +3,31 @@ import { Archive } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NewspaperSectionLabel } from "../newspaper/NewspaperSectionLabel";
+import fatcatthrone from "@/assets/fatcatthrone.png";
 
-const scrapbookImages = Object.values(
+const archiveImages = Object.values(
   import.meta.glob("../../../../assets/carousel/*", {
     eager: true,
     import: "default",
   }) as Record<string, string>,
-).slice(0, 3);
+).slice(0, 2);
+
+const scrapbookImages = [
+  {
+    src: fatcatthrone,
+    alt: "Fat Cat Cartel illustration by Dull Hafnir",
+    badge: "FC art",
+    caption: "Drawn by our Dull Hafnir.",
+    fit: "object-contain",
+  },
+  ...archiveImages.map((src, index) => ({
+    src,
+    alt: `FC memory ${index + 1}`,
+    badge: `Photo ${index + 1}`,
+    caption: `Event archive image ${index + 1}`,
+    fit: "object-cover",
+  })),
+];
 
 export function ScrapbookPreview() {
   return (
@@ -27,7 +45,7 @@ export function ScrapbookPreview() {
       </div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div className="grid gap-3 sm:grid-cols-3">
-          {scrapbookImages.map((src, index) => (
+          {scrapbookImages.map(({ src, alt, badge, caption, fit }) => (
             <div
               key={src}
               className="gazette-clipping relative overflow-hidden rounded-lg border border-dashed bg-background p-2 shadow-sm"
@@ -37,17 +55,17 @@ export function ScrapbookPreview() {
                 variant="secondary"
                 className="absolute left-4 top-4 z-10 text-[0.6rem] uppercase tracking-[0.16em]"
               >
-                Photo {index + 1}
+                {badge}
               </Badge>
               <div className="aspect-[4/3] overflow-hidden rounded-md border bg-card">
                 <img
                   src={src}
-                  alt={`FC memory ${index + 1}`}
-                  className="h-full w-full object-cover"
+                  alt={alt}
+                  className={`h-full w-full ${fit}`}
                 />
               </div>
               <p className="mt-2 text-xs italic text-muted-foreground">
-                Event archive image {index + 1}
+                {caption}
               </p>
             </div>
           ))}

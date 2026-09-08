@@ -15,16 +15,13 @@ export function HomePage() {
 
   return (
     <div ref={pageRef} className="w-full space-y-10">
-      <section className="grid items-stretch gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(16rem,1fr)]">
+      <section>
         <div className="flex min-w-0">
-          <HomeHero memberCount={dashboardData.memberCount} />
-        </div>
-        <div className="flex min-w-0 self-start lg:mt-6">
-          <OperationsPanel />
+          <HomeHero memberCount={dashboardData.memberCount} members={dashboardData.members} profiles={dashboardData.profiles} />
         </div>
       </section>
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div>
+        <div className="min-w-0">
           <NoticeBoard
             failed={dashboardData.failed}
             loading={dashboardData.loading}
@@ -41,7 +38,10 @@ export function HomePage() {
           />
         </div>
       </section>
-      <ScrapbookPreview />
+      <div className="space-y-4">
+        <OperationsPanel />
+        <ScrapbookPreview />
+      </div>
     </div>
   );
 }
