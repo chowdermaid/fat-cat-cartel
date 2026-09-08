@@ -136,10 +136,10 @@ Member profiles:
 - Read FFLogs parses across current Savage, Trials, and Alliance tabs.
 - Read Tomestone activity from `/memberActivity/{lodestoneId}/tomestone/recent`.
 - Render `Raid Activity Insights` from stored Tomestone activity only:
-  - Timeline: one activity point per stored activity.
-  - Progress: best boss HP or cleared state per encounter.
-  - Jobs: 50/50 donut and job breakdown with job icons.
+  - Encounters (default): Recharts stacked clear/wipe bars grouped by zone, encounter, and content type, sorted by attempts.
+  - Jobs: Recharts donut counting activity records per normalized job, with job icons, counts, and percentages in the legend and tooltip.
   - Heatmap: calendar-style day grid with clear and wipe intensity.
+- A compact top-right header summary shows latest activity, top known job, recent clears, and wipes. Title and tabs stay on the left; charts span the full panel width below. The header wraps on narrow screens.
 - Use shadcn tooltips and scroll areas for custom chart hover and scroll behavior.
 - Do not call `getTomestoneProgressionGraph` from the UI.
 

@@ -1,3 +1,4 @@
+import { displayJobName } from "./jobs";
 import type { TomestoneActivity } from "@/features/raid-stats/types";
 
 export function activityLabel(activity: TomestoneActivity): string {
@@ -42,9 +43,36 @@ export function buildActivitySummary(activities: TomestoneActivity[]) {
   );
   const jobs = new Map<string, number>();
   for (const activity of activities) {
-    if (activity.job) jobs.set(activity.job, (jobs.get(activity.job) ?? 0) + 1);
+    if (activity.job && activity.job !== "Unknown") {
+      const job = displayJobName(activity.job);
+      jobs.set(job, (jobs.get(job) ?? 0) + 1);
+    }
   }
   const topJob =
-    [...jobs.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "No job yet";
-  return { clears, wipes, topJob, latest: activities[0]?.startedAt ?? null };
+    [...jobs.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ?? "No job yet";
+  return { clears, wipes, topJob, latest: activities.length ? Math.max(...activities.map((row) => row.startedAt)) : null };
+}
+
+export function groupEncounterActivity(activities: TomestoneActivity[]) {
+  const groups = new Map<string, { key: string; name: string; zone: string; contentType: string; clears: number; wipes: number; total: number }>();
+  for (const row of activities) {
+    const key = `${row.zoneId}:${row.encounterKey}:${row.contentType}`;
+    const item = groups.get(key) ?? { key, name: row.encounterName, zone: row.zoneName, contentType: row.contentType, clears: 0, wipes: 0, total: 0 };
+    item.clears += row.clearCount;
+    item.wipes += row.wipeCount;
+    item.total = item.clears + item.wipes;
+    groups.set(key, item);
+  }
+  return [...groups.values()].sort((a, b) => b.total - a.total || a.name.localeCompare(b.name) || a.key.localeCompare(b.key));
+}
+
+export function groupJobActivity(activities: TomestoneActivity[]) {
+  const counts = new Map<string, number>();
+  for (const activity of activities) {
+    const name = activity.job ? displayJobName(activity.job) : "Unknown";
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([name, value]) => ({ name, value, percent: value / activities.length * 100 }));
 }

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import {
+  ArrowRight,
   CalendarDays,
   Dices,
   Hammer,
@@ -9,7 +10,6 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HOME_GAZETTE } from "../../constants";
 import { useHomeAnimations } from "../../hooks/useHomeAnimations";
@@ -98,35 +98,30 @@ export function HomeHero({ memberCount }: { memberCount: number }) {
               </Button>
             </div>
           </div>
-          <div className="hero-item hidden h-full flex-col rounded-md border bg-muted/30 p-3 xl:col-start-2 xl:row-span-2 xl:flex">
-            <div className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              FC BIO
-            </div>
-            <div className="mb-3 rounded-md border bg-background/70 p-3">
-              <div className="flex items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                <Users className="h-3.5 w-3.5 text-primary" />
-                Members
-              </div>
-              <div className="mt-2 flex items-end gap-2">
-                <span className="font-serif text-4xl font-semibold leading-none text-foreground">
-                  {memberCount}
-                </span>
-                <span className="pb-1 text-xs font-medium text-muted-foreground">
-                  on file
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-1 flex-col content-start gap-2">
+          <div className="hero-item flex flex-col gap-4 border-t pt-5 xl:col-start-2 xl:row-span-2 xl:self-start xl:border-l xl:border-t-0 xl:pl-5 xl:pt-0">
+            <h2 className="text-xs font-semibold text-muted-foreground">
+              FC Bio
+            </h2>
+            <ul className="flex flex-wrap gap-x-5 gap-y-3">
               {FC_FOCUS_ITEMS.map(({ icon: Icon, label }) => (
-                <Badge
-                  key={label}
-                  variant="secondary"
-                  className="justify-start gap-2 rounded-sm border bg-background/70 px-2.5 py-1.5 text-xs font-medium text-foreground"
-                >
-                  <Icon className="h-3.5 w-3.5 text-primary" />
+                <li key={label} className="flex items-center gap-2 text-xs font-medium">
+                  <Icon className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
                   {label}
-                </Badge>
+                </li>
               ))}
+            </ul>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-1 text-xs">
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                <Users className="h-3.5 w-3.5" aria-hidden="true" />
+                {memberCount} {memberCount === 1 ? "member" : "members"}
+              </span>
+              <Link
+                to="/members"
+                className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Meet the crew
+                <ArrowRight className="h-3 w-3" aria-hidden="true" />
+              </Link>
             </div>
           </div>
           <div className="hero-item relative flex flex-col items-center gap-0 rounded-lg border border-dashed bg-background/60 p-4 xl:col-start-3 xl:row-span-2">

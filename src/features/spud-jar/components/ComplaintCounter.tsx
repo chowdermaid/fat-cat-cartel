@@ -6,7 +6,10 @@ type ComplaintCounterProps = {
   reducedMotion: boolean;
 };
 
-export function ComplaintCounter({ total, reducedMotion }: ComplaintCounterProps) {
+export function ComplaintCounter({
+  total,
+  reducedMotion,
+}: ComplaintCounterProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLSpanElement>(null);
   const previousRef = useRef<number | null>(null);
@@ -27,7 +30,9 @@ export function ComplaintCounter({ total, reducedMotion }: ComplaintCounterProps
         ease: "out(4)",
         onUpdate: () => {
           if (numberRef.current) {
-            numberRef.current.textContent = Math.round(counter.value).toLocaleString();
+            numberRef.current.textContent = Math.round(
+              counter.value,
+            ).toLocaleString();
           }
         },
       });
@@ -58,7 +63,9 @@ export function ComplaintCounter({ total, reducedMotion }: ComplaintCounterProps
         </span>
       </div>
       <span className="sr-only" aria-live="polite">
-        {total === null ? "Loading complaint total" : `${total} complaints recorded`}
+        {total === null
+          ? "Loading complaint total"
+          : `${total} complaints recorded`}
       </span>
     </div>
   );

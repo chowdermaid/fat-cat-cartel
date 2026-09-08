@@ -29,7 +29,6 @@ export function RaidStatsHome({ onSelect }: Props) {
     <div className="grid max-w-5xl gap-4">
       {ZONE_TABS.map((tab) => {
         const icon = CARD_ICONS[tab.type];
-        const latest = tab.zones[0];
 
         return (
           <button
@@ -67,15 +66,6 @@ export function RaidStatsHome({ onSelect }: Props) {
                     <p className="mt-1 text-sm text-muted-foreground">
                       {CARD_COPY[tab.type]}
                     </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                      {tab.zones.length} zones
-                    </span>
-                    <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                      Latest: {latest.shortName}
-                    </span>
                   </div>
 
                   <div className="flex flex-wrap gap-1.5">

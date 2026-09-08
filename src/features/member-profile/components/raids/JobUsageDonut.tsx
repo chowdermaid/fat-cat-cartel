@@ -1,1 +1,1 @@
-export { JobUsageDonut } from "../MemberProfilePage";
+export { JobUsageDonut } from "../activity/ActivityCharts";

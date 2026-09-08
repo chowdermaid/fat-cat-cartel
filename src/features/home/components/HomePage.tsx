@@ -19,7 +19,7 @@ export function HomePage() {
         <div className="flex min-w-0">
           <HomeHero memberCount={dashboardData.memberCount} />
         </div>
-        <div className="flex min-w-0 lg:mt-6">
+        <div className="flex min-w-0 self-start lg:mt-6">
           <OperationsPanel />
         </div>
       </section>

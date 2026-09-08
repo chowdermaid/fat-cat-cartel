@@ -124,7 +124,7 @@ export function RaidStatsPage() {
         <div ref={pageRef} className="min-w-0 max-w-full space-y-6">
           <div className="anim-section flex items-end justify-between gap-4 flex-wrap">
             <p className="text-sm text-muted-foreground">
-              {data.meta.name} Â· {memberCount} members Â· updated{" "}
+              {data.meta.name} · {memberCount} members · updated{" "}
               {timeAgoShort(data.lastUpdated)}
             </p>
           </div>

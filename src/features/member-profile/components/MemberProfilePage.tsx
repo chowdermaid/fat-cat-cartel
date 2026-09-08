@@ -77,7 +77,9 @@ import {
   timezoneCountryCode,
   timezoneLabel,
 } from "../profileOptions";
-import { JOB_ICONS } from "@/features/raid-stats/jobIcons";
+import { JobIcon } from "./jobs/JobIcon";
+import { EncounterActivityChart, JobUsageDonut } from "./activity/ActivityCharts";
+import { buildActivitySummary } from "../utils/activity";
 import {
   formatJobName,
   percentileClass,
@@ -90,10 +92,10 @@ import type {
 } from "@/features/raid-stats/types";
 
 type ProfileParseType = "savage" | "trial" | "alliance";
-type ActivityChartType = "timeline" | "progress" | "jobs" | "heatmap";
+type ActivityChartType = "encounters" | "jobs" | "heatmap";
 const ACTIVITY_PAGE_SIZE = 10;
 
-const jobIconMap = import.meta.glob<string>("../../assets/jobs/*.png", {
+const jobIconMap = import.meta.glob<string>("../../../assets/jobs/*.png", {
   eager: true,
   import: "default",
 }) as Record<string, string>;
@@ -121,6 +123,7 @@ const JOB_ICON_SLUG: Record<string, string> = {
   "Red Mage": "redmage",
   Pictomancer: "pictomancer",
   "Blue Mage": "bluemage",
+  Beastmaster: "beastmaster",
   Carpenter: "Carpenter",
   Blacksmith: "Blacksmith",
   Armorer: "Armorer",
@@ -148,7 +151,7 @@ function displayJobName(jobName: string): string {
 
 function jobIconSrc(fullName: string): string | null {
   const slug = JOB_ICON_SLUG[displayJobName(fullName)];
-  return slug ? (jobIconMap[`../../assets/jobs/${slug}.png`] ?? null) : null;
+  return slug ? (jobIconMap[`../../../assets/jobs/${slug}.png`] ?? null) : null;
 }
 
 const JOB_ABBR: Record<string, string> = {
@@ -174,6 +177,7 @@ const JOB_ABBR: Record<string, string> = {
   "Red Mage": "RDM",
   Pictomancer: "PCT",
   "Blue Mage": "BLU",
+  Beastmaster: "BST",
   Carpenter: "CRP",
   Blacksmith: "BSM",
   Armorer: "ARM",
@@ -239,6 +243,7 @@ const EMPTY_PROFILE: MemberProfile = {
 const DEFAULT_MAX_JOB_LEVEL = 100;
 const JOB_MAX_LEVELS: Partial<Record<string, number>> = {
   "Blue Mage": 80,
+  Beastmaster: 50,
 };
 
 function maxLevelForJob(job: string) {
@@ -268,7 +273,7 @@ const JOB_LEVEL_GROUPS = [
   },
   {
     label: "Limited",
-    jobs: ["Blue Mage"],
+    jobs: ["Blue Mage", "Beastmaster"],
   },
   {
     label: "Crafting",
@@ -442,26 +447,6 @@ function timeAgo(ms: number | null): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-export function JobIcon({ fullName, size = 20 }: { fullName: string; size?: number }) {
-  const displayName = displayJobName(fullName);
-  const src =
-    JOB_ICONS[fullName] ??
-    JOB_ICONS[displayName.replace(/\s/g, "")] ??
-    jobIconSrc(fullName);
-  const abbr = JOB_ABBR[displayName] ?? displayName;
-  if (!src) return <span className="font-mono text-xs">{abbr}</span>;
-  return (
-    <img
-      src={src}
-      alt={abbr}
-      title={displayName}
-      width={size}
-      height={size}
-      className="object-contain"
-    />
-  );
-}
-
 function parseMode(contentType: ContentType): "savage" | "normal" {
   return contentType === "savage" ? "savage" : "normal";
 }
@@ -590,39 +575,6 @@ function dayKey(ms: number): string {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
-function compactContentType(type: string): string {
-  if (type === "alliance") return "Alliance";
-  if (type === "trial") return "Trial";
-  if (type === "savage") return "Savage";
-  return type;
-}
-
-function activityImpact(activity: TomestoneActivity): number {
-  return activity.clearCount + activity.wipeCount;
-}
-
-function clampPercent(value: number): number {
-  return Math.max(0, Math.min(100, value));
-}
-
-function buildActivitySummary(activities: TomestoneActivity[]) {
-  const clears = activities.reduce(
-    (sum, activity) => sum + activity.clearCount,
-    0,
-  );
-  const wipes = activities.reduce(
-    (sum, activity) => sum + activity.wipeCount,
-    0,
-  );
-  const jobs = new Map<string, number>();
-  for (const activity of activities) {
-    if (activity.job) jobs.set(activity.job, (jobs.get(activity.job) ?? 0) + 1);
-  }
-  const topJob =
-    [...jobs.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "No job yet";
-  return { clears, wipes, topJob, latest: activities[0]?.startedAt ?? null };
-}
-
 export function ProfileValue({
   label,
   value,
@@ -727,18 +679,16 @@ export function JobLevels({
               jobLevels={jobLevels}
             />
           </div>
-          <div className="grid gap-3 lg:grid-cols-[3fr_1fr]">
-            <JobLevelGroupCard
-              group={groupByLabel["Physical Ranged"]}
-              jobLevels={jobLevels}
-              columns="grid-cols-2 lg:grid-cols-3"
-            />
-            <JobLevelGroupCard
-              group={groupByLabel.Limited}
-              jobLevels={jobLevels}
-              columns="grid-cols-1"
-            />
-          </div>
+          <JobLevelGroupCard
+            group={groupByLabel["Physical Ranged"]}
+            jobLevels={jobLevels}
+            columns="grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+          />
+          <JobLevelGroupCard
+            group={groupByLabel.Limited}
+            jobLevels={jobLevels}
+            columns="grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+          />
           <JobLevelGroupCard
             group={groupByLabel.Crafting}
             jobLevels={jobLevels}
@@ -762,224 +712,9 @@ export function JobLevels({
 
 export function EmptyChart({ message }: { message: string }) {
   return (
-    <div className="flex h-64 items-center justify-center rounded-lg border border-dashed bg-muted/20 px-4 text-center text-sm text-muted-foreground">
+    <div className="flex h-64 items-center justify-center px-4 text-center text-sm text-muted-foreground">
       {message}
     </div>
-  );
-}
-
-export function ActivityTooltipContent({ activity }: { activity: TomestoneActivity }) {
-  return (
-    <TooltipContent className="max-w-64 text-xs">
-      <div className="space-y-1">
-        <p className="font-medium text-popover-foreground">
-          {activity.encounterName}
-        </p>
-        <p>{activity.zoneName}</p>
-        <p>{activity.job ? displayJobName(activity.job) : "Unknown job"}</p>
-        <p>
-          {activity.clearCount} clears, {activity.wipeCount} wipes
-        </p>
-        <p>
-          Best progress:{" "}
-          {activity.bestProgress == null
-            ? "N/A"
-            : `${activity.bestProgress.toFixed(1)}%`}
-        </p>
-        <p>{formatDate(activity.startedAt)}</p>
-      </div>
-    </TooltipContent>
-  );
-}
-
-export function ActivityTimelineChart({
-  activities,
-}: {
-  activities: TomestoneActivity[];
-}) {
-  if (activities.length === 0) {
-    return (
-      <EmptyChart message="No recent Tomestone activity has been stored for this member yet." />
-    );
-  }
-  const data = [...activities].sort((a, b) => a.startedAt - b.startedAt);
-  const minTime = data[0]?.startedAt ?? 0;
-  const maxTime = data[data.length - 1]?.startedAt ?? minTime;
-  const span = Math.max(1, maxTime - minTime);
-  const maxImpact = Math.max(1, ...data.map(activityImpact));
-
-  return (
-    <TooltipProvider delayDuration={100}>
-      <div className="h-64 rounded-lg border bg-background/30 p-3">
-        <div className="relative h-52 border-b border-l border-border/70">
-          <div className="absolute inset-x-0 top-1/4 border-t border-border/30" />
-          <div className="absolute inset-x-0 top-1/2 border-t border-border/30" />
-          <div className="absolute inset-x-0 top-3/4 border-t border-border/30" />
-          {data.map((activity) => {
-            const left = ((activity.startedAt - minTime) / span) * 100;
-            const impact = Math.max(1, activityImpact(activity));
-            const bottom = (impact / maxImpact) * 82 + 6;
-            const size = Math.min(22, 8 + impact * 2);
-            const clear = activity.clearCount > 0;
-            return (
-              <Tooltip key={activity.id}>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className={`absolute rounded-full border border-background shadow-sm transition-transform hover:scale-125 ${
-                      clear ? "bg-yellow-400" : "bg-red-500"
-                    }`}
-                    style={{
-                      left: `${left}%`,
-                      bottom: `${bottom}%`,
-                      width: size,
-                      height: size,
-                      transform: "translate(-50%, 50%)",
-                    }}
-                    aria-label={`${activity.encounterName} ${formatDate(activity.startedAt)}`}
-                  />
-                </TooltipTrigger>
-                <ActivityTooltipContent activity={activity} />
-              </Tooltip>
-            );
-          })}
-        </div>
-        <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-          <span>{formatDate(minTime)}</span>
-          <span>Bubble size = clears + wipes</span>
-          <span>{formatDate(maxTime)}</span>
-        </div>
-      </div>
-    </TooltipProvider>
-  );
-}
-
-export function JobUsageDonut({ activities }: { activities: TomestoneActivity[] }) {
-  if (activities.length === 0) return <EmptyChart message="No job data yet." />;
-  const counts = new Map<string, number>();
-  for (const activity of activities) {
-    const job = activity.job ? displayJobName(activity.job) : "Unknown";
-    counts.set(job, (counts.get(job) ?? 0) + 1);
-  }
-  const data = [...counts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, value]) => ({ name, value }));
-  const colors = [
-    "#facc15",
-    "#22c55e",
-    "#38bdf8",
-    "#f97316",
-    "#a78bfa",
-    "#f472b6",
-    "#94a3b8",
-  ];
-  const total = data.reduce((sum, item) => sum + item.value, 0);
-  let offset = 25;
-  const segments = data.map((item, index) => {
-    const percent = (item.value / total) * 100;
-    const dashArray = `${percent} ${100 - percent}`;
-    const currentOffset = offset;
-    offset -= percent;
-    return {
-      ...item,
-      color: colors[index % colors.length],
-      currentOffset,
-      dashArray,
-      percent,
-    };
-  });
-
-  return (
-    <TooltipProvider delayDuration={100}>
-      <div className="grid min-h-64 gap-4 sm:grid-cols-2 sm:items-center">
-        <div className="relative mx-auto h-52 w-52">
-          <svg viewBox="0 0 42 42" className="h-full w-full -rotate-90">
-            <circle
-              cx="21"
-              cy="21"
-              r="15.915"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="7"
-              className="text-muted"
-            />
-            {segments.map((segment) => (
-              <Tooltip key={segment.name}>
-                <TooltipTrigger asChild>
-                  <g
-                    tabIndex={0}
-                    role="button"
-                    aria-label={`${segment.name} ${segment.value} activities`}
-                    className="cursor-default outline-none"
-                  >
-                    <circle
-                      cx="21"
-                      cy="21"
-                      r="15.915"
-                      fill="none"
-                      stroke={segment.color}
-                      strokeWidth="9"
-                      strokeDasharray={segment.dashArray}
-                      strokeDashoffset={segment.currentOffset}
-                      strokeOpacity="0"
-                    />
-                    <circle
-                      cx="21"
-                      cy="21"
-                      r="15.915"
-                      fill="none"
-                      stroke={segment.color}
-                      strokeWidth="7"
-                      strokeDasharray={segment.dashArray}
-                      strokeDashoffset={segment.currentOffset}
-                      className="transition-opacity hover:opacity-80"
-                    />
-                  </g>
-                </TooltipTrigger>
-                <TooltipContent className="text-xs">
-                  <div className="flex items-center gap-2">
-                    {segment.name !== "Unknown" && (
-                      <JobIcon fullName={segment.name} size={18} />
-                    )}
-                    <p className="font-medium text-popover-foreground">
-                      {segment.name}
-                    </p>
-                  </div>
-                  <p>
-                    {segment.value} activities ({Math.round(segment.percent)}%)
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </svg>
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-2xl font-bold tabular-nums">{total}</span>
-            <span className="text-[11px] text-muted-foreground">
-              activities
-            </span>
-          </div>
-        </div>
-        <ScrollArea className="h-48" viewportClassName="h-48">
-          <div className="space-y-2 pr-3">
-            {data.map((item, index) => (
-              <div key={item.name} className="flex items-center gap-2 text-xs">
-                <span
-                  className="h-2.5 w-2.5 shrink-0 rounded-sm"
-                  style={{ backgroundColor: colors[index % colors.length] }}
-                />
-                {item.name !== "Unknown" && (
-                  <JobIcon fullName={item.name} size={18} />
-                )}
-                <span className="min-w-0 flex-1 truncate">{item.name}</span>
-                <span className="tabular-nums text-muted-foreground">
-                  {item.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
-    </TooltipProvider>
   );
 }
 
@@ -1032,7 +767,7 @@ export function RaidActivityHeatmap({
   return (
     <TooltipProvider delayDuration={100}>
       <ScrollArea
-        className="h-64 rounded-lg border bg-background/30"
+        className="h-64"
         viewportClassName="h-64"
       >
         <div className="min-w-[21rem] p-3 pr-6">
@@ -1112,165 +847,77 @@ export function RaidActivityHeatmap({
   );
 }
 
-export function BestProgressByEncounter({
-  activities,
-}: {
-  activities: TomestoneActivity[];
-}) {
-  if (activities.length === 0) {
-    return (
-      <EmptyChart message="No recent Tomestone activity has been stored for this member yet." />
-    );
-  }
-  const grouped = new Map<
-    string,
-    {
-      encounterName: string;
-      zoneName: string;
-      contentType: string;
-      clears: number;
-      wipes: number;
-      bestProgress: number | null;
-      latest: number;
-    }
-  >();
-  for (const activity of activities) {
-    const key = `${activity.zoneId}:${activity.encounterKey}`;
-    const existing = grouped.get(key) ?? {
-      encounterName: activity.encounterName,
-      zoneName: activity.zoneName,
-      contentType: activity.contentType,
-      clears: 0,
-      wipes: 0,
-      bestProgress: null,
-      latest: activity.startedAt,
-    };
-    existing.clears += activity.clearCount;
-    existing.wipes += activity.wipeCount;
-    existing.latest = Math.max(existing.latest, activity.startedAt);
-    if (activity.bestProgress != null) {
-      existing.bestProgress =
-        existing.bestProgress == null
-          ? activity.bestProgress
-          : Math.min(existing.bestProgress, activity.bestProgress);
-    }
-    grouped.set(key, existing);
-  }
-  const rows = [...grouped.values()].sort((a, b) => b.latest - a.latest);
-
-  return (
-    <TooltipProvider delayDuration={100}>
-      <ScrollArea className="h-64" viewportClassName="h-64">
-        <div className="space-y-3 pr-3">
-          {rows.map((row) => {
-            const cleared = row.clears > 0;
-            const hp = cleared ? 0 : row.bestProgress;
-            const hpWidth = hp == null ? 0 : clampPercent(hp);
-            return (
-              <Tooltip key={`${row.zoneName}-${row.encounterName}`}>
-                <TooltipTrigger asChild>
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">
-                          {row.encounterName}
-                        </p>
-                        <p className="truncate text-xs text-muted-foreground">
-                          {row.zoneName} - {compactContentType(row.contentType)}
-                        </p>
-                      </div>
-                      <span
-                        className={
-                          cleared
-                            ? "text-xs font-medium text-yellow-400"
-                            : "text-xs tabular-nums text-muted-foreground"
-                        }
-                      >
-                        {cleared
-                          ? "Cleared"
-                          : hp == null
-                            ? "N/A"
-                            : `${hp.toFixed(1)}% HP`}
-                      </span>
-                    </div>
-                    <div className="h-3 overflow-hidden rounded-full bg-red-500/70 ring-1 ring-border">
-                      <div
-                        className="h-full rounded-full bg-emerald-500"
-                        style={{ width: `${hpWidth}%` }}
-                      />
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="text-xs">
-                  <p className="font-medium text-popover-foreground">
-                    {row.encounterName}
-                  </p>
-                  <p>{row.zoneName}</p>
-                  <p>
-                    {row.clears} clears, {row.wipes} wipes
-                  </p>
-                  <p>
-                    Best boss HP: {hp == null ? "Unknown" : `${hp.toFixed(1)}%`}
-                  </p>
-                  <p>Latest: {formatDate(row.latest)}</p>
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </div>
-      </ScrollArea>
-    </TooltipProvider>
-  );
-}
-
 export function RaidActivityInsights({
   activities,
 }: {
   activities: TomestoneActivity[];
 }) {
-  const [activeChart, setActiveChart] = useState<ActivityChartType>("timeline");
+  const [activeChart, setActiveChart] = useState<ActivityChartType>("encounters");
+  const activitySummary = useMemo(() => buildActivitySummary(activities), [activities]);
   const chartTabs: Array<{ id: ActivityChartType; label: string }> = [
-    { id: "timeline", label: "Timeline" },
-    { id: "progress", label: "Progress" },
+    { id: "encounters", label: "Encounters" },
     { id: "jobs", label: "Jobs" },
     { id: "heatmap", label: "Heatmap" },
   ];
 
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="flex items-center gap-2 font-serif text-lg font-semibold">
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            Raid Activity Insights
-          </h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Built from stored Tomestone activity.
-          </p>
+    <div className="min-w-0 rounded-lg border bg-card p-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 space-y-3">
+          <div>
+            <h3 className="flex items-center gap-2 font-serif text-lg font-semibold">
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              Raid Activity Insights
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Recent recorded activity - past 30 days.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-1 rounded-lg border bg-muted/30 p-1">
+            {chartTabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant="ghost"
+                size="sm"
+                aria-pressed={activeChart === tab.id}
+                type="button"
+                onClick={() => setActiveChart(tab.id)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  activeChart === tab.id
+                    ? "bg-accent text-foreground"
+                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-1 rounded-lg border bg-muted/30 p-1">
-          {chartTabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveChart(tab.id)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                activeChart === tab.id
-                  ? "bg-accent text-foreground"
-                  : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <dl className="ml-auto grid grid-cols-2 gap-x-5 gap-y-2 text-right sm:grid-cols-4">
+          <div>
+            <dt className="text-[11px] text-muted-foreground">Latest</dt>
+            <dd className="mt-1 text-xs font-medium">{timeAgo(activitySummary.latest)}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] text-muted-foreground">Top Job</dt>
+            <dd className="mt-1 flex items-center justify-end gap-1.5 text-xs font-medium">
+              {activitySummary.topJob !== "No job yet" && <JobIcon fullName={activitySummary.topJob} size={16} />}
+              {displayJobName(activitySummary.topJob)}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] text-muted-foreground">Recent Clears</dt>
+            <dd className="mt-1 text-sm font-semibold tabular-nums text-amber-600 dark:text-amber-400">{activitySummary.clears}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] text-muted-foreground">Wipes</dt>
+            <dd className="mt-1 text-sm font-semibold tabular-nums text-red-600 dark:text-red-400">{activitySummary.wipes}</dd>
+          </div>
+        </dl>
       </div>
-      <div className="mt-4">
-        {activeChart === "timeline" && (
-          <ActivityTimelineChart activities={activities} />
-        )}
-        {activeChart === "progress" && (
-          <BestProgressByEncounter activities={activities} />
+      <div className="mt-4 min-w-0">
+        {activeChart === "encounters" && (
+          <EncounterActivityChart activities={activities} />
         )}
         {activeChart === "jobs" && <JobUsageDonut activities={activities} />}
         {activeChart === "heatmap" && (
@@ -1609,10 +1256,6 @@ export function MemberProfilePage() {
   const sortedActivity = useMemo(
     () => [...recentActivity].sort((a, b) => b.startedAt - a.startedAt),
     [recentActivity],
-  );
-  const activitySummary = useMemo(
-    () => buildActivitySummary(sortedActivity),
-    [sortedActivity],
   );
   const totalActivityPages = Math.max(
     1,
@@ -2013,33 +1656,7 @@ export function MemberProfilePage() {
                 {sortedActivity.length === 1 ? "y" : "ies"} - only past 30 days.
               </p>
             </div>
-            <div className="grid gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                <ProfileValue
-                  label="Latest"
-                  value={timeAgo(activitySummary.latest)}
-                />
-                <ProfileValue
-                  label="Top Job"
-                  value={
-                    activitySummary.topJob === "No job yet" ? (
-                      activitySummary.topJob
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5">
-                        <JobIcon fullName={activitySummary.topJob} size={16} />
-                        {displayJobName(activitySummary.topJob)}
-                      </span>
-                    )
-                  }
-                />
-                <ProfileValue
-                  label="Recent Clears"
-                  value={activitySummary.clears}
-                />
-                <ProfileValue label="Wipes" value={activitySummary.wipes} />
-              </div>
-              <RaidActivityInsights activities={sortedActivity} />
-            </div>
+            <RaidActivityInsights activities={sortedActivity} />
           </div>
 
           <div className="anim-section space-y-3">

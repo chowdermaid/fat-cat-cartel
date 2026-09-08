@@ -10,7 +10,7 @@ export interface MemberProfile {
 
 export type ProfileParseType = "savage" | "trial" | "alliance";
 
-export type ActivityChartType = "timeline" | "progress" | "jobs" | "heatmap";
+export type ActivityChartType = "encounters" | "jobs" | "heatmap";
 
 export type CraftingProfileStats = {
   fulfilledRequests: number;

@@ -21,19 +21,19 @@ const OPERATION_TOOLS: OperationTool[] = [
   {
     label: "Mount Roulette",
     to: "/mount-roulette",
-    description: "Pick a mount quickly for the next run.",
+    description: "Pick the next mount.",
     icon: Dices,
   },
   {
     label: "Crafting Board",
     to: "/craftingboard",
-    description: "Request gear, food, furniture, and handoffs.",
+    description: "Request gear, food, and furniture.",
     icon: Hammer,
   },
   {
     label: "Meowket Board",
     to: "/meowketboard",
-    description: "Browse member market listings.",
+    description: "Browse member listings.",
     icon: HandCoins,
     memberOnly: true,
   },
@@ -50,28 +50,25 @@ export function OperationsPanel() {
   );
 
   return (
-    <section className="gazette-reveal h-full w-full rounded-lg border-y border-dashed bg-muted/30 px-4 py-4">
-      <div className="mb-4 flex items-start gap-3">
-        <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+    <section className="gazette-reveal w-full self-start px-2 py-4">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center text-primary">
           <Wrench className="h-4 w-4" />
         </span>
         <div className="min-w-0">
-          <h2 className="font-serif text-2xl leading-tight">
-            Operations Panel
+          <h2 className="font-serif text-xl font-semibold leading-tight">
+            FC Tools
           </h2>
-          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Available tools
-          </p>
         </div>
       </div>
-      <div className="grid gap-2">
+      <nav aria-label="FC tools" className="divide-y divide-border">
         {visibleTools.map(({ description, icon: Icon, label, to }) => (
           <Link
             key={to}
             to={to}
-            className="group flex min-w-0 items-center gap-3 rounded-lg border border-dashed bg-background/70 p-3 text-left transition-colors hover:border-primary/50 hover:bg-muted/40"
+            className="group flex min-w-0 items-center gap-3 rounded-sm px-2 py-4 text-left transition-colors hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center text-primary">
               <Icon className="h-4 w-4" />
             </span>
             <span className="min-w-0 flex-1">
@@ -85,7 +82,7 @@ export function OperationsPanel() {
             <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </Link>
         ))}
-      </div>
+      </nav>
     </section>
   );
 }

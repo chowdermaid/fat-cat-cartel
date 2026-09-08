@@ -4,7 +4,7 @@ import type { CollectibleKey } from "@/features/fc-collection/types";
 import type { MemberProfile } from "./types";
 
 export type ProfileParseType = "savage" | "trial" | "alliance";
-export type ActivityChartType = "timeline" | "progress" | "jobs" | "heatmap";
+export type ActivityChartType = "encounters" | "jobs" | "heatmap";
 export const ACTIVITY_PAGE_SIZE = 10;
 
 export const PROFILE_ZONE_IDS = ZONE_TABS.filter((tab) => tab.type === "savage" || tab.type === "trial" || tab.type === "alliance").flatMap((tab) => tab.zones.map((zone) => zone.id));
@@ -34,6 +34,7 @@ export const JOB_ICON_SLUG: Record<string, string> = {
   "Red Mage": "redmage",
   Pictomancer: "pictomancer",
   "Blue Mage": "bluemage",
+  Beastmaster: "beastmaster",
   Carpenter: "Carpenter",
   Blacksmith: "Blacksmith",
   Armorer: "Armorer",
@@ -76,6 +77,7 @@ export const JOB_ABBR: Record<string, string> = {
   "Red Mage": "RDM",
   Pictomancer: "PCT",
   "Blue Mage": "BLU",
+  Beastmaster: "BST",
   Carpenter: "CRP",
   Blacksmith: "BSM",
   Armorer: "ARM",
@@ -138,6 +140,7 @@ export const EMPTY_PROFILE: MemberProfile = {
 export const DEFAULT_MAX_JOB_LEVEL = 100;
 export const JOB_MAX_LEVELS: Partial<Record<string, number>> = {
   "Blue Mage": 80,
+  Beastmaster: 50,
 };
 export const JOB_LEVEL_GROUPS = [
   {
@@ -162,7 +165,7 @@ export const JOB_LEVEL_GROUPS = [
   },
   {
     label: "Limited",
-    jobs: ["Blue Mage"],
+    jobs: ["Blue Mage", "Beastmaster"],
   },
   {
     label: "Crafting",
