@@ -41,7 +41,7 @@ Older local keys such as `admin_authed`, `fcc_collection_v2`, `fcc_raidstats_v2_
 Important RTDB paths:
 
 - `/members/{lodestoneId}`: canonical member records keyed by Lodestone ID. Fields include `name`, `server`, `fflogsId`, `avatarUrl`, and `fcRank`.
-- `/memberProfiles/{lodestoneId}`: editable profile fields such as `bio`, `birthday` as `MM-DD`, `mainJobs`, timezone, favorites, and favorite content type.
+- `/memberProfiles/{lodestoneId}`: editable profile fields such as `bio`, `birthday` as `MM-DD`, `mainJobs`, timezone, favorites, favorite content type, and optional `clubhouseHatId`. Hat IDs are `fat-cat-cartel-fedora`, `cartel-flat-cap`, `cartel-witch-hat`, `fat-cat-avatar-ears`, and `cartel-tiny-crown`; absent IDs display the fedora.
 - `/fcCollection/collectibles/{mounts|minions|titles|achievements}`: FFXIV Collect item data keyed by item ID.
 - `/fcCollection/collectibles/lastFetched`: collection refresh timestamp.
 - `/fcCollection/memberData/{lodestoneId}`: avatar, owned collectible IDs, previous counts, and `lastFetched`.
@@ -186,3 +186,7 @@ The CloudWatch Agent must publish `mem_used_percent` and `disk_used_percent` und
 - Admin auth and protected callables: `docs/admin-auth-implementation.md`.
 - Calendar events: `docs/calendar-events-implementation.md`.
 - Cleanup inventory: `docs/database-cleanup-inventory.md`.
+
+## Clubhouse Hat Updates
+
+Self-edit and admin profile saves validate `clubhouseHatId` through existing callables. Null explicitly selects the fedora; an omitted field preserves any saved selection for older clients. Unknown IDs or wrong types fail validation. Both operations update known profile children rather than replacing the profile node. No migration or additional read, write request, listener, or Function invocation is added. Existing profile payloads gain one short string; SVGs are bundled frontend assets. Deploy updated profile Functions before the frontend.

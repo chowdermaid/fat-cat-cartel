@@ -11,8 +11,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import { HOME_GAZETTE } from "../../constants";
 import { useHomeAnimations } from "../../hooks/useHomeAnimations";
+import { useHomeGreeting } from "../../hooks/useHomeGreeting";
 import omgpeets from "../../../../assets/fatcat/omgpeets.png";
 import type { ClubhouseProps } from "../../types";
 import { CartelClubhouse } from "../clubhouse/CartelClubhouse";
@@ -28,8 +30,18 @@ const FC_FOCUS_ITEMS: {
   { icon: Dices, label: "Roulettes" },
 ];
 
-export function HomeHero({ memberCount, members, profiles }: { memberCount: number } & ClubhouseProps) {
+export function HomeHero({
+  memberCount,
+  members,
+  profiles,
+}: { memberCount: number } & ClubhouseProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const auth = useAdminAuth();
+  const greetingName = auth.authed
+    ? auth.session?.characterName || auth.session?.discordDisplayName || auth.session?.discordUsername
+    : null;
+  const birthday = auth.authed && auth.session?.lodestoneId ? profiles[auth.session.lodestoneId]?.birthday : null;
+  const greeting = useHomeGreeting(greetingName, birthday);
 
   useHomeAnimations(sectionRef, ".hero-item", 20, 0, 120, 600);
 
@@ -47,10 +59,10 @@ export function HomeHero({ memberCount, members, profiles }: { memberCount: numb
       </div>
       <section
         ref={sectionRef}
-        className="relative z-10 flex h-full flex-1 overflow-visible rounded-lg border bg-card/80 px-5 py-6 shadow-sm sm:px-8 sm:pt-10 lg:px-10"
+        className="relative z-10 flex h-full flex-1 overflow-hidden rounded-lg border bg-card/80 shadow-sm"
       >
-        <div className="grid flex-1 items-stretch gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-          <div className="hero-item min-w-0 space-y-5">
+        <div className="grid flex-1 items-stretch gap-x-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,7fr)]">
+          <div className="hero-item @container flex min-w-0 flex-col gap-5 px-5 py-6 sm:px-8 sm:pt-10 lg:py-8 lg:pl-10 lg:pr-0">
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
                 {HOME_GAZETTE.name}
@@ -76,9 +88,9 @@ export function HomeHero({ memberCount, members, profiles }: { memberCount: numb
                 </span>
               ))}
             </div>
-            <div className="space-y-4 border-b border-dashed pb-5">
-              <h2 className="text-xs font-semibold text-muted-foreground">
-                Our legal endeavors
+            <div className="flex flex-1 flex-col justify-center gap-4 border-b border-dashed pb-5">
+              <h2 className="hidden text-3xl font-semibold leading-snug tracking-tight font-serif [overflow-wrap:anywhere] @min-[34rem]:block">
+                {greeting}
               </h2>
               <ul className="flex flex-wrap gap-x-5 gap-y-3">
                 {FC_FOCUS_ITEMS.map(({ icon: Icon, label }) => (
@@ -123,7 +135,7 @@ export function HomeHero({ memberCount, members, profiles }: { memberCount: numb
               </Button>
             </div>
           </div>
-          <div className="min-w-0">
+          <div className="flex min-w-0">
             <CartelClubhouse members={members} profiles={profiles} />
           </div>
         </div>

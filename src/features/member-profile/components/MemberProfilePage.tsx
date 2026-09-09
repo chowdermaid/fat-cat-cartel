@@ -1,3 +1,5 @@
+import { ClubhouseHatPicker } from "./editor/ClubhouseHatPicker";
+import { getClubhouseHat } from "@/features/home/utils/clubhouseHats";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import ReactCountryFlag from "react-country-flag";
@@ -932,6 +934,7 @@ export function ProfileEditorDialog({
   open,
   onOpenChange,
   lodestoneId,
+  avatarUrl,
   profile,
   collectionData,
   collectibles,
@@ -941,6 +944,7 @@ export function ProfileEditorDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lodestoneId: string;
+  avatarUrl?: string | null;
   profile: MemberProfile | null;
   collectionData: MemberCacheData | null;
   collectibles: CollectiblesData | null;
@@ -971,6 +975,7 @@ export function ProfileEditorDialog({
       favoriteMountId: nextProfile.favoriteMountId ?? null,
       favoriteMinionId: nextProfile.favoriteMinionId ?? null,
       favoriteContent: nextProfile.favoriteContent ?? null,
+      clubhouseHatId: getClubhouseHat(nextProfile.clubhouseHatId).id,
     });
     setBirthday(parseBirthday(nextProfile.birthday ?? null));
   }, [open, profile]);
@@ -1001,6 +1006,7 @@ export function ProfileEditorDialog({
       favoriteMountId: draft.favoriteMountId ?? null,
       favoriteMinionId: draft.favoriteMinionId ?? null,
       favoriteContent: draft.favoriteContent ?? null,
+      clubhouseHatId: getClubhouseHat(draft.clubhouseHatId).id,
     };
 
     setSaving(true);
@@ -1030,6 +1036,7 @@ export function ProfileEditorDialog({
         </DialogHeader>
 
         <div className="space-y-5 py-2">
+          <ClubhouseHatPicker value={draft.clubhouseHatId} avatarUrl={avatarUrl} disabled={saving} onChange={(clubhouseHatId) => setDraft((current) => ({ ...current, clubhouseHatId }))} />
           <div className="space-y-1.5">
             <Label htmlFor="profile-bio">Bio</Label>
             <textarea
@@ -1761,6 +1768,7 @@ export function MemberProfilePage() {
       </div>
 
       <ProfileEditorDialog
+        avatarUrl={avatar}
         open={editingProfile}
         onOpenChange={setEditingProfile}
         lodestoneId={lodestoneId}

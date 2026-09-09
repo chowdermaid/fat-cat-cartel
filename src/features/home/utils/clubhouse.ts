@@ -1,28 +1,20 @@
+import { CLUBHOUSE_HATS, type ClubhouseHat } from "./clubhouseHats.ts";
 import type { ClubhouseBounds, ClubhouseGeometry, ClubhousePoint, ClubhouseQueue } from "../types.ts";
 import { CLUBHOUSE } from "../constants.ts";
 
-export function getClubhouseHatTilt(id: string, config: typeof CLUBHOUSE): number {
-  let hash = 2166136261;
-  for (const char of id) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
-  return config.hatTilt.min + (hash >>> 0) % (config.hatTilt.max - config.hatTilt.min + 1);
-}
-
-export function getClubhouseHatCorners(size: number, tilt: number, config: typeof CLUBHOUSE): ClubhousePoint[] {
-  const width = size * config.hatWidth;
-  const height = width * config.hatAspectRatio;
-  const anchor = { x: width * config.hatOrigin.x, y: height * config.hatOrigin.y };
-  const angle = (tilt - config.hatEmbeddedTilt) * Math.PI / 180;
+export function getClubhouseHatCorners(size: number, hat: ClubhouseHat): ClubhousePoint[] {
+  const width = size * hat.width;
+  const height = width * hat.aspectRatio;
+  const anchor = { x: width * hat.origin.x, y: height * hat.origin.y };
+  const angle = hat.rotation * Math.PI / 180;
   return [[0, 0], [width, 0], [width, height], [0, height]].map(([x, y]) => ({
-    x: size * config.hatLeft + anchor.x + (x - anchor.x) * Math.cos(angle) - (y - anchor.y) * Math.sin(angle),
-    y: size * config.hatTop + anchor.y + (x - anchor.x) * Math.sin(angle) + (y - anchor.y) * Math.cos(angle),
+    x: size * hat.left + anchor.x + (x - anchor.x) * Math.cos(angle) - (y - anchor.y) * Math.sin(angle),
+    y: size * hat.top + anchor.y + (x - anchor.x) * Math.sin(angle) + (y - anchor.y) * Math.cos(angle),
   }));
 }
 
-export function getClubhouseFootprint(size: number, config: typeof CLUBHOUSE) {
-  const corners: ClubhousePoint[] = [];
-  for (let tilt = config.hatTilt.min; tilt <= config.hatTilt.max; tilt++) {
-    corners.push(...getClubhouseHatCorners(size, tilt, config));
-  }
+export function getClubhouseFootprint(size: number, config: typeof CLUBHOUSE, hat?: ClubhouseHat) {
+  const corners = (hat ? [hat] : CLUBHOUSE_HATS).flatMap((option) => getClubhouseHatCorners(size, option));
   return {
     left: Math.min(0, (size - config.nameWidth) / 2, ...corners.map((point) => point.x)),
     right: Math.max(size, (size + config.nameWidth) / 2, ...corners.map((point) => point.x)),
@@ -67,8 +59,8 @@ export function clampClubhousePoint(point: ClubhousePoint, polygon: readonly Clu
   return { ...closest };
 }
 
-export function getClubhouseGeometry(width: number, size: number, config: typeof CLUBHOUSE): ClubhouseGeometry {
-  const height = Math.max(width < config.narrowWidth ? config.narrowSceneHeight : config.sceneHeight, width * config.artwork.height / config.artwork.width);
+export function getClubhouseGeometry(width: number, size: number, config: typeof CLUBHOUSE, sceneHeight?: number): ClubhouseGeometry {
+  const height = sceneHeight || Math.max(width < config.narrowWidth ? config.narrowSceneHeight : config.sceneHeight, width * config.artwork.height / config.artwork.width);
   const bounds = getClubhouseBounds(width, height, size, config);
   const scale = Math.max(width / config.artwork.width, height / config.artwork.height);
   const imageWidth = config.artwork.width * scale;

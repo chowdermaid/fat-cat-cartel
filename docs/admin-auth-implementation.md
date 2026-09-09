@@ -73,7 +73,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - The sidebar uses the reusable `AuthUserMenu` component. Logged-out users see "Member Login" and "Login with Discord"; clicking starts OAuth.
 - Logged-in users see their linked in-game character name and FC rank. The account popover says `Welcome, {characterName}` and includes logout.
 - Authenticated outsiders display their Discord identity and are not labelled as FFXIV members.
-- Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, and favorite content type. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
+- Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, favorite content type, and Clubhouse hat. The hat picker offers five bundled accessories with a preview and saves through the existing profile action. Boss/Underpaw admins have the same picker when editing members. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
 - Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
 - Any base session can open Palworld only when its immutable Discord ID has an active, non-expired `/gameServerAccess` entitlement. Boss and Underpaw sessions retain a live-admin bypass.

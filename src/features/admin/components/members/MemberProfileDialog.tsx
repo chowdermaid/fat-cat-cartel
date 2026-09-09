@@ -1,3 +1,4 @@
+import { ClubhouseHatPicker } from "@/features/member-profile/components/editor/ClubhouseHatPicker";
 import type { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -79,6 +80,7 @@ export function MemberProfileDialog({
         </DialogHeader>
 
         <div className="space-y-5 py-2">
+          <ClubhouseHatPicker value={profileDraft.clubhouseHatId} avatarUrl={editingMember?.avatarUrl} disabled={profileSaving} onChange={(clubhouseHatId) => setProfileDraft((current) => ({ ...current, clubhouseHatId }))} />
           <div className="space-y-1.5">
             <Label>FC Rank</Label>
             <select

@@ -236,12 +236,12 @@ export function createClubhouseController(
       roster = ids;
       reconcile();
     },
-    resize(width: number) {
+    resize(width: number, sceneHeight?: number) {
       if (disposed || width <= 0) return;
       const narrow = width < CLUBHOUSE.narrowWidth;
       const size = narrow ? CLUBHOUSE.narrowPortraitSize : CLUBHOUSE.portraitSize;
       const previousGeometry = geometry;
-      geometry = getClubhouseGeometry(width, size, CLUBHOUSE);
+      geometry = getClubhouseGeometry(width, size, CLUBHOUSE, sceneHeight);
       const height = geometry.height;
       const nextLimit = geometry.walkPolygon.length >= 3 ? Math.min(CLUBHOUSE.maxVisible, narrow ? CLUBHOUSE.narrowVisible : CLUBHOUSE.maxVisible) : 0;
       bounds = geometry.bounds;

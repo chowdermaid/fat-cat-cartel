@@ -77,6 +77,7 @@ const FAVORITE_CONTENT_OPTIONS = new Set([
   "Social Events",
 ]);
 const SCORE_KEYS = ["hideAndSeek", "trivia", "eorzoaGuessr"] as const;
+export const CLUBHOUSE_HAT_IDS = ["fat-cat-cartel-fedora", "cartel-flat-cap", "cartel-witch-hat", "fat-cat-avatar-ears", "cartel-tiny-crown"] as const;
 
 interface UpdateMemberProfileRequest {
   lodestoneId?: unknown;
@@ -110,6 +111,7 @@ function isValidBirthday(value: string): boolean {
 }
 
 type ParsedProfile = {
+  clubhouseHatId?: string;
   bio: string | null;
   birthday: string | null;
   mainJobs: string[];
@@ -176,11 +178,20 @@ function parseProfile(value: unknown): ParsedProfile {
     bio,
     birthday,
     mainJobs,
+    ...("clubhouseHatId" in profile ? { clubhouseHatId: parseClubhouseHat(profile.clubhouseHatId) } : {}),
     timezone: parseNullableEnum(profile.timezone, PROFILE_TIMEZONES, "Please choose a valid timezone."),
     favoriteMountId: parseFavoriteId(profile.favoriteMountId, "Please choose a valid favorite mount."),
     favoriteMinionId: parseFavoriteId(profile.favoriteMinionId, "Please choose a valid favorite minion."),
     favoriteContent: parseNullableEnum(profile.favoriteContent, FAVORITE_CONTENT_OPTIONS, "Please choose a valid favorite content type."),
   };
+}
+
+function parseClubhouseHat(value: unknown): string {
+  if (value === null) return CLUBHOUSE_HAT_IDS[0];
+  if (typeof value !== "string" || !CLUBHOUSE_HAT_IDS.some((id) => id === value)) {
+    throw new HttpsError("invalid-argument", "Please choose a valid Clubhouse hat.");
+  }
+  return value;
 }
 
 function parseRank(value: unknown): string | null {
@@ -224,7 +235,7 @@ export async function updateMemberProfileAdmin(data: UpdateMemberProfileRequest)
   const fcRank = parseRank(data.fcRank);
   await validateFavoriteOwnership(lodestoneId, profile);
   await admin.database().ref("/").update({
-    [`memberProfiles/${lodestoneId}`]: profile,
+    ...Object.fromEntries(Object.entries(profile).map(([key, value]) => [`memberProfiles/${lodestoneId}/${key}`, value])),
     [`members/${lodestoneId}/fcRank`]: fcRank,
     membersLastUpdated: Date.now(),
   });
@@ -234,7 +245,7 @@ export async function updateMemberProfileAdmin(data: UpdateMemberProfileRequest)
 export async function updateOwnMemberProfile(data: UpdateMemberProfileRequest, lodestoneId: string): Promise<{ ok: true }> {
   const profile = parseProfile(data.profile);
   await validateFavoriteOwnership(lodestoneId, profile);
-  await admin.database().ref(`memberProfiles/${lodestoneId}`).set(profile);
+  await admin.database().ref(`memberProfiles/${lodestoneId}`).update(profile);
   return { ok: true };
 }
 

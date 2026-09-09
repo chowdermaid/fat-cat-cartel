@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 240 180">
+  <title>Cartel tiny crown — portrait accessory</title>
+  <desc>Small antique-gold crown with rounded tips, muted ruby jewel and a playful counterclockwise tilt. Transparent background. Separately editable interior, crown, band, tips and jewel. No fonts or raster images.</desc>
+  <g id="tiny-crown" transform="rotate(-10 120 102)" stroke-linejoin="round" stroke-linecap="round">
+    <g id="crown-interior">
+      <path fill="#75532C" stroke="#5A4128" stroke-width="3" d="M 63,116 C 79,103 159,101 177,116 L 170,128 C 148,136 91,136 70,128 Z"/>
+    </g>
+    <g id="gold-crown-body">
+      <path fill="#C69A4C" stroke="#5A4128" stroke-width="3" d="M 70,120 L 54,65 Q 53,61 57,63 L 89,87 L 116,43 Q 120,37 124,43 L 151,87 L 183,63 Q 187,61 186,65 L 170,120 C 144,128 96,128 70,120 Z"/>
+      <path fill="#E3BD70" d="M 59,68 L 90,92 L 120,45 L 120,122 C 102,122 85,121 74,117 Z"/>
+      <path fill="#AF803C" d="M 151,92 L 181,69 L 167,117 C 159,119 150,120 141,121 Z"/>
+      <path fill="#F0D294" d="M 69,79 L 88,94 L 92,92 L 119,51 L 113,65 L 92,101 Z"/>
+    </g>
+    <g id="rounded-crown-tips" fill="#E3BD70" stroke="#5A4128" stroke-width="2.5">
+      <circle cx="56" cy="62" r="6"/>
+      <circle cx="120" cy="41" r="7"/>
+      <circle cx="184" cy="62" r="6"/>
+    </g>
+    <g id="curved-gold-band">
+      <path fill="#C69A4C" stroke="#5A4128" stroke-width="3" d="M 69,114 C 95,122 145,122 171,114 L 169,133 C 144,141 96,141 71,133 Z"/>
+      <path fill="#E9C67D" d="M 72,117 C 99,125 142,125 168,117 L 167.5,122 C 142,130 98,129 72.5,122 Z"/>
+      <path fill="#AD7E3D" d="M 73,129 C 99,136 142,136 167,129 L 166.8,131 C 142,138 98,138 73.2,131 Z"/>
+    </g>
+    <g id="ruby-centrepiece">
+      <path fill="#F0D294" stroke="#846035" stroke-width="1.5" d="M 120,111 Q 122,111 124,113 L 132,122 Q 134,125 131,128 L 124,135 Q 120,138 117,135 L 109,128 Q 106,125 109,122 L 117,113 Q 119,111 120,111 Z"/>
+      <path fill="#9F5356" d="M 120,115 L 129,125 L 120,134 L 111,125 Z"/>
+      <path fill="#CE8582" d="M 120,115 L 120,125 L 111,125 Z"/>
+      <path fill="#753C48" d="M 120,125 L 129,125 L 120,134 Z"/>
+    </g>
+  </g>
+</svg>

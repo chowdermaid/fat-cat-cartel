@@ -1,3 +1,4 @@
+import { getClubhouseHat } from "@/features/home/utils/clubhouseHats";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { MemberCacheData } from "@/features/fc-collection/types";
@@ -51,6 +52,7 @@ export function useProfileEditor({
       favoriteMountId: nextProfile.favoriteMountId ?? null,
       favoriteMinionId: nextProfile.favoriteMinionId ?? null,
       favoriteContent: nextProfile.favoriteContent ?? null,
+      clubhouseHatId: getClubhouseHat(nextProfile.clubhouseHatId).id,
     });
     setBirthday(parseBirthday(nextProfile.birthday ?? null));
   }, [open, profile]);
@@ -81,6 +83,7 @@ export function useProfileEditor({
       favoriteMountId: draft.favoriteMountId ?? null,
       favoriteMinionId: draft.favoriteMinionId ?? null,
       favoriteContent: draft.favoriteContent ?? null,
+      clubhouseHatId: getClubhouseHat(draft.clubhouseHatId).id,
     };
 
     setSaving(true);

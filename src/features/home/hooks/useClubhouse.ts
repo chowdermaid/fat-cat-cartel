@@ -29,11 +29,14 @@ export function useClubhouse(members: ClubhouseProps["members"]) {
     const onVisibilityChange = () => controller.setEnvironment({ hidden: document.hidden });
     controller.setEnvironment({ hidden: document.hidden, reducedMotion: media.matches });
     let lastWidth = 0;
+    let lastHeight = 0;
     const resize = () => {
       const width = scene.clientWidth;
-      if (width === lastWidth) return;
+      const height = scene.clientHeight;
+      if (width === lastWidth && height === lastHeight) return;
       lastWidth = width;
-      controller.resize(width);
+      lastHeight = height;
+      controller.resize(width, height);
     };
     resize();
     const resizeObserver = new ResizeObserver(resize);

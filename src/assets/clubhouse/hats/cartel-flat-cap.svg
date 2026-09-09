@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="280" viewBox="0 0 240 140">
+  <title>Cartel flat cap — portrait accessory</title>
+  <desc>Charcoal tweed-inspired flat cap with a short right-facing peak. Transparent background. Crown, side panel, band, brim and seams are independently editable vector groups. No embedded images or fonts. Artwork bounds approximately x27–220, y30–112.</desc>
+  <g id="flat-cap" stroke-linejoin="round" stroke-linecap="round">
+    <g id="short-brim">
+      <path fill="#292825" stroke="#191A19" stroke-width="3" d="M 141,88 C 164,87 188,89 202,92 C 209,93.5 212,96 212,99 C 212,103 207,105 199,106.5 C 184,109.5 166,111 151,110 L 130,99 Z"/>
+      <path fill="#57534A" d="M 160,93 C 177,92.5 194,94 201,96 C 205,97 206,98 205,99.5 C 202,102 180,105 159,104 L 147,100 Z"/>
+    </g>
+    <g id="lower-band">
+      <path fill="#34332E" stroke="#191A19" stroke-width="3" d="M 36,87 C 70,83 111,85 158,88 L 176,98 C 151,112 83,117 43,104 C 39,100 37,95 36,87 Z"/>
+      <path fill="#777064" d="M 44,98 C 80,109 132,107 163,98 L 158,102 C 124,112 76,112 45,103 Z"/>
+    </g>
+    <g id="crown">
+      <path fill="#666257" stroke="#191A19" stroke-width="3" d="M 29,85 C 28,63 44,44 70,36 C 100,25 128,31 152,46 C 172,58 185,75 195,87 C 185,96 156,100 126,101 C 87,103 50,99 32,91 C 29,90 28,88 29,85 Z"/>
+      <path id="crown-upper-panel" fill="#797468" d="M 36,76 C 41,58 55,45 77,39 C 101,32 125,36 144,46 C 159,54 170,65 179,76 C 145,66 102,64 66,70 C 54,72 44,74 36,76 Z"/>
+    </g>
+    <g id="side-panel">
+      <path fill="#494840" d="M 34,79 C 75,65 129,66 169,77 C 179,80 187,83 192,87 C 175,95 151,98 125,98 C 86,100 50,96 33,89 C 31,87 32,83 34,79 Z"/>
+      <path fill="#57564C" d="M 35,80 C 69,70 100,69 127,73 C 109,77 97,86 91,98 C 67,97 46,93 33,88 Z"/>
+    </g>
+    <g id="tailored-seams" fill="none">
+      <path stroke="#393A34" stroke-width="1.8" d="M 83,35 C 96,42 110,55 121,70"/>
+      <path stroke="#928B7A" stroke-width="1.2" d="M 87,36 C 101,44 113,56 124,69"/>
+      <path stroke="#31332E" stroke-width="1.8" d="M 35,79 C 81,64 142,67 186,84"/>
+    </g>
+    <g id="peak-snap">
+      <ellipse cx="187" cy="89" rx="3.5" ry="1.8" fill="#A68C5C"/>
+    </g>
+  </g>
+</svg>

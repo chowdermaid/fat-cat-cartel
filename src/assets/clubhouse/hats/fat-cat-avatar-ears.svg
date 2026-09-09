@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 255.89">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #eb8042;
+      }
+
+      .cls-2 {
+        fill: #e9b9d4;
+      }
+
+      .cls-3 {
+        fill: #5b5859;
+      }
+
+      .cls-4 {
+        fill: #484747;
+      }
+
+      .cls-5 {
+        fill: #f2b57f;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g id="fat-cat-ear-pair">
+      <g id="left-orange-ear">
+        <path id="left-outer-ear" class="cls-1" d="M0,254.81c3-57,15-117,42-168C60,47.81,81,14.81,99,14.81s21,45,39,69c15,15,42,12,69,18-9,60-63,120-120,141-30,12-60,15-87,12Z"/>
+        <path id="left-ear-rim" class="cls-5" d="M9,212.81c9-51,21-96,45-138,15-30,33-54,45-54,9,0,15,27,21,42-18-9-27,0-39,18-30,39-48,87-72,132Z"/>
+        <path id="left-pink-inner-ear" class="cls-2" d="M54,176.81c0-30,12-66,30-90,9-15,18-12,24,6s6,33-3,45c-15,12-33,21-51,39Z"/>
+      </g>
+      <g id="right-charcoal-ear">
+        <path id="right-outer-ear" class="cls-4" d="M327,101.81c33-42,75-81,126-99,18-6,33-3,39,15,12,33,6,66,21,105,12,33,27,63,33,90-69,12-129-3-171-42-21-21-36-45-48-69Z"/>
+        <path id="right-ear-rim" class="cls-3" d="M348,92.81c30-39,72-72,111-84,12-3,21-3,24,9,6,21,3,42,6,57-9-30-21-45-36-39-36,9-72,33-105,57Z"/>
+        <path id="right-pink-inner-ear" class="cls-2" d="M405,80.81c12-21,36-39,54-42,12-3,15,6,15,21v36c0,9-6,12-15,9-21-9-42-12-54-24Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

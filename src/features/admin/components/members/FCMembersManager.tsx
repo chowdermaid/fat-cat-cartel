@@ -1,3 +1,4 @@
+import { getClubhouseHat } from "@/features/home/utils/clubhouseHats";
 import { useState } from "react";
 import { toast } from "sonner";
 import { db, ref, set, remove, get } from "@/lib/db";
@@ -298,6 +299,7 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
           favoriteMountId: existing.favoriteMountId ?? null,
           favoriteMinionId: existing.favoriteMinionId ?? null,
           favoriteContent: existing.favoriteContent ?? null,
+          clubhouseHatId: getClubhouseHat(existing.clubhouseHatId).id,
         });
         const { month, day } = parseBirthday(existing.birthday ?? null);
         setBdMonth(month);
@@ -322,6 +324,7 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
         favoriteMountId: profileDraft.favoriteMountId ?? null,
         favoriteMinionId: profileDraft.favoriteMinionId ?? null,
         favoriteContent: profileDraft.favoriteContent ?? null,
+        clubhouseHatId: getClubhouseHat(profileDraft.clubhouseHatId).id,
       };
       if (firebaseApp) {
         if (!adminSessionToken) throw new Error("Admin session is required.");

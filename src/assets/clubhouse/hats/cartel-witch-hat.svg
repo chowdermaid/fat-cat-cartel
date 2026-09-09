@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="540" viewBox="0 0 240 180">
+  <title>Cartel witch hat — portrait accessory</title>
+  <desc>Floppy plum witch hat with a bent tip, peach band and antique-gold buckle. Transparent background. Independently editable brim, crown, band and buckle groups; closed vector paths with no embedded images or fonts.</desc>
+  <g id="witch-hat" stroke-linecap="round" stroke-linejoin="round">
+    <g id="wide-curved-brim">
+      <path fill="#302635" stroke="#241E29" stroke-width="3" d="M 65,120 C 46,122 27,129 23,136 C 19,144 43,152 74,154 C 115,158 166,153 198,141 C 211,136 222,129 217,124 C 214,120 204,123 194,124 C 155,130 102,128 65,120 Z"/>
+      <path fill="#58405C" d="M 28,135 C 44,126 60,127 78,127 C 115,136 165,135 197,128 C 204,127 210,125 214,126 C 204,134 181,142 154,146 C 113,152 70,151 42,145 C 29,142 24,138 28,135 Z"/>
+    </g>
+    <g id="bent-crown">
+      <path fill="#62466A" stroke="#241E29" stroke-width="3" d="M 68,131 C 74,112 81,91 88,75 C 98,52 107,33 121,26 C 134,19 148,27 158,36 C 166,43 174,46 180,45 C 181,51 172,55 163,53 C 151,52 142,42 135,43 C 127,46 132,68 141,84 C 151,102 161,115 171,127 C 147,140 94,144 68,131 Z"/>
+      <path fill="#7B5782" d="M 76,119 C 83,99 91,78 100,59 C 110,39 119,29 130,29 C 140,29 149,35 156,41 C 144,35 136,34 129,39 C 116,49 112,71 105,88 C 99,102 89,113 76,119 Z"/>
+      <path fill="#48324F" d="M 136,43 C 127,46 132,68 141,84 C 151,102 161,115 171,127 C 161,133 148,137 133,138 C 140,124 137,113 129,101 C 119,86 118,65 123,52 C 126,45 130,41 136,43 Z"/>
+      <path fill="#49344F" d="M 144,38 C 156,44 165,51 176,48 C 172,52 167,52 162,50 C 154,48 150,42 144,38 Z"/>
+    </g>
+    <g id="peach-hat-band">
+      <path fill="#C98E70" d="M 74,113 C 94,123 133,123 158,111 C 162,117 166,122 171,127 C 147,140 94,144 68,131 Z"/>
+      <path fill="#E1AA83" d="M 74,113 C 94,123 133,123 158,111 L 161,115 C 139,127 98,130 72,118 Z"/>
+      <path fill="#AF745D" d="M 151,115 L 158,111 C 162,117 166,122 171,127 C 166,130 161,132 155,134 Z"/>
+    </g>
+    <g id="antique-gold-buckle" transform="rotate(-9 139 126)">
+      <path fill="#B58B47" fill-rule="evenodd" d="M 131,115 L 148,115 Q 151,115 151,118 L 151,134 Q 151,137 148,137 L 131,137 Q 128,137 128,134 L 128,118 Q 128,115 131,115 Z M 133,120 L 133,132 L 146,132 L 146,120 Z"/>
+      <path fill="#E0BB72" d="M 132,116 L 147,116 L 147,118 L 132,118 L 132,133 L 130,133 L 130,118 Q 130,116 132,116 Z"/>
+      <path fill="#B58B47" d="M 137,119 L 140,119 L 140,133 L 137,133 Z"/>
+    </g>
+  </g>
+</svg>

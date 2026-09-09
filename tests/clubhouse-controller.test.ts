@@ -107,6 +107,19 @@ test("exit keeps old member until completion; entrance never exceeds capacity", 
   assert.equal(f.active().length, 0);
 });
 
+test("height-only stretching realigns an active doorway exchange", () => {
+  const f = fixture();
+  f.rotation()!.finish();
+  f.reachDoor();
+  f.controller.resize(800, 700);
+  const stretched = getClubhouseGeometry(800, CLUBHOUSE.portraitSize, CLUBHOUSE, 700);
+  assert.equal(stretched.height, 700);
+  const door = toScenePoint(stretched.door, stretched.bounds);
+  assert.equal(f.elements.get(f.visible()[0])!.style.transform, `translate3d(${door.x}px, ${door.y}px, 0)`);
+  assert.equal(f.visible().length, 15);
+  f.controller.dispose();
+});
+
 test("interaction during fade cancels eviction and retains protected member", () => {
   const f = fixture();
   const id = f.visible()[0];

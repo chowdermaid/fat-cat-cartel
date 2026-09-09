@@ -1,10 +1,11 @@
+import { CLUBHOUSE_HATS, getClubhouseHat } from "../src/features/home/utils/clubhouseHats.ts";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { CLUBHOUSE } from "../src/features/home/constants.ts";
 import {
   chooseClubhousePoint, clubhouseTravelMs, getClubhouseBounds, reconcileClubhouse,
   replaceClubhouseMember, replacementCandidate, shuffleMembers, toScenePoint,
-  getClubhouseFootprint, getClubhouseHatCorners, getClubhouseHatTilt,
+  getClubhouseFootprint, getClubhouseHatCorners,
   getClubhouseGeometry, isInsideClubhousePolygon, clampClubhousePoint,
 } from "../src/features/home/utils/clubhouse.ts";
 import { stubGet, stubRef } from "../src/lib/db.stub.ts";
@@ -85,8 +86,8 @@ test("responsive bounds keep full hat, portrait, name and shadow inside scene", 
     const bounds = getClubhouseBounds(width, height, size, CLUBHOUSE);
     for (const point of [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: -1, y: 2 }]) {
       const actual = toScenePoint(point, bounds);
-      for (let tilt = CLUBHOUSE.hatTilt.min; tilt <= CLUBHOUSE.hatTilt.max; tilt++) {
-        for (const corner of getClubhouseHatCorners(size, tilt, CLUBHOUSE)) {
+      for (const hat of CLUBHOUSE_HATS) {
+        for (const corner of getClubhouseHatCorners(size, hat)) {
           assert.ok(actual.x + corner.x >= CLUBHOUSE.edgeClearance - 0.001);
           assert.ok(actual.x + corner.x <= width - CLUBHOUSE.edgeClearance + 0.001);
           assert.ok(actual.y + corner.y - CLUBHOUSE.bobPx >= CLUBHOUSE.edgeClearance - 0.001);
@@ -109,15 +110,22 @@ test("destination sampling favors open space and duration scales with distance",
   assert.equal(clubhouseTravelMs({ x: 0, y: 0 }, { x: 0.1, y: 0 }, bounds, 20), 1000);
 });
 
-test("hat angles are stable by member and varied within the configured final tilt range", () => {
-  const angles = roster(100).map((id) => getClubhouseHatTilt(id, CLUBHOUSE));
-  assert.deepEqual(angles, roster(100).map((id) => getClubhouseHatTilt(id, CLUBHOUSE)));
-  assert.ok(angles.every((angle) => angle >= -25 && angle <= 10));
-  assert.ok(new Set(angles).size > 20);
-  const size = 64;
-  const unrotated = getClubhouseHatCorners(size, CLUBHOUSE.hatEmbeddedTilt, CLUBHOUSE);
-  assert.ok(Math.abs(unrotated[0].x - size * CLUBHOUSE.hatLeft) < 0.001);
-  assert.ok(Math.abs(unrotated[0].y - size * CLUBHOUSE.hatTop) < 0.001);
+test("hat defaults and fixed footprints cover every choice at both portrait sizes", () => {
+  for (const value of [undefined, null, "unknown", 12]) assert.equal(getClubhouseHat(value).id, "fat-cat-cartel-fedora");
+  for (const size of [44, 52]) {
+    const overall = getClubhouseFootprint(size, CLUBHOUSE);
+    for (const hat of CLUBHOUSE_HATS) {
+      assert.equal(getClubhouseHat(hat.id), hat);
+      assert.equal(hat.rotation, hat.id === "fat-cat-cartel-fedora" ? 10 : 0);
+      const own = getClubhouseFootprint(size, CLUBHOUSE, hat);
+      assert.ok(own.left >= overall.left && own.right <= overall.right);
+      assert.ok(own.top >= overall.top && own.bottom <= overall.bottom);
+      for (const corner of getClubhouseHatCorners(size, hat)) {
+        assert.ok(corner.x >= own.left && corner.x <= own.right);
+        assert.ok(corner.y >= own.top && corner.y <= own.bottom);
+      }
+    }
+  }
 });
 
 test("spacing scores prefer room for permanent labels over small center gaps", () => {
@@ -132,8 +140,10 @@ test("spacing scores prefer room for permanent labels over small center gaps", (
 
 test("shared stub supplies 20 members, refreshed cache version and empty/long biographies", async () => {
   const members = (await stubGet(stubRef(null, "members"))).val() as Record<string, { name: string }>;
-  const profiles = (await stubGet(stubRef(null, "memberProfiles"))).val() as Record<string, { bio?: string | null }>;
+  const profiles = (await stubGet(stubRef(null, "memberProfiles"))).val() as Record<string, { bio?: string | null; clubhouseHatId?: string }>;
   const version = (await stubGet(stubRef(null, "membersLastUpdated"))).val();
+  assert.deepEqual(new Set(Object.values(profiles).map((profile) => profile.clubhouseHatId).filter(Boolean)), new Set(CLUBHOUSE_HATS.map((hat) => hat.id)));
+  assert.ok(Object.values(profiles).some((profile) => profile.clubhouseHatId === undefined));
   assert.equal(Object.keys(members).length, 20);
   assert.equal(version, Date.UTC(2026, 8, 9));
   assert.ok(Object.entries(members).filter(([id]) => Number(id) > 11111008).every(([, member]) => member.name.startsWith("Stub ")));
