@@ -157,6 +157,8 @@ For loading states, prefer skeleton blocks with `animate-pulse` and a `.sk` clas
 
 For table or list refreshes, animate only visible rows and cap long lists to avoid sluggish dashboards.
 
+Homepage `.gazette-reveal` sections remain observed after entry. Crossing back below the lower reveal threshold reverses their existing animation and nested clipping stagger; re-entering plays them forward again. Sections leaving above the viewport stay revealed. Reduced motion, including live preference changes, shows all sections immediately. Cleanup reverts animations, restores inline styles, and disconnects observers/listeners. Verify with `node --experimental-test-module-mocks --test tests/home-scroll-reveal.test.ts`.
+
 For progress bars or visual meters, keep JSX at the base value and animate the changed property.
 
 ## Verification

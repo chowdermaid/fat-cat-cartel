@@ -62,6 +62,22 @@ for (const mode of ["self", "admin"] as const) {
     }
     assert.equal(writes.length, 0);
   });
+
+  test(`${mode}: limited jobs, crafters and gatherers can be saved as main jobs`, async () => {
+    const addedJobs = ["Blue Mage", "Beastmaster", "Fisher", "Miner", "Botanist", "Carpenter", "Blacksmith", "Armorer", "Goldsmith", "Leatherworker", "Weaver", "Alchemist", "Culinarian"];
+    for (const job of addedJobs) {
+      await save({ mainJobs: [job] });
+      assert.deepEqual(stored[`memberProfiles/${memberId}/mainJobs`], [job]);
+    }
+    const mixedJobs = ["Paladin", "Blue Mage", "Beastmaster", "Fisher", "Miner", "Botanist", "Carpenter", "Culinarian"];
+    await save({ mainJobs: mixedJobs });
+    assert.deepEqual(stored[`memberProfiles/${memberId}/mainJobs`], mixedJobs);
+    const before = writes.length;
+    for (const mainJobs of [[...mixedJobs, "Weaver"], ["Unknown Job"], ["Fisher", 42]]) {
+      await assert.rejects(save({ mainJobs }), (error) => error instanceof HttpsError && error.code === "invalid-argument");
+    }
+    assert.equal(writes.length, before);
+  });
 }
 
 test("frontend catalogue and bundled SVGs match server allowlist", () => {

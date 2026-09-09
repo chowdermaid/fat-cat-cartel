@@ -1,3 +1,4 @@
+import { MainJobsPicker } from "./editor/MainJobsPicker";
 import { ClubhouseHatPicker } from "./editor/ClubhouseHatPicker";
 import { getClubhouseHat } from "@/features/home/utils/clubhouseHats";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -97,48 +98,6 @@ type ProfileParseType = "savage" | "trial" | "alliance";
 type ActivityChartType = "encounters" | "jobs" | "heatmap";
 const ACTIVITY_PAGE_SIZE = 10;
 
-const jobIconMap = import.meta.glob<string>("../../../assets/jobs/*.png", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const JOB_ICON_SLUG: Record<string, string> = {
-  Paladin: "paladin",
-  Warrior: "warrior",
-  "Dark Knight": "darkknight",
-  Gunbreaker: "gunbreaker",
-  "White Mage": "whitemage",
-  Scholar: "scholar",
-  Astrologian: "astrologian",
-  Sage: "sage",
-  Monk: "monk",
-  Dragoon: "dragoon",
-  Ninja: "ninja",
-  Samurai: "samurai",
-  Reaper: "reaper",
-  Viper: "viper",
-  Bard: "bard",
-  Machinist: "machinist",
-  Dancer: "dancer",
-  "Black Mage": "blackmage",
-  Summoner: "summoner",
-  "Red Mage": "redmage",
-  Pictomancer: "pictomancer",
-  "Blue Mage": "bluemage",
-  Beastmaster: "beastmaster",
-  Carpenter: "Carpenter",
-  Blacksmith: "Blacksmith",
-  Armorer: "Armorer",
-  Goldsmith: "Goldsmith",
-  Leatherworker: "Leatherworker",
-  Weaver: "Weaver",
-  Alchemist: "Alchemist",
-  Culinarian: "Culinarian",
-  Miner: "Miner",
-  Botanist: "Botanist",
-  Fisher: "Fisher",
-};
-
 const JOB_NAME_ALIASES: Record<string, string> = {
   BlackMage: "Black Mage",
   BlueMage: "Blue Mage",
@@ -150,72 +109,6 @@ const JOB_NAME_ALIASES: Record<string, string> = {
 function displayJobName(jobName: string): string {
   return JOB_NAME_ALIASES[jobName] ?? formatJobName(jobName);
 }
-
-function jobIconSrc(fullName: string): string | null {
-  const slug = JOB_ICON_SLUG[displayJobName(fullName)];
-  return slug ? (jobIconMap[`../../../assets/jobs/${slug}.png`] ?? null) : null;
-}
-
-const JOB_ABBR: Record<string, string> = {
-  Paladin: "PLD",
-  Warrior: "WAR",
-  "Dark Knight": "DRK",
-  Gunbreaker: "GNB",
-  "White Mage": "WHM",
-  Scholar: "SCH",
-  Astrologian: "AST",
-  Sage: "SGE",
-  Monk: "MNK",
-  Dragoon: "DRG",
-  Ninja: "NIN",
-  Samurai: "SAM",
-  Reaper: "RPR",
-  Viper: "VPR",
-  Bard: "BRD",
-  Machinist: "MCH",
-  Dancer: "DNC",
-  "Black Mage": "BLM",
-  Summoner: "SMN",
-  "Red Mage": "RDM",
-  Pictomancer: "PCT",
-  "Blue Mage": "BLU",
-  Beastmaster: "BST",
-  Carpenter: "CRP",
-  Blacksmith: "BSM",
-  Armorer: "ARM",
-  Goldsmith: "GSM",
-  Leatherworker: "LTW",
-  Weaver: "WVR",
-  Alchemist: "ALC",
-  Culinarian: "CUL",
-  Miner: "MIN",
-  Botanist: "BTN",
-  Fisher: "FSH",
-};
-
-const PROFILE_JOBS = [
-  "Paladin",
-  "Warrior",
-  "Dark Knight",
-  "Gunbreaker",
-  "White Mage",
-  "Scholar",
-  "Astrologian",
-  "Sage",
-  "Monk",
-  "Dragoon",
-  "Ninja",
-  "Samurai",
-  "Reaper",
-  "Viper",
-  "Bard",
-  "Machinist",
-  "Dancer",
-  "Black Mage",
-  "Summoner",
-  "Red Mage",
-  "Pictomancer",
-] as const;
 
 const PROFILE_MONTHS = [
   "Jan",
@@ -1030,192 +923,160 @@ export function ProfileEditorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+      <DialogContent className="flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-4xl flex-col overflow-hidden p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 py-2">
-          <ClubhouseHatPicker value={draft.clubhouseHatId} avatarUrl={avatarUrl} disabled={saving} onChange={(clubhouseHatId) => setDraft((current) => ({ ...current, clubhouseHatId }))} />
-          <div className="space-y-1.5">
-            <Label htmlFor="profile-bio">Bio</Label>
-            <textarea
-              id="profile-bio"
-              value={draft.bio ?? ""}
-              maxLength={500}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  bio: event.target.value || null,
-                }))
-              }
-              rows={4}
-              className="w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            />
-            <p className="text-xs text-muted-foreground">
-              {(draft.bio ?? "").length}/500
-            </p>
-          </div>
+        <ScrollArea className="-mx-1 min-h-0 flex-1 px-1" viewportClassName="max-h-[calc(90dvh-10rem)]">
+          <div className="grid min-w-0 gap-6 py-2 pr-2 md:grid-cols-2">
+            <div className="min-w-0 space-y-5">
+              <ClubhouseHatPicker value={draft.clubhouseHatId} avatarUrl={avatarUrl} disabled={saving} onChange={(clubhouseHatId) => setDraft((current) => ({ ...current, clubhouseHatId }))} />
+              <div className="space-y-1.5">
+                <Label htmlFor="profile-bio">Bio</Label>
+                <textarea
+                  id="profile-bio"
+                  value={draft.bio ?? ""}
+                  maxLength={500}
+                  onChange={(event) =>
+                    setDraft((current) => ({
+                      ...current,
+                      bio: event.target.value || null,
+                    }))
+                  }
+                  rows={4}
+                  className="w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {(draft.bio ?? "").length}/500
+                </p>
+              </div>
 
-          <div className="space-y-1.5">
-            <Label>Birthday</Label>
-            <div className="grid grid-cols-2 gap-2">
-              <Select
-                value={month ? String(month) : "0"}
-                onValueChange={(value) =>
-                  setBirthday((current) => ({
-                    ...current,
-                    month: Number(value),
-                  }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Month" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">No month</SelectItem>
-                  {PROFILE_MONTHS.map((label, index) => (
-                    <SelectItem key={label} value={String(index + 1)}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={day ? String(day) : "0"}
-                onValueChange={(value) =>
-                  setBirthday((current) => ({ ...current, day: Number(value) }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Day" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">No day</SelectItem>
-                  {PROFILE_DAYS.map((value) => (
-                    <SelectItem key={value} value={String(value)}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>Timezone</Label>
-              <Select
-                value={draft.timezone ?? "none"}
-                onValueChange={(value) =>
-                  setDraft((current) => ({
-                    ...current,
-                    timezone: value === "none" ? null : value,
-                  }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Timezone" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No timezone</SelectItem>
-                  {PROFILE_TIMEZONES.map((timezone) => (
-                    <SelectItem key={timezone} value={timezone}>
-                      {timezoneLabel(timezone)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Favorite Content</Label>
-              <Select
-                value={draft.favoriteContent ?? "none"}
-                onValueChange={(value) =>
-                  setDraft((current) => ({
-                    ...current,
-                    favoriteContent: value === "none" ? null : value,
-                  }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Favorite content" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No favorite</SelectItem>
-                  {FAVORITE_CONTENT_OPTIONS.map((content) => (
-                    <SelectItem key={content} value={content}>
-                      {content}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <FavoriteCollectiblePicker
-              label="Favorite Mount"
-              emptyText="No synced owned mounts yet."
-              options={mountOptions}
-              value={draft.favoriteMountId}
-              onChange={(value) =>
-                setDraft((current) => ({ ...current, favoriteMountId: value }))
-              }
-            />
-
-            <FavoriteCollectiblePicker
-              label="Favorite Minion"
-              emptyText="No synced owned minions yet."
-              options={minionOptions}
-              value={draft.favoriteMinionId}
-              onChange={(value) =>
-                setDraft((current) => ({ ...current, favoriteMinionId: value }))
-              }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Main Jobs</Label>
-            <div className="grid grid-cols-7 gap-1.5">
-              {PROFILE_JOBS.map((job) => {
-                const selected = draft.mainJobs.includes(job);
-                const icon = jobIconSrc(job);
-                const abbr = JOB_ABBR[job] ?? job;
-                return (
-                  <button
-                    key={job}
-                    type="button"
-                    title={job}
-                    onClick={() => toggleJob(job)}
-                    className={`flex aspect-square items-center justify-center rounded-md border text-xs transition-colors ${
-                      selected
-                        ? "border-primary bg-primary/15 text-primary"
-                        : "bg-muted/30 hover:bg-muted"
-                    }`}
+              <div className="space-y-1.5">
+                <Label>Birthday</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Select
+                    value={month ? String(month) : "0"}
+                    onValueChange={(value) =>
+                      setBirthday((current) => ({
+                        ...current,
+                        month: Number(value),
+                      }))
+                    }
                   >
-                    {icon ? (
-                      <img
-                        src={icon}
-                        alt={abbr}
-                        className="h-6 w-6 object-contain"
-                      />
-                    ) : (
-                      abbr
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {draft.mainJobs.length}/8 selected
-            </p>
-          </div>
-        </div>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No month</SelectItem>
+                      {PROFILE_MONTHS.map((label, index) => (
+                        <SelectItem key={label} value={String(index + 1)}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-        <div className="flex justify-end gap-2">
+                  <Select
+                    value={day ? String(day) : "0"}
+                    onValueChange={(value) =>
+                      setBirthday((current) => ({ ...current, day: Number(value) }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Day" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No day</SelectItem>
+                      {PROFILE_DAYS.map((value) => (
+                        <SelectItem key={value} value={String(value)}>
+                          {value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Timezone</Label>
+                <Select
+                  value={draft.timezone ?? "none"}
+                  onValueChange={(value) =>
+                    setDraft((current) => ({
+                      ...current,
+                      timezone: value === "none" ? null : value,
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Timezone">{draft.timezone ? timezoneLabel(draft.timezone) : "No timezone"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No timezone</SelectItem>
+                    {PROFILE_TIMEZONES.map((timezone) => (
+                      <SelectItem key={timezone} value={timezone}>
+                        {timezoneLabel(timezone)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+            </div>
+            <div className="min-w-0 space-y-5">
+              <div className="grid gap-3 lg:grid-cols-2">
+                <FavoriteCollectiblePicker
+                  label="Favorite Mount"
+                  emptyText="No synced owned mounts yet."
+                  options={mountOptions}
+                  value={draft.favoriteMountId}
+                  onChange={(value) =>
+                    setDraft((current) => ({ ...current, favoriteMountId: value }))
+                  }
+                />
+
+                <FavoriteCollectiblePicker
+                  label="Favorite Minion"
+                  emptyText="No synced owned minions yet."
+                  options={minionOptions}
+                  value={draft.favoriteMinionId}
+                  onChange={(value) =>
+                    setDraft((current) => ({ ...current, favoriteMinionId: value }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Favorite Content</Label>
+                <Select
+                  value={draft.favoriteContent ?? "none"}
+                  onValueChange={(value) =>
+                    setDraft((current) => ({
+                      ...current,
+                      favoriteContent: value === "none" ? null : value,
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Favorite content" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No favorite</SelectItem>
+                    {FAVORITE_CONTENT_OPTIONS.map((content) => (
+                      <SelectItem key={content} value={content}>
+                        {content}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <MainJobsPicker value={draft.mainJobs} onToggle={toggleJob} disabled={saving} />
+            </div>
+          </div>
+        </ScrollArea>
+
+        <div className="flex shrink-0 justify-end gap-2 border-t pt-4">
           <Button
             type="button"
             variant="outline"

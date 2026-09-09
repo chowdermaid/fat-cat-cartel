@@ -356,7 +356,7 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
     const current = profileDraft.mainJobs ?? [];
     const next = current.includes(full)
       ? current.filter((j) => j !== full)
-      : [...current, full];
+      : current.length >= 8 ? current : [...current, full];
     setProfileDraft((d) => ({ ...d, mainJobs: next }));
   }
 

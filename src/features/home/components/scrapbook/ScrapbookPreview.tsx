@@ -57,7 +57,7 @@ export function ScrapbookPreview() {
               >
                 {badge}
               </Badge>
-              <div className="aspect-[4/3] overflow-hidden rounded-md border bg-card">
+              <div className={`aspect-[4/3] overflow-hidden rounded-md border ${src === fatcatthrone ? "bg-background" : "bg-card"}`}>
                 <img
                   src={src}
                   alt={alt}

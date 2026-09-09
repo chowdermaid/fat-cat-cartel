@@ -238,3 +238,9 @@ Manual checks:
 - Public members, collection, raid stats, and Easter scoreboard reads still work.
 - Discord friend signup, linking, status, and profile view slash commands still work. Profile editing slash commands were removed because profile edits now live on the website.
 - Discord `/clear-channel` denies non-admin members, requires confirmation from the initiating admin, cancels without deleting, and reports that messages older than 14 days may remain.
+
+## Profile Editor Layout and Main Jobs
+
+Self and admin profile editors use two columns from the medium breakpoint: Clubhouse hat, bio, birthday, and timezone on the left; favorite mount/minion, favorite content, and main jobs on the right. Admin rank stays on the left. Smaller screens stack the columns. A bounded ScrollArea keeps Save/Cancel visible.
+
+The shared MainJobsPicker groups all 34 jobs into combat/limited, crafting, and gathering. Blue Mage, Beastmaster, all eight crafting classes, Miner, Botanist, and Fisher are supported by both existing profile callables. Up to eight main jobs can be selected across groups; at the limit, unselected buttons are disabled while selected ones can still be removed. No extra Firebase reads, write operations, or Function calls are added. Deploy the updated profile Functions before the frontend to enable the additional choices.
