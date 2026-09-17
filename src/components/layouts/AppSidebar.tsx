@@ -4,7 +4,6 @@ import {
   CalendarDays,
   Coins,
   Dices,
-  Drama,
   Hammer,
   HandCoins,
   Home,
@@ -44,7 +43,6 @@ const navItems = [
 const progressItems = [
   { label: "FC Collection", to: "/fc-collection", icon: Library },
   { label: "Raid Stats", to: "/raid-stats", icon: BarChart2 },
-  { label: "DMU Prog", to: "/dmu-prog", icon: Drama },
 ] as const;
 
 const toolItems = [

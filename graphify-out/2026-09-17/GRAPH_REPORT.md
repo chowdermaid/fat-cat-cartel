@@ -1,16 +1,16 @@
-# Graph Report - fat-cat-cartel  (2026-09-17)
+# Graph Report - fat-cat-cartel  (2026-08-31)
 
 ## Corpus Check
-- 420 files · ~2,317,870 words
+- 418 files · ~2,127,296 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2656 nodes · 5237 edges · 165 communities (143 shown, 22 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 39 edges (avg confidence: 0.6)
+- 2646 nodes · 5212 edges · 166 communities (146 shown, 20 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e8ef825c`
+- Built from commit: `843b8951`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -91,13 +91,13 @@
 - Community 73
 - Community 74
 - Community 75
+- Community 76
 - Community 77
 - Community 78
 - Community 79
 - Community 80
 - Community 81
 - Community 82
-- Community 83
 - Community 84
 - Community 85
 - Community 86
@@ -110,6 +110,7 @@
 - Community 93
 - Community 94
 - Community 95
+- Community 96
 - Community 97
 - Community 98
 - Community 99
@@ -167,9 +168,9 @@
 ## God Nodes (most connected - your core abstractions)
 1. `formatGil()` - 35 edges
 2. `registerDefaultHandlers()` - 33 edges
-3. `ContentType` - 25 edges
-4. `MemberData` - 25 edges
-5. `callAdminFunction()` - 24 edges
+3. `callAdminFunction()` - 25 edges
+4. `ContentType` - 25 edges
+5. `MemberData` - 25 edges
 6. `compilerOptions` - 22 edges
 7. `calculateMeowketProfitForAdmin()` - 21 edges
 8. `formatQuantity()` - 20 edges
@@ -177,25 +178,25 @@
 10. `compilerOptions` - 18 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `fetchDmuProgressionRows()` --indirect_call--> `progress()`  [INFERRED]
+  functions/src/refresh-tomestone-raid-stats.ts → src/lib/db.stub.ts
 - `fetchTomestoneProgressionGraph()` --indirect_call--> `progress()`  [INFERRED]
   functions/src/refresh-tomestone-raid-stats.ts → src/lib/db.stub.ts
-- `CreateRequestDialog()` --indirect_call--> `item()`  [INFERRED]
-  src/features/craftingboard/components/CreateRequestDialog.tsx → tests/home-scroll-reveal.test.ts
-- `combinedEligibility()` --indirect_call--> `item()`  [INFERRED]
-  src/features/craftingboard/utils/eligibility.ts → tests/home-scroll-reveal.test.ts
-- `buildCartShoppingList()` --indirect_call--> `item()`  [INFERRED]
-  src/features/meowket-board/utils/cartMerging.ts → tests/home-scroll-reveal.test.ts
-- `buildCartSummary()` --indirect_call--> `item()`  [INFERRED]
-  src/features/meowket-board/utils/cartMerging.ts → tests/home-scroll-reveal.test.ts
+- `Stepper()` --references--> `react`  [EXTRACTED]
+  src/components/reui/stepper.tsx → package.json
+- `useStepper()` --references--> `react`  [EXTRACTED]
+  src/components/reui/stepper.tsx → package.json
+- `useCarousel()` --references--> `react`  [EXTRACTED]
+  src/components/ui/carousel.tsx → package.json
 
 ## Import Cycles
 - None detected.
 
-## Communities (165 total, 22 thin omitted)
+## Communities (166 total, 20 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (58): CachePayload, CollectiblesValue, MembersValue, useFCCollection(), CollectibleDetailDialog(), CollectibleDetailDialogProps, isMount(), animateFilterClick() (+50 more)
+Nodes (59): CachePayload, CollectiblesValue, MembersValue, useFCCollection(), CollectibleDetailDialog(), CollectibleDetailDialogProps, isMount(), animateFilterClick() (+51 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
@@ -203,7 +204,7 @@ Nodes (57): approveCalendarEventRequest(), createRaidHelperEvent(), denyCalendar
 
 ### Community 2 - "Community 2"
 Cohesion: 0.02
-Nodes (92): requireAdminSession(), parsePort(), acceptCraftingRequest, addSpudJarComplaints, adminAppOrigin, adminAuthConfig(), adminAuthConfigWithHousecat(), adminAuthConfigWithSingleMemberRole() (+84 more)
+Nodes (94): requireAdminSession(), parsePort(), acceptCraftingRequest, addSpudJarComplaints, adminAppOrigin, adminAuthConfig(), adminAuthConfigWithHousecat(), adminAuthConfigWithSingleMemberRole() (+86 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.06
@@ -214,24 +215,24 @@ Cohesion: 0.11
 Nodes (52): acceptCraftingRequestForMember(), addEligibleCrafters(), arrayValue(), cleanText(), closeCraftingRequestForMember(), commissionText(), completeCraftingRequestForMember(), craftingBoardUrl() (+44 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.14
-Nodes (22): chooseClubhousePoint(), clampClubhousePoint(), clubhouseTravelMs(), getClubhouseBounds(), getClubhouseFootprint(), getClubhouseGeometry(), getClubhouseHatCorners(), isInsideClubhousePolygon() (+14 more)
+Cohesion: 0.10
+Nodes (36): fetchDmuProgress(), triggerDmuProgressRefresh(), DmuRecentActivity(), DmuChartStats(), DmuChartTooltip(), formatPullDuration(), DmuEndpointAvatarMark(), DmuProgressChart() (+28 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.08
-Nodes (43): ButtonStyle, clearChannelErrorMessage(), ClearChannelResult, clearChannelResultMessage(), clearRecentChannelMessages(), ComponentType, confirmClearChannelComponents(), deferredEphemeral() (+35 more)
+Nodes (44): ButtonStyle, clearChannelErrorMessage(), ClearChannelResult, clearChannelResultMessage(), clearRecentChannelMessages(), ComponentType, confirmClearChannelComponents(), deferredEphemeral() (+36 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.06
-Nodes (43): ActivityChartType, activityLabel(), COLLECTIBLE_META, dayKey(), displayJobName(), EMPTY_PROFILE, EmptyChart(), encodeBirthday() (+35 more)
+Nodes (37): ActivityChartType, COLLECTIBLE_META, dayKey(), displayJobName(), EMPTY_PROFILE, EmptyChart(), encodeBirthday(), fmtRdps() (+29 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.07
-Nodes (39): firebase, AnyFn, Callback, getAtPath(), listeners, makeSnapshot(), maxedJobLevels(), notifyPath() (+31 more)
+Nodes (41): firebase, AnyFn, Callback, getAtPath(), listeners, makeSnapshot(), maxedJobLevels(), notifyPath() (+33 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.09
-Nodes (33): ActivityPayload, ActivityRow, CompactActivity, compactProfile(), computeMostPlayedJobs(), configuredEncountersByCanonical(), emptyEncounterSummary(), fetchRecentActivity() (+25 more)
+Cohesion: 0.08
+Nodes (37): ActivityPayload, ActivityRow, batchRun(), buildDmuProgressForMembers(), CompactActivity, DmuProgressCache, DmuProgressPlayer, DmuProgressPoint (+29 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -242,8 +243,8 @@ Cohesion: 0.10
 Nodes (39): AdminAuthConfig, AdminOAuthStartConfig, AdminSession, applyDevRoleOverride(), assertDevRoleOverrideSafety(), authenticatedSessionRecordIsValid(), cookieIsSecure(), cookieValue() (+31 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.10
-Nodes (29): getFFLogsToken(), TokenCache, buildCharacterZonesQuery(), DIFFICULTY, queryFFLogs(), AllStars, buildCharacterParseEntries(), CharacterRankings (+21 more)
+Cohesion: 0.09
+Nodes (29): getFFLogsToken(), TokenCache, buildCharacterZonesQuery(), DIFFICULTY, queryFFLogs(), AllStars, batchRun(), buildCharacterParseEntries() (+21 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.14
@@ -254,16 +255,16 @@ Cohesion: 0.15
 Nodes (20): MountRouletteControls(), LoadingSkeleton(), MountRoulettePage(), MountResultDialog(), drawWheel(), SpinWheel(), CAT_POSITIONS, EXPANSIONS (+12 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.12
-Nodes (21): deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh(), updateMemberProfileAdmin(), upsertMember() (+13 more)
+Cohesion: 0.13
+Nodes (24): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerDmuProgressRefresh(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh() (+16 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.13
 Nodes (27): acceptCraftingRequest(), byCompletedAtDesc(), byUpdatedAtDesc(), closeCraftingRequest(), completeCraftingRequest(), CRAFTING_REQUEST_PATHS, CraftingLifecycleInput, CraftingMemberTotals (+19 more)
 
 ### Community 17 - "Community 17"
-Cohesion: 0.14
-Nodes (26): FriendRefreshJob, processFriendRefreshJob(), runSource(), assertRefreshableMember(), MemberSourceResult, MemberSourceSecrets, parseRequest(), refreshLodestoneMember() (+18 more)
+Cohesion: 0.22
+Nodes (14): FriendRefreshJob, processFriendRefreshJob(), runSource(), assertRefreshableMember(), MemberSourceResult, MemberSourceSecrets, parseRequest(), refreshLodestoneMember() (+6 more)
 
 ### Community 18 - "Community 18"
 Cohesion: 0.12
@@ -278,16 +279,16 @@ Cohesion: 0.07
 Nodes (26): Sidebar, SidebarContent, SidebarContext, SidebarContextProps, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent (+18 more)
 
 ### Community 21 - "Community 21"
-Cohesion: 0.11
-Nodes (21): calculateMeowketProfit(), LOCAL_MEOWKET_RESULTS, localSearch(), MOCK_MEOWKET_SEARCH_RESULTS, searchMeowketItems(), ItemIcon(), MaterialIcon(), SelectedCraftCard() (+13 more)
+Cohesion: 0.13
+Nodes (20): calculateMeowketProfit(), LOCAL_MEOWKET_RESULTS, localSearch(), MOCK_MEOWKET_SEARCH_RESULTS, searchMeowketItems(), ItemIcon(), ItemSearchDialog(), SelectedCraftCard() (+12 more)
 
 ### Community 22 - "Community 22"
-Cohesion: 0.25
-Nodes (13): MaterialsTable(), MeowketBoardPage(), prefersReducedMotion(), useEntranceAnimation(), useStaggeredEntrance(), useMeowketCalculation(), useMeowketCart(), useOwnedMaterials() (+5 more)
+Cohesion: 0.17
+Nodes (20): MaterialsTable(), MeowketBoardPage(), TheDonPanel(), prefersReducedMotion(), useEntranceAnimation(), useStaggeredEntrance(), useMeowketCalculation(), useMeowketCart() (+12 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.14
-Nodes (24): AddCurrentCraftButton(), CartItemRow(), CartLineIcon(), CartRouteItem, prefersReducedMotion(), CartRouteByWorld(), MeowketCartPopover(), MathTooltip() (+16 more)
+Cohesion: 0.19
+Nodes (17): MeowketCartPopover(), ProfitWaterfallChart(), profitWaterfallData(), ProfitWaterfallDatum, WaterfallTooltip(), SellPriceByWorldChart(), SellRecommendationCard(), MeowketCartSummary (+9 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.08
@@ -315,15 +316,15 @@ Nodes (16): CraftingRecipe, CreateRequestDialog(), EligibleCrafters(), RecipePre
 
 ### Community 30 - "Community 30"
 Cohesion: 0.08
-Nodes (23): adminRoute, calendarRoute, craftingBoardRoute, easter2026Route, fcCollectionRoute, fcLeaderboardRoute, fcTypeRoute, gameServerIndexRoute (+15 more)
+Nodes (24): adminRoute, calendarRoute, craftingBoardRoute, dmuProgRoute, easter2026Route, fcCollectionRoute, fcLeaderboardRoute, fcTypeRoute (+16 more)
 
 ### Community 31 - "Community 31"
 Cohesion: 0.17
 Nodes (17): BestPerJobCarousel(), getBestPerJob(), JobEntry, maxWidthForStaticSlides(), bestPrimary(), MemberBoard(), primaryParses(), SortKey (+9 more)
 
 ### Community 32 - "Community 32"
-Cohesion: 0.14
-Nodes (23): CLUBHOUSE_HAT_IDS, deleteEasterParticipantAdmin(), EasterParticipantRequest, FAVORITE_CONTENT_OPTIONS, FC_RANKS, FFXIV_JOBS, isValidBirthday(), parseClubhouseHat() (+15 more)
+Cohesion: 0.15
+Nodes (21): deleteEasterParticipantAdmin(), EasterParticipantRequest, FAVORITE_CONTENT_OPTIONS, FC_RANKS, FFXIV_JOBS, isValidBirthday(), ParsedProfile, parseFavoriteId() (+13 more)
 
 ### Community 33 - "Community 33"
 Cohesion: 0.18
@@ -334,20 +335,20 @@ Cohesion: 0.12
 Nodes (15): useScoreboard(), UseScoreboardResult, EventCard(), EventCardProps, PointRule, PrizeRule, HideAndSeekDialog(), instructionImages (+7 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.10
-Nodes (29): MemberDeleteDialog(), MemberDeleteDialogProps, MemberRosterTable(), MemberRosterTableProps, StatusCell(), MemberSyncToolbar(), MemberSyncToolbarProps, AdminAuthState (+21 more)
+Cohesion: 0.09
+Nodes (30): MemberDeleteDialog(), MemberDeleteDialogProps, MemberRosterTable(), MemberRosterTableProps, StatusCell(), MemberSyncToolbar(), MemberSyncToolbarProps, FRESHNESS_MS (+22 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.16
 Nodes (14): getXivapiIconUrl(), RequestedItem(), IngredientGroup(), PreviewIcon(), CRAFTING_MATERIAL_STATUSES, CRAFTING_REQUEST_STATUSES, CraftingDiscordMessageMetadata, CraftingPrecraftSnapshot (+6 more)
 
 ### Community 37 - "Community 37"
-Cohesion: 0.15
-Nodes (23): countIndexRecords(), DashboardIndexValue, DbSnapshot, readHomeCraftingStatus(), readHomeWeeklyData(), useHomeDashboardData(), HomeCraftingStatus, HomeNextBirthdaySummary (+15 more)
+Cohesion: 0.20
+Nodes (18): readHomeWeeklyData(), useHomeDashboardData(), HomeNextBirthdaySummary, HomeWeeklyBirthdaySummary, HomeWeeklyData, HomeWeeklyEventSummary, DATE_FORMATTER, endOfWeekWindow() (+10 more)
 
 ### Community 38 - "Community 38"
-Cohesion: 0.13
-Nodes (20): groups, MainJobsPicker(), JobIcon(), ActivityChartType, COLLECTIBLE_META, EMPTY_PROFILE, JOB_ABBR, JOB_ICON_SLUG (+12 more)
+Cohesion: 0.12
+Nodes (17): ActivityChartType, COLLECTIBLE_META, EMPTY_PROFILE, JOB_ABBR, JOB_ICON_SLUG, JOB_LEVEL_GROUPS, JOB_MAX_LEVELS, JOB_NAME_ALIASES (+9 more)
 
 ### Community 39 - "Community 39"
 Cohesion: 0.10
@@ -355,7 +356,7 @@ Nodes (19): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib
 
 ### Community 40 - "Community 40"
 Cohesion: 0.16
-Nodes (11): HomePage(), NewspaperSectionLabel(), NoticeBoard(), OPERATION_TOOLS, OperationsPanel(), OperationTool, archiveImages, scrapbookImages (+3 more)
+Nodes (11): HomePage(), NewspaperSectionLabel(), NoticeBoard(), OPERATION_TOOLS, OperationsPanel(), OperationTool, scrapbookImages, ScrapbookPreview() (+3 more)
 
 ### Community 41 - "Community 41"
 Cohesion: 0.11
@@ -370,12 +371,12 @@ Cohesion: 0.16
 Nodes (17): applyOwnedMaterials(), calculateMeowketProfitForAdmin(), collectFlattenedMaterials(), compactSearchResults(), estimateSellPrice(), isCostedMaterial(), materialCategory(), materialFromIngredient() (+9 more)
 
 ### Community 44 - "Community 44"
-Cohesion: 0.31
-Nodes (13): MarketStatusCard(), MaterialRow(), SupplyBadge(), formatQuantity(), formatRelativeTime(), actualCostTooltip(), effectiveUnitTooltip(), materialLabel() (+5 more)
+Cohesion: 0.32
+Nodes (13): MaterialIcon(), MaterialRow(), SupplyBadge(), MeowketMaterial, formatQuantity(), actualCostTooltip(), effectiveUnitTooltip(), materialLabel() (+5 more)
 
 ### Community 45 - "Community 45"
-Cohesion: 0.21
-Nodes (17): CART_ROUTE_WORLDS, MEOWKET_TOAST_POSITION, MeowketCartBatch, allUsedListingKeys(), buildCartBatch(), buildCartShoppingList(), buildCartSummary(), buildReplacementCartItem() (+9 more)
+Cohesion: 0.24
+Nodes (15): MeowketCartBatch, allUsedListingKeys(), buildCartBatch(), buildCartShoppingList(), buildCartSummary(), buildReplacementCartItem(), buildReplacementListings(), buildShoppingRouteGroups() (+7 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.21
@@ -387,11 +388,11 @@ Nodes (18): dependencies, @aws-sdk/client-ec2, @aws-sdk/client-ssm, firebase-adm
 
 ### Community 48 - "Community 48"
 Cohesion: 0.21
-Nodes (10): MemberProfileDialog(), MemberProfileDialogProps, DAYS, EMPTY_PROFILE, FC_RANKS, FRESHNESS_MS, JOBS, MONTHS (+2 more)
+Nodes (11): MemberProfileDialog(), MemberProfileDialogProps, DAYS, EMPTY_PROFILE, FC_RANKS, JOBS, MONTHS, FCRank (+3 more)
 
 ### Community 49 - "Community 49"
-Cohesion: 0.13
-Nodes (18): ClassifiedLink(), ClippingCard(), FcHangoutCard(), FeaturedToolCard(), HomeWidgets(), excerptBio(), MemberSpotlightCard(), StatusBoardCard() (+10 more)
+Cohesion: 0.23
+Nodes (12): ClassifiedLink(), FeaturedToolCard(), excerptBio(), MemberSpotlightCard(), HOME_FEATURED_TOOLS, HomeSpotlightMember, getDailyIndex(), getInitials() (+4 more)
 
 ### Community 50 - "Community 50"
 Cohesion: 0.15
@@ -406,28 +407,28 @@ Cohesion: 0.12
 Nodes (17): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, @firebase/rules-unit-testing, globals, tailwindcss (+9 more)
 
 ### Community 53 - "Community 53"
-Cohesion: 0.21
-Nodes (8): batchRun(), batchRun(), FCStats(), ItemSearchDialog(), animations, fixture(), item(), leaf()
+Cohesion: 0.22
+Nodes (10): AddCurrentCraftButton(), CartItemRow(), CartLineIcon(), CartRouteItem, prefersReducedMotion(), CartRouteByWorld(), MathTooltip(), SummaryCard() (+2 more)
 
 ### Community 54 - "Community 54"
 Cohesion: 0.14
 Nodes (13): compileOnSave, compilerOptions, lib, module, noImplicitReturns, noUnusedLocals, outDir, skipLibCheck (+5 more)
 
 ### Community 55 - "Community 55"
-Cohesion: 0.14
-Nodes (24): CartelClubhouse(), isSydneyNight(), sydneyHour, ClubhousePortrait, Props, CLUBHOUSE, HOME_NOTICES, HOME_QUICK_TOOLS (+16 more)
+Cohesion: 0.21
+Nodes (10): HOME_NOTICES, HOME_QUICK_TOOLS, HOME_STATIC_WEEK_ITEMS, HomeFeaturedTool, HomeHouseDetails, HomeNotice, HomeOpenErrandSummary, HomeQuickTool (+2 more)
 
 ### Community 56 - "Community 56"
 Cohesion: 0.24
 Nodes (9): saveOwnMemberProfile(), useProfileEditor(), ActivityChartType, CraftingProfileStats, MemberProfile, ProfileParseType, encodeBirthday(), parseBirthday() (+1 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.22
-Nodes (8): Background, carpet, and door motion, Cartel Clubhouse handoff, Commands in this environment, Current product behavior, Data and scope, Files to inspect, Resume context, Verification status
+Cohesion: 0.16
+Nodes (12): activityLabel(), buildActivitySummary(), favoriteById(), favoriteContentIcon(), favoriteOptions(), findRarest(), formatBirthday(), isCollectible() (+4 more)
 
 ### Community 58 - "Community 58"
-Cohesion: 0.20
-Nodes (14): MaterialCostByWorldChart(), materialCostByWorldData(), SellPriceByWorldChart(), TheDonPanel(), formatChartGil(), formatDecimal(), formatSaleTime(), formatUploadTime() (+6 more)
+Cohesion: 0.26
+Nodes (8): MarketStatusCard(), MaterialCostByWorldChart(), materialCostByWorldData(), CART_ROUTE_WORLDS, formatChartGil(), formatRelativeTime(), shortGil(), shortGilWithUnit()
 
 ### Community 59 - "Community 59"
 Cohesion: 0.22
@@ -454,24 +455,32 @@ Cohesion: 0.21
 Nodes (8): AuthLinkHelpDialog(), AuthLinkHelpDialogProps, AuthLoginInstructionsDialog(), AuthLoginInstructionsDialogProps, InstructionSectionProps, AuthUserMenu(), AuthUserMenuProps, initials()
 
 ### Community 65 - "Community 65"
-Cohesion: 0.22
-Nodes (6): adminItem, AppSidebar(), bottomItems, navItems, progressItems, toolItems
+Cohesion: 0.18
+Nodes (7): adminItem, AppSidebar(), bottomItems, navItems, progressItems, toolItems, BANNER_CATS
 
 ### Community 66 - "Community 66"
 Cohesion: 0.27
 Nodes (10): CollectiblesData, CraftingProfileStats, DbSnapshot, EMPTY_CRAFTING_STATS, loadCollectiblesCache(), MemberProfileState, normalizeCollectibles(), normalizeCraftingStats() (+2 more)
 
 ### Community 67 - "Community 67"
-Cohesion: 0.50
-Nodes (3): ClubhouseHatPicker(), assets, ClubhouseHat()
+Cohesion: 0.24
+Nodes (12): memberSyncError(), memberSyncSuccess(), runRefreshFFLogs(), decodeHtml(), JOB_ALIASES, LodestoneEntry, parseCharacterPage(), parseJobLevels() (+4 more)
 
 ### Community 68 - "Community 68"
 Cohesion: 0.24
 Nodes (11): buildSellConfidence(), confidenceLabel(), confidenceReason(), confidenceVerdict(), demandInsight(), donComment(), fetchSellConfidence(), formatHistoryTime() (+3 more)
 
+### Community 69 - "Community 69"
+Cohesion: 0.29
+Nodes (5): ClippingCard(), FcHangoutCard(), StatusBoardCard(), HOME_HOUSE_DETAILS, HomeCraftingStatus
+
 ### Community 70 - "Community 70"
 Cohesion: 0.42
 Nodes (8): cacheKey(), loadCachedZone(), saveCachedZone(), fetchRaidStatsZone(), fetchRaidStatsZoneLastUpdated(), RaidStatsState, useRaidStats(), ZoneData
+
+### Community 71 - "Community 71"
+Cohesion: 0.31
+Nodes (10): compactProfile(), computeMostPlayedJobs(), configuredEncountersByCanonical(), emptyEncounterSummary(), initializeZoneMembers(), mergeActivity(), mergeProfileClears(), profileEncounterSummaries() (+2 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.27
@@ -488,6 +497,10 @@ Nodes (8): deleteEasterParticipantAdmin(), upsertEasterParticipantAdmin(), Parti
 ### Community 75 - "Community 75"
 Cohesion: 0.36
 Nodes (7): FavoriteCollectibleOption, FavoriteCollectiblePicker(), favoriteById(), favoriteOptions(), findRarest(), isCollectible(), ownedPct()
+
+### Community 76 - "Community 76"
+Cohesion: 0.20
+Nodes (7): activityImpact(), ActivityTimelineChart(), ActivityTooltipContent(), BestProgressByEncounter(), clampPercent(), compactContentType(), formatDate()
 
 ### Community 77 - "Community 77"
 Cohesion: 0.22
@@ -510,12 +523,8 @@ Cohesion: 0.25
 Nodes (7): Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow
 
 ### Community 82 - "Community 82"
-Cohesion: 0.27
-Nodes (7): FC_FOCUS_ITEMS, HomeHero(), HOME_GAZETTE, useHomeAnimations(), useHomeGreeting(), getHomeGreeting(), sydneyTime
-
-### Community 83 - "Community 83"
-Cohesion: 0.15
-Nodes (5): attemptConfig, EncounterActivityChart(), JobUsageDonut(), groupEncounterActivity(), groupJobActivity()
+Cohesion: 0.36
+Nodes (5): FC_FOCUS_ITEMS, HomeHero(), NewspaperStamp(), HOME_GAZETTE, useHomeAnimations()
 
 ### Community 84 - "Community 84"
 Cohesion: 0.29
@@ -561,6 +570,10 @@ Nodes (4): name, private, type, version
 Cohesion: 0.50
 Nodes (4): children, shutdown(), start(), RequestSection()
 
+### Community 96 - "Community 96"
+Cohesion: 0.50
+Nodes (4): countIndexRecords(), DashboardIndexValue, DbSnapshot, readHomeCraftingStatus()
+
 ### Community 97 - "Community 97"
 Cohesion: 0.70
 Nodes (4): bestPrimary(), ParseLeaderboard(), primaryParses(), SortKey
@@ -602,28 +615,28 @@ Cohesion: 0.18
 Nodes (10): Crafting Board Implementation, Crafting Request Data Model, Create Request Flow, Current Scope, Lifecycle Actions, Recipe Preview Cost And Traffic, Request Cost Impact, Request Extension Hook (+2 more)
 
 ### Community 141 - "Project Reference"
-Cohesion: 0.15
-Nodes (12): Animation Pattern, App Entry And Shell, Assets, Coding Conventions, Commands, File Structure, General checks, Homepage Cartel Clubhouse (+4 more)
+Cohesion: 0.18
+Nodes (10): Animation Pattern, App Entry And Shell, Assets, Coding Conventions, Commands, File Structure, Project Reference, Routes (+2 more)
 
 ### Community 142 - "Admin Auth Implementation"
-Cohesion: 0.17
-Nodes (11): Admin Auth Implementation, Client Surfaces, Database Rules, Local Emulator Development, OAuth Flow, Palworld Entitlements, Profile Editor Layout and Main Jobs, Protected Admin Operations (+3 more)
+Cohesion: 0.18
+Nodes (10): Admin Auth Implementation, Client Surfaces, Database Rules, Local Emulator Development, OAuth Flow, Palworld Entitlements, Protected Admin Operations, Secrets And Config (+2 more)
 
 ### Community 143 - "Database Cleanup Inventory"
-Cohesion: 0.18
-Nodes (10): Cleanup Candidates, Database Cleanup Inventory, Emulator Data, Generated And Rebuildable, Keep, Live Top-Level Branches, Local Storage Keys, Orphan Cleanup Rules (+2 more)
+Cohesion: 0.20
+Nodes (9): Cleanup Candidates, Database Cleanup Inventory, Emulator Data, Generated And Rebuildable, Keep, Live Top-Level Branches, Local Storage Keys, Orphan Cleanup Rules (+1 more)
 
 ### Community 144 - "Raid Stats Implementation"
-Cohesion: 0.18
-Nodes (10): Cache Keys, Cost Notes, Data Sources, Database Shape, Firebase Functions, Frontend Behavior, Raid Stats Implementation, Refresh Behavior (+2 more)
+Cohesion: 0.20
+Nodes (9): Cache Keys, Cost Notes, Data Sources, Database Shape, Firebase Functions, Frontend Behavior, Raid Stats Implementation, Refresh Behavior (+1 more)
 
 ### Community 145 - "Website Overview"
 Cohesion: 0.20
 Nodes (9): Admin Features, Data Sources And Integrations, Deeper Docs, Local Development Modes, Main Audiences, Member And FC Data Features, Public And Community Features, Tools (+1 more)
 
 ### Community 146 - "Firebase Data And Costs"
-Cohesion: 0.17
-Nodes (11): Cache Keys, Clubhouse Hat Updates, Cost And Read Rules, Data Access Rules, Database Shape, Firebase Data And Costs, Firebase Functions, Game Server Cost Notes (+3 more)
+Cohesion: 0.18
+Nodes (10): Cache Keys, Cost And Read Rules, Data Access Rules, Database Shape, Firebase Data And Costs, Firebase Functions, Game Server Cost Notes, Ownership Boundaries (+2 more)
 
 ### Community 147 - "Frontend Patterns"
 Cohesion: 0.22
@@ -642,8 +655,8 @@ Cohesion: 0.18
 Nodes (10): Current Phase, Deferred Work, Game Server Dashboard Progress, Locked Decisions, Overall Checklist, Phase 1 Checklist, Phase 2 Checklist, Phase 3 Checklist (+2 more)
 
 ### Community 151 - "adminFunctions.ts"
-Cohesion: 0.23
-Nodes (12): callAdminFunction(), deleteGameServerAccess(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAccessCandidates(), listGameServerAuditLog(), updateGameServerSettings() (+4 more)
+Cohesion: 0.19
+Nodes (11): deleteGameServerAccess(), GameServerAccessInput, getGameServerSettings(), listGameServerAccess(), listGameServerAccessCandidates(), listGameServerAuditLog(), updateGameServerSettings(), upsertGameServerAccess() (+3 more)
 
 ### Community 152 - "cloudWatchQuery"
 Cohesion: 0.13
@@ -698,24 +711,24 @@ Cohesion: 0.39
 Nodes (6): mutateSpudJar(), nextSpudJarRecord(), parseSpudJarBatchCount(), readCurrent(), SpudJarAction, SpudJarRecord
 
 ## Knowledge Gaps
-- **871 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+866 more)
+- **866 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+861 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `item()` connect `Community 53` to `Community 45`, `Community 29`?**
-  _High betweenness centrality (0.165) - this node is a cross-community bridge._
-- **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
-  _High betweenness centrality (0.120) - this node is a cross-community bridge._
 - **Why does `progress()` connect `Community 9` to `Community 8`?**
-  _High betweenness centrality (0.119) - this node is a cross-community bridge._
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `fetchTomestoneProgressionGraph()` connect `Community 9` to `Community 2`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `Community 24` to `Community 8`, `Community 60`, `Community 93`?**
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
-  _871 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _866 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06483075157773953 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06386554621848739 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.07191358024691358 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.022263450834879406 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.02178217821782178 - nodes in this community are weakly interconnected._

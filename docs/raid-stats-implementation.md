@@ -35,6 +35,12 @@ Related refreshes:
 
 ## Database Shape
 
+### Retired DMU tracker
+
+The completed DMU tracker has been removed. `/dmu-prog` uses normal not-found behavior, and `triggerDmuProgressRefresh` and its `DMU_PROGGERS` parameter declaration are removed. Delete the deployed callable before removing `/raidStats/dmuProgress`, allowing its 300-second execution window to drain first. This branch contains the tracker's player pull histories, activity, summary, timestamp, and source diagnostics; remove it from local emulator exports too.
+
+Normal Dancing Mad raid results under `/raidStats/zones/76`, member Tomestone activity and profiles, shared diagnostics, and the generic progression graph cache remain active. Shared Tomestone refreshes do not write the retired tracker branch. The retirement removes tracker page reads and manual refresh costs without changing daily maintenance.
+
 FFLogs-owned paths:
 
 - `/raidStats/lastUpdated`

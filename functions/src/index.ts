@@ -28,7 +28,6 @@ import {
 } from "./sync-discord-planner-events";
 import {
   fetchTomestoneProgressionGraph,
-  runRefreshDmuProgress,
   runRefreshTomestoneRaidStats,
 } from "./refresh-tomestone-raid-stats";
 import {
@@ -84,7 +83,6 @@ admin.initializeApp({
 const fflogsClientId = defineString("FFLOGS_CLIENT_ID");
 const fflogsClientSecret = defineSecret("FFLOGS_CLIENT_SECRET");
 const tomestoneBearerToken = defineSecret("TOMESTONE_BEARER_TOKEN");
-const dmuProggers = defineString("DMU_PROGGERS", { default: "" });
 const discordPublicKey = defineString("DISCORD_PUBLIC_KEY");
 const discordClientId = defineString("DISCORD_CLIENT_ID");
 const discordClientSecret = defineSecret("DISCORD_CLIENT_SECRET");
@@ -366,22 +364,6 @@ export const triggerTomestoneRaidStatsRefresh = onCall(
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
     return { ok: true };
-  },
-);
-
-export const triggerDmuProgressRefresh = onCall(
-  {
-    secrets: [tomestoneBearerToken, discordBotToken],
-    timeoutSeconds: 300,
-    region: "us-central1",
-  },
-  async (request) => {
-    await requireAdminSession(request.data, adminAuthConfig());
-    const sourceStatus = await runRefreshDmuProgress(
-      tomestoneBearerToken.value(),
-      dmuProggers.value(),
-    );
-    return { ok: true, sourceStatus };
   },
 );
 

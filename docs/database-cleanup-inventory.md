@@ -79,6 +79,12 @@ These branches are active, but they are generated from external sources. They ca
 
 ## Cleanup Candidates
 
+### Retired DMU tracker
+
+`/raidStats/dmuProgress` is retired with the completed DMU tracker. Remove only this branch after deleting the deployed `triggerDmuProgressRefresh` callable in `us-central1` and waiting its 300-second maximum execution window. Take a temporary branch-only backup outside the repository, verify deletion, then remove the backup. Remove the same branch from local emulator data so later imports cannot restore it.
+
+Preserve `/raidStats/zones/76`, `/memberActivity`, member Tomestone profiles, `/memberProgressionGraphs`, and shared refresh diagnostics. Ordinary DMU raid results and the shared Tomestone integration remain in use. Verify the retired branch stays absent after the next normal maintenance run.
+
 These branches were present live but are not referenced by current app or function code:
 
 - `/portraitOverrides`

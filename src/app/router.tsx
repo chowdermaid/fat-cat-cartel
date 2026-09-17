@@ -22,7 +22,6 @@ import { CalendarPage } from "@/features/calendar";
 import { CraftingBoardPage } from "@/features/craftingboard";
 import { MeowketBoardPage } from "@/features/meowket-board";
 import { SpudJarPage } from "@/features/spud-jar";
-import { DmuProgPage } from "@/features/dmu-prog";
 import {
   GameServerIndexPage,
   PalworldServerPage,
@@ -78,12 +77,6 @@ const raidStatsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/raid-stats",
   component: RaidStatsPage,
-});
-
-const dmuProgRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/dmu-prog",
-  component: DmuProgPage,
 });
 
 const mountRouletteRoute = createRoute({
@@ -155,7 +148,6 @@ const routeTree = rootRoute.addChildren([
   fcTypeRoute,
   fcLeaderboardRoute,
   raidStatsRoute,
-  dmuProgRoute,
   mountRouletteRoute,
   craftingBoardRoute,
   meowketBoardRoute,
