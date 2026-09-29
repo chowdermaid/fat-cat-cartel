@@ -25,6 +25,7 @@ import { SpudJarPage } from "@/features/spud-jar";
 import {
   GameServerIndexPage,
   PalworldServerPage,
+  DragonwildsServerPage,
 } from "@/features/gameserver";
 
 const rootRoute = createRootRoute({
@@ -115,6 +116,12 @@ const palworldServerRoute = createRoute({
   component: PalworldServerPage,
 });
 
+const dragonwildsServerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gameserver/dragonwilds",
+  component: DragonwildsServerPage,
+});
+
 const calendarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calendar",
@@ -154,6 +161,7 @@ const routeTree = rootRoute.addChildren([
   spudJarRoute,
   gameServerIndexRoute,
   palworldServerRoute,
+  dragonwildsServerRoute,
   calendarRoute,
   adminRoute,
   membersRoute,

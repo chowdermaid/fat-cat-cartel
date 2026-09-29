@@ -1,3 +1,6 @@
+import { readGameServerAccessStore, upsertLocalGameServerAccess, deleteLocalGameServerAccess } from "@/lib/dev/gameServerAccess";
+import { DEV_AUTH_LAYER_ENABLED } from "@/lib/dev/personas";
+import { stubGameServerAuditLog, stubGameServerSettings, stubUpdateGameServerSettings } from "@/features/gameserver/api/gameServerStubs";
 import { callAdminFunction } from "./adminFunctions";
 import type {
   GameServerAccessCandidatesResponse,
@@ -9,6 +12,8 @@ import type {
   GameServerSettingsResponse,
 } from "@/features/gameserver/types";
 
+const USE_STUBS = import.meta.env.DEV && import.meta.env.VITE_USE_STUBS === "true" && !DEV_AUTH_LAYER_ENABLED;
+
 export type GameServerAccessInput = {
   discordUserId: string;
   displayName: string;
@@ -17,39 +22,47 @@ export type GameServerAccessInput = {
   notes: string | null;
 };
 
-export function listGameServerAccess(adminSessionToken: string) {
+export async function listGameServerAccess(adminSessionToken: string, serverId: GameServerId = "palworld") {
+  if (USE_STUBS) return { ok: true as const, entries: Object.values(readGameServerAccessStore(serverId)).sort((a, b) => a.displayName.localeCompare(b.displayName)) };
   return callAdminFunction<GameServerAccessListResponse>(
     "listGameServerAccess",
     adminSessionToken,
+    { serverId },
   );
 }
 
-export function listGameServerAccessCandidates(adminSessionToken: string) {
+export async function listGameServerAccessCandidates(adminSessionToken: string, serverId: GameServerId = "palworld") {
+  if (USE_STUBS) return { ok: true as const, candidates: [], legacyEntries: (await listGameServerAccess(adminSessionToken, serverId)).entries };
   return callAdminFunction<GameServerAccessCandidatesResponse>(
     "listGameServerAccessCandidates",
     adminSessionToken,
+    { serverId },
   );
 }
 
-export function upsertGameServerAccess(
+export async function upsertGameServerAccess(
   adminSessionToken: string,
   input: GameServerAccessInput,
+  serverId: GameServerId = "palworld",
 ) {
+  if (USE_STUBS) return upsertLocalGameServerAccess(input, "local-dev", serverId);
   return callAdminFunction<GameServerAccessUpsertResponse>(
     "upsertGameServerAccess",
     adminSessionToken,
-    input,
+    { ...input, serverId },
   );
 }
 
-export function deleteGameServerAccess(
+export async function deleteGameServerAccess(
   adminSessionToken: string,
   discordUserId: string,
+  serverId: GameServerId = "palworld",
 ) {
+  if (USE_STUBS) return deleteLocalGameServerAccess(discordUserId, serverId);
   return callAdminFunction<{ ok: true }>(
     "deleteGameServerAccess",
     adminSessionToken,
-    { discordUserId },
+    { discordUserId, serverId },
   );
 }
 
@@ -57,6 +70,7 @@ export function listGameServerAuditLog(
   adminSessionToken: string,
   serverId: GameServerId = "palworld",
 ) {
+  if (USE_STUBS) return stubGameServerAuditLog(serverId);
   return callAdminFunction<GameServerAuditLogResponse>(
     "listGameServerAuditLog",
     adminSessionToken,
@@ -64,10 +78,12 @@ export function listGameServerAuditLog(
   );
 }
 
-export function getGameServerSettings(adminSessionToken: string) {
+export function getGameServerSettings(adminSessionToken: string, serverId: GameServerId = "palworld") {
+  if (USE_STUBS) return stubGameServerSettings(serverId);
   return callAdminFunction<GameServerSettingsResponse>(
     "getGameServerSettings",
     adminSessionToken,
+    { serverId },
   );
 }
 
@@ -79,6 +95,7 @@ export function updateGameServerSettings(
     disabledMessage: string | null;
   },
 ) {
+  if (USE_STUBS) return stubUpdateGameServerSettings(input);
   return callAdminFunction<GameServerSettingsResponse>(
     "updateGameServerSettings",
     adminSessionToken,

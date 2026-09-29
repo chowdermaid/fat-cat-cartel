@@ -6,10 +6,13 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { getGameServers } from "../api/gameServerFunctions";
 import { useGameServerAuth } from "../hooks/useGameServerAuth";
 import type { GameServersResponse } from "../types";
 import { PalworldServerIndexCard } from "./palworld/PalworldServerIndexCard";
+import { DragonwildsServerIndexCard } from "./dragonwilds/DragonwildsServerIndexCard";
+import { gameServerIdentity, isGameServerAccessError } from "../utils/dragonwilds";
 
 type GameServerCard = GameServersResponse["servers"][number];
 
@@ -47,12 +50,13 @@ function GameServerIndexLoading() {
   );
 }
 
-export function GameServerIndexPage() {
-  const auth = useGameServerAuth();
+function GameServerCatalog({ auth }: { auth: ReturnType<typeof useGameServerAuth> }) {
   const [servers, setServers] =
     useState<GameServerCard[]>([]);
   const [serverError, setServerError] = useState<string | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (!auth.sessionToken || !auth.canUseGameServers) return;
@@ -63,12 +67,15 @@ export function GameServerIndexPage() {
         setServers(result.servers);
         setServerError(null);
         setAccessDenied(false);
+        setLoaded(true);
       })
       .catch((err) => {
         if (cancelled) return;
+        setLoaded(true);
         const message =
           err instanceof Error ? err.message : "Failed to load game servers.";
-        if (message.toLowerCase().includes("whitelist")) {
+        if (isGameServerAccessError(err)) {
+          setServers([]);
           setAccessDenied(true);
           setServerError(null);
           return;
@@ -78,35 +85,13 @@ export function GameServerIndexPage() {
     return () => {
       cancelled = true;
     };
-  }, [auth.canUseGameServers, auth.sessionToken]);
-
-  if (auth.checking) {
-    return null;
-  }
-
-  if (!auth.authed) {
-    return (
-      <AuthAccessState
-        title="Game Servers"
-        description={
-          "Login with Discord to view game server access."
-        }
-        error={auth.error}
-        checking={auth.checking}
-        onLogin={auth.login}
-      />
-    );
-  }
+  }, [auth.canUseGameServers, auth.sessionToken, retry]);
 
   if (accessDenied) {
-    return null;
+    return <AuthAccessState title="Game server access required" description="An active game-server grant or admin access is required. Contact a Free Company admin." showLogin={false} />;
   }
 
-  if (!auth.canUseGameServers) {
-    return null;
-  }
-
-  if (!servers.length && !serverError) {
+  if (!loaded) {
     return <GameServerIndexLoading />;
   }
 
@@ -128,16 +113,27 @@ export function GameServerIndexPage() {
         <Card className="border-destructive/30 bg-destructive/5">
           <CardContent className="py-4 text-sm text-destructive">
             {serverError}
+            <Button variant="outline" className="ml-3" onClick={() => { setLoaded(false); setRetry((value) => value + 1); }}>Retry catalog</Button>
           </CardContent>
         </Card>
       )}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {servers.map((server) => (
-          <PalworldServerIndexCard key={server.id} server={server} />
+          server.id === "palworld" ? <PalworldServerIndexCard key={server.id} server={server} /> :
+          server.id === "dragonwilds" ? <DragonwildsServerIndexCard key={server.id} server={server} /> : null
         ))}
       </div>
+      {!servers.length && !serverError && <p className="text-sm text-muted-foreground">No game servers available.</p>}
 
     </div>
   );
+}
+
+export function GameServerIndexPage() {
+  const auth = useGameServerAuth();
+  if (auth.checking) return <GameServerIndexLoading />;
+  if (!auth.authed) return <AuthAccessState title="Game Servers" description="Login with Discord to view game server access." error={auth.error} onLogin={auth.login} />;
+  if (!auth.canUseGameServers) return <AuthAccessState title="Game server access required" description="An active game-server grant or admin access is required. Contact a Free Company admin." showLogin={false} />;
+  return <GameServerCatalog key={gameServerIdentity(auth)} auth={auth} />;
 }

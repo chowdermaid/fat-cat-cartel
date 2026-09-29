@@ -53,7 +53,7 @@ Admin sessions live at `/adminSessions/{sessionIdHash}`:
 - `isMember`
 - `isAdmin`
 - `isHousecat` is returned by `getAdminSession` for client gating but is derived from live Discord roles, not stored as an auth authority.
-- `canUseGameServers` is returned by `getAdminSession` from the live admin result or the active `/gameServerAccess/{discordUserId}` entitlement so the client does not need a second access bootstrap call.
+- `getAdminSession` computes `gameServerAccessById: { palworld, dragonwilds }` from live admin verification or each independent grant. `canUseGameServers` is their aggregate OR for navigation. Neither field is persisted or accepted as backend authority; no second access bootstrap call is needed.
 - `createdAt`
 - `expiresAt`
 - `lastSeenAt`
@@ -76,7 +76,7 @@ The UI displays linked in-game character data from `/members/{lodestoneId}`: ful
 - Logged-in users can edit their own `/members/{lodestoneId}` profile fields: bio, birthday, main jobs, timezone, favorite owned mount, favorite owned minion, favorite content type, and Clubhouse hat. The hat picker offers five bundled accessories with a preview and saves through the existing profile action. Boss/Underpaw admins have the same picker when editing members. The browser never sends the target Lodestone ID for self-edits; Functions derive it from the session.
 - Only sessions with `isAdmin: true` see the Admin sidebar link or pass the `/admin` page gate.
 - Linked sessions with a configured member role can access `/meowketboard`; Meowket search and calculation callables use member-session authorization, not admin-only authorization.
-- Any base session can open Palworld only when its immutable Discord ID has an active, non-expired `/gameServerAccess` entitlement. Boss and Underpaw sessions retain a live-admin bypass.
+- Any valid base session, including an unlinked Discord identity, can open a game only with its own active grant: `/gameServerAccess` for Palworld, `/dragonwildsServerAccess` for Dragonwilds. Boss and Underpaw retain a live-admin bypass. Membership alone grants neither game.
 - Sessions with `isHousecat: true` can submit calendar event requests from `/calendar`, but cannot approve requests or use admin callables.
 - The `/admin` page uses a reusable access-state component. Password auth is deprecated and no password gate is rendered.
 - The admin client feature follows the standard feature structure under `src/features/admin`: the route export stays thin in `index.tsx`, callable helpers live in `api/`, stateful orchestration lives in `hooks/`, pure display/cache/auth helpers live in `utils/`, and admin UI is grouped under `components/`.
@@ -122,11 +122,19 @@ Public reads remain available where the app needs them. Client writes are denied
 
 Functions write these paths through the Admin SDK after server-side role authorization.
 
-## Palworld Entitlements
+## Independent Game Server Entitlements
 
-Palworld entitlements live at `/gameServerAccess/{discordUserId}` and remain private to trusted Functions. Legacy `enabled: true` entries without `expiresAt` remain active and non-expiring. New records can include nullable `expiresAt`, `updatedBy`, notes, grant actor, and timestamps. Missing, disabled, malformed, or expired entries are denied on the next Palworld request. Entitlements never grant FFXIV member or admin access.
+Palworld uses the existing private `/gameServerAccess/{discordUserId}` root. Dragonwilds uses `/dragonwildsServerAccess/{discordUserId}`, initially empty. Both use the existing grant schema: enabled, optional expiry, display name, notes and actor/timestamp fields. Existing Palworld records are not moved or copied; legacy enabled entries without expiry remain non-expiring. Missing, disabled, malformed, expired or wrong-game grants deny access. Entitlements never grant FFXIV member/admin access.
 
-Game-server callables authorize direct entitlements immediately after base-session validation. They call Discord for live Boss or Underpaw verification only when no direct entitlement exists and an admin bypass may apply.
+Callables validate the requested game, validate the base session, read its individual grant once, then use live admin fallback only when needed. Authorized service results carry a server-verified capability map; every detail, telemetry, action and event service checks its selected game before protected work. Catalog checks both entries and verifies live admin at most once, then filters games before settings/config/AWS reads. No client-supplied access map, cached admin flag or instance ID is trusted.
+
+Grant list, candidate, upsert/delete and access-status calls accept `serverId`. Omission means Palworld for compatibility; unknown explicit IDs fail. New UI always sends the selected ID. Grant/settings/candidate/audit management stays live-admin-only. Both grant roots deny anonymous and Firebase-authenticated browser reads/writes, including claimed admin roles.
+
+The admin selector controls one game's list and availability; switching resets unsaved fields. Mutation locks prevent switching during saves. Request generations and keyed game/session forms discard late results and errors after switching, logout or admin loss. Separate refresh controls avoid unrelated list/settings reads.
+
+Detail hooks use only their selected session capability; missing maps fail closed even if an old aggregate/admin hint is present. Catalog identity includes both capabilities. Access/identity changes invalidate pending read deduplication and clear protected page state, including when aggregate access remains true. Production revocation is enforced on the next callable, with no new realtime subscription or authorization polling.
+
+Development retains `fcc_dev_data_game-server-access` as Palworld-only and adds empty `fcc_dev_data_dragonwilds-server-access`. Persona mode takes precedence over direct stubs; direct local admins retain bypass and offline grant CRUD. Notifications recompute both capabilities and re-arm the earliest active expiry without polling. See Phase 5's checklist record for tests and outstanding browser checks.
 
 ## Local Emulator Development
 
@@ -234,7 +242,7 @@ Manual checks:
 - Browser attempts to edit another member's profile fail because self profile updates derive Lodestone ID from the verified session.
 - Logout deletes the server session.
 - Direct browser RTDB writes fail for admin-owned paths.
-- Game-server access requires a linked member/admin session; unlinked Discord users cannot use `/gameserver`.
+- Game-server access requires a valid base session and the selected active grant or live Boss/Underpaw bypass. Unlinked Discord identities with an active grant can use that game; membership and cached admin claims alone grant neither game.
 - Public members, collection, raid stats, and Easter scoreboard reads still work.
 - Discord friend signup, linking, status, and profile view slash commands still work. Profile editing slash commands were removed because profile edits now live on the website.
 - Discord `/clear-channel` denies non-admin members, requires confirmation from the initiating admin, cancels without deleting, and reports that messages older than 14 days may remain.
@@ -244,3 +252,9 @@ Manual checks:
 Self and admin profile editors use two columns from the medium breakpoint: Clubhouse hat, bio, birthday, and timezone on the left; favorite mount/minion, favorite content, and main jobs on the right. Admin rank stays on the left. Smaller screens stack the columns. A bounded ScrollArea keeps Save/Cancel visible.
 
 The shared MainJobsPicker groups all 34 jobs into combat/limited, crafting, and gathering. Blue Mage, Beastmaster, all eight crafting classes, Miner, Botanist, and Fisher are supported by both existing profile callables. Up to eight main jobs can be selected across groups; at the limit, unselected buttons are disabled while selected ones can still be removed. No extra Firebase reads, write operations, or Function calls are added. Deploy the updated profile Functions before the frontend to enable the additional choices.
+
+### Phase 6 local security verification
+
+The registered `functions/src/game-servers.test.ts` exercises the real mocked callable boundaries, including independent grants, unlinked identities, expired/revoked sessions, removed live roles, scope mismatch and denial before protected/AWS work. Together with `authorization-policy.test.ts`, 32 tests pass. Synthetic credential, raw-output and player-IP markers are absent from returned payloads and stored audits. These assertions do not establish live IAM or host security.
+
+`npm run test:rules` passes 20 emulator tests using `demo-fat-cat-cartel`: anonymous, authenticated and admin-claim clients cannot read/write either grant root or either game's settings, idle state, cost and audit paths, including parent/leaf paths. Public member/profile, collection, activity, raid, calendar, crafting, Easter and Spud Jar regressions remain covered. Browser UI and live operator evidence remain open; see the [Phase 6 record](../DRAGONWILDS_PHASED_IMPLEMENTATION.md#phase-6-local-implementation-record---29-september-2026).

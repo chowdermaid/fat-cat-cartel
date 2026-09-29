@@ -49,6 +49,11 @@
       ".write": false
     },
 
+    "dragonwildsServerAccess": {
+      ".read": false,
+      ".write": false
+    },
+
     "gameServerAccess": {
       ".read": false,
       ".write": false

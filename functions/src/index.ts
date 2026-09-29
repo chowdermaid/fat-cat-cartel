@@ -64,13 +64,17 @@ import {
   listGameServerAccessForAdmin,
   listGameServerAccessCandidatesForAdmin,
   listGameServersForSession,
+  parseCatalogServerIds,
   parsePort,
-  requireGameServerAccess,
+  parseServerId,
+  parseOptionalServerId,
   runAutoStopIdleGameServers,
   startGameServerForSession,
   stopGameServerForSession,
   updateGameServerSettingsForAdmin,
   upsertGameServerAccessForAdmin,
+  type GameServerId,
+  type GameServerAwsConfig,
 } from "./game-servers";
 
 const DEFAULT_DATABASE_URL =
@@ -109,6 +113,11 @@ const palworldCloudWatchNamespace = defineString("PALWORLD_CLOUDWATCH_NAMESPACE"
 const palworldAdminPassword = defineString("PALWORLD_ADMIN_PASSWORD", {
   default: "",
 });
+const dragonwildsInstanceId = defineString("DRAGONWILDS_INSTANCE_ID", { default: "" });
+const dragonwildsGamePort = defineString("DRAGONWILDS_GAME_PORT", { default: "7777" });
+const dragonwildsWorldName = defineString("DRAGONWILDS_WORLD_NAME", { default: "" });
+const dragonwildsCloudWatchNamespace = defineString("DRAGONWILDS_CLOUDWATCH_NAMESPACE", { default: "CWAgent" });
+const dragonwildsCapacity = defineString("DRAGONWILDS_CAPACITY", { default: "" });
 const awsAccessKeyId = defineSecret("AWS_ACCESS_KEY_ID");
 const awsSecretAccessKey = defineSecret("AWS_SECRET_ACCESS_KEY");
 const raidHelperFallbackLeaderId = defineString(
@@ -163,39 +172,35 @@ function discordOAuthConfig() {
   };
 }
 
-async function authorizedGameServerSession(data: unknown) {
+async function authorizedGameServerSession(data: unknown, serverIds: GameServerId[]) {
   const baseSession = await requireAuthenticatedSession(data);
-  const directAccessSession = { ...baseSession, isAdmin: false };
-  let directAccessError: HttpsError;
-  try {
-    return await requireGameServerAccess(directAccessSession);
-  } catch (error) {
-    if (!(error instanceof HttpsError) || error.code !== "permission-denied") {
-      throw error;
+  const gameServerAccessById = { palworld: false, dragonwilds: false };
+  await Promise.all(serverIds.map(async (serverId) => {
+    const access = await getGameServerAccessStatusForIdentity(baseSession.discordUserId, false, serverId);
+    gameServerAccessById[serverId] = access.canUseGameServers;
+  }));
+  if (serverIds.some((id) => !gameServerAccessById[id])) {
+    try {
+      const adminSession = await requireAdminSession(data, adminAuthConfig(), baseSession);
+      for (const id of serverIds) gameServerAccessById[id] = true;
+      return { ...adminSession, gameServerAccessById };
+    } catch (error) {
+      if (error instanceof HttpsError && error.code === "unauthenticated") throw error;
     }
-    directAccessError = error;
   }
-
-  try {
-    const adminSession = await requireAdminSession(
-      data,
-      adminAuthConfig(),
-      baseSession,
-    );
-    return requireGameServerAccess(adminSession);
-  } catch (error) {
-    if (error instanceof HttpsError && error.code === "unauthenticated") {
-      throw error;
-    }
-    throw directAccessError;
+  if (!serverIds.some((id) => gameServerAccessById[id])) {
+    throw new HttpsError("permission-denied", "Game server whitelist required.");
   }
+  return { ...baseSession, isAdmin: false, gameServerAccessById };
 }
 
 async function gameServerAccessStatus(data: unknown) {
+  const serverId = parseOptionalServerId(data);
   const baseSession = await requireAuthenticatedSession(data);
   const directStatus = await getGameServerAccessStatusForIdentity(
     baseSession.discordUserId,
     false,
+    serverId,
   );
   if (directStatus.canUseGameServers) return directStatus;
 
@@ -208,6 +213,7 @@ async function gameServerAccessStatus(data: unknown) {
     return getGameServerAccessStatusForIdentity(
       adminSession.discordUserId,
       adminSession.isAdmin === true,
+      serverId,
     );
   } catch (error) {
     if (error instanceof HttpsError && error.code === "unauthenticated") {
@@ -272,8 +278,29 @@ function birthdayNotificationConfig() {
   };
 }
 
-function gameServerAwsConfig() {
+function gameServerAwsConfig(serverId: GameServerId): GameServerAwsConfig {
+  if (serverId === "dragonwilds") {
+    const instanceId = dragonwildsInstanceId.value().trim();
+    if (instanceId && instanceId === palworldInstanceId.value().trim()) {
+      throw new HttpsError("failed-precondition", "Dragonwilds must use a separate EC2 instance.");
+    }
+    const capacity = Number(dragonwildsCapacity.value());
+    return {
+      serverId,
+      region: awsRegion.value(),
+      instanceId,
+      accessKeyId: awsAccessKeyId.value(),
+      secretAccessKey: awsSecretAccessKey.value(),
+      gamePort: parsePort(dragonwildsGamePort.value(), 7777),
+      queryPort: null,
+      cloudWatchNamespace: dragonwildsCloudWatchNamespace.value() || "CWAgent",
+      adminPassword: "",
+      worldName: dragonwildsWorldName.value().trim(),
+      capacity: Number.isInteger(capacity) && capacity > 0 ? capacity : null,
+    };
+  }
   return {
+    serverId,
     region: awsRegion.value(),
     instanceId: palworldInstanceId.value(),
     accessKeyId: awsAccessKeyId.value(),
@@ -645,11 +672,12 @@ export const getAdminSession = onCall(
       request.data,
       adminAuthConfigWithSingleMemberRoleAndHousecat(),
     );
-    const access = await getGameServerAccessStatusForIdentity(
-      session.discordUserId,
-      session.isAdmin,
-    );
-    return { ...session, canUseGameServers: access.canUseGameServers };
+    const [palworld, dragonwilds] = await Promise.all([
+      getGameServerAccessStatusForIdentity(session.discordUserId, session.isAdmin, "palworld"),
+      getGameServerAccessStatusForIdentity(session.discordUserId, session.isAdmin, "dragonwilds"),
+    ]);
+    const gameServerAccessById = { palworld: palworld.canUseGameServers, dragonwilds: dragonwilds.canUseGameServers };
+    return { ...session, gameServerAccessById, canUseGameServers: gameServerAccessById.palworld || gameServerAccessById.dragonwilds };
   },
 );
 
@@ -708,8 +736,9 @@ export const getGameServers = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const accessSession = await authorizedGameServerSession(request.data);
-    return listGameServersForSession(accessSession, gameServerAwsConfig());
+    const serverIds = parseCatalogServerIds(request.data);
+    const accessSession = await authorizedGameServerSession(request.data, serverIds);
+    return listGameServersForSession(accessSession, gameServerAwsConfig, serverIds);
   },
 );
 
@@ -721,11 +750,11 @@ export const getGameServerStatus = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const accessSession = await authorizedGameServerSession(request.data);
+    const accessSession = await authorizedGameServerSession(request.data, [parseServerId(request.data)]);
     return getGameServerStatusForSession(
       request.data,
       accessSession,
-      gameServerAwsConfig(),
+      gameServerAwsConfig,
     );
   },
 );
@@ -738,11 +767,11 @@ export const getGameServerTelemetry = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const accessSession = await authorizedGameServerSession(request.data);
+    const accessSession = await authorizedGameServerSession(request.data, [parseServerId(request.data)]);
     return getGameServerTelemetryForSession(
       request.data,
       accessSession,
-      gameServerAwsConfig(),
+      gameServerAwsConfig,
     );
   },
 );
@@ -755,11 +784,11 @@ export const startGameServer = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const accessSession = await authorizedGameServerSession(request.data);
+    const accessSession = await authorizedGameServerSession(request.data, [parseServerId(request.data)]);
     return startGameServerForSession(
       request.data,
       accessSession,
-      gameServerAwsConfig(),
+      gameServerAwsConfig,
     );
   },
 );
@@ -772,11 +801,11 @@ export const stopGameServer = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const accessSession = await authorizedGameServerSession(request.data);
+    const accessSession = await authorizedGameServerSession(request.data, [parseServerId(request.data)]);
     return stopGameServerForSession(
       request.data,
       accessSession,
-      gameServerAwsConfig(),
+      gameServerAwsConfig,
     );
   },
 );
@@ -789,7 +818,7 @@ export const listGameServerEvents = onCall(
     region: "us-central1",
   },
   async (request) => {
-    const accessSession = await authorizedGameServerSession(request.data);
+    const accessSession = await authorizedGameServerSession(request.data, [parseOptionalServerId(request.data)]);
     return listGameServerAuditLogForSession(request.data, accessSession);
   },
 );
@@ -802,7 +831,7 @@ export const autoStopIdleGameServers = onSchedule(
     region: "us-central1",
   },
   async () => {
-    await runAutoStopIdleGameServers(gameServerAwsConfig());
+    await runAutoStopIdleGameServers(gameServerAwsConfig);
   },
 );
 
@@ -815,7 +844,7 @@ export const getGameServerSettings = onCall(
   },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
-    return getGameServerSettingsForAdmin();
+    return getGameServerSettingsForAdmin(request.data);
   },
 );
 
@@ -841,7 +870,7 @@ export const listGameServerAccess = onCall(
   },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
-    return listGameServerAccessForAdmin();
+    return listGameServerAccessForAdmin(request.data);
   },
 );
 
@@ -854,7 +883,7 @@ export const listGameServerAccessCandidates = onCall(
   },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
-    return listGameServerAccessCandidatesForAdmin();
+    return listGameServerAccessCandidatesForAdmin(request.data);
   },
 );
 

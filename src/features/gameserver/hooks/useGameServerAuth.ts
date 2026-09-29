@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
-import type { GameServerAccessState } from "../types";
+import type { GameServerAccessState, GameServerId } from "../types";
 
 const GAME_SERVER_ACCESS_KEY = "game_server_session_has_access";
 
@@ -25,17 +25,17 @@ function storeSessionCanUseGameServers(value: boolean): void {
   localStorage.setItem(GAME_SERVER_ACCESS_KEY, value ? "true" : "false");
 }
 
-export function useGameServerAuth(): GameServerAccessState {
+export function useGameServerAuth(serverId?: GameServerId): GameServerAccessState {
   const auth = useAdminAuth();
   const name = displayName(auth);
-  const canUseGameServers =
-    auth.session?.canUseGameServers === true || auth.session?.isAdmin === true;
+  const aggregate = auth.session?.canUseGameServers === true;
+  const canUseGameServers = serverId ? auth.session?.gameServerAccessById?.[serverId] === true : aggregate;
 
   useEffect(() => {
     if (!auth.checking) {
-      storeSessionCanUseGameServers(auth.authed && canUseGameServers);
+      storeSessionCanUseGameServers(auth.authed && aggregate);
     }
-  }, [auth.authed, auth.checking, canUseGameServers]);
+  }, [auth.authed, auth.checking, aggregate]);
 
   const sessionWasAllowedGameServers =
     canUseGameServers || (auth.checking && storedSessionCanUseGameServers());

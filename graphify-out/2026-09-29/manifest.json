@@ -2685,8 +2685,8 @@
     "semantic_hash": ""
   },
   "src/features/gameserver/components/dragonwilds/DragonwildsServerIndexCard.tsx": {
-    "mtime": 1790675175.3818252,
-    "ast_hash": "1fa0f7a716a4212e68e6cf38d37c158a",
+    "mtime": 1790664632.884346,
+    "ast_hash": "6f0b2ecda409946665b2bf87e14acbe1",
     "semantic_hash": ""
   },
   "src/features/gameserver/hooks/dragonwildsController.ts": {
@@ -2705,8 +2705,8 @@
     "semantic_hash": ""
   },
   "tests/dragonwilds-dashboard.test.mjs": {
-    "mtime": 1790675175.383363,
-    "ast_hash": "b5f2e2fac4bdfa2a501621cc2ea35339",
+    "mtime": 1790675110.4227593,
+    "ast_hash": "9d60ddea8a6085832c8254561366f43a",
     "semantic_hash": ""
   },
   "DRAGONWILDS_PHASE_4_HANDOFF.md": {

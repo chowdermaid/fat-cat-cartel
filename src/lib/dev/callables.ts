@@ -1,3 +1,7 @@
+import type { GameServerId } from "@/features/gameserver/types";
+import type { GameServerFixture } from "@/features/gameserver/api/gameServerFixtures";
+import { createGameServerMockState, parseMockCatalogServerIds, parseMockServerId } from "@/features/gameserver/api/gameServerMockState";
+import { devGameServerAccessStatus, devGameServerCapabilities, readGameServerAccessStore, upsertLocalGameServerAccess, deleteLocalGameServerAccess } from "./gameServerAccess";
 import {
   acceptDevCraftingRequest,
   closeDevCraftingRequest,
@@ -42,47 +46,8 @@ type CalendarStore = {
   events: Record<string, unknown>;
 };
 
-type GameServerAccessEntry = {
-  discordUserId: string;
-  displayName: string;
-  enabled: boolean;
-  expiresAt: number | null;
-  notes: string | null;
-  addedBy: string;
-  addedAt: number;
-  updatedBy: string;
-  updatedAt: number;
-};
-
-type GameServerAuditLogEntry = {
-  id: string;
-  serverId: "palworld";
-  action: "start" | "stop" | "auto-stop" | "settings";
-  result: "requested" | "noop" | "blocked" | "failed";
-  statusBefore: "running" | "stopped" | "disabled" | "unknown";
-  statusAfter?: "running" | "stopped" | "disabled" | "unknown";
-  message: string;
-  requestedByDiscordUserId: string;
-  requestedByDisplayName?: string;
-  isAdmin: boolean;
-  instanceId?: string;
-  createdAt: number;
-};
-
-type GameServerSettings = {
-  serverId: "palworld";
-  enabled: boolean;
-  disabledMessage: string | null;
-  updatedAt: number;
-  updatedBy: string | null;
-};
-
 const handlers = new Map<string, DevCallableHandler>();
 const CALENDAR_FEATURE = "calendar";
-const GAME_SERVER_ACCESS_FEATURE = "game-server-access";
-const GAME_SERVER_STATUS_FEATURE = "game-server-status";
-const GAME_SERVER_AUDIT_FEATURE = "game-server-audit";
-const GAME_SERVER_SETTINGS_FEATURE = "game-server-settings";
 
 function assertDevLayer(): void {
   if (!DEV_AUTH_LAYER_ENABLED) {
@@ -268,146 +233,6 @@ function creatorFromPersona(persona: DevPersona): CalendarRequestCreator {
   };
 }
 
-function readGameServerAccessStore(): Record<string, GameServerAccessEntry> {
-  if (typeof window === "undefined") return {};
-  const raw = window.localStorage.getItem(
-    devStorageKey(GAME_SERVER_ACCESS_FEATURE),
-  );
-  if (!raw) return {};
-  try {
-    const parsed = JSON.parse(raw) as Record<string, GameServerAccessEntry>;
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
-function writeGameServerAccessStore(
-  store: Record<string, GameServerAccessEntry>,
-): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    devStorageKey(GAME_SERVER_ACCESS_FEATURE),
-    JSON.stringify(store),
-  );
-}
-
-function readGameServerAuditStore(): GameServerAuditLogEntry[] {
-  if (typeof window === "undefined") return [];
-  const raw = window.localStorage.getItem(
-    devStorageKey(GAME_SERVER_AUDIT_FEATURE),
-  );
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw) as GameServerAuditLogEntry[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeGameServerAuditStore(entries: GameServerAuditLogEntry[]): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    devStorageKey(GAME_SERVER_AUDIT_FEATURE),
-    JSON.stringify(entries.slice(0, 50)),
-  );
-}
-
-function appendGameServerAuditEntry(
-  persona: DevPersona,
-  entry: Pick<
-    GameServerAuditLogEntry,
-    "action" | "result" | "statusBefore" | "message"
-  > & { statusAfter?: "running" | "stopped" | "disabled" | "unknown" },
-): void {
-  const now = Date.now();
-  writeGameServerAuditStore([
-    {
-      id: `dev_audit_${now}_${Math.random().toString(36).slice(2, 8)}`,
-      serverId: "palworld",
-      ...entry,
-      requestedByDiscordUserId: persona.discordUserId,
-      requestedByDisplayName:
-        persona.characterName || persona.discordUserId,
-      isAdmin: persona.isAdmin,
-      instanceId: "i-local-palworld",
-      createdAt: now,
-    },
-    ...readGameServerAuditStore(),
-  ]);
-}
-
-function readGameServerSettingsStore(): GameServerSettings {
-  if (typeof window === "undefined") {
-    return {
-      serverId: "palworld",
-      enabled: true,
-      disabledMessage: null,
-      updatedAt: 0,
-      updatedBy: null,
-    };
-  }
-  const raw = window.localStorage.getItem(
-    devStorageKey(GAME_SERVER_SETTINGS_FEATURE),
-  );
-  if (!raw) {
-    return {
-      serverId: "palworld",
-      enabled: true,
-      disabledMessage: null,
-      updatedAt: 0,
-      updatedBy: null,
-    };
-  }
-  try {
-    const parsed = JSON.parse(raw) as Partial<GameServerSettings>;
-    return {
-      serverId: "palworld",
-      enabled: parsed.enabled !== false,
-      disabledMessage:
-        typeof parsed.disabledMessage === "string" && parsed.disabledMessage
-          ? parsed.disabledMessage
-          : null,
-      updatedAt: typeof parsed.updatedAt === "number" ? parsed.updatedAt : 0,
-      updatedBy:
-        typeof parsed.updatedBy === "string" && parsed.updatedBy
-          ? parsed.updatedBy
-          : null,
-    };
-  } catch {
-    return {
-      serverId: "palworld",
-      enabled: true,
-      disabledMessage: null,
-      updatedAt: 0,
-      updatedBy: null,
-    };
-  }
-}
-
-function writeGameServerSettingsStore(settings: GameServerSettings): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    devStorageKey(GAME_SERVER_SETTINGS_FEATURE),
-    JSON.stringify(settings),
-  );
-}
-
-function assertGameServerAccess(persona: DevPersona): void {
-  assertAuthenticated(persona);
-  if (persona.isAdmin) return;
-  const entry = readGameServerAccessStore()[persona.discordUserId];
-  if (
-    !entry?.enabled ||
-    (entry.expiresAt !== null &&
-      entry.expiresAt !== undefined &&
-      entry.expiresAt <= Date.now())
-  ) {
-    throw new Error("Game server whitelist required.");
-  }
-}
-
 function parseDevDiscordId(value: unknown): string {
   const discordUserId = cleanText(value);
   if (!/^\d{16,24}$/.test(discordUserId) && !/^dev-[a-z-]+$/.test(discordUserId)) {
@@ -422,142 +247,38 @@ function parseDevDisplayName(value: unknown): string {
   return displayName;
 }
 
-function readDevGameServerStatus(): "running" | "stopped" {
-  if (typeof window === "undefined") return "stopped";
-  const raw = window.localStorage.getItem(
-    devStorageKey(GAME_SERVER_STATUS_FEATURE),
-  );
-  return raw === "running" ? "running" : "stopped";
-}
+const gameServers = createGameServerMockState("persona", {
+  read: (feature) => typeof window === "undefined" ? null : window.localStorage.getItem(devStorageKey(feature)),
+  write: (feature, value) => { if (typeof window !== "undefined") window.localStorage.setItem(devStorageKey(feature), value); },
+});
 
-function writeDevGameServerStatus(status: "running" | "stopped"): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    devStorageKey(GAME_SERVER_STATUS_FEATURE),
-    status,
-  );
-}
-
-function devMonthlyCost() {
-  const now = new Date();
-  const monthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-  const previous = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
-  const previousMonthKey = `${previous.getUTCFullYear()}-${String(previous.getUTCMonth() + 1).padStart(2, "0")}`;
-  return {
-    monthlyCost: {
-      monthKey,
-      estimatedComputeAud: 4.25,
-      runningHours: 28.3,
-      hourlyRateAud: 0.15,
-      instanceType: "t3a.large",
-      updatedAt: Date.now(),
-    },
-    previousMonthCost: {
-      monthKey: previousMonthKey,
-      estimatedComputeAud: 12.75,
-      runningHours: 85,
-      hourlyRateAud: 0.15,
-      instanceType: "t3a.large",
-      updatedAt: Date.now() - 24 * 60 * 60 * 1000,
-    },
-  };
-}
-
-function devPalworldStatus(serverId = "palworld") {
-  const settings = readGameServerSettingsStore();
-  if (!settings.enabled) {
-    return {
-      ok: true,
-      serverId,
-      status: "disabled",
-      checkedAt: Date.now(),
-      host: null,
-      connectAddress: null,
-      message: settings.disabledMessage || "Palworld is disabled by admins.",
-      enabled: false,
-      disabledMessage: settings.disabledMessage,
-      instanceId: null,
-      instanceType: null,
-      launchTime: null,
-      playerCount: null,
-      maxPlayers: null,
-      players: [],
-      memoryUsedPercent: null,
-      diskUsedPercent: null,
-      idleSince: null,
-      autoStopEligibleAt: null,
-      telemetryCheckedAt: null,
-      telemetryMessage: "Telemetry is disabled while Palworld is off.",
-      monthlyCost: null,
-      previousMonthCost: null,
-    };
-  }
-  const status = readDevGameServerStatus();
-  const host = status === "running" ? "127.0.0.1" : null;
-  const costs = devMonthlyCost();
-  const players =
-    status === "running"
-      ? [
-          {
-            name: "Chow",
-            accountName: "chow",
-            playerId: "626327D9000000000000000000000000",
-            userId: "steam_76561198069906492",
-            ping: 19.6,
-            level: 8,
-          },
-        ]
-      : [];
-  return {
-    ok: true,
-    serverId,
-    status,
-    checkedAt: Date.now(),
-    host,
-    connectAddress: host ? `${host}:8211` : null,
-    message:
-      status === "running"
-        ? "Ready to join."
-        : "Offline.",
-    enabled: true,
-    disabledMessage: null,
-    instanceId: "i-local-palworld",
-    instanceType: "t3a.large",
-    launchTime: status === "running" ? new Date().toISOString() : null,
-    playerCount: status === "running" ? players.length : null,
-    maxPlayers: null,
-    players,
-    memoryUsedPercent: status === "running" ? 41.8 : null,
-    diskUsedPercent: status === "running" ? 63.2 : null,
-    idleSince: status === "running" ? Date.now() - 12 * 60 * 1000 : null,
-    autoStopEligibleAt: status === "running" ? Date.now() + 18 * 60 * 1000 : null,
-    telemetryCheckedAt: Date.now(),
-    telemetryMessage: null,
-    monthlyCost: costs.monthlyCost,
-    previousMonthCost: costs.previousMonthCost,
-  };
+function assertGameServerAccess(persona: DevPersona, serverId: GameServerId): void {
+  assertAuthenticated(persona);
+  if (!devGameServerAccessStatus(persona, serverId).canUseGameServers) throw new Error("Game server whitelist required.");
 }
 
 function registerDefaultHandlers(): void {
   if (handlers.size > 0) return;
 
-  handlers.set("listGameServerAccess", () => {
+  handlers.set("listGameServerAccess", (data) => {
+    const serverId = parseMockServerId(data, true);
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
     return {
       ok: true,
-      entries: Object.values(readGameServerAccessStore()).sort((a, b) =>
+      entries: Object.values(readGameServerAccessStore(serverId)).sort((a, b) =>
         a.displayName.localeCompare(b.displayName),
       ),
     };
   });
 
-  handlers.set("listGameServerAccessCandidates", () => {
+  handlers.set("listGameServerAccessCandidates", (data) => {
+    const serverId = parseMockServerId(data, true);
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
-    const store = readGameServerAccessStore();
+    const store = readGameServerAccessStore(serverId);
     const linkedDiscordIds = new Set<string>();
     const candidates = DEV_PERSONAS
       .filter((candidate) => candidate.authenticated)
@@ -591,316 +312,72 @@ function registerDefaultHandlers(): void {
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
-    const discordUserId = parseDevDiscordId(data.discordUserId);
-    const displayName = parseDevDisplayName(data.displayName);
-    const notes = cleanText(data.notes).slice(0, 500) || null;
-    const enabled = data.enabled === undefined ? true : data.enabled === true;
-    const expiresAt =
-      typeof data.expiresAt === "number" ? data.expiresAt : null;
-    const store = readGameServerAccessStore();
-    const existing = store[discordUserId];
-    const now = Date.now();
-    const entry: GameServerAccessEntry = {
-      discordUserId,
-      displayName,
-      enabled,
-      expiresAt,
-      notes,
-      addedBy: existing?.addedBy || persona.discordUserId,
-      addedAt: existing?.addedAt || now,
-      updatedBy: persona.discordUserId,
-      updatedAt: now,
-    };
-    writeGameServerAccessStore({ ...store, [discordUserId]: entry });
-    return { ok: true, entry };
+    return upsertLocalGameServerAccess({
+      discordUserId: parseDevDiscordId(data.discordUserId), displayName: parseDevDisplayName(data.displayName),
+      enabled: data.enabled === undefined ? true : data.enabled === true,
+      expiresAt: data.expiresAt as number | null, notes: cleanText(data.notes) || null,
+    }, persona.discordUserId, parseMockServerId(data, true));
   });
 
   handlers.set("deleteGameServerAccess", (data) => {
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
-    const discordUserId = parseDevDiscordId(data.discordUserId);
-    const store = readGameServerAccessStore();
-    const next = { ...store };
-    delete next[discordUserId];
-    writeGameServerAccessStore(next);
-    return { ok: true };
+    return deleteLocalGameServerAccess(parseDevDiscordId(data.discordUserId), parseMockServerId(data, true));
   });
 
-  handlers.set("listGameServerAuditLog", () => {
+  handlers.set("listGameServerAuditLog", (data) => {
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
-    return {
-      ok: true,
-      entries: readGameServerAuditStore().slice(0, 25),
-    };
+    return gameServers.events(parseMockServerId(data, true), 25);
   });
-
-  handlers.set("listGameServerEvents", () => {
-    const persona = getSelectedDevPersona();
-    assertGameServerAccess(persona);
-    return {
-      ok: true,
-      entries: readGameServerAuditStore().slice(0, 5),
-    };
+  handlers.set("listGameServerEvents", (data) => {
+    assertGameServerAccess(getSelectedDevPersona(), parseMockServerId(data, true));
+    return gameServers.events(parseMockServerId(data, true), 5);
   });
-
-  handlers.set("getGameServerSettings", () => {
+  handlers.set("getGameServerSettings", (data) => {
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
-    return {
-      ok: true,
-      settings: readGameServerSettingsStore(),
-    };
+    return { ok: true, settings: gameServers.settings(parseMockServerId(data, true)) };
   });
-
   handlers.set("updateGameServerSettings", (data) => {
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
     if (!persona.isAdmin) throw new Error("Boss or Underpaw Discord role required.");
-    const serverId = cleanText(data.serverId);
-    if (serverId !== "palworld") {
-      throw new Error("A valid game server is required.");
-    }
-    const settings: GameServerSettings = {
-      serverId: "palworld",
-      enabled: data.enabled === true,
-      disabledMessage: cleanText(data.disabledMessage).slice(0, 240) || null,
-      updatedAt: Date.now(),
-      updatedBy: persona.discordUserId,
-    };
-    writeGameServerSettingsStore(settings);
-    appendGameServerAuditEntry(persona, {
-      action: "settings",
-      result: "requested",
-      statusBefore: "unknown",
-      statusAfter: settings.enabled ? "unknown" : "disabled",
-      message: settings.enabled
-        ? "Local dev Palworld mock enabled."
-        : "Local dev Palworld mock disabled.",
-    });
-    return { ok: true, settings };
+    return gameServers.updateSettings(parseMockServerId(data), data.enabled === true,
+      cleanText(data.disabledMessage) || null, persona);
   });
-
-  handlers.set("getGameServers", () => {
-    const persona = getSelectedDevPersona();
-    assertGameServerAccess(persona);
-    const status = readDevGameServerStatus();
-    const settings = readGameServerSettingsStore();
-    return {
-      ok: true,
-      servers: [
-        {
-          id: "palworld",
-          name: "Palworld",
-          description: "Dedicated Palworld server hosted on AWS EC2.",
-          provider: "aws-ec2",
-          region: "ap-southeast-2",
-          route: "/gameserver/palworld",
-          ports: [
-            { label: "Server", protocol: "UDP", port: 8211 },
-            { label: "Query", protocol: "UDP", port: 27015 },
-          ],
-          status: settings.enabled ? status : "disabled",
-          host: settings.enabled && status === "running" ? "127.0.0.1" : null,
-          connectAddress:
-            settings.enabled && status === "running" ? "127.0.0.1:8211" : null,
-          enabled: settings.enabled,
-          disabledMessage: settings.disabledMessage,
-          controlsAvailable:
-            settings.enabled && (status === "running" || status === "stopped"),
-          phase: "live",
-        },
-      ],
-    };
-  });
-
-  handlers.set("getGameServerAccessStatus", () => {
+  handlers.set("getGameServers", (data) => {
+    const serverIds = parseMockCatalogServerIds(data);
     const persona = getSelectedDevPersona();
     assertAuthenticated(persona);
-    const entry = readGameServerAccessStore()[persona.discordUserId];
-    return {
-      ok: true,
-      canUseGameServers:
-        persona.isAdmin ||
-        (entry?.enabled === true &&
-          (entry.expiresAt === null ||
-            entry.expiresAt === undefined ||
-            entry.expiresAt > Date.now())),
-      isAdmin: persona.isAdmin,
-      expiresAt: entry?.expiresAt ?? null,
-    };
+    const access = devGameServerCapabilities(persona);
+    const allowedIds = serverIds.filter((id) => access.gameServerAccessById[id]);
+    if (!allowedIds.length) throw new Error("Game server whitelist required.");
+    return gameServers.catalog(allowedIds);
   });
-
+  handlers.set("getGameServerAccessStatus", (data) => {
+    const persona = getSelectedDevPersona();
+    assertAuthenticated(persona);
+    return devGameServerAccessStatus(persona, parseMockServerId(data, true));
+  });
   handlers.set("getGameServerStatus", (data) => {
-    const persona = getSelectedDevPersona();
-    assertGameServerAccess(persona);
-    const serverId = cleanText(data.serverId);
-    if (serverId !== "palworld") {
-      throw new Error("A valid game server is required.");
-    }
-    return devPalworldStatus(serverId);
+    assertGameServerAccess(getSelectedDevPersona(), parseMockServerId(data, true));
+    return gameServers.status(parseMockServerId(data));
   });
-
-  handlers.set("startGameServer", (data) => {
-    const persona = getSelectedDevPersona();
-    assertGameServerAccess(persona);
-    const serverId = cleanText(data.serverId);
-    if (serverId !== "palworld") {
-      throw new Error("A valid game server is required.");
-    }
-    if (!readGameServerSettingsStore().enabled) {
-      throw new Error(
-        readGameServerSettingsStore().disabledMessage ||
-          "Palworld is disabled by admins.",
-      );
-    }
-    const previousStatus = readDevGameServerStatus();
-    if (previousStatus === "running") {
-      appendGameServerAuditEntry(persona, {
-        action: "start",
-        result: "noop",
-        statusBefore: previousStatus,
-        statusAfter: previousStatus,
-        message: "Local dev Palworld mock is already running.",
-      });
-      return {
-        ok: true,
-        serverId,
-        status: "running",
-        checkedAt: Date.now(),
-        host: "127.0.0.1",
-        connectAddress: "127.0.0.1:8211",
-        enabled: true,
-        disabledMessage: null,
-        instanceId: "i-local-palworld",
-        instanceType: "t3a.large",
-        launchTime: new Date().toISOString(),
-        playerCount: 0,
-        maxPlayers: null,
-        players: [],
-        memoryUsedPercent: 41.8,
-        diskUsedPercent: 63.2,
-        idleSince: Date.now(),
-        autoStopEligibleAt: Date.now() + 30 * 60 * 1000,
-        telemetryCheckedAt: Date.now(),
-        telemetryMessage: null,
-        message: "Local dev Palworld mock is already running.",
-      };
-    }
-    writeDevGameServerStatus("running");
-    appendGameServerAuditEntry(persona, {
-      action: "start",
-      result: "requested",
-      statusBefore: previousStatus,
-      statusAfter: "running",
-      message: "Local dev Palworld mock started.",
+  handlers.set("getGameServerTelemetry", (data) => {
+    assertGameServerAccess(getSelectedDevPersona(), parseMockServerId(data, true));
+    return gameServers.telemetry(parseMockServerId(data));
+  });
+  for (const action of ["start", "stop"] as const) {
+    handlers.set(action === "start" ? "startGameServer" : "stopGameServer", (data) => {
+      const persona = getSelectedDevPersona();
+      assertGameServerAccess(persona, parseMockServerId(data));
+      return gameServers.action(parseMockServerId(data), action, persona);
     });
-    return {
-      ok: true,
-      serverId,
-      status: "running",
-      checkedAt: Date.now(),
-      host: "127.0.0.1",
-      connectAddress: "127.0.0.1:8211",
-      enabled: true,
-      disabledMessage: null,
-      instanceId: "i-local-palworld",
-      instanceType: "t3a.large",
-      launchTime: new Date().toISOString(),
-      playerCount: 0,
-      maxPlayers: null,
-      players: [],
-      memoryUsedPercent: 41.8,
-      diskUsedPercent: 63.2,
-      idleSince: Date.now(),
-      autoStopEligibleAt: Date.now() + 30 * 60 * 1000,
-      telemetryCheckedAt: Date.now(),
-      telemetryMessage: null,
-      message: "Local dev Palworld mock started.",
-    };
-  });
-
-  handlers.set("stopGameServer", (data) => {
-    const persona = getSelectedDevPersona();
-    assertGameServerAccess(persona);
-    const serverId = cleanText(data.serverId);
-    if (serverId !== "palworld") {
-      throw new Error("A valid game server is required.");
-    }
-    if (!readGameServerSettingsStore().enabled) {
-      throw new Error(
-        readGameServerSettingsStore().disabledMessage ||
-          "Palworld is disabled by admins.",
-      );
-    }
-    const previousStatus = readDevGameServerStatus();
-    if (previousStatus === "stopped") {
-      appendGameServerAuditEntry(persona, {
-        action: "stop",
-        result: "noop",
-        statusBefore: previousStatus,
-        statusAfter: previousStatus,
-        message: "Local dev Palworld mock is already stopped.",
-      });
-      return {
-        ok: true,
-        serverId,
-        status: "stopped",
-        checkedAt: Date.now(),
-        host: null,
-        connectAddress: null,
-        enabled: true,
-        disabledMessage: null,
-        instanceId: "i-local-palworld",
-        instanceType: "t3a.large",
-        launchTime: null,
-        playerCount: null,
-        maxPlayers: null,
-        players: [],
-        memoryUsedPercent: null,
-        diskUsedPercent: null,
-        idleSince: null,
-        autoStopEligibleAt: null,
-        telemetryCheckedAt: Date.now(),
-        telemetryMessage: "Telemetry is available while Palworld is running.",
-        message: "Local dev Palworld mock is already stopped.",
-      };
-    }
-    writeDevGameServerStatus("stopped");
-    appendGameServerAuditEntry(persona, {
-      action: "stop",
-      result: "requested",
-      statusBefore: previousStatus,
-      statusAfter: "stopped",
-      message: "Local dev Palworld mock stopped.",
-    });
-    return {
-      ok: true,
-      serverId,
-      status: "stopped",
-      checkedAt: Date.now(),
-      host: null,
-      connectAddress: null,
-      enabled: true,
-      disabledMessage: null,
-      instanceId: "i-local-palworld",
-      instanceType: "t3a.large",
-      launchTime: null,
-      playerCount: null,
-      maxPlayers: null,
-      players: [],
-      memoryUsedPercent: null,
-      diskUsedPercent: null,
-      idleSince: null,
-      autoStopEligibleAt: null,
-      telemetryCheckedAt: Date.now(),
-      telemetryMessage: "Telemetry is available while Palworld is running.",
-      message: "Local dev Palworld mock stopped.",
-    };
-  });
+  }
 
   handlers.set("getAdminSession", () => {
     const persona = getSelectedDevPersona();
@@ -917,6 +394,7 @@ function registerDefaultHandlers(): void {
       roleIds: persona.roleIds,
       isAdmin: persona.isAdmin,
       isHousecat: persona.isHousecat,
+      ...devGameServerCapabilities(persona),
       capabilities: persona.capabilities,
       expiresAt: Number.MAX_SAFE_INTEGER,
     };
@@ -1051,4 +529,9 @@ export async function callDevAdminFunction<T = unknown>(
 export function getDevCalendarEvents(): Record<string, unknown> {
   if (!DEV_AUTH_LAYER_ENABLED) return {};
   return readCalendarStore().events;
+}
+
+export function setDevGameServerFixture(serverId: GameServerId, scenario: GameServerFixture): void {
+  assertDevLayer();
+  gameServers.fixture(serverId, scenario);
 }

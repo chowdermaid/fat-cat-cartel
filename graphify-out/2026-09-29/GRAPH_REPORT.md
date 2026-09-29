@@ -1,11 +1,11 @@
 # Graph Report - fat-cat-cartel  (2026-09-29)
 
 ## Corpus Check
-- 443 files · ~2,358,584 words
+- 443 files · ~2,358,550 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2882 nodes · 5667 edges · 178 communities (156 shown, 22 thin omitted)
+- 2882 nodes · 5667 edges · 177 communities (155 shown, 22 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 43 edges (avg confidence: 0.62)
 - Token cost: 0 input · 0 output
 
@@ -172,7 +172,6 @@
 - getGameServerAccessStatusForIdentity
 - cleanText
 - 4. Proposed implementation
-- Phase 4: build the Dragonwilds page and online board
 - refresh-fc-collection.ts
 - Dragonwilds Phase 7 release handoff
 
@@ -203,7 +202,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (178 total, 22 thin omitted)
+## Communities (177 total, 22 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -574,8 +573,8 @@ Cohesion: 0.50
 Nodes (4): children, shutdown(), start(), RequestSection()
 
 ### Community 96 - "Dragonwilds: phased implementation checklist"
-Cohesion: 0.09
-Nodes (22): Backend groundwork record — 29 September 2026, Completion record, Cost acceptance, Data boundaries, Dragonwilds: phased implementation checklist, Handoff record — 29 September 2026, Implementation record - 29 September 2026, Phase 1: verify hosting and player-status integration (+14 more)
+Cohesion: 0.08
+Nodes (26): Backend groundwork record — 29 September 2026, Completion record, Cost acceptance, Data boundaries, Dragonwilds: phased implementation checklist, Handoff record — 29 September 2026, Implementation record - 29 September 2026, Implementation record - 29 September 2026 (+18 more)
 
 ### Community 97 - "Community 97"
 Cohesion: 0.70
@@ -606,8 +605,8 @@ Cohesion: 0.23
 Nodes (18): callGameServerFunction(), getGameServerAccessStatus(), getGameServers(), getGameServerStatus(), getGameServerTelemetry(), listGameServerEvents(), sharedRead(), startGameServer() (+10 more)
 
 ### Community 138 - "profile.ts"
-Cohesion: 0.05
-Nodes (68): accessEntryFromValue(), amzDate(), AuthorizedGameServerSession, cleanText(), cloudWatchQuery(), connectAddress(), connectionAddressForInstance(), costSnapshotFromValue() (+60 more)
+Cohesion: 0.06
+Nodes (75): amzDate(), assertAwsConfig(), assertGameServerScope(), assertServerEnabled(), AuthorizedGameServerSession, autoStopIdleServer(), cloudWatchQuery(), connectAddress() (+67 more)
 
 ### Community 139 - "Meowket Board Implementation"
 Cohesion: 0.13
@@ -719,11 +718,11 @@ Nodes (6): mutateSpudJar(), nextSpudJarRecord(), parseSpudJarBatchCount(), readC
 
 ### Community 167 - "game-servers.test.ts"
 Cohesion: 0.14
-Nodes (10): auditEntryFromValue(), GameServerAwsConfig, GameServerId, listGameServerAuditLog(), listGameServerAuditLogForAdmin(), listGameServerAuditLogForSession(), listGameServersForSession(), runAutoStopIdleGameServers() (+2 more)
+Nodes (12): auditEntryFromValue(), GameServerAwsConfig, GameServerId, getGameServerSettingsForAdmin(), listGameServerAuditLog(), listGameServerAuditLogForAdmin(), listGameServerAuditLogForSession(), listGameServersForSession() (+4 more)
 
 ### Community 168 - "cloudWatchQuery"
 Cohesion: 0.20
-Nodes (25): assertAwsConfig(), assertGameServerScope(), assertServerEnabled(), autoStopIdleServer(), describeGameServerInstance(), disabledStatus(), ec2Client(), getGameServerStatusForSession() (+17 more)
+Nodes (16): accessEntryFromValue(), cleanText(), deleteGameServerAccessForAdmin(), gameServerGrantRoot(), getGameServerAccessStatusForIdentity(), getGameServerAccessStatusForSession(), isGameServerAccessEntryActive(), listGameServerAccessCandidatesForAdmin() (+8 more)
 
 ### Community 169 - "scrape-lodestone.ts"
 Cohesion: 0.33
@@ -744,10 +743,6 @@ Nodes (8): Current state, Dragonwilds Phase 4 handoff, Implementation scope, Loc
 ### Community 174 - "4. Proposed implementation"
 Cohesion: 0.50
 Nodes (4): Phase 7 local implementation record - 29 September 2026, Phase 7: staged deployment and live acceptance, Rollback, Tasks
-
-### Community 175 - "Phase 4: build the Dragonwilds page and online board"
-Cohesion: 0.50
-Nodes (4): Implementation record - 29 September 2026, Online-board states, Phase 4: build the Dragonwilds page and online board, Tasks
 
 ### Community 176 - "refresh-fc-collection.ts"
 Cohesion: 0.25

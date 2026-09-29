@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { DEV_AUTH_LAYER_ENABLED, getSelectedDevPersona } from "@/lib/dev/personas";
+import { devGameServerAccessStatus } from "@/lib/dev/gameServerAccess";
+import { gameServerIdentity, isGameServerAccessError } from "../utils/dragonwilds";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Power,
   Server,
@@ -105,17 +108,14 @@ function formatDateTime(value: string | null | undefined): string {
   return new Date(value).toLocaleString();
 }
 
-function formatPlayers(status: GameServerStatusResponse | null): string {
+function formatPlayers(status: GameServerStatusResponse<"palworld"> | null): string {
   if (!status || status.playerCount === null) return "Unavailable";
   if (status.maxPlayers === null) return `${status.playerCount}`;
   return `${status.playerCount}/${status.maxPlayers}`;
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
-}
 
-function friendlyStatus(status: GameServerStatusResponse | null): string {
+function friendlyStatus(status: GameServerStatusResponse<"palworld"> | null): string {
   if (!status) return "Unknown";
   if (!status.enabled || status.status === "disabled") return "Disabled";
   if (status.status === "running") return "Ready to join";
@@ -129,9 +129,9 @@ function friendlyStatus(status: GameServerStatusResponse | null): string {
 }
 
 function actionToStatus(
-  result: GameServerActionResponse,
-  fallback: GameServerStatusResponse | null,
-): GameServerStatusResponse {
+  result: GameServerActionResponse<"palworld">,
+  fallback: GameServerStatusResponse<"palworld"> | null,
+): GameServerStatusResponse<"palworld"> {
   return {
     ok: true,
     serverId: result.serverId,
@@ -163,9 +163,8 @@ function actionToStatus(
   };
 }
 
-export function PalworldServerPage() {
-  const auth = useGameServerAuth();
-  const [status, setStatus] = useState<GameServerStatusResponse | null>(null);
+function PalworldDashboard({ auth }: { auth: ReturnType<typeof useGameServerAuth> }) {
+  const [status, setStatus] = useState<GameServerStatusResponse<"palworld"> | null>(null);
   const [events, setEvents] = useState<GameServerAuditLogEntry[]>([]);
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [loadingEvents, setLoadingEvents] = useState(false);
@@ -176,6 +175,44 @@ export function PalworldServerPage() {
   const [accessDenied, setAccessDenied] = useState(false);
   const [stopConfirmOpen, setStopConfirmOpen] = useState(false);
   const pollCancelledRef = useRef(false);
+  const active = useRef(false);
+  const epoch = useRef(0);
+  const statusRequest = useRef(0);
+  const eventRequest = useRef(0);
+  const actionPending = useRef(false);
+  const pollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const wakePoll = useRef<(() => void) | null>(null);
+  const pending = useRef(new Map<string, Promise<unknown>>());
+  const read = useCallback(async <T,>(operation: string, valid: () => boolean, load: () => Promise<T>): Promise<T | undefined> => {
+    const earlier = pending.current.get(operation);
+    if (earlier) { try { await earlier; } catch { /* The original caller handles errors. */ } }
+    if (!valid()) return undefined;
+    const promise = load();
+    pending.current.set(operation, promise);
+    try { return await promise; }
+    finally { if (pending.current.get(operation) === promise) pending.current.delete(operation); }
+  }, []);
+  const discordId = auth.session?.discordUserId;
+  const current = useCallback((version: number) => active.current && version === epoch.current &&
+    (!DEV_AUTH_LAYER_ENABLED || (getSelectedDevPersona().discordUserId === discordId &&
+      devGameServerAccessStatus(getSelectedDevPersona(), "palworld").canUseGameServers)), [discordId]);
+  const cancelPolling = useCallback(() => {
+    pollCancelledRef.current = true;
+    clearTimeout(pollTimer.current);
+    wakePoll.current?.();
+    wakePoll.current = null;
+  }, []);
+  const deny = useCallback(() => {
+    epoch.current += 1;
+    cancelPolling();
+    setStatus(null); setEvents([]); setStopConfirmOpen(false); setAccessDenied(true);
+    setLoadingStatus(false); setLoadingEvents(false); setActionLoading(null);
+    actionPending.current = false;
+  }, [cancelPolling]);
+  useLayoutEffect(() => {
+    active.current = true;
+    return () => { active.current = false; epoch.current += 1; cancelPolling(); };
+  }, [cancelPolling]);
   const { rootRef, pulseCopy } = usePalworldServerAnimations(
     status?.status,
     actionLoading,
@@ -183,27 +220,32 @@ export function PalworldServerPage() {
   );
 
   const loadEvents = useCallback(async () => {
-    if (!auth.sessionToken) return;
+    if (!auth.sessionToken || !current(epoch.current)) return;
+    const version = epoch.current;
+    const request = ++eventRequest.current;
+    const valid = () => current(version) && request === eventRequest.current;
     setLoadingEvents(true);
     try {
-      const result = await listGameServerEvents(auth.sessionToken, "palworld");
-      setEvents(result.entries);
+      const result = await read("events", valid, () => listGameServerEvents(auth.sessionToken!, "palworld"));
+      if (result && valid()) setEvents(result.entries);
     } catch (err) {
+      if (!valid()) return;
+      if (isGameServerAccessError(err)) { deny(); return; }
       toast.error(
         err instanceof Error ? err.message : "Failed to load Palworld events.",
       );
     } finally {
-      setLoadingEvents(false);
+      if (valid()) setLoadingEvents(false);
     }
-  }, [auth.sessionToken]);
+  }, [auth.sessionToken, current, deny, read]);
 
-  const loadTelemetry = useCallback(async () => {
-    if (!auth.sessionToken) return;
+  const loadTelemetry = useCallback(async (request: number) => {
+    if (!auth.sessionToken || !current(epoch.current)) return;
+    const version = epoch.current;
+    const valid = () => current(version) && request === statusRequest.current;
     try {
-      const telemetry = await getGameServerTelemetry(
-        auth.sessionToken,
-        "palworld",
-      );
+      const telemetry = await read("telemetry", valid, () => getGameServerTelemetry(auth.sessionToken!, "palworld"));
+      if (!telemetry || !valid()) return;
       setStatus((current) =>
         current?.status === "running"
           ? {
@@ -218,39 +260,49 @@ export function PalworldServerPage() {
             }
           : current,
       );
-    } catch {
+    } catch (err) {
+      if (valid() && isGameServerAccessError(err)) deny();
       // Basic EC2 status remains usable when optional telemetry is unavailable.
     }
-  }, [auth.sessionToken]);
+  }, [auth.sessionToken, current, deny, read]);
 
   const refreshStatus = useCallback(async (options?: { quiet?: boolean }) => {
-    if (!auth.sessionToken) return null;
+    if (!auth.sessionToken || !current(epoch.current)) return null;
+    if (!options?.quiet) cancelPolling();
+    const version = epoch.current;
+    const request = ++statusRequest.current;
+    const valid = () => current(version) && request === statusRequest.current;
     if (!options?.quiet) setLoadingStatus(true);
     try {
-      const result = await getGameServerStatus(auth.sessionToken, "palworld");
+      const result = await read("status", valid, () => getGameServerStatus(auth.sessionToken!, "palworld"));
+      if (!result || !valid()) return null;
       setStatus(result);
       setAccessDenied(false);
-      if (result.status === "running") void loadTelemetry();
+      if (result.enabled && result.status === "running") void loadTelemetry(request);
       return result;
     } catch (err) {
+      if (!valid()) return null;
       const message =
         err instanceof Error ? err.message : "Failed to refresh Palworld.";
-      if (message.toLowerCase().includes("whitelist")) {
-        setAccessDenied(true);
+      if (isGameServerAccessError(err)) {
+        deny();
         return null;
       }
       if (!options?.quiet) toast.error(message);
       return null;
     } finally {
-      if (!options?.quiet) setLoadingStatus(false);
+      if (valid() && !options?.quiet) setLoadingStatus(false);
     }
-  }, [auth.sessionToken, loadTelemetry]);
+  }, [auth.sessionToken, loadTelemetry, current, deny, cancelPolling, read]);
 
-  async function pollUntilReady() {
+  async function pollUntilReady(version: number) {
     for (let attempt = 0; attempt < START_POLL_MAX_ATTEMPTS; attempt += 1) {
-      await sleep(START_POLL_INTERVAL_MS);
-      if (pollCancelledRef.current) return;
+      if (!current(version) || pollCancelledRef.current) return;
+      await new Promise<void>((resolve) => { wakePoll.current = resolve; pollTimer.current = setTimeout(resolve, START_POLL_INTERVAL_MS); });
+      wakePoll.current = null;
+      if (!current(version) || pollCancelledRef.current) return;
       const result = await refreshStatus({ quiet: true });
+      if (!current(version) || pollCancelledRef.current) return;
       if (!result) continue;
       if (result.status === "running" && result.connectAddress) {
         toast.success("Palworld is ready to join.");
@@ -266,7 +318,14 @@ export function PalworldServerPage() {
   }
 
   async function runAction(action: "start" | "stop") {
-    if (!auth.sessionToken) return;
+    if (!auth.sessionToken || !current(epoch.current) || actionPending.current || accessDenied) return;
+    const version = epoch.current;
+    actionPending.current = true;
+    cancelPolling();
+    statusRequest.current += 1;
+    eventRequest.current += 1;
+    setLoadingStatus(false);
+    setLoadingEvents(false);
     setActionLoading(action);
     pollCancelledRef.current = action !== "start";
     try {
@@ -274,21 +333,24 @@ export function PalworldServerPage() {
         action === "start"
           ? await startGameServer(auth.sessionToken, "palworld")
           : await stopGameServer(auth.sessionToken, "palworld");
+      if (!current(version)) return;
       setStatus((current) => actionToStatus(result, current));
       toast.success(result.message);
       void loadEvents();
       if (action === "start") {
         pollCancelledRef.current = false;
-        await pollUntilReady();
+        await pollUntilReady(version);
       } else {
         await refreshStatus({ quiet: true });
       }
     } catch (err) {
+      if (!current(version)) return;
+      if (isGameServerAccessError(err)) { deny(); return; }
       toast.error(
         err instanceof Error ? err.message : `Failed to ${action} Palworld.`,
       );
     } finally {
-      setActionLoading(null);
+      if (current(version)) { actionPending.current = false; setActionLoading(null); }
     }
   }
 
@@ -308,9 +370,9 @@ export function PalworldServerPage() {
     void refreshStatus();
     void loadEvents();
     return () => {
-      pollCancelledRef.current = true;
+      cancelPolling();
     };
-  }, [auth.authed, auth.sessionToken, loadEvents, refreshStatus]);
+  }, [auth.authed, auth.sessionToken, loadEvents, refreshStatus, cancelPolling]);
 
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), 30_000);
@@ -496,4 +558,12 @@ export function PalworldServerPage() {
       </Dialog>
     </div>
   );
+}
+
+export function PalworldServerPage() {
+  const auth = useGameServerAuth("palworld");
+  if (auth.checking) return <PalworldServerLoading />;
+  if (!auth.authed) return <AuthAccessState title="Palworld Server" description="Login with Discord to view Palworld access." error={auth.error} onLogin={auth.login} />;
+  if (!auth.canUseGameServers) return <AuthAccessState title="Palworld Server" description="Your Discord account does not currently have Palworld access." showLogin={false} />;
+  return <PalworldDashboard key={gameServerIdentity(auth, "palworld")} auth={auth} />;
 }

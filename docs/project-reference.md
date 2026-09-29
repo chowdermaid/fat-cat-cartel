@@ -62,6 +62,9 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`
 - `/admin`: `AdminPage`
+- `/gameserver`: authorized game-server catalog
+- `/gameserver/palworld`: existing Palworld controls and player field
+- `/gameserver/dragonwilds`: compact host dashboard, online board and recent activity
 
 When adding a page, create `src/features/<name>/index.tsx`, register it in `src/app/router.tsx`, and add a sidebar item only if it belongs in global navigation.
 
@@ -187,3 +190,20 @@ For progress bars or visual meters, keep JSX at the base value and animate the c
 - UI layout changes: run the dev server and inspect mobile and desktop states if feasible.
 - Firebase data path changes: test with `VITE_USE_STUBS=true` first unless real backend or emulator behavior is required.
 - Local UI flow testing can use `VITE_DEV_AUTH_LAYER=true` for the top-header persona selector and local mock callables. Use Firebase emulators instead for backend, auth, rules, or external integration verification.
+
+### Game-server integrated verification
+
+Phase 6 local results and outstanding gates are recorded in the [phased checklist](../DRAGONWILDS_PHASED_IMPLEMENTATION.md#phase-6-local-implementation-record---29-september-2026); host setup, joining, save/restore and release safeguards live in the [operations runbook](dragonwilds-server-implementation.md#9-phase-6-local-verification-and-release-handoff).
+
+```powershell
+node --test tests/game-server-client.test.mjs tests/dragonwilds-dashboard.test.mjs tests/game-server-access-lifecycle.test.mjs
+npm --prefix functions run build
+node --test functions/lib/game-servers.test.js functions/lib/authorization-policy.test.js
+$env:FIREBASE_CLI_DISABLE_UPDATE_CHECK = "true"
+npm run test:rules
+npx eslint functions/src/game-servers.ts functions/src/game-servers.test.ts tests/database-rules.test.mjs
+```
+
+The client suite uses offline fixtures, deferred transports and controlled timers; its hook harness is not mounted-browser/React Strict Mode evidence. For later browser checks, set `VITE_USE_STUBS=true` and `VITE_DEV_AUTH_LAYER=true` in the launching shell only. Test both games/grant combinations and admin selections, delayed switching, mobile/desktop, themes, keyboard, clipboard and Stop/delete confirmation. Do not edit `.env` or fall back to production when local browser tooling is unavailable.
+
+Phase 7's [release handoff](../DRAGONWILDS_PHASE_7_HANDOFF.md) supplies the gated rules/backend/frontend deployment order and Function allowlist; do not use the general broad deployment command for this release. Current catalog calls send `includeDragonwilds: true`; omitted/false legacy requests select only Palworld before authorization/status work. Local bridge checks pass; live release remains blocked.

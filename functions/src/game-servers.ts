@@ -19,7 +19,7 @@ import type {
   VerifiedAuthenticatedSession,
 } from "./admin-auth";
 
-type GameServerId = "palworld";
+export type GameServerId = "palworld" | "dragonwilds";
 type GameServerStatus =
   | "unknown"
   | "disabled"
@@ -134,15 +134,20 @@ type GameServerCostSnapshot = {
 };
 
 export type GameServerAwsConfig = {
+  serverId: GameServerId;
   region: string;
   instanceId: string;
   accessKeyId: string;
   secretAccessKey: string;
   gamePort: number;
-  queryPort: number;
+  queryPort: number | null;
   cloudWatchNamespace: string;
   adminPassword: string;
+  worldName?: string;
+  capacity?: number | null;
 };
+
+export type GameServerConfigResolver = (serverId: GameServerId) => GameServerAwsConfig;
 
 type GameServerStatusResult = {
   ok: true;
@@ -168,6 +173,7 @@ type GameServerStatusResult = {
   telemetryMessage: string | null;
   monthlyCost: GameServerCostSnapshot | null;
   previousMonthCost: GameServerCostSnapshot | null;
+  worldName?: string | null;
 };
 
 const GAME_SERVERS: GameServerDefinition[] = [
@@ -183,7 +189,31 @@ const GAME_SERVERS: GameServerDefinition[] = [
       { label: "Query", protocol: "UDP", port: 27015 },
     ],
   },
+  {
+    id: "dragonwilds",
+    name: "Dragonwilds",
+    description: "Dedicated RuneScape: Dragonwilds server hosted on AWS EC2.",
+    provider: "aws-ec2",
+    region: "ap-southeast-2",
+    route: "/gameserver/dragonwilds",
+    ports: [{ label: "Server", protocol: "UDP", port: 7777 }],
+  },
 ];
+
+function serverName(serverId: GameServerId): string {
+  return serverId === "palworld" ? "Palworld" : "Dragonwilds";
+}
+
+function resolveServerConfig(
+  serverId: GameServerId,
+  resolveConfig: GameServerConfigResolver,
+): GameServerAwsConfig {
+  const config = resolveConfig(serverId);
+  if (config.serverId !== serverId) {
+    throw new HttpsError("failed-precondition", "Game server configuration does not match the requested server.");
+  }
+  return config;
+}
 
 const DISCORD_ID_PATTERN = /^\d{16,24}$/;
 const MAX_DISPLAY_NAME_LENGTH = 80;
@@ -205,15 +235,30 @@ function cleanText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function parseServerId(data: unknown): GameServerId {
+export function parseServerId(data: unknown): GameServerId {
   const serverId =
     typeof data === "object" && data
       ? (data as { serverId?: unknown }).serverId
       : null;
-  if (serverId !== "palworld") {
+  if (serverId !== "palworld" && serverId !== "dragonwilds") {
     throw new HttpsError("invalid-argument", "A valid game server is required.");
   }
   return serverId;
+}
+
+export function parseOptionalServerId(data: unknown): GameServerId {
+  return typeof data === "object" && data && "serverId" in data
+    ? parseServerId(data)
+    : "palworld";
+}
+
+export function parseCatalogServerIds(data: unknown): GameServerId[] {
+  if (typeof data !== "object" || !data || !("includeDragonwilds" in data)) return ["palworld"];
+  const { includeDragonwilds } = data as { includeDragonwilds: unknown };
+  if (typeof includeDragonwilds !== "boolean") {
+    throw new HttpsError("invalid-argument", "includeDragonwilds must be a boolean.");
+  }
+  return includeDragonwilds ? ["palworld", "dragonwilds"] : ["palworld"];
 }
 
 function parsePort(value: string, fallback: number): number {
@@ -229,7 +274,7 @@ function assertAwsConfig(config: GameServerAwsConfig): void {
   if (!config.instanceId.trim()) {
     throw new HttpsError(
       "failed-precondition",
-      "Palworld instance ID is not configured.",
+      `${serverName(config.serverId)} instance ID is not configured.`,
     );
   }
   if (!config.accessKeyId.trim() || !config.secretAccessKey.trim()) {
@@ -283,6 +328,10 @@ function hostForInstance(instance: Instance): string | null {
 
 function connectAddress(host: string | null, gamePort: number): string | null {
   return host ? `${host}:${gamePort}` : null;
+}
+
+function connectionAddressForInstance(instance: Instance, gamePort: number): string | null {
+  return connectAddress(instance.PublicIpAddress || instance.PublicDnsName || null, gamePort);
 }
 
 function monthKeyForTimestamp(timestamp: number): string {
@@ -391,9 +440,9 @@ async function updateMonthlyCostSnapshot(input: {
   return { current, previous };
 }
 
-function statusMessage(status: GameServerStatus, enabled: boolean): string {
-  if (!enabled || status === "disabled") return "Palworld is disabled by admins.";
-  if (status === "running") return "Ready to join.";
+function statusMessage(status: GameServerStatus, enabled: boolean, serverId: GameServerId): string {
+  if (!enabled || status === "disabled") return `${serverName(serverId)} is disabled by admins.`;
+  if (status === "running") return serverId === "palworld" ? "Ready to join." : "Host is running. Game readiness is not verified.";
   if (status === "stopped") return "Offline.";
   if (status === "pending") return "Starting.";
   if (status === "stopping") return "Stopping.";
@@ -403,8 +452,18 @@ function statusMessage(status: GameServerStatus, enabled: boolean): string {
 }
 
 type AuthorizedGameServerSession = VerifiedAuthenticatedSession & {
-  gameServerAccess: GameServerAccessEntry | null;
+  gameServerAccessById: Record<GameServerId, boolean>;
 };
+
+export function gameServerGrantRoot(serverId: GameServerId): string {
+  return parseServerId({ serverId }) === "palworld" ? "gameServerAccess" : "dragonwildsServerAccess";
+}
+
+function assertGameServerScope(session: AuthorizedGameServerSession, serverId: GameServerId): void {
+  if (session.gameServerAccessById[serverId] !== true) {
+    throw new HttpsError("permission-denied", "Game server whitelist required.");
+  }
+}
 
 function sessionDisplayName(
   session: VerifiedAuthenticatedSession,
@@ -434,10 +493,10 @@ function systemSession(): VerifiedAdminSession {
   };
 }
 
-function settingsFromValue(value: Partial<GameServerSettings> | null): GameServerSettings {
+function settingsFromValue(serverId: GameServerId, value: Partial<GameServerSettings> | null): GameServerSettings {
   return {
-    serverId: "palworld",
-    enabled: value?.enabled !== false,
+    serverId,
+    enabled: serverId === "palworld" ? value?.enabled !== false : value?.enabled === true,
     disabledMessage:
       typeof value?.disabledMessage === "string" && value.disabledMessage
         ? value.disabledMessage
@@ -449,18 +508,18 @@ function settingsFromValue(value: Partial<GameServerSettings> | null): GameServe
 
 async function readGameServerSettings(serverId: GameServerId): Promise<GameServerSettings> {
   const snapshot = await admin.database().ref(`gameServerSettings/${serverId}`).get();
-  return settingsFromValue(snapshot.val() as Partial<GameServerSettings> | null);
+  return settingsFromValue(serverId, snapshot.val() as Partial<GameServerSettings> | null);
 }
 
 function disabledStatus(settings: GameServerSettings): GameServerStatusResult {
   return {
     ok: true,
-    serverId: "palworld",
+    serverId: settings.serverId,
     status: "disabled",
     checkedAt: Date.now(),
     host: null,
     connectAddress: null,
-    message: settings.disabledMessage || statusMessage("disabled", false),
+    message: settings.disabledMessage || statusMessage("disabled", false, settings.serverId),
     enabled: false,
     disabledMessage: settings.disabledMessage,
     instanceId: null,
@@ -545,7 +604,7 @@ function safeNumber(value: unknown): number | null {
 }
 
 function palworldPlayerFromValue(value: unknown): PalworldPlayer | null {
-  if (!value || typeof value !== "object") return null;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const input = value as Record<string, unknown>;
   return {
     name: safeString(input.name),
@@ -561,9 +620,11 @@ function parsePalworldPlayersResponse(text: string): PalworldPlayer[] | null {
   try {
     const parsed = JSON.parse(text) as { players?: unknown };
     if (!Array.isArray(parsed.players)) return null;
-    return parsed.players
-      .map((player) => palworldPlayerFromValue(player))
-      .filter((player): player is PalworldPlayer => player !== null);
+    const players = parsed.players.map((player) => palworldPlayerFromValue(player));
+    // Dropping malformed rows could turn an unknown population into false zero.
+    return players.every((player): player is PalworldPlayer => player !== null)
+      ? players
+      : null;
   } catch {
     return null;
   }
@@ -759,6 +820,7 @@ async function cloudWatchQuery(
     `SignedHeaders=${signedHeaders}, Signature=${signature}`;
   const response = await fetch(`https://${host}/`, {
     method: "POST",
+    signal: AbortSignal.timeout(5_000),
     headers: {
       Authorization: authorization,
       "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
@@ -840,7 +902,7 @@ async function readCloudWatchTelemetry(config: GameServerAwsConfig): Promise<{
           : null,
     };
   } catch (error) {
-    console.error("Failed to read Palworld CloudWatch telemetry", error);
+    console.error("Failed to read game server CloudWatch telemetry", { serverId: config.serverId, error });
     return {
       memoryUsedPercent: null,
       diskUsedPercent: null,
@@ -849,7 +911,7 @@ async function readCloudWatchTelemetry(config: GameServerAwsConfig): Promise<{
   }
 }
 
-async function readPalworldTelemetry(
+async function readGameServerTelemetry(
   config: GameServerAwsConfig,
   host: string | null,
   status: GameServerStatus,
@@ -864,6 +926,24 @@ async function readPalworldTelemetry(
       diskUsedPercent: null,
       telemetryCheckedAt: checkedAt,
       telemetryMessage: null,
+    };
+  }
+
+  // No verified Dragonwilds player source yet. Never query Palworld's API or
+  // manufacture an empty snapshot; unknown membership must not enable auto-stop.
+  if (config.serverId === "dragonwilds") {
+    const cloudWatch = await readCloudWatchTelemetry(config);
+    return {
+      playerCount: null,
+      maxPlayers: config.capacity ?? null,
+      players: [],
+      memoryUsedPercent: cloudWatch.memoryUsedPercent,
+      diskUsedPercent: cloudWatch.diskUsedPercent,
+      telemetryCheckedAt: checkedAt,
+      telemetryMessage: [
+        "Dragonwilds player telemetry is not configured. Automatic idle shutdown is inactive.",
+        cloudWatch.message,
+      ].filter(Boolean).join(" "),
     };
   }
 
@@ -897,7 +977,8 @@ async function writeIdleState(serverId: GameServerId, state: GameServerIdleState
   await admin.database().ref(`gameServerIdleState/${serverId}`).set(state);
 }
 
-async function readPalworldInstance(config: GameServerAwsConfig): Promise<Instance> {
+async function readGameServerInstance(config: GameServerAwsConfig): Promise<Instance> {
+  assertAwsConfig(config);
   let instance: Instance | undefined;
   try {
     const result = await ec2Client(config).send(
@@ -909,31 +990,31 @@ async function readPalworldInstance(config: GameServerAwsConfig): Promise<Instan
       reservation.Instances ?? [],
     )[0];
   } catch (error) {
-    console.error("Failed to describe Palworld EC2 instance", error);
+    console.error(`Failed to describe ${serverName(config.serverId)} EC2 instance`, error);
     throw new HttpsError(
       "unavailable",
-      "Could not read Palworld EC2 status.",
+      `Could not read ${serverName(config.serverId)} EC2 status.`,
     );
   }
 
   if (!instance) {
-    throw new HttpsError("not-found", "Palworld EC2 instance was not found.");
+    throw new HttpsError("not-found", `${serverName(config.serverId)} EC2 instance was not found.`);
   }
   return instance;
 }
 
-async function describePalworldInstance(
+async function describeGameServerInstance(
   config: GameServerAwsConfig,
   options: { includeTelemetry: boolean } = { includeTelemetry: true },
 ): Promise<GameServerStatusResult> {
-  const instance = await readPalworldInstance(config);
+  const instance = await readGameServerInstance(config);
 
   const status = normalizeState(instance.State?.Name);
   const host = hostForInstance(instance);
   const instanceType = instance.InstanceType ?? null;
   const launchTime = instance.LaunchTime?.toISOString() ?? null;
   const telemetry = options.includeTelemetry
-    ? await readPalworldTelemetry(config, host, status)
+    ? await readGameServerTelemetry(config, host, status)
     : {
         playerCount: null,
         maxPlayers: null,
@@ -943,21 +1024,24 @@ async function describePalworldInstance(
         telemetryCheckedAt: Date.now(),
         telemetryMessage: null,
       };
-  const idleState = await readIdleState("palworld");
+  const idleState = config.serverId === "palworld"
+    ? await readIdleState(config.serverId)
+    : { idleSince: null, autoStopEligibleAt: null };
   const cost = await updateMonthlyCostSnapshot({
-    serverId: "palworld",
+    serverId: config.serverId,
     status,
     launchTime,
     instanceType,
   });
   return {
     ok: true,
-    serverId: "palworld",
+    serverId: config.serverId,
     status,
     checkedAt: Date.now(),
     host,
-    connectAddress: status === "running" ? connectAddress(host, config.gamePort) : null,
-    message: statusMessage(status, true),
+    connectAddress: status === "running" ? connectionAddressForInstance(instance, config.gamePort) : null,
+    ...(config.serverId === "dragonwilds" ? { worldName: config.worldName || null } : {}),
+    message: statusMessage(status, true, config.serverId),
     enabled: true,
     disabledMessage: null,
     instanceId: instance.InstanceId ?? config.instanceId,
@@ -978,12 +1062,14 @@ async function describePalworldInstance(
 }
 
 async function statusForEnabledServer(
-  config: GameServerAwsConfig,
+  serverId: GameServerId,
+  resolveConfig: GameServerConfigResolver,
   options?: { includeTelemetry: boolean },
 ): Promise<GameServerStatusResult> {
-  const settings = await readGameServerSettings("palworld");
+  const settings = await readGameServerSettings(serverId);
   if (!settings.enabled) return disabledStatus(settings);
-  return describePalworldInstance(config, options);
+  const config = resolveServerConfig(serverId, resolveConfig);
+  return describeGameServerInstance(config, options);
 }
 
 function parseDiscordId(value: unknown): string {
@@ -1056,10 +1142,11 @@ export function isGameServerAccessEntryActive(
 
 async function readAccessEntry(
   discordUserId: string,
+  serverId: GameServerId,
 ): Promise<GameServerAccessEntry | null> {
   const snapshot = await admin
     .database()
-    .ref(`gameServerAccess/${discordUserId}`)
+    .ref(`${gameServerGrantRoot(serverId)}/${discordUserId}`)
     .get();
   const entry = snapshot.val() as Partial<GameServerAccessEntry> | null;
   return accessEntryFromValue(discordUserId, entry);
@@ -1067,14 +1154,17 @@ async function readAccessEntry(
 
 export async function requireGameServerAccess(
   session: VerifiedAuthenticatedSession,
+  serverId: GameServerId = "palworld",
 ): Promise<AuthorizedGameServerSession> {
+  gameServerGrantRoot(serverId);
+  const gameServerAccessById = { palworld: false, dragonwilds: false, [serverId]: true };
   if (session.isAdmin === true) {
-    return { ...session, gameServerAccess: null };
+    return { ...session, gameServerAccessById };
   }
 
-  const entry = await readAccessEntry(session.discordUserId);
+  const entry = await readAccessEntry(session.discordUserId, serverId);
   if (isGameServerAccessEntryActive(entry)) {
-    return { ...session, gameServerAccess: entry };
+    return { ...session, gameServerAccessById };
   }
 
   throw new HttpsError(
@@ -1085,6 +1175,7 @@ export async function requireGameServerAccess(
 
 export async function getGameServerAccessStatusForSession(
   session: VerifiedAuthenticatedSession,
+  serverId: GameServerId = "palworld",
 ): Promise<{
   ok: true;
   canUseGameServers: boolean;
@@ -1094,18 +1185,21 @@ export async function getGameServerAccessStatusForSession(
   return getGameServerAccessStatusForIdentity(
     session.discordUserId,
     session.isAdmin === true,
+    serverId,
   );
 }
 
 export async function getGameServerAccessStatusForIdentity(
   discordUserId: string,
   isAdmin: boolean,
+  serverId: GameServerId = "palworld",
 ): Promise<{
   ok: true;
   canUseGameServers: boolean;
   isAdmin: boolean;
   expiresAt: number | null;
 }> {
+  gameServerGrantRoot(serverId);
   if (isAdmin) {
     return {
       ok: true,
@@ -1115,7 +1209,7 @@ export async function getGameServerAccessStatusForIdentity(
     };
   }
 
-  const entry = await readAccessEntry(discordUserId);
+  const entry = await readAccessEntry(discordUserId, serverId);
   return {
     ok: true,
     canUseGameServers: isGameServerAccessEntryActive(entry),
@@ -1126,23 +1220,37 @@ export async function getGameServerAccessStatusForIdentity(
 
 export async function listGameServersForSession(
   _session: AuthorizedGameServerSession,
-  config: GameServerAwsConfig,
+  resolveConfig: GameServerConfigResolver,
+  serverIds: GameServerId[],
 ) {
-  const status = await statusForEnabledServer(config);
   return {
     ok: true,
-    servers: GAME_SERVERS.map((server) => ({
-      ...server,
-      status: server.id === "palworld" ? status.status : "unknown",
-      host: server.id === "palworld" ? status.host : null,
-      connectAddress: server.id === "palworld" ? status.connectAddress : null,
-      enabled: server.id === "palworld" ? status.enabled : true,
-      disabledMessage: server.id === "palworld" ? status.disabledMessage : null,
-      controlsAvailable:
-        server.id === "palworld" &&
-        status.enabled &&
-        (status.status === "running" || status.status === "stopped"),
-      phase: "live",
+    servers: await Promise.all(GAME_SERVERS.filter((server) => serverIds.includes(server.id) && _session.gameServerAccessById[server.id]).map(async (server) => {
+      try {
+        const status = await statusForEnabledServer(server.id, resolveConfig, { includeTelemetry: false });
+        return {
+          ...server,
+          status: status.status,
+          host: status.host,
+          connectAddress: status.connectAddress,
+          enabled: status.enabled,
+          disabledMessage: status.disabledMessage,
+          controlsAvailable: status.enabled && (status.status === "running" || status.status === "stopped"),
+          phase: "live",
+        };
+      } catch (error) {
+        console.error("Failed to read game server catalog entry", { serverId: server.id, error });
+        return {
+          ...server,
+          status: "unavailable" as const,
+          host: null,
+          connectAddress: null,
+          enabled: false,
+          disabledMessage: null,
+          controlsAvailable: false,
+          phase: "live",
+        };
+      }
     })),
   };
 }
@@ -1150,23 +1258,25 @@ export async function listGameServersForSession(
 export async function getGameServerStatusForSession(
   data: unknown,
   _session: AuthorizedGameServerSession,
-  config: GameServerAwsConfig,
+  resolveConfig: GameServerConfigResolver,
 ) {
   const serverId = parseServerId(data);
+  assertGameServerScope(_session, serverId);
   const server = GAME_SERVERS.find((item) => item.id === serverId);
   if (!server) {
     throw new HttpsError("not-found", "Game server was not found.");
   }
-  return statusForEnabledServer(config, { includeTelemetry: false });
+  return statusForEnabledServer(serverId, resolveConfig, { includeTelemetry: false });
 }
 
 export async function getGameServerTelemetryForSession(
   data: unknown,
   _session: AuthorizedGameServerSession,
-  config: GameServerAwsConfig,
+  resolveConfig: GameServerConfigResolver,
 ): Promise<GameServerTelemetryResult> {
   void _session;
   const serverId = parseServerId(data);
+  assertGameServerScope(_session, serverId);
   const server = GAME_SERVERS.find((item) => item.id === serverId);
   if (!server) {
     throw new HttpsError("not-found", "Game server was not found.");
@@ -1186,9 +1296,10 @@ export async function getGameServerTelemetryForSession(
     };
   }
 
-  const instance = await readPalworldInstance(config);
+  const config = resolveServerConfig(serverId, resolveConfig);
+  const instance = await readGameServerInstance(config);
   const status = normalizeState(instance.State?.Name);
-  const telemetry = await readPalworldTelemetry(
+  const telemetry = await readGameServerTelemetry(
     config,
     hostForInstance(instance),
     status,
@@ -1201,7 +1312,7 @@ async function assertServerEnabled(serverId: GameServerId): Promise<void> {
   if (!settings.enabled) {
     throw new HttpsError(
       "failed-precondition",
-      settings.disabledMessage || "Palworld is disabled by admins.",
+      settings.disabledMessage || `${serverName(serverId)} is disabled by admins.`,
     );
   }
 }
@@ -1209,20 +1320,22 @@ async function assertServerEnabled(serverId: GameServerId): Promise<void> {
 export async function startGameServerForSession(
   data: unknown,
   session: AuthorizedGameServerSession,
-  config: GameServerAwsConfig,
+  resolveConfig: GameServerConfigResolver,
 ) {
   const serverId = parseServerId(data);
+  assertGameServerScope(session, serverId);
   await assertServerEnabled(serverId);
+  const config = resolveServerConfig(serverId, resolveConfig);
   let status: GameServerStatusResult;
   try {
-    status = await describePalworldInstance(config, { includeTelemetry: false });
+    status = await describeGameServerInstance(config, { includeTelemetry: false });
   } catch (error) {
     await writeGameServerAuditLog({
       serverId,
       action: "start",
       result: "failed",
       statusBefore: "unavailable",
-      message: error instanceof Error ? error.message : "Failed to read Palworld status before start.",
+      message: error instanceof Error ? error.message : `Failed to read ${serverName(config.serverId)} status before start.`,
       session,
       instanceId: config.instanceId,
     });
@@ -1232,8 +1345,8 @@ export async function startGameServerForSession(
   if (status.status === "running" || status.status === "pending") {
     const message =
       status.status === "running"
-        ? "Palworld is already ready to join."
-        : "Palworld is already starting.";
+        ? (serverId === "palworld" ? "Palworld is already ready to join." : "Dragonwilds host is already running. Game readiness is not verified.")
+        : `${serverName(config.serverId)} is already starting.`;
     await writeGameServerAuditLog({
       serverId,
       action: "start",
@@ -1251,7 +1364,7 @@ export async function startGameServerForSession(
     };
   }
   if (status.status === "stopping") {
-    const message = "Palworld is stopping. Refresh and try again once it is stopped.";
+    const message = `${serverName(config.serverId)} is stopping. Refresh and try again once it is stopped.`;
     await writeGameServerAuditLog({
       serverId,
       action: "start",
@@ -1264,7 +1377,7 @@ export async function startGameServerForSession(
     throw new HttpsError("failed-precondition", message);
   }
   if (status.status === "terminated" || status.status === "unavailable") {
-    const message = "Palworld cannot be started from its current state.";
+    const message = `${serverName(config.serverId)} cannot be started from its current state.`;
     await writeGameServerAuditLog({
       serverId,
       action: "start",
@@ -1277,7 +1390,7 @@ export async function startGameServerForSession(
     throw new HttpsError("failed-precondition", message);
   }
   if (status.status !== "stopped") {
-    const message = "Palworld is not ready to start.";
+    const message = `${serverName(config.serverId)} is not ready to start.`;
     await writeGameServerAuditLog({
       serverId,
       action: "start",
@@ -1295,7 +1408,7 @@ export async function startGameServerForSession(
       new StartInstancesCommand({ InstanceIds: [config.instanceId] }),
     );
   } catch (error) {
-    const message = "Palworld EC2 instance start request failed.";
+    const message = `${serverName(config.serverId)} EC2 instance start request failed.`;
     console.error(message, error);
     await writeGameServerAuditLog({
       serverId,
@@ -1319,7 +1432,7 @@ export async function startGameServerForSession(
     result: "requested",
     statusBefore: status.status,
     statusAfter: "pending",
-    message: "Palworld start requested.",
+    message: `${serverName(config.serverId)} start requested.`,
     session,
     instanceId: config.instanceId,
   });
@@ -1331,7 +1444,7 @@ export async function startGameServerForSession(
     checkedAt: Date.now(),
     host: null,
     connectAddress: null,
-    message: "Palworld start requested.",
+    message: `${serverName(config.serverId)} start requested.`,
     instanceId: config.instanceId,
   };
 }
@@ -1339,20 +1452,22 @@ export async function startGameServerForSession(
 export async function stopGameServerForSession(
   data: unknown,
   session: AuthorizedGameServerSession,
-  config: GameServerAwsConfig,
+  resolveConfig: GameServerConfigResolver,
 ) {
   const serverId = parseServerId(data);
+  assertGameServerScope(session, serverId);
   await assertServerEnabled(serverId);
+  const config = resolveServerConfig(serverId, resolveConfig);
   let status: GameServerStatusResult;
   try {
-    status = await describePalworldInstance(config);
+    status = await describeGameServerInstance(config, { includeTelemetry: serverId === "palworld" });
   } catch (error) {
     await writeGameServerAuditLog({
       serverId,
       action: "stop",
       result: "failed",
       statusBefore: "unavailable",
-      message: error instanceof Error ? error.message : "Failed to read Palworld status before stop.",
+      message: error instanceof Error ? error.message : `Failed to read ${serverName(config.serverId)} status before stop.`,
       session,
       instanceId: config.instanceId,
     });
@@ -1362,8 +1477,8 @@ export async function stopGameServerForSession(
   if (status.status === "stopped" || status.status === "stopping") {
     const message =
       status.status === "stopped"
-        ? "Palworld is already offline."
-        : "Palworld is already stopping.";
+        ? `${serverName(config.serverId)} is already offline.`
+        : `${serverName(config.serverId)} is already stopping.`;
     await writeGameServerAuditLog({
       serverId,
       action: "stop",
@@ -1381,7 +1496,7 @@ export async function stopGameServerForSession(
     };
   }
   if (status.status === "pending") {
-    const message = "Palworld is starting. Refresh and try again once it is running.";
+    const message = `${serverName(config.serverId)} is starting. Refresh and try again once it is running.`;
     await writeGameServerAuditLog({
       serverId,
       action: "stop",
@@ -1394,7 +1509,7 @@ export async function stopGameServerForSession(
     throw new HttpsError("failed-precondition", message);
   }
   if (status.status === "terminated" || status.status === "unavailable") {
-    const message = "Palworld cannot be stopped from its current state.";
+    const message = `${serverName(config.serverId)} cannot be stopped from its current state.`;
     await writeGameServerAuditLog({
       serverId,
       action: "stop",
@@ -1407,7 +1522,7 @@ export async function stopGameServerForSession(
     throw new HttpsError("failed-precondition", message);
   }
   if (status.status !== "running") {
-    const message = "Palworld is not ready to stop.";
+    const message = `${serverName(config.serverId)} is not ready to stop.`;
     await writeGameServerAuditLog({
       serverId,
       action: "stop",
@@ -1425,7 +1540,7 @@ export async function stopGameServerForSession(
       new StopInstancesCommand({ InstanceIds: [config.instanceId] }),
     );
   } catch (error) {
-    const message = "Palworld EC2 instance stop request failed.";
+    const message = `${serverName(config.serverId)} EC2 instance stop request failed.`;
     console.error(message, error);
     await writeGameServerAuditLog({
       serverId,
@@ -1449,7 +1564,7 @@ export async function stopGameServerForSession(
     result: "requested",
     statusBefore: status.status,
     statusAfter: "stopping",
-    message: "Palworld stop requested.",
+    message: `${serverName(config.serverId)} stop requested.`,
     session,
     instanceId: config.instanceId,
   });
@@ -1459,16 +1574,17 @@ export async function stopGameServerForSession(
     serverId,
     status: "stopping",
     checkedAt: Date.now(),
-    message: "Palworld stop requested.",
+    message: `${serverName(config.serverId)} stop requested.`,
     instanceId: config.instanceId,
   };
 }
 
-export async function listGameServerAccessForAdmin(): Promise<{
+export async function listGameServerAccessForAdmin(data?: unknown): Promise<{
   ok: true;
   entries: GameServerAccessEntry[];
 }> {
-  const snapshot = await admin.database().ref("gameServerAccess").get();
+  const serverId = parseOptionalServerId(data);
+  const snapshot = await admin.database().ref(gameServerGrantRoot(serverId)).get();
   const value = snapshot.val() as Record<string, GameServerAccessEntry> | null;
   const entries = Object.entries(value ?? {})
     .map(([discordUserId, entry]) => accessEntryFromValue(discordUserId, entry))
@@ -1477,15 +1593,16 @@ export async function listGameServerAccessForAdmin(): Promise<{
   return { ok: true, entries };
 }
 
-export async function listGameServerAccessCandidatesForAdmin(): Promise<{
+export async function listGameServerAccessCandidatesForAdmin(data?: unknown): Promise<{
   ok: true;
   candidates: GameServerAccessCandidate[];
   legacyEntries: GameServerAccessEntry[];
 }> {
+  const serverId = parseOptionalServerId(data);
   const [membersSnapshot, linksSnapshot, accessSnapshot] = await Promise.all([
     admin.database().ref("members").get(),
     admin.database().ref("discordLinksByLodestone").get(),
-    admin.database().ref("gameServerAccess").get(),
+    admin.database().ref(gameServerGrantRoot(serverId)).get(),
   ]);
   const members = (membersSnapshot.val() ?? {}) as Record<
     string,
@@ -1543,6 +1660,7 @@ export async function upsertGameServerAccessForAdmin(
   data: unknown,
   adminSession: VerifiedAdminSession,
 ): Promise<{ ok: true; entry: GameServerAccessEntry }> {
+  const serverId = parseOptionalServerId(data);
   const input = typeof data === "object" && data ? data as Record<string, unknown> : {};
   const discordUserId = parseDiscordId(input.discordUserId);
   const displayName = parseDisplayName(input.displayName);
@@ -1567,7 +1685,7 @@ export async function upsertGameServerAccessForAdmin(
       "Enabled access must expire in the future.",
     );
   }
-  const ref = admin.database().ref(`gameServerAccess/${discordUserId}`);
+  const ref = admin.database().ref(`${gameServerGrantRoot(serverId)}/${discordUserId}`);
   const existing = (await ref.get()).val() as Partial<GameServerAccessEntry> | null;
   const now = Date.now();
   const entry: GameServerAccessEntry = {
@@ -1594,9 +1712,10 @@ export async function upsertGameServerAccessForAdmin(
 export async function deleteGameServerAccessForAdmin(
   data: unknown,
 ): Promise<{ ok: true }> {
+  const serverId = parseOptionalServerId(data);
   const input = typeof data === "object" && data ? data as Record<string, unknown> : {};
   const discordUserId = parseDiscordId(input.discordUserId);
-  await admin.database().ref(`gameServerAccess/${discordUserId}`).remove();
+  await admin.database().ref(`${gameServerGrantRoot(serverId)}/${discordUserId}`).remove();
   return { ok: true };
 }
 
@@ -1656,10 +1775,7 @@ async function listGameServerAuditLog(
 export async function listGameServerAuditLogForAdmin(
   data: unknown,
 ): Promise<{ ok: true; entries: GameServerAuditLogEntry[] }> {
-  const serverId =
-    typeof data === "object" && data && "serverId" in data
-      ? parseServerId(data)
-      : "palworld";
+  const serverId = parseOptionalServerId(data);
   return { ok: true, entries: await listGameServerAuditLog(serverId, AUDIT_LOG_ADMIN_LIMIT) };
 }
 
@@ -1668,18 +1784,16 @@ export async function listGameServerAuditLogForSession(
   _session: AuthorizedGameServerSession,
 ): Promise<{ ok: true; entries: GameServerAuditLogEntry[] }> {
   void _session;
-  const serverId =
-    typeof data === "object" && data && "serverId" in data
-      ? parseServerId(data)
-      : "palworld";
+  const serverId = parseOptionalServerId(data);
+  assertGameServerScope(_session, serverId);
   return { ok: true, entries: await listGameServerAuditLog(serverId, AUDIT_LOG_USER_LIMIT) };
 }
 
-export async function getGameServerSettingsForAdmin(): Promise<{
+export async function getGameServerSettingsForAdmin(data?: unknown): Promise<{
   ok: true;
   settings: GameServerSettings;
 }> {
-  return { ok: true, settings: await readGameServerSettings("palworld") };
+  return { ok: true, settings: await readGameServerSettings(parseOptionalServerId(data)) };
 }
 
 export async function updateGameServerSettingsForAdmin(
@@ -1706,22 +1820,49 @@ export async function updateGameServerSettingsForAdmin(
     result: "requested",
     statusBefore: existing.enabled ? "running" : "disabled",
     statusAfter: enabled ? "unknown" : "disabled",
-    message: enabled ? "Palworld enabled by admin." : "Palworld disabled by admin.",
+    message: `${serverName(serverId)} ${enabled ? "enabled" : "disabled"} by admin.`,
     session: adminSession,
   });
   return { ok: true, settings };
 }
 
 export async function runAutoStopIdleGameServers(
-  config: GameServerAwsConfig,
+  resolveConfig: GameServerConfigResolver,
+) {
+  const results = await Promise.all(GAME_SERVERS.map(async ({ id: serverId }) => {
+    try {
+      return { serverId, ...await autoStopIdleServer(serverId, resolveConfig) };
+    } catch (error) {
+      console.error("Game server idle check failed", { serverId, error });
+      return { serverId, ok: false, skipped: true, stopped: false, reason: "Idle check failed." };
+    }
+  }));
+  return { ok: results.every((result) => result.ok), results };
+}
+
+async function autoStopIdleServer(
+  serverId: GameServerId,
+  resolveConfig: GameServerConfigResolver,
 ): Promise<{ ok: true; skipped: boolean; stopped: boolean; reason: string }> {
-  const serverId: GameServerId = "palworld";
   const settings = await readGameServerSettings(serverId);
   if (!settings.enabled) {
-    return { ok: true, skipped: true, stopped: false, reason: "Palworld disabled." };
+    return { ok: true, skipped: true, stopped: false, reason: `${serverName(serverId)} disabled.` };
+  }
+  const config = resolveServerConfig(serverId, resolveConfig);
+  if (!config.instanceId.trim()) {
+    return { ok: true, skipped: true, stopped: false, reason: `${serverName(serverId)} is not configured.` };
+  }
+  // Deliberately gate by game, not by a configurable capacity or an empty list.
+  // A verified player adapter and lifecycle contract are required to remove this.
+  if (serverId === "dragonwilds") {
+    const idle = await readIdleState(serverId);
+    if (idle.idleSince !== null || idle.autoStopEligibleAt !== null) {
+      await writeIdleState(serverId, { idleSince: null, autoStopEligibleAt: null, updatedAt: Date.now() });
+    }
+    return { ok: true, skipped: true, stopped: false, reason: "Dragonwilds automatic idle shutdown is inactive: player telemetry is unverified." };
   }
 
-  const status = await describePalworldInstance(config, { includeTelemetry: true });
+  const status = await describeGameServerInstance(config, { includeTelemetry: true });
   if (status.status !== "running") {
     await writeIdleState(serverId, {
       idleSince: null,

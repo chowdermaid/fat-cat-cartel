@@ -1,3 +1,5 @@
+import { invalidateGameServerReads } from "@/features/gameserver/api/gameServerReadCache";
+import { devGameServerCapabilities, subscribeDevGameServerAccess } from "@/lib/dev/gameServerAccess";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { firebaseApp } from "@/lib/firebase";
@@ -5,7 +7,6 @@ import {
   DEV_AUTH_LAYER_ENABLED,
   DEV_SESSION_TOKEN,
   getSelectedDevPersona,
-  subscribeDevPersona,
 } from "@/lib/dev/personas";
 import {
   ADMIN_AUTH_BYPASS,
@@ -63,6 +64,7 @@ const localDevSession: AdminSession = {
   isAdmin: true,
   isHousecat: false,
   canUseGameServers: true,
+  gameServerAccessById: { palworld: true, dragonwilds: true },
   capabilities: ["admin:*"],
   expiresAt: Number.MAX_SAFE_INTEGER,
 };
@@ -83,7 +85,7 @@ function devSessionFromPersona(): AdminSession | null {
     isMember: true,
     isAdmin: persona.isAdmin,
     isHousecat: persona.isHousecat,
-    canUseGameServers: persona.isAdmin,
+    ...devGameServerCapabilities(persona),
     capabilities: persona.capabilities,
     expiresAt: Number.MAX_SAFE_INTEGER,
   };
@@ -120,7 +122,11 @@ let authSnapshot: AuthSnapshot = DEV_AUTH_LAYER_ENABLED
     };
 
 function updateAuthSnapshot(next: Partial<AuthSnapshot>): void {
-  authSnapshot = { ...authSnapshot, ...next };
+  const identity = (snapshot: AuthSnapshot) => JSON.stringify([snapshot.state, snapshot.sessionToken,
+    snapshot.session?.discordUserId, snapshot.session?.isAdmin, snapshot.session?.canUseGameServers, snapshot.session?.gameServerAccessById]);
+  const updated = { ...authSnapshot, ...next };
+  if (identity(updated) !== identity(authSnapshot)) invalidateGameServerReads();
+  authSnapshot = updated;
   subscribers.forEach((subscriber) => subscriber());
 }
 
@@ -152,7 +158,7 @@ export function useAdminAuth() {
         updateAuthSnapshot(devAuthSnapshot());
       }
       syncDevPersona();
-      const unsubscribeDevPersona = subscribeDevPersona(syncDevPersona);
+      const unsubscribeDevPersona = subscribeDevGameServerAccess(syncDevPersona);
       return () => {
         subscribers.delete(syncSnapshot);
         unsubscribeDevPersona();

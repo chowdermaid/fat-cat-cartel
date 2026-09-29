@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Power, RefreshCw, Save, Trash2, UserPlus } from "lucide-react";
-import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,15 +22,12 @@ import {
 } from "@/components/ui/table";
 import type {
   GameServerAccessEntry,
-  GameServerSettings,
+  GameServerId,
 } from "@/features/gameserver/types";
-import {
-  deleteGameServerAccess,
-  getGameServerSettings,
-  listGameServerAccess,
-  updateGameServerSettings,
-  upsertGameServerAccess,
-} from "../../api/gameServerAccess";
+import { useGameServerAccessManager } from "../../hooks/useGameServerAccessManager";
+import { useAdminAuth } from "../../hooks/useAdminAuth";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 type GameServerAccessManagerProps = {
   adminSessionToken: string | null;
@@ -56,172 +52,15 @@ function AccessStatusBadge({
   );
 }
 
-export function GameServerAccessManager({
-  adminSessionToken,
-}: GameServerAccessManagerProps) {
-  const [entries, setEntries] = useState<GameServerAccessEntry[]>([]);
-  const [search, setSearch] = useState("");
-  const [loadingAccess, setLoadingAccess] = useState(false);
-  const [settings, setSettings] = useState<GameServerSettings | null>(null);
-  const [settingsEnabled, setSettingsEnabled] = useState(true);
-  const [disabledMessage, setDisabledMessage] = useState("");
-  const [loadingSettings, setLoadingSettings] = useState(false);
-  const [savingSettings, setSavingSettings] = useState(false);
-  const [savingId, setSavingId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [renderedAt] = useState(Date.now);
-  const [newDiscordUserId, setNewDiscordUserId] = useState("");
-  const [newDisplayName, setNewDisplayName] = useState("");
-  const [newNotes, setNewNotes] = useState("");
-  const [newExpiresAt, setNewExpiresAt] = useState("");
-
-  const filteredEntries = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return entries;
-    return entries.filter((entry) =>
-      [entry.displayName, entry.discordUserId, entry.notes ?? ""]
-        .join(" ")
-        .toLowerCase()
-        .includes(query),
-    );
-  }, [entries, search]);
-
-  async function loadAccess() {
-    if (!adminSessionToken) return;
-    setLoadingAccess(true);
-    try {
-      const result = await listGameServerAccess(adminSessionToken);
-      setEntries(result.entries);
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to load Palworld access.",
-      );
-    } finally {
-      setLoadingAccess(false);
-    }
-  }
-
-  async function loadSettings() {
-    if (!adminSessionToken) return;
-    setLoadingSettings(true);
-    try {
-      const result = await getGameServerSettings(adminSessionToken);
-      setSettings(result.settings);
-      setSettingsEnabled(result.settings.enabled);
-      setDisabledMessage(result.settings.disabledMessage ?? "");
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to load Palworld settings.",
-      );
-    } finally {
-      setLoadingSettings(false);
-    }
-  }
-
-  useEffect(() => {
-    void loadAccess();
-    void loadSettings();
-  }, [adminSessionToken]);
-
-  async function grantDiscordUser() {
-    if (!adminSessionToken) return;
-    const discordUserId = newDiscordUserId.trim();
-    const displayName = newDisplayName.trim();
-    const expiresAt = newExpiresAt
-      ? new Date(`${newExpiresAt}T23:59:59`).getTime()
-      : null;
-    setSavingId(discordUserId);
-    try {
-      await upsertGameServerAccess(adminSessionToken, {
-        discordUserId,
-        displayName,
-        enabled: true,
-        expiresAt,
-        notes: newNotes.trim() || null,
-      });
-      toast.success(`${displayName} can access Palworld.`);
-      setNewDiscordUserId("");
-      setNewDisplayName("");
-      setNewNotes("");
-      setNewExpiresAt("");
-      await loadAccess();
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to grant Palworld access.",
-      );
-    } finally {
-      setSavingId(null);
-    }
-  }
-
-  async function toggleEnabled(entry: GameServerAccessEntry) {
-    if (!adminSessionToken) return;
-    setSavingId(entry.discordUserId);
-    try {
-      const result = await upsertGameServerAccess(adminSessionToken, {
-        discordUserId: entry.discordUserId,
-        displayName: entry.displayName,
-        enabled: !entry.enabled,
-        expiresAt:
-          !entry.enabled &&
-          entry.expiresAt !== null &&
-          entry.expiresAt <= Date.now()
-            ? null
-            : entry.expiresAt,
-        notes: entry.notes,
-      });
-      toast.success(
-        `${result.entry.displayName} ${result.entry.enabled ? "enabled" : "disabled"}.`,
-      );
-      await loadAccess();
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update access.",
-      );
-    } finally {
-      setSavingId(null);
-    }
-  }
-
-  async function removeEntry(entry: GameServerAccessEntry) {
-    if (!adminSessionToken) return;
-    setDeletingId(entry.discordUserId);
-    try {
-      await deleteGameServerAccess(adminSessionToken, entry.discordUserId);
-      toast.success(`${entry.displayName} removed.`);
-      await loadAccess();
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to remove access.",
-      );
-    } finally {
-      setDeletingId(null);
-    }
-  }
-
-  async function saveSettings() {
-    if (!adminSessionToken) return;
-    setSavingSettings(true);
-    try {
-      const result = await updateGameServerSettings(adminSessionToken, {
-        serverId: "palworld",
-        enabled: settingsEnabled,
-        disabledMessage: disabledMessage.trim() || null,
-      });
-      setSettings(result.settings);
-      setSettingsEnabled(result.settings.enabled);
-      setDisabledMessage(result.settings.disabledMessage ?? "");
-      toast.success(
-        result.settings.enabled ? "Palworld enabled." : "Palworld disabled.",
-      );
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to save Palworld settings.",
-      );
-    } finally {
-      setSavingSettings(false);
-    }
-  }
+function GameServerAccessForm({ serverId, adminSessionToken, discordUserId, busy, onBusy }: {
+  serverId: GameServerId; adminSessionToken: string; discordUserId: string; busy: boolean; onBusy: (busy: boolean) => void;
+}) {
+  const { gameName, filteredEntries, search, setSearch, loadingAccess, settings, settingsEnabled, setSettingsEnabled,
+    disabledMessage, setDisabledMessage, loadingSettings, savingSettings, renderedAt,
+    newDiscordUserId, setNewDiscordUserId, newDisplayName, setNewDisplayName, newNotes, setNewNotes,
+    newExpiresAt, setNewExpiresAt, loadAccess, loadSettings, grantDiscordUser, toggleEnabled, removeEntry, saveSettings
+  } = useGameServerAccessManager(serverId, adminSessionToken, discordUserId, onBusy);
+  const [deleteEntry, setDeleteEntry] = useState<GameServerAccessEntry | null>(null);
 
   return (
     <Card>
@@ -229,14 +68,14 @@ export function GameServerAccessManager({
         <div>
           <CardTitle className="flex items-center gap-2">
             <Power className="h-5 w-5 text-muted-foreground" />
-            Palworld
+            Game Server Access: {gameName}
           </CardTitle>
           <CardDescription>
-            Manage availability and Discord user access.
+            Grants apply only to {gameName}. Live Boss/Underpaw admins bypass both lists.
           </CardDescription>
         </div>
         <Badge variant={settingsEnabled ? "secondary" : "outline"}>
-          {settingsEnabled ? "Enabled" : "Disabled"}
+          {!settings ? loadingSettings ? "Loading settings" : "Settings unavailable" : settingsEnabled ? "Enabled" : "Disabled"}
         </Badge>
       </CardHeader>
 
@@ -244,28 +83,31 @@ export function GameServerAccessManager({
         <section className="space-y-3">
           <div className="flex items-center gap-3 rounded-md border px-3 py-3">
             <Checkbox
-              id="palworld-enabled"
+              id="game-server-enabled"
               checked={settingsEnabled}
               onCheckedChange={(checked) => setSettingsEnabled(checked === true)}
-              disabled={loadingSettings || savingSettings}
+              disabled={loadingSettings || busy || !settings}
             />
-            <Label htmlFor="palworld-enabled">Palworld enabled</Label>
+            <Label htmlFor="game-server-enabled">{gameName} enabled</Label>
           </div>
           <Input
-            aria-label="Disabled message"
+            aria-label={`${gameName} disabled message`}
             value={disabledMessage}
             onChange={(event) => setDisabledMessage(event.target.value)}
             placeholder="Optional message shown while disabled"
-            disabled={loadingSettings || savingSettings}
+            disabled={loadingSettings || busy || !settings}
             maxLength={240}
           />
           <div className="flex flex-wrap items-center gap-2">
             <Button
               onClick={() => void saveSettings()}
-              disabled={loadingSettings || savingSettings}
+              disabled={loadingSettings || busy || !settings}
             >
               <Save className="h-4 w-4" />
-              {savingSettings ? "Saving" : "Save"}
+              {savingSettings ? "Saving" : `Save ${gameName} settings`}
+            </Button>
+            <Button variant="outline" size="icon" onClick={() => void loadSettings()} disabled={loadingSettings || busy} aria-label={`Refresh ${gameName} settings`}>
+              <RefreshCw className="h-4 w-4" />
             </Button>
             <span className="text-xs text-muted-foreground">
               Updated {formatTimestamp(settings?.updatedAt ?? null)}
@@ -275,9 +117,9 @@ export function GameServerAccessManager({
 
         <section className="grid gap-3 border-t pt-6 md:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="palworld-discord-id">Discord User ID</Label>
+            <Label htmlFor="game-server-discord-id">Discord User ID</Label>
             <Input
-              id="palworld-discord-id"
+              id="game-server-discord-id"
               value={newDiscordUserId}
               onChange={(event) => setNewDiscordUserId(event.target.value)}
               placeholder="123456789012345678"
@@ -286,9 +128,9 @@ export function GameServerAccessManager({
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="palworld-display-name">Display Name</Label>
+            <Label htmlFor="game-server-display-name">Display Name</Label>
             <Input
-              id="palworld-display-name"
+              id="game-server-display-name"
               value={newDisplayName}
               onChange={(event) => setNewDisplayName(event.target.value)}
               placeholder="Friend name"
@@ -296,18 +138,18 @@ export function GameServerAccessManager({
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="palworld-expiry">Expiry (optional)</Label>
+            <Label htmlFor="game-server-expiry">Expiry (optional)</Label>
             <Input
-              id="palworld-expiry"
+              id="game-server-expiry"
               type="date"
               value={newExpiresAt}
               onChange={(event) => setNewExpiresAt(event.target.value)}
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="palworld-notes">Note (optional)</Label>
+            <Label htmlFor="game-server-notes">Note (optional)</Label>
             <Input
-              id="palworld-notes"
+              id="game-server-notes"
               value={newNotes}
               onChange={(event) => setNewNotes(event.target.value)}
               maxLength={500}
@@ -319,11 +161,11 @@ export function GameServerAccessManager({
               disabled={
                 !newDiscordUserId.trim() ||
                 !newDisplayName.trim() ||
-                savingId === newDiscordUserId.trim()
+                busy || loadingAccess
               }
             >
               <UserPlus className="h-4 w-4" />
-              Grant Access
+              Grant {gameName} Access
             </Button>
           </div>
         </section>
@@ -339,8 +181,8 @@ export function GameServerAccessManager({
               variant="outline"
               size="icon"
               onClick={() => void loadAccess()}
-              disabled={loadingAccess}
-              aria-label="Refresh access"
+              disabled={loadingAccess || busy}
+              aria-label={`Refresh ${gameName} access`}
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -381,17 +223,18 @@ export function GameServerAccessManager({
                       <Button
                         size="sm"
                         variant="outline"
-                        disabled={savingId === entry.discordUserId}
+                        disabled={busy}
                         onClick={() => void toggleEnabled(entry)}
+                        aria-label={`${entry.enabled ? "Disable" : "Enable"} ${gameName} access for ${entry.displayName}`}
                       >
                         {entry.enabled ? "Disable" : "Enable"}
                       </Button>
                       <Button
                         size="icon"
                         variant="ghost"
-                        disabled={deletingId === entry.discordUserId}
-                        onClick={() => void removeEntry(entry)}
-                        aria-label={`Remove ${entry.displayName}`}
+                        disabled={busy}
+                        onClick={() => setDeleteEntry(entry)}
+                        aria-label={`Remove ${entry.displayName} from ${gameName}`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -413,6 +256,40 @@ export function GameServerAccessManager({
           </Table>
         </section>
       </CardContent>
+      <Dialog open={Boolean(deleteEntry)} onOpenChange={(open) => { if (!open && !busy) setDeleteEntry(null); }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Remove {gameName} access?</DialogTitle>
+            <DialogDescription>Remove {deleteEntry?.displayName} from {gameName}? Their other game access stays unchanged.</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" disabled={busy} onClick={() => setDeleteEntry(null)}>Cancel</Button>
+            <Button variant="destructive" disabled={busy} onClick={() => { if (deleteEntry) { const entry = deleteEntry; setDeleteEntry(null); void removeEntry(entry); } }}>Remove {gameName} access</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
+}
+
+function GameServerAccessSelection({ adminSessionToken, discordUserId }: { adminSessionToken: string; discordUserId: string }) {
+  const [serverId, setServerId] = useState<GameServerId>("palworld");
+  const [busy, setBusy] = useState(false);
+  return <div className="space-y-3">
+    <div className="max-w-sm space-y-2">
+      <Label htmlFor="managed-game">Game</Label>
+      <Select value={serverId} onValueChange={(value) => setServerId(value as GameServerId)} disabled={busy}>
+        <SelectTrigger id="managed-game"><SelectValue /></SelectTrigger>
+        <SelectContent><SelectItem value="palworld">Palworld</SelectItem><SelectItem value="dragonwilds">Dragonwilds</SelectItem></SelectContent>
+      </Select>
+      <p className="text-xs text-muted-foreground">Switching games clears unsaved fields. Disabling a game blocks controls; it does not stop its host or remove grants.</p>
+    </div>
+    <GameServerAccessForm key={serverId} serverId={serverId} adminSessionToken={adminSessionToken} discordUserId={discordUserId} busy={busy} onBusy={setBusy} />
+  </div>;
+}
+
+export function GameServerAccessManager({ adminSessionToken }: GameServerAccessManagerProps) {
+  const auth = useAdminAuth();
+  if (!adminSessionToken || !auth.authed || auth.checking || !auth.session?.isAdmin || auth.sessionToken !== adminSessionToken) return null;
+  const identity = JSON.stringify([adminSessionToken, auth.session.discordUserId, auth.session.isAdmin]);
+  return <GameServerAccessSelection key={identity} adminSessionToken={adminSessionToken} discordUserId={auth.session.discordUserId} />;
 }

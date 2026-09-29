@@ -1,3 +1,4 @@
+import type { GameServerId } from "@/features/gameserver/types";
 import type { Member } from "@/types";
 import type { Participant } from "@/types";
 import type { FavoriteCollectibleOption } from "@/features/member-profile/FavoriteCollectiblePicker";
@@ -23,6 +24,7 @@ export interface AdminSession {
   isAdmin: boolean;
   isHousecat: boolean;
   canUseGameServers?: boolean;
+  gameServerAccessById: Record<GameServerId, boolean>;
   capabilities?: string[];
   expiresAt: number;
 }

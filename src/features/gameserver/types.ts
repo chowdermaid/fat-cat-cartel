@@ -1,6 +1,6 @@
 import type { AdminSession } from "@/features/admin/types";
 
-export type GameServerId = "palworld";
+export type GameServerId = "palworld" | "dragonwilds";
 
 export type GameServerStatus =
   | "unknown"
@@ -144,6 +144,14 @@ export interface PalworldPlayer {
   level: number | null;
 }
 
+// Names are optional telemetry; count-only snapshots have no player rows.
+export interface DragonwildsPlayer {
+  name: string;
+}
+
+export type GameServerPlayer<T extends GameServerId> =
+  T extends "palworld" ? PalworldPlayer : DragonwildsPlayer;
+
 export interface GameServersResponse {
   ok: true;
   servers: Array<GameServerDefinition & {
@@ -157,13 +165,14 @@ export interface GameServersResponse {
   }>;
 }
 
-export interface GameServerStatusResponse {
+export interface GameServerStatusResponse<T extends GameServerId = GameServerId> {
   ok: true;
-  serverId: GameServerId;
+  serverId: T;
   status: GameServerStatus;
   checkedAt: number;
   host: string | null;
   connectAddress: string | null;
+  worldName?: string | null;
   message: string;
   enabled: boolean;
   disabledMessage: string | null;
@@ -172,7 +181,7 @@ export interface GameServerStatusResponse {
   launchTime: string | null;
   playerCount: number | null;
   maxPlayers: number | null;
-  players: PalworldPlayer[];
+  players: GameServerPlayer<T>[];
   memoryUsedPercent: number | null;
   diskUsedPercent: number | null;
   idleSince: number | null;
@@ -183,26 +192,27 @@ export interface GameServerStatusResponse {
   previousMonthCost: GameServerCostSnapshot | null;
 }
 
-export interface GameServerTelemetryResponse {
+export interface GameServerTelemetryResponse<T extends GameServerId = GameServerId> {
   ok: true;
-  serverId: GameServerId;
+  serverId: T;
   playerCount: number | null;
   maxPlayers: number | null;
-  players: PalworldPlayer[];
+  players: GameServerPlayer<T>[];
   memoryUsedPercent: number | null;
   diskUsedPercent: number | null;
   telemetryCheckedAt: number;
   telemetryMessage: string | null;
 }
 
-export interface GameServerActionResponse {
+export interface GameServerActionResponse<T extends GameServerId = GameServerId> {
   ok: boolean;
-  serverId: GameServerId;
+  serverId: T;
   status: GameServerStatus;
   message: string;
   checkedAt?: number;
   host?: string | null;
   connectAddress?: string | null;
+  worldName?: string | null;
   enabled?: boolean;
   disabledMessage?: string | null;
   instanceId?: string | null;
@@ -210,7 +220,7 @@ export interface GameServerActionResponse {
   launchTime?: string | null;
   playerCount?: number | null;
   maxPlayers?: number | null;
-  players?: PalworldPlayer[];
+  players?: GameServerPlayer<T>[];
   memoryUsedPercent?: number | null;
   diskUsedPercent?: number | null;
   idleSince?: number | null;
@@ -219,4 +229,21 @@ export interface GameServerActionResponse {
   telemetryMessage?: string | null;
   monthlyCost?: GameServerCostSnapshot | null;
   previousMonthCost?: GameServerCostSnapshot | null;
+}
+
+export interface DragonwildsServerState {
+  identity: string;
+  status: GameServerStatusResponse<"dragonwilds"> | null;
+  telemetry: GameServerTelemetryResponse<"dragonwilds"> | null;
+  events: GameServerAuditLogEntry[];
+  loadingStatus: boolean;
+  loadingTelemetry: boolean;
+  loadingEvents: boolean;
+  action: "start" | "stop" | null;
+  waitingForHost: boolean;
+  accessDenied: boolean;
+  error: string | null;
+  telemetryError: string | null;
+  eventsError: string | null;
+  notice: string | null;
 }
