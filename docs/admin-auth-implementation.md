@@ -66,6 +66,8 @@ The browser stores the raw opaque session token in `localStorage` under `admin_s
 
 `requireAdminSession` wraps `requireMemberSession` and rejects sessions whose live role IDs do not include Boss or Underpaw.
 
+`triggerUcobProgressRefresh` uses `requireMemberSession` so any signed-in, linked tracked member with an allowed live Discord role can refresh The Coils Cartel's UCOB tracker. The UI requires `isMember` and a linked Lodestone ID; the backend revalidates the link and character. The refresh always uses the configured static source ID rather than the caller's character.
+
 The UI displays linked in-game character data from `/members/{lodestoneId}`: full character name, FC rank, and avatar URL. Discord username, global display name, and Discord avatar are not used for app display.
 
 ## Client Surfaces

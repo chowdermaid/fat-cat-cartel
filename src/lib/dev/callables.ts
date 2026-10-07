@@ -1,4 +1,6 @@
 import type { GameServerId } from "@/features/gameserver/types";
+import { createUcobProgressFixture } from "@/features/ucob-prog/api/ucobProgressFixtures";
+import { UCOB_USE_STUBS } from "@/features/ucob-prog/constants";
 import type { GameServerFixture } from "@/features/gameserver/api/gameServerFixtures";
 import { createGameServerMockState, parseMockCatalogServerIds, parseMockServerId } from "@/features/gameserver/api/gameServerMockState";
 import { devGameServerAccessStatus, devGameServerCapabilities, readGameServerAccessStore, upsertLocalGameServerAccess, deleteLocalGameServerAccess } from "./gameServerAccess";
@@ -259,6 +261,15 @@ function assertGameServerAccess(persona: DevPersona, serverId: GameServerId): vo
 
 function registerDefaultHandlers(): void {
   if (handlers.size > 0) return;
+
+  handlers.set("triggerUcobProgressRefresh", () => {
+    const persona = getSelectedDevPersona();
+    assertAuthenticated(persona);
+    if (!persona.lodestoneId) throw new Error("A linked Discord character is required.");
+    if (!UCOB_USE_STUBS) throw new Error("UCOB mock refresh requires stub mode.");
+    const fixture = createUcobProgressFixture();
+    return { ok: true, sourceStatus: fixture.sourceStatus };
+  });
 
   handlers.set("listGameServerAccess", (data) => {
     const serverId = parseMockServerId(data, true);

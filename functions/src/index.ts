@@ -5,6 +5,7 @@ import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
 import { defineSecret, defineString } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { runRefreshFFLogs } from "./refresh-fflogs";
+import { runRefreshUcobProgress } from "./ucob-progress";
 import { runRefreshFCCollection } from "./refresh-fc-collection";
 import { runScrapeLodestone } from "./scrape-lodestone";
 import { handleDiscordInteraction } from "./discord/interactions";
@@ -87,6 +88,7 @@ admin.initializeApp({
 const fflogsClientId = defineString("FFLOGS_CLIENT_ID");
 const fflogsClientSecret = defineSecret("FFLOGS_CLIENT_SECRET");
 const tomestoneBearerToken = defineSecret("TOMESTONE_BEARER_TOKEN");
+const ucobSourceLodestoneId = defineString("UCOB_SOURCE_LODESTONE_ID", { default: "20439006" });
 const discordPublicKey = defineString("DISCORD_PUBLIC_KEY");
 const discordClientId = defineString("DISCORD_CLIENT_ID");
 const discordClientSecret = defineSecret("DISCORD_CLIENT_SECRET");
@@ -391,6 +393,19 @@ export const triggerTomestoneRaidStatsRefresh = onCall(
     await requireAdminSession(request.data, adminAuthConfig());
     await runRefreshTomestoneRaidStats(tomestoneBearerToken.value());
     return { ok: true };
+  },
+);
+
+export const triggerUcobProgressRefresh = onCall(
+  {
+    secrets: [tomestoneBearerToken, discordBotToken],
+    timeoutSeconds: 300,
+    region: "us-central1",
+  },
+  async (request) => {
+    await requireMemberSession(request.data, adminAuthConfig());
+    const sourceStatus = await runRefreshUcobProgress(tomestoneBearerToken.value(), ucobSourceLodestoneId.value());
+    return { ok: true, sourceStatus };
   },
 );
 

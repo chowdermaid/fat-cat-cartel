@@ -209,8 +209,9 @@ function configuredEncountersByCanonical(): Map<string, { zone: ZoneConfig; enco
   return map;
 }
 
-async function fetchTomestone<T>(token: string, path: string): Promise<T> {
+export async function fetchTomestone<T>(token: string, path: string, onRequest?: () => void): Promise<T> {
   for (let attempt = 0; attempt < 4; attempt++) {
+    onRequest?.();
     const res = await fetch(`${TOMESTONE_BASE_URL}${path}`, {
       headers: {
         Accept: "application/json",

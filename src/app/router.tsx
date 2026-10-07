@@ -15,6 +15,7 @@ import {
 import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
 import { RaidStatsPage } from "@/features/raid-stats";
+import { UcobProgPage } from "@/features/ucob-prog";
 import { MountRoulettePage } from "@/features/mount-roulette";
 import { MembersPage } from "@/features/members";
 import { MemberProfilePage } from "@/features/member-profile";
@@ -78,6 +79,12 @@ const raidStatsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/raid-stats",
   component: RaidStatsPage,
+});
+
+const ucobProgRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/ucob-prog",
+  component: UcobProgPage,
 });
 
 const mountRouletteRoute = createRoute({
@@ -155,6 +162,7 @@ const routeTree = rootRoute.addChildren([
   fcTypeRoute,
   fcLeaderboardRoute,
   raidStatsRoute,
+  ucobProgRoute,
   mountRouletteRoute,
   craftingBoardRoute,
   meowketBoardRoute,

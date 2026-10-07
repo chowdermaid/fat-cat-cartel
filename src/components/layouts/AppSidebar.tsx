@@ -33,6 +33,11 @@ import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import { useGameServerAuth } from "@/features/gameserver/hooks/useGameServerAuth";
 import fatcathi from "../../assets/fatcathi.png";
+import dragonIcon from "@/assets/icons/dragon.svg";
+
+function DragonIcon({ className }: { className?: string }) {
+  return <img src={dragonIcon} alt="" aria-hidden="true" className={`dark:invert ${className ?? ""}`} />;
+}
 
 const navItems = [
   { label: "Home", to: "/", icon: Home },
@@ -43,6 +48,7 @@ const navItems = [
 const progressItems = [
   { label: "FC Collection", to: "/fc-collection", icon: Library },
   { label: "Raid Stats", to: "/raid-stats", icon: BarChart2 },
+  { label: "UCOB Prog", to: "/ucob-prog", icon: DragonIcon },
 ] as const;
 
 const toolItems = [

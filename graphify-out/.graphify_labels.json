@@ -159,7 +159,7 @@
   "157": "updateMonthlyCostSnapshot",
   "158": "SpudJarPage.tsx",
   "159": "PalworldActivityTimeline.tsx",
-  "160": "describePalworldInstance",
+  "160": "describeGameServerInstance",
   "161": "database-rules.test.mjs",
   "162": "PalworldPlayerField.tsx",
   "163": "PalworldCostSummary.tsx",
@@ -169,12 +169,15 @@
   "167": "game-servers.test.ts",
   "168": "cloudWatchQuery",
   "169": "scrape-lodestone.ts",
-  "170": "requireAdminSession",
+  "170": "avatar.tsx",
   "171": "getGameServerAccessStatusForIdentity",
   "172": "cleanText",
   "173": "DRAGONWILDS_IMPLEMENTATION_PLAN.md",
   "174": "4. Proposed implementation",
   "175": "Phase 4: build the Dragonwilds page and online board",
-  "176": "refresh-fc-collection.ts",
-  "177": "Dragonwilds Phase 7 release handoff"
+  "176": "types.ts",
+  "177": "Dragonwilds Phase 7 release handoff",
+  "178": "PalworldActivityTimeline.tsx",
+  "180": "game-server-access-lifecycle.test.mjs",
+  "181": "ucob-animations.test.mjs"
 }

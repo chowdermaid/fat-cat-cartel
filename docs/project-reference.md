@@ -58,6 +58,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/meowketboard`: `MeowketBoardPage`
 - `/spud-jar`: `SpudJarPage`
 - `/raid-stats`: `RaidStatsPage`
+- `/ucob-prog`: `UcobProgPage`, The Coils Cartel's single-static UCOB tracker
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`

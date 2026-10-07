@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1790669098.6830983,
-    "ast_hash": "d8c40dad5cf32bdee3d62476bfb6a1a0",
+    "mtime": 1791331910.2999146,
+    "ast_hash": "86dd7f9a0a2a4e13d5c6718b619dfb86",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -130,8 +130,8 @@
     "semantic_hash": "02bcb4987b70ee153ac51253eb9504da"
   },
   "functions/src/refresh-tomestone-raid-stats.ts": {
-    "mtime": 1789644994.4128618,
-    "ast_hash": "8a9ce28ff028e7f2a522b31d9463394f",
+    "mtime": 1791330824.559885,
+    "ast_hash": "c57cb7f6f47bf7b3f3729fd7cc606196",
     "semantic_hash": ""
   },
   "functions/src/scrape-lodestone.ts": {
@@ -160,8 +160,8 @@
     "semantic_hash": "615851105fdbc32d13f37443a9422443"
   },
   "package.json": {
-    "mtime": 1790667203.8184574,
-    "ast_hash": "ff2a7611d8fd73174284b27dbd3ab4c7",
+    "mtime": 1791342098.352998,
+    "ast_hash": "8c9a2b5803198c79b9c05816d0105d83",
     "semantic_hash": ""
   },
   "scripts/dev-emulator.mjs": {
@@ -190,8 +190,8 @@
     "semantic_hash": "ffc66b08419b1e517f8640368d378fda"
   },
   "src/app/router.tsx": {
-    "mtime": 1790665072.2143688,
-    "ast_hash": "dae37400006b624f329c8250394207c1",
+    "mtime": 1791330667.1792946,
+    "ast_hash": "6b1e18bf5cf02363ea75afbd86f417b9",
     "semantic_hash": ""
   },
   "src/components/auth/AuthAccessState.tsx": {
@@ -220,8 +220,8 @@
     "semantic_hash": "09aa737caac1b43a078e46a3ed091b65"
   },
   "src/components/layouts/AppSidebar.tsx": {
-    "mtime": 1789644994.4075396,
-    "ast_hash": "93b103c12a6c18a8d6a58a84b99c1a61",
+    "mtime": 1791331910.2983696,
+    "ast_hash": "86a681f6461be3b546f820f783a34a7a",
     "semantic_hash": ""
   },
   "src/components/layouts/RootLayout.tsx": {
@@ -1665,8 +1665,8 @@
     "semantic_hash": "82564c024de5ea4bf8ce2a4c800cbfc2"
   },
   "src/lib/db.stub.ts": {
-    "mtime": 1789644994.4139054,
-    "ast_hash": "685e9caa0d70e6d973521e58eef62cf9",
+    "mtime": 1791330667.1808286,
+    "ast_hash": "cb596c792ac1d5add576b1e951be2af3",
     "semantic_hash": ""
   },
   "src/lib/db.ts": {
@@ -1675,8 +1675,8 @@
     "semantic_hash": ""
   },
   "src/lib/dev/callables.ts": {
-    "mtime": 1790669098.6857424,
-    "ast_hash": "81fdc9c6ca00b1db5ad755fee9dbc6e1",
+    "mtime": 1791331910.2999146,
+    "ast_hash": "c6271bc16340c73f44967da6c63f4854",
     "semantic_hash": ""
   },
   "src/lib/dev/craftingRequests.ts": {
@@ -1770,8 +1770,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1790668147.9045463,
-    "ast_hash": "530d40ad0f9cab88d034a8fa081b412e",
+    "mtime": 1791331954.2803156,
+    "ast_hash": "4848d2cc100589dfcaa6975f68de26f5",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -1810,13 +1810,13 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1790669365.6779778,
-    "ast_hash": "cbb46d96276319b544eb1dbb88f4c089",
+    "mtime": 1791330824.563003,
+    "ast_hash": "26df9190b7c201d28f1a4518b6f70f08",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
-    "mtime": 1789644923.8053117,
-    "ast_hash": "a247ef6ad3c23d92e08c943ef155b872",
+    "mtime": 1791344722.0608351,
+    "ast_hash": "48069d5d29633a3d1bb5cab3d6df950e",
     "semantic_hash": ""
   },
   "docs/website-overview.md": {
@@ -2634,16 +2634,6 @@
     "ast_hash": "f31dffc9096df70dbe1900f08ec1633f",
     "semantic_hash": ""
   },
-  "DRAGONWILDS_IMPLEMENTATION_PLAN.md": {
-    "mtime": 1790668147.9060867,
-    "ast_hash": "768743ca6c0b94011d7e1e926cca7685",
-    "semantic_hash": ""
-  },
-  "DRAGONWILDS_PHASED_IMPLEMENTATION.md": {
-    "mtime": 1790672444.0315027,
-    "ast_hash": "f7c2446a89c36341c98a862b359d2e62",
-    "semantic_hash": ""
-  },
   "docs/dragonwilds-server-implementation.md": {
     "mtime": 1790672444.0315027,
     "ast_hash": "8d015bade3f49aee7b213fdea065d294",
@@ -2709,11 +2699,6 @@
     "ast_hash": "b5f2e2fac4bdfa2a501621cc2ea35339",
     "semantic_hash": ""
   },
-  "DRAGONWILDS_PHASE_4_HANDOFF.md": {
-    "mtime": 1790663564.0613408,
-    "ast_hash": "c745d29294c1fd113b58be82dfd22f11",
-    "semantic_hash": ""
-  },
   "src/features/admin/hooks/useGameServerAccessManager.ts": {
     "mtime": 1790667293.031112,
     "ast_hash": "ef9322811d0fc55249e2ee9c3e8611bc",
@@ -2729,16 +2714,6 @@
     "ast_hash": "7aa3b79779a244d48d114cf670408ffa",
     "semantic_hash": ""
   },
-  "DRAGONWILDS_PHASE_5_HANDOFF.md": {
-    "mtime": 1790667477.4211392,
-    "ast_hash": "1b718b07ec6be876e2aef0313839704c",
-    "semantic_hash": ""
-  },
-  "DRAGONWILDS_PHASE_7_HANDOFF.md": {
-    "mtime": 1790672412.5945024,
-    "ast_hash": "4515401409e4cab1144c678543d1fec1",
-    "semantic_hash": ""
-  },
   "src/features/gameserver/components/dragonwilds/DragonwildsConnectionPanel.tsx": {
     "mtime": 1790672371.4814508,
     "ast_hash": "b26d0701515afda8776f51db579b4fab",
@@ -2747,6 +2722,131 @@
   "src/assets/gameserver/runescape-banner.jpg": {
     "mtime": 1790673023.5911386,
     "ast_hash": "c55e758eeb2cb58338f1b75e0a154acb",
+    "semantic_hash": ""
+  },
+  "functions/src/ucob-progress.test.ts": {
+    "mtime": 1791331981.8886206,
+    "ast_hash": "acbdce43d79cc4a14bcbd34850979fa1",
+    "semantic_hash": ""
+  },
+  "functions/src/ucob-progress.ts": {
+    "mtime": 1791330824.5614178,
+    "ast_hash": "6314cbc131192c053dcd5ebc769adafe",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/api/ucobProgressFetchers.ts": {
+    "mtime": 1791331003.0185795,
+    "ast_hash": "62af79434eae917515549a3cdcde2f16",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/api/ucobProgressFixtures.ts": {
+    "mtime": 1791340377.0104558,
+    "ast_hash": "1375b687925309790b65812b26418fce",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/UcobProgPage.tsx": {
+    "mtime": 1791344334.2047858,
+    "ast_hash": "d9091ea192ef3c95ebc1fbf7fdf05d30",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/activity/UcobRecentActivity.tsx": {
+    "mtime": 1791344691.891409,
+    "ast_hash": "7dab1424094cffc586ad3c5e0bb2b939",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/chart/UcobChartStats.tsx": {
+    "mtime": 1791344864.3993144,
+    "ast_hash": "8a70db6dee4b44aaeb91bc89819bdc99",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/chart/UcobChartTooltip.tsx": {
+    "mtime": 1791330667.174737,
+    "ast_hash": "9b1e28a374a4535addc829f935db063f",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/chart/UcobProgressChart.tsx": {
+    "mtime": 1791344691.8892992,
+    "ast_hash": "6fdba3000aa4761e5bd0775fd247d4aa",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/constants.ts": {
+    "mtime": 1791341862.9280548,
+    "ast_hash": "b66f5140ed49b4bfd679b16c2807f6d6",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/hooks/useUcobProgress.ts": {
+    "mtime": 1791330738.705932,
+    "ast_hash": "e8c3e5f9b9537d2697b95de737015d90",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/index.tsx": {
+    "mtime": 1791330667.177761,
+    "ast_hash": "58a6d1d2deb9d2b3fab6f09d61ba66e0",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/types.ts": {
+    "mtime": 1791342161.4653203,
+    "ast_hash": "dfce36c4d7a502e5df6a2ab34451ce4f",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/utils/chartData.ts": {
+    "mtime": 1791330667.1714408,
+    "ast_hash": "018ce4c26dcbfbef2edaf72175f28325",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/utils/formatting.ts": {
+    "mtime": 1791330667.1714408,
+    "ast_hash": "da1b636294968a4ee8bbc4113cc10e99",
+    "semantic_hash": ""
+  },
+  "tests/ucob-progress-client.test.mjs": {
+    "mtime": 1791344021.5380714,
+    "ast_hash": "4fc2a1bc0e46cdd741a1a532852f6061",
+    "semantic_hash": ""
+  },
+  "src/components/ui/avatar.tsx": {
+    "mtime": 1791331910.2963245,
+    "ast_hash": "420a83c7b6afa94d2b0f9adc600e549f",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/chart/UcobEndpointAvatar.tsx": {
+    "mtime": 1791331910.2968333,
+    "ast_hash": "bd6ef215bbf02affb2e27597cfae3fd0",
+    "semantic_hash": ""
+  },
+  "src/assets/icons/dragon.svg": {
+    "mtime": 1791331644.3686738,
+    "ast_hash": "a1ad9953b239baf9011ee818211b44a0",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/progress/UcobPhaseProgress.tsx": {
+    "mtime": 1791344691.8892992,
+    "ast_hash": "f9c50edeecfeff8443a83a9168ff9eb4",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/utils/phaseProgress.ts": {
+    "mtime": 1791342161.4659872,
+    "ast_hash": "afd10764bc4a1c50e7c56480127d4c1a",
+    "semantic_hash": ""
+  },
+  "src/components/ui/progress.tsx": {
+    "mtime": 1791342161.4632444,
+    "ast_hash": "55b8726ffa0e257fe4d311370c0a62cb",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/components/chart/UcobStatValue.tsx": {
+    "mtime": 1791344334.2017117,
+    "ast_hash": "83ddcd90e202cbebac793c2a4c98abf7",
+    "semantic_hash": ""
+  },
+  "src/features/ucob-prog/hooks/useUcobAnimations.ts": {
+    "mtime": 1791344691.8887856,
+    "ast_hash": "1b11c62af1400197abb889f6ea20f021",
+    "semantic_hash": ""
+  },
+  "tests/ucob-animations.test.mjs": {
+    "mtime": 1791344722.059301,
+    "ast_hash": "59092a4f764299e105a2c1df0d32b6ba",
     "semantic_hash": ""
   }
 }

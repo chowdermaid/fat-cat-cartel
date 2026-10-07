@@ -3,6 +3,8 @@
  * used in this app. Seeded with fake data for local development.
  */
 
+import { createUcobProgressFixture } from "@/features/ucob-prog/api/ucobProgressFixtures";
+
 export interface StubRef {
   path: string;
 }
@@ -644,6 +646,7 @@ let store: Record<string, unknown> = {
       },
     },
   raidStats: {
+    ucobProgress: createUcobProgressFixture(NOW),
     lastUpdated: NOW - 15 * 60_000,
     sourceStatus: {
       source: "tomestone",
