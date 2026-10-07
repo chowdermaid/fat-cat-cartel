@@ -46,7 +46,10 @@ export function UcobProgPage() {
 
   return (
     <div className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
-      <header ref={headerRef} className="flex flex-wrap items-start justify-between gap-3">
+      <header
+        ref={headerRef}
+        className="flex flex-wrap items-start justify-between gap-3"
+      >
         <div className="flex min-w-0 items-center gap-3">
           <img
             src={dragonIcon}
@@ -78,7 +81,9 @@ export function UcobProgPage() {
               );
             }}
           >
-            <RefreshCw className={`h-4 w-4 motion-reduce:animate-none ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-4 w-4 motion-reduce:animate-none ${loading ? "animate-spin" : ""}`}
+            />
             Reload
           </Button>
           {canRefresh && (
@@ -110,7 +115,9 @@ export function UcobProgPage() {
         <Skeleton className="h-[500px] w-full motion-reduce:animate-none" />
       ) : !data || !data.points?.length ? (
         <div className="rounded-lg border bg-muted/30 px-6 py-12 text-center">
-          <p className="font-medium">The Coils Cartel's journey starts here.</p>
+          <p className="font-medium">
+            No data yet!! come back after first prog :D
+          </p>
           <p className="mt-2 text-sm text-muted-foreground">
             {data
               ? "No UCOB pulls have been recorded yet."
