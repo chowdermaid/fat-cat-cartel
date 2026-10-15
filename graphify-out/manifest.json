@@ -190,8 +190,8 @@
     "semantic_hash": "ffc66b08419b1e517f8640368d378fda"
   },
   "src/app/router.tsx": {
-    "mtime": 1791330667.1792946,
-    "ast_hash": "6b1e18bf5cf02363ea75afbd86f417b9",
+    "mtime": 1792046568.1174383,
+    "ast_hash": "e50c19de7dd857b4801c27857715b6af",
     "semantic_hash": ""
   },
   "src/components/auth/AuthAccessState.tsx": {
@@ -825,9 +825,9 @@
     "semantic_hash": "a58b03ca465bfb5f0eb1899397a10fa0"
   },
   "src/features/fc-collection/components/FCCollectionPage.tsx": {
-    "mtime": 1781095382.2854235,
-    "ast_hash": "9a77e376d9e788a64d9643d810396f02",
-    "semantic_hash": "9a77e376d9e788a64d9643d810396f02"
+    "mtime": 1792046650.4566047,
+    "ast_hash": "053b54b33b055377f1b73fa285fe5b7f",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/CollectibleDetailDialog.tsx": {
     "mtime": 1781095432.0034285,
@@ -835,29 +835,29 @@
     "semantic_hash": "1ab83354d2b86513ce82954ffcdb6f1f"
   },
   "src/features/fc-collection/components/detail/CollectibleGrid.tsx": {
-    "mtime": 1782184135.888023,
-    "ast_hash": "0edab39043f801bdb9463f2b9e25a1a7",
-    "semantic_hash": "0edab39043f801bdb9463f2b9e25a1a7"
+    "mtime": 1792049100.6782987,
+    "ast_hash": "44afe15dd1527f070e01e5379da80dc9",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/CollectiblePage.tsx": {
-    "mtime": 1781095431.554867,
-    "ast_hash": "232f2960c5e6a53ffb723ed03421c3bb",
-    "semantic_hash": "232f2960c5e6a53ffb723ed03421c3bb"
+    "mtime": 1792048860.942838,
+    "ast_hash": "1a76d413bda9b4966b2b7622cb4a946b",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/MemberHeader.tsx": {
-    "mtime": 1781095432.306801,
-    "ast_hash": "df72b676606150d36fb25db17852d1c6",
-    "semantic_hash": "df72b676606150d36fb25db17852d1c6"
+    "mtime": 1792047785.6096995,
+    "ast_hash": "fc2fe1f360d0828a0625a50230d072f9",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/MemberPicker.tsx": {
-    "mtime": 1782184132.3285472,
-    "ast_hash": "98e8f0d1f3d8d564fdf10f502e5e2bc8",
-    "semantic_hash": "98e8f0d1f3d8d564fdf10f502e5e2bc8"
+    "mtime": 1792047785.6096995,
+    "ast_hash": "fa46c2d0c22c65657419b2897c381fbd",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx": {
-    "mtime": 1781095431.7306273,
-    "ast_hash": "b8d3721eda8bdceb76820943a14f0388",
-    "semantic_hash": "b8d3721eda8bdceb76820943a14f0388"
+    "mtime": 1792046568.0904567,
+    "ast_hash": "cc9effbe717a39b2ba38d1e81af58c44",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/leaderboard/LeaderboardTable.tsx": {
     "mtime": 1781095563.3807144,
@@ -865,14 +865,14 @@
     "semantic_hash": "ca9ef52e9a88f8768152028657ab1599"
   },
   "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx": {
-    "mtime": 1781095382.0856774,
-    "ast_hash": "6d889bea74c9a2deb8bba9fa9982e394",
-    "semantic_hash": "6d889bea74c9a2deb8bba9fa9982e394"
+    "mtime": 1792049353.5027711,
+    "ast_hash": "2d58a94f12639c368e7ac0529962170b",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/overview/FCStats.tsx": {
-    "mtime": 1781095680.5684483,
-    "ast_hash": "81a30463768daaa90f0cc70358a71d50",
-    "semantic_hash": "81a30463768daaa90f0cc70358a71d50"
+    "mtime": 1792049342.8811958,
+    "ast_hash": "d171e034e3206d671e6ca3179789e227",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/scope/CollectionScopeToggle.tsx": {
     "mtime": 1781095432.4735827,
@@ -890,14 +890,14 @@
     "semantic_hash": "cefc6bde1eb838750f561b6154ed954f"
   },
   "src/features/fc-collection/index.tsx": {
-    "mtime": 1781095382.4599464,
-    "ast_hash": "2d850ca60cb94d940f5642f4402deec9",
-    "semantic_hash": "2d850ca60cb94d940f5642f4402deec9"
+    "mtime": 1792046523.951632,
+    "ast_hash": "06230ef770f395a9cfc2cddafa1c8822",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/types.ts": {
-    "mtime": 1781095232.3484676,
-    "ast_hash": "4af5d7e779fb05e457d8a1241b44adf6",
-    "semantic_hash": "4af5d7e779fb05e457d8a1241b44adf6"
+    "mtime": 1792046523.9495609,
+    "ast_hash": "84287914175a3730096018ed9b81c7e6",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/utils/collectionData.ts": {
     "mtime": 1781095280.4805305,
@@ -970,8 +970,8 @@
     "semantic_hash": ""
   },
   "src/features/home/components/scrapbook/ScrapbookPreview.tsx": {
-    "mtime": 1788961058.4121308,
-    "ast_hash": "09721017519df62f258b27f9043e1564",
+    "mtime": 1792027586.2183032,
+    "ast_hash": "65f570fb875906071b1ed2d5dc939eff",
     "semantic_hash": ""
   },
   "src/features/home/components/widgets/FcHangoutCard.tsx": {
@@ -1790,8 +1790,8 @@
     "semantic_hash": ""
   },
   "docs/fc-collection-implementation.md": {
-    "mtime": 1782623642.9517307,
-    "ast_hash": "e3d3de4892d7277ea0bde66b2aa79627",
+    "mtime": 1792048925.6850002,
+    "ast_hash": "90ab3242eb66f91c2cfa64b82d878a7b",
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
@@ -1810,8 +1810,8 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1791330824.563003,
-    "ast_hash": "26df9190b7c201d28f1a4518b6f70f08",
+    "mtime": 1792046812.571493,
+    "ast_hash": "69b1b16c89e6f7292438c4ef4072d719",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
@@ -1857,11 +1857,6 @@
   "src/assets/carousel/9wpngs.png": {
     "mtime": 1775041793.4197183,
     "ast_hash": "07bdb199915c8723ef98c686044fe0da",
-    "semantic_hash": ""
-  },
-  "src/assets/carousel/Screenshot_2025-05-30_195107.png": {
-    "mtime": 1775041888.9696178,
-    "ast_hash": "8424b64ba4e843338d65186b6b28c4ab",
     "semantic_hash": ""
   },
   "src/assets/carousel/Screenshot_2025-08-04_225843.png": {
@@ -2745,8 +2740,8 @@
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/UcobProgPage.tsx": {
-    "mtime": 1791344334.2047858,
-    "ast_hash": "d9091ea192ef3c95ebc1fbf7fdf05d30",
+    "mtime": 1791346295.4024785,
+    "ast_hash": "5c9bc89d7b0b35d368be4ec45fe77b40",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/activity/UcobRecentActivity.tsx": {
@@ -2847,6 +2842,56 @@
   "tests/ucob-animations.test.mjs": {
     "mtime": 1791344722.059301,
     "ast_hash": "59092a4f764299e105a2c1df0d32b6ba",
+    "semantic_hash": ""
+  },
+  "src/assets/carousel/axo1.png": {
+    "mtime": 1792027388.7422233,
+    "ast_hash": "7fa5a70c7f1d507ee71d48809fad29e3",
+    "semantic_hash": ""
+  },
+  "src/assets/carousel/cf1.png": {
+    "mtime": 1789305448.6181793,
+    "ast_hash": "f6677da72a23ab5d73b1caaee4cdd57f",
+    "semantic_hash": ""
+  },
+  "src/assets/carousel/raid1.png": {
+    "mtime": 1789382476.6687016,
+    "ast_hash": "f21fe90ae399ce036c1e6e8cd77aab16",
+    "semantic_hash": ""
+  },
+  "src/assets/carousel/viv1.png": {
+    "mtime": 1791963863.1332786,
+    "ast_hash": "b7f780791873259d54b02df214d2e855",
+    "semantic_hash": ""
+  },
+  "docs/fc-collection-ui-refactor-handoff.md": {
+    "mtime": 1792028179.6050644,
+    "ast_hash": "b52ec42c6b1b157ea8cb6cef9f967a95",
+    "semantic_hash": ""
+  },
+  "src/features/fc-collection/components/CollectionNavigation.tsx": {
+    "mtime": 1792049353.5011945,
+    "ast_hash": "72ce5687bc2f0a22f6ae198ba8eb5252",
+    "semantic_hash": ""
+  },
+  "src/features/fc-collection/components/FCCollectionLayout.tsx": {
+    "mtime": 1792049360.3696642,
+    "ast_hash": "a885bb96cd06a2ca9a3ee69b7c14ef80",
+    "semantic_hash": ""
+  },
+  "src/features/fc-collection/hooks/useCollectionView.ts": {
+    "mtime": 1792046523.9500797,
+    "ast_hash": "2304fa77b7e7273e77eea2a8a84d953a",
+    "semantic_hash": ""
+  },
+  "tests/fc-collection-routing.test.mjs": {
+    "mtime": 1792046812.571493,
+    "ast_hash": "061c9f7e92dd8634eaf0066be5863f15",
+    "semantic_hash": ""
+  },
+  "design-qa.md": {
+    "mtime": 1792048925.6865118,
+    "ast_hash": "1687719f25bd07dc8e28d75eb87a62fc",
     "semantic_hash": ""
   }
 }

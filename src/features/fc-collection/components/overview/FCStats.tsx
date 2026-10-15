@@ -1,15 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Gem, Trophy, ArrowRight, Package } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Gem, PawPrint, ArrowRight, Package } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import {
-  COLLECTIBLE_CONFIG,
-  COLLECTIBLE_KEYS,
-  OVERVIEW_NICHES,
-} from "../../constants";
-import type { Collectible, CollectibleKey, CollectionScope, MemberWithMounts } from "../../types";
-
+import { COLLECTIBLE_KEYS, OVERVIEW_NICHES } from "../../constants";
+import type {
+  Collectible,
+  CollectibleKey,
+  CollectionScope,
+  MemberWithMounts,
+} from "../../types";
 
 interface FCStatsProps {
   allCollectibles: Record<CollectibleKey, Collectible[]>;
@@ -17,34 +18,43 @@ interface FCStatsProps {
   scope: CollectionScope;
 }
 
-function MemberAvatar({ member }: { member: MemberWithMounts }) {
-  return member.avatar ? (
-    <img
-      src={member.avatar}
-      alt={member.name}
-      className="h-8 w-8 rounded-full border object-cover shrink-0"
-    />
-  ) : (
-    <div className="h-8 w-8 rounded-full border bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
-      {member.name[0]}
-    </div>
+function MemberAvatar({
+  member,
+  featured = false,
+}: {
+  member: MemberWithMounts;
+  featured?: boolean;
+}) {
+  return (
+    <Avatar
+      className={`${featured ? "h-10 w-10 border-primary" : "h-8 w-8 border-primary/40"} shrink-0 border`}
+    >
+      <AvatarImage src={member.avatar || undefined} alt="" />
+      <AvatarFallback className="text-xs">
+        {member.name
+          .split(" ")
+          .map((part) => part[0])
+          .slice(0, 2)
+          .join("")}
+      </AvatarFallback>
+    </Avatar>
   );
 }
 
-function MiniBar({ pct }: { pct: number }) {
-  return (
-    <div className="w-full bg-muted rounded-full h-1">
-      <div
-        className="bg-primary h-1 rounded-full"
-        style={{ width: `${pct}%` }}
-      />
-    </div>
-  );
-}
+const goldText = "text-amber-800 dark:text-primary";
+const rowLink =
+  "group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-muted/50";
 
 export function FCStats({ allCollectibles, members, scope }: FCStatsProps) {
   const groupLabel = scope === "all" ? "Group" : "FC";
-  const personLabel = scope === "all" ? "tracked person" : "FC member";
+  const [specialtyOrder] = useState(() => {
+    const labels = OVERVIEW_NICHES.map(({ label }) => label);
+    for (let index = labels.length - 1; index > 0; index--) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [labels[index], labels[swapIndex]] = [labels[swapIndex], labels[index]];
+    }
+    return labels;
+  });
   const nicheLeaders = useMemo(() => {
     const achieves = allCollectibles.achievements;
     return OVERVIEW_NICHES.map(({ label, desc, cats, icon }) => {
@@ -117,228 +127,276 @@ export function FCStats({ allCollectibles, members, scope }: FCStatsProps) {
     return rarest;
   }, [allCollectibles, members]);
 
-  const fcCompletion = useMemo(() => {
-    return COLLECTIBLE_CONFIG.map((cfg) => {
-      const items = allCollectibles[cfg.key];
-      const itemIds = new Set(items.map((i) => i.id));
-      const ownedByAnyone = new Set(
-        members.flatMap((m) =>
-          [...m.owned[cfg.key]].filter((id) => itemIds.has(id)),
-        ),
-      );
-      const pct =
-        items.length > 0 ? (ownedByAnyone.size / items.length) * 100 : 0;
-      return { cfg, owned: ownedByAnyone.size, total: items.length, pct };
-    });
-  }, [allCollectibles, members]);
-
-  if (members.length === 0) return null;
-
   const { hoarder, maxHoard, rarestCollector, lowestAvg } = specialLeaders;
+  const orderedLeaders = specialtyOrder.flatMap((label) =>
+    nicheLeaders.filter((leader) => leader.label === label),
+  );
 
   return (
-    <div className="space-y-4">
-      {/* Personality archetype cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {nicheLeaders.map(({ label, desc, icon: Icon, member, score, pct }) => (
-          <Link key={label} to="/fc-collection/$type" params={{ type: "achievements" }}>
-            <Card className="hover:bg-muted/30 transition-colors h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </CardTitle>
-                <p className="text-xs text-muted-foreground/60">{desc}</p>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {member ? (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <MemberAvatar member={member} />
-                      <span className="font-semibold text-sm truncate">
-                        {member.name}
-                      </span>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span className="font-semibold text-foreground tabular-nums">
+    <>
+      <section
+        aria-labelledby="specialty-heading"
+        className="min-w-0 rounded-lg border bg-card/50 p-4 xl:col-start-2 xl:row-start-1"
+      >
+        <div className="mb-3 flex items-start gap-2.5">
+          <PawPrint
+            aria-hidden="true"
+            className={`mt-0.5 h-6 w-6 shrink-0 ${goldText}`}
+          />
+          <div>
+            <h2 id="specialty-heading" className="font-serif text-xl font-bold">
+              The Meowfia's finest
+            </h2>
+          </div>
+        </div>
+        {members.length === 0 && (
+          <p className="mb-3 text-sm text-muted-foreground">
+            No members in this scope. Leader statistics unavailable.
+          </p>
+        )}
+        {allCollectibles.achievements.length === 0 && (
+          <p className="mb-3 text-xs text-muted-foreground">
+            Achievement catalog unavailable
+          </p>
+        )}
+        <div className="divide-y divide-border">
+          {orderedLeaders.map(
+            ({ label, desc, icon: Icon, member, score, pct }, index) =>
+              index < 3 ? (
+                <Link
+                  key={label}
+                  to="/fc-collection/collections/$type"
+                  params={{ type: "achievements" }}
+                  className={`${rowLink} flex items-center gap-4 px-1 py-4`}
+                >
+                  {member ? (
+                    <MemberAvatar member={member} featured />
+                  ) : (
+                    <Icon
+                      aria-hidden="true"
+                      className="h-10 w-10 shrink-0 p-2 text-muted-foreground"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <h3 className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted-foreground">
+                      <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                      {label}
+                    </h3>
+                    <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
+                      {desc}
+                    </p>
+                    {member ? (
+                      <>
+                        <p className="mt-1 break-words text-base font-semibold">
+                          {member.name}
+                        </p>
+                        <p
+                          className={`text-2xl font-bold leading-tight tabular-nums ${goldText}`}
+                        >
+                          {score.toLocaleString()}{" "}
+                          <span className="text-lg">pts</span>
+                        </p>
+                        <div className="mt-1.5 flex max-w-40 items-center gap-2">
+                          <Progress
+                            aria-label={`${label} available points completed`}
+                            value={pct}
+                            className="h-0.5 flex-1 bg-muted"
+                          />
+                          <span className="text-[10px] tabular-nums text-muted-foreground">
+                            {pct.toFixed(1)}%
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        No leader data yet
+                      </p>
+                    )}
+                  </div>
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border bg-muted/40 ${goldText}`}
+                  >
+                    <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                  </span>
+                </Link>
+              ) : (
+                <Link
+                  key={label}
+                  to="/fc-collection/collections/$type"
+                  params={{ type: "achievements" }}
+                  className={`${rowLink} flex items-center gap-2.5 px-1 py-2.5`}
+                >
+                  <Icon
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-muted-foreground"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)_5rem]">
+                      <h3 className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        {label}
+                      </h3>
+                      <div className="col-start-1 row-start-2 flex min-w-0 items-center gap-2 sm:col-start-2 sm:row-start-1">
+                        {member && <MemberAvatar member={member} />}
+                        <span className="min-w-0 break-words text-xs font-medium">
+                          {member?.name ?? "No leader data yet"}
+                        </span>
+                      </div>
+                      {member && (
+                        <span
+                          className={`col-start-2 row-start-1 whitespace-nowrap text-right text-xs tabular-nums ${goldText} sm:col-start-3`}
+                        >
                           {score.toLocaleString()} pts
                         </span>
-                        <span>{pct.toFixed(1)}%</span>
-                      </div>
-                      <MiniBar pct={pct} />
+                      )}
                     </div>
-                  </>
-                ) : (
-                  <p className="text-xs text-muted-foreground">No data yet</p>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-
-        {/* The Hoarder */}
-        <Link to="/fc-collection/leaderboard">
-          <Card className="hover:bg-muted/30 transition-colors h-full">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
-                <Package className="h-3.5 w-3.5" />
-                The Hoarder
-              </CardTitle>
-              <p className="text-xs text-muted-foreground/60">
-                Mounts · Minions · Titles
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {hoarder ? (
-                <>
-                  <div className="flex items-center gap-2">
-                    <MemberAvatar member={hoarder} />
-                    <span className="font-semibold text-sm truncate">
-                      {hoarder.name}
-                    </span>
+                    <div className="mt-1 flex items-baseline justify-between gap-2 text-[10px] leading-snug text-muted-foreground">
+                      <span>{desc}</span>
+                      {member && (
+                        <span className="shrink-0 tabular-nums">
+                          {pct.toFixed(1)}%
+                        </span>
+                      )}
+                    </div>
+                    {member && (
+                      <Progress
+                        aria-label={`${label} available points completed`}
+                        value={pct}
+                        className="mt-1 h-0.5 bg-muted"
+                      />
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground tabular-nums">
-                      {maxHoard}
-                    </span>{" "}
-                    items total
-                  </p>
-                </>
-              ) : (
-                <p className="text-xs text-muted-foreground">No data yet</p>
-              )}
-            </CardContent>
-          </Card>
-        </Link>
-
-        {/* Rarest Collection */}
-        <Link to="/fc-collection/$type" params={{ type: "mounts" }}>
-          <Card className="hover:bg-muted/30 transition-colors h-full">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
-                <Gem className="h-3.5 w-3.5" />
-                Rarest Collection
-              </CardTitle>
-              <p className="text-xs text-muted-foreground/60">
-                Avg rarity of owned mounts
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {rarestCollector ? (
-                <>
-                  <div className="flex items-center gap-2">
-                    <MemberAvatar member={rarestCollector} />
-                    <span className="font-semibold text-sm truncate">
-                      {rarestCollector.name}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground tabular-nums">
-                      {lowestAvg.toFixed(1)}%
-                    </span>{" "}
-                    avg mount rarity
-                  </p>
-                </>
-              ) : (
-                <p className="text-xs text-muted-foreground">No data yet</p>
-              )}
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
-
-      {/* Secondary stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        {/* Rarest owned */}
-        {rarestOwned && (
-          <Link to="/fc-collection/$type" params={{ type: rarestOwned.key }}>
-            <Card className="hover:bg-muted/30 transition-colors h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
-                  <Gem className="h-3.5 w-3.5" />
-                  {groupLabel}'s Rarest Item
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={rarestOwned.item.icon}
-                    alt=""
-                    className="h-8 w-8 rounded border shrink-0"
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
                   />
-                  <span className="font-semibold text-sm leading-tight line-clamp-2">
-                    {rarestOwned.item.name}
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Owned by{" "}
-                  <span className="font-medium text-foreground">
-                    {rarestOwned.item.owned}
-                  </span>{" "}
-                  of players
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        )}
-
-        {/* FC Completion */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {groupLabel} Coverage
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2.5">
-            {fcCompletion.map(({ cfg, owned, total, pct }) => {
-              const Icon = cfg.icon;
-              return (
-                <div key={cfg.key} className="space-y-0.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1 text-muted-foreground">
-                      <Icon className="h-3 w-3" />
-                      {cfg.label}
-                    </span>
-                    <span className="tabular-nums font-medium">
-                      {owned}/{total}
-                      <span className="text-muted-foreground ml-1">
-                        ({pct.toFixed(0)}%)
-                      </span>
+                </Link>
+              ),
+          )}
+          {[
+            {
+              label: "The Hoarder",
+              desc: "Mounts · Minions · Titles",
+              member: hoarder,
+              value: `${maxHoard.toLocaleString()} items`,
+              icon: Package,
+              destination: "leaderboard",
+            },
+            {
+              label: "Rarest Collection",
+              desc: "Average public ownership of known owned mounts, per FFXIV Collect.",
+              member: rarestCollector,
+              value: `${lowestAvg.toFixed(1)}%`,
+              icon: Gem,
+              destination: "mounts",
+            },
+          ].map(({ label, desc, member, value, icon: Icon, destination }) => (
+            <Link
+              key={label}
+              to={
+                destination === "leaderboard"
+                  ? "/fc-collection/rankings"
+                  : "/fc-collection/collections/$type"
+              }
+              params={destination === "leaderboard" ? {} : { type: "mounts" }}
+              className={`${rowLink} flex items-center gap-2.5 px-1 py-2.5`}
+            >
+              <Icon
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 text-muted-foreground"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)_5rem]">
+                  <h3 className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    {label}
+                  </h3>
+                  <div className="col-start-1 row-start-2 flex min-w-0 items-center gap-2 sm:col-start-2 sm:row-start-1">
+                    {member && <MemberAvatar member={member} />}
+                    <span className="min-w-0 break-words text-xs font-medium">
+                      {member?.name ?? "No leader data yet"}
                     </span>
                   </div>
-                  <MiniBar pct={pct} />
+                  {member && (
+                    <span
+                      className={`col-start-2 row-start-1 whitespace-nowrap text-right text-xs tabular-nums ${goldText} sm:col-start-3`}
+                    >
+                      {value}
+                    </span>
+                  )}
                 </div>
-              );
-            })}
-            <p className="text-xs text-muted-foreground pt-0.5">
-              Items owned by at least one {personLabel}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Leaderboard */}
-        <Card className="flex flex-col">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
-              <Trophy className="h-3.5 w-3.5" />
-              Leaderboard
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-between gap-4">
+                <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
+                  {desc}
+                </p>
+              </div>
+              <ArrowRight
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+              />
+            </Link>
+          ))}
+        </div>
+      </section>
+      <section
+        aria-label="Rarest item and rankings"
+        className="grid min-w-0 gap-4 rounded-lg border bg-card/50 p-4 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] xl:col-start-1 xl:row-start-2"
+      >
+        <div className="min-w-0">
+          <h2
+            className={`mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide ${goldText}`}
+          >
+            <Gem aria-hidden="true" className="h-4 w-4" />
+            {groupLabel}'s rarest owned item
+          </h2>
+          {rarestOwned ? (
+            <Link
+              to="/fc-collection/collections/$type"
+              params={{ type: rarestOwned.key }}
+              className={`${rowLink} flex items-center gap-3 p-1`}
+            >
+              <Avatar className="h-8 w-8 shrink-0 rounded border">
+                <AvatarImage
+                  src={rarestOwned.item.icon || undefined}
+                  alt=""
+                  className="object-contain"
+                />
+                <AvatarFallback className="rounded">
+                  <Gem
+                    aria-hidden="true"
+                    className="h-4 w-4 text-muted-foreground"
+                  />
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="break-words font-serif text-lg font-bold leading-tight">
+                  {rarestOwned.item.name}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  <span className={`font-semibold ${goldText}`}>
+                    {parseFloat(rarestOwned.item.owned)}%
+                  </span>{" "}
+                  FFXIV Collect public ownership
+                </p>
+              </div>
+            </Link>
+          ) : (
             <p className="text-sm text-muted-foreground">
-              Place for axo to flex her collection (aka carbon date how old she
-              is)
+              No owned item with public ownership data available.
             </p>
-            <Button asChild variant="outline" size="sm" className="w-full">
-              <Link to="/fc-collection/leaderboard">
-                View Rankings
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          )}
+        </div>
+        <div className="flex min-w-0 flex-col justify-center gap-2 border-t pt-3 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
+          <h2 className="text-sm font-semibold">Snoop and shame</h2>
+          <p className="text-xs text-muted-foreground">
+            Compare collections and view rankings across{" "}
+            {scope === "all" ? "FC and Friends" : "the FC"}.
+          </p>
+          <Button asChild variant="outline" size="sm" className="w-full">
+            <Link to="/fc-collection/rankings">
+              View Rankings
+              <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+    </>
   );
 }

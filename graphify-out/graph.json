@@ -2800,7 +2800,7 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "functions_src_game_servers_servername",
-      "community": 138,
+      "community": 160,
       "norm_label": "servername()"
     },
     {
@@ -2810,7 +2810,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "functions_src_game_servers_resolveserverconfig",
-      "community": 138,
+      "community": 160,
       "norm_label": "resolveserverconfig()"
     },
     {
@@ -2830,7 +2830,7 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "functions_src_game_servers_cleantext",
-      "community": 160,
+      "community": 138,
       "norm_label": "cleantext()"
     },
     {
@@ -2840,7 +2840,7 @@
       "source_location": "L238",
       "_origin": "ast",
       "id": "functions_src_game_servers_parseserverid",
-      "community": 138,
+      "community": 160,
       "norm_label": "parseserverid()"
     },
     {
@@ -2850,7 +2850,7 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "functions_src_game_servers_parseoptionalserverid",
-      "community": 167,
+      "community": 138,
       "norm_label": "parseoptionalserverid()"
     },
     {
@@ -2880,7 +2880,7 @@
       "source_location": "L270",
       "_origin": "ast",
       "id": "functions_src_game_servers_assertawsconfig",
-      "community": 138,
+      "community": 160,
       "norm_label": "assertawsconfig()"
     },
     {
@@ -2890,7 +2890,7 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "functions_src_game_servers_ec2client",
-      "community": 138,
+      "community": 160,
       "norm_label": "ec2client()"
     },
     {
@@ -2910,7 +2910,7 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "functions_src_game_servers_normalizestate",
-      "community": 138,
+      "community": 160,
       "norm_label": "normalizestate()"
     },
     {
@@ -2920,7 +2920,7 @@
       "source_location": "L325",
       "_origin": "ast",
       "id": "functions_src_game_servers_hostforinstance",
-      "community": 138,
+      "community": 160,
       "norm_label": "hostforinstance()"
     },
     {
@@ -3010,7 +3010,7 @@
       "source_location": "L443",
       "_origin": "ast",
       "id": "functions_src_game_servers_statusmessage",
-      "community": 138,
+      "community": 160,
       "norm_label": "statusmessage()"
     },
     {
@@ -3030,7 +3030,7 @@
       "source_location": "L458",
       "_origin": "ast",
       "id": "functions_src_game_servers_gameservergrantroot",
-      "community": 160,
+      "community": 138,
       "norm_label": "gameservergrantroot()"
     },
     {
@@ -3040,7 +3040,7 @@
       "source_location": "L462",
       "_origin": "ast",
       "id": "functions_src_game_servers_assertgameserverscope",
-      "community": 138,
+      "community": 160,
       "norm_label": "assertgameserverscope()"
     },
     {
@@ -3080,7 +3080,7 @@
       "source_location": "L509",
       "_origin": "ast",
       "id": "functions_src_game_servers_readgameserversettings",
-      "community": 138,
+      "community": 160,
       "norm_label": "readgameserversettings()"
     },
     {
@@ -3090,7 +3090,7 @@
       "source_location": "L514",
       "_origin": "ast",
       "id": "functions_src_game_servers_disabledstatus",
-      "community": 138,
+      "community": 160,
       "norm_label": "disabledstatus()"
     },
     {
@@ -3110,7 +3110,7 @@
       "source_location": "L556",
       "_origin": "ast",
       "id": "functions_src_game_servers_writegameserverauditlog",
-      "community": 138,
+      "community": 160,
       "norm_label": "writegameserverauditlog()"
     },
     {
@@ -3300,7 +3300,7 @@
       "source_location": "L914",
       "_origin": "ast",
       "id": "functions_src_game_servers_readgameservertelemetry",
-      "community": 138,
+      "community": 160,
       "norm_label": "readgameservertelemetry()"
     },
     {
@@ -3310,7 +3310,7 @@
       "source_location": "L965",
       "_origin": "ast",
       "id": "functions_src_game_servers_readidlestate",
-      "community": 138,
+      "community": 160,
       "norm_label": "readidlestate()"
     },
     {
@@ -3320,7 +3320,7 @@
       "source_location": "L976",
       "_origin": "ast",
       "id": "functions_src_game_servers_writeidlestate",
-      "community": 138,
+      "community": 160,
       "norm_label": "writeidlestate()"
     },
     {
@@ -3330,7 +3330,7 @@
       "source_location": "L980",
       "_origin": "ast",
       "id": "functions_src_game_servers_readgameserverinstance",
-      "community": 138,
+      "community": 160,
       "norm_label": "readgameserverinstance()"
     },
     {
@@ -3340,7 +3340,7 @@
       "source_location": "L1006",
       "_origin": "ast",
       "id": "functions_src_game_servers_describegameserverinstance",
-      "community": 138,
+      "community": 160,
       "norm_label": "describegameserverinstance()"
     },
     {
@@ -3350,7 +3350,7 @@
       "source_location": "L1064",
       "_origin": "ast",
       "id": "functions_src_game_servers_statusforenabledserver",
-      "community": 138,
+      "community": 160,
       "norm_label": "statusforenabledserver()"
     },
     {
@@ -3360,7 +3360,7 @@
       "source_location": "L1075",
       "_origin": "ast",
       "id": "functions_src_game_servers_parsediscordid",
-      "community": 160,
+      "community": 138,
       "norm_label": "parsediscordid()"
     },
     {
@@ -3370,7 +3370,7 @@
       "source_location": "L1086",
       "_origin": "ast",
       "id": "functions_src_game_servers_parsedisplayname",
-      "community": 160,
+      "community": 138,
       "norm_label": "parsedisplayname()"
     },
     {
@@ -3380,7 +3380,7 @@
       "source_location": "L1094",
       "_origin": "ast",
       "id": "functions_src_game_servers_parsenotes",
-      "community": 160,
+      "community": 138,
       "norm_label": "parsenotes()"
     },
     {
@@ -3390,7 +3390,7 @@
       "source_location": "L1099",
       "_origin": "ast",
       "id": "functions_src_game_servers_parseenabled",
-      "community": 160,
+      "community": 138,
       "norm_label": "parseenabled()"
     },
     {
@@ -3400,7 +3400,7 @@
       "source_location": "L1103",
       "_origin": "ast",
       "id": "functions_src_game_servers_accessentryfromvalue",
-      "community": 160,
+      "community": 138,
       "norm_label": "accessentryfromvalue()"
     },
     {
@@ -3410,7 +3410,7 @@
       "source_location": "L1133",
       "_origin": "ast",
       "id": "functions_src_game_servers_isgameserveraccessentryactive",
-      "community": 160,
+      "community": 138,
       "norm_label": "isgameserveraccessentryactive()"
     },
     {
@@ -3420,7 +3420,7 @@
       "source_location": "L1143",
       "_origin": "ast",
       "id": "functions_src_game_servers_readaccessentry",
-      "community": 160,
+      "community": 138,
       "norm_label": "readaccessentry()"
     },
     {
@@ -3430,7 +3430,7 @@
       "source_location": "L1155",
       "_origin": "ast",
       "id": "functions_src_game_servers_requiregameserveraccess",
-      "community": 160,
+      "community": 138,
       "norm_label": "requiregameserveraccess()"
     },
     {
@@ -3440,7 +3440,7 @@
       "source_location": "L1176",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameserveraccessstatusforsession",
-      "community": 160,
+      "community": 138,
       "norm_label": "getgameserveraccessstatusforsession()"
     },
     {
@@ -3450,7 +3450,7 @@
       "source_location": "L1192",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameserveraccessstatusforidentity",
-      "community": 160,
+      "community": 138,
       "norm_label": "getgameserveraccessstatusforidentity()"
     },
     {
@@ -3470,7 +3470,7 @@
       "source_location": "L1258",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameserverstatusforsession",
-      "community": 138,
+      "community": 160,
       "norm_label": "getgameserverstatusforsession()"
     },
     {
@@ -3480,7 +3480,7 @@
       "source_location": "L1272",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameservertelemetryforsession",
-      "community": 138,
+      "community": 160,
       "norm_label": "getgameservertelemetryforsession()"
     },
     {
@@ -3490,7 +3490,7 @@
       "source_location": "L1310",
       "_origin": "ast",
       "id": "functions_src_game_servers_assertserverenabled",
-      "community": 138,
+      "community": 160,
       "norm_label": "assertserverenabled()"
     },
     {
@@ -3500,7 +3500,7 @@
       "source_location": "L1320",
       "_origin": "ast",
       "id": "functions_src_game_servers_startgameserverforsession",
-      "community": 138,
+      "community": 160,
       "norm_label": "startgameserverforsession()"
     },
     {
@@ -3510,7 +3510,7 @@
       "source_location": "L1452",
       "_origin": "ast",
       "id": "functions_src_game_servers_stopgameserverforsession",
-      "community": 138,
+      "community": 160,
       "norm_label": "stopgameserverforsession()"
     },
     {
@@ -3520,7 +3520,7 @@
       "source_location": "L1582",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserveraccessforadmin",
-      "community": 160,
+      "community": 138,
       "norm_label": "listgameserveraccessforadmin()"
     },
     {
@@ -3530,7 +3530,7 @@
       "source_location": "L1596",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserveraccesscandidatesforadmin",
-      "community": 160,
+      "community": 138,
       "norm_label": "listgameserveraccesscandidatesforadmin()"
     },
     {
@@ -3540,7 +3540,7 @@
       "source_location": "L1659",
       "_origin": "ast",
       "id": "functions_src_game_servers_upsertgameserveraccessforadmin",
-      "community": 160,
+      "community": 138,
       "norm_label": "upsertgameserveraccessforadmin()"
     },
     {
@@ -3550,7 +3550,7 @@
       "source_location": "L1712",
       "_origin": "ast",
       "id": "functions_src_game_servers_deletegameserveraccessforadmin",
-      "community": 160,
+      "community": 138,
       "norm_label": "deletegameserveraccessforadmin()"
     },
     {
@@ -3600,7 +3600,7 @@
       "source_location": "L1792",
       "_origin": "ast",
       "id": "functions_src_game_servers_getgameserversettingsforadmin",
-      "community": 167,
+      "community": 138,
       "norm_label": "getgameserversettingsforadmin()"
     },
     {
@@ -3610,7 +3610,7 @@
       "source_location": "L1799",
       "_origin": "ast",
       "id": "functions_src_game_servers_updategameserversettingsforadmin",
-      "community": 138,
+      "community": 160,
       "norm_label": "updategameserversettingsforadmin()"
     },
     {
@@ -3630,7 +3630,7 @@
       "source_location": "L1843",
       "_origin": "ast",
       "id": "functions_src_game_servers_autostopidleserver",
-      "community": 138,
+      "community": 160,
       "norm_label": "autostopidleserver()"
     },
     {
@@ -5710,7 +5710,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection",
-      "community": 178,
+      "community": 17,
       "norm_label": "refresh-fc-collection.ts"
     },
     {
@@ -5720,7 +5720,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_collectible_config",
-      "community": 178,
+      "community": 17,
       "norm_label": "collectible_config"
     },
     {
@@ -5730,7 +5730,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_collectiblekey",
-      "community": 178,
+      "community": 17,
       "norm_label": "collectiblekey"
     },
     {
@@ -5740,7 +5740,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_previousownedentry",
-      "community": 178,
+      "community": 17,
       "norm_label": "previousownedentry"
     },
     {
@@ -5750,7 +5750,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_membercachedata",
-      "community": 178,
+      "community": 17,
       "norm_label": "membercachedata"
     },
     {
@@ -5760,7 +5760,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_memberfetchresult",
-      "community": 178,
+      "community": 17,
       "norm_label": "memberfetchresult"
     },
     {
@@ -5770,7 +5770,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_parseowned",
-      "community": 178,
+      "community": 17,
       "norm_label": "parseowned()"
     },
     {
@@ -5780,7 +5780,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_transformitems",
-      "community": 178,
+      "community": 17,
       "norm_label": "transformitems()"
     },
     {
@@ -5790,7 +5790,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_fetchmembercollectiondata",
-      "community": 178,
+      "community": 17,
       "norm_label": "fetchmembercollectiondata()"
     },
     {
@@ -5810,7 +5810,7 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "functions_src_refresh_fc_collection_runrefreshfccollection",
-      "community": 178,
+      "community": 17,
       "norm_label": "runrefreshfccollection()"
     },
     {
@@ -6500,7 +6500,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone",
-      "community": 17,
+      "community": 182,
       "norm_label": "scrape-lodestone.ts"
     },
     {
@@ -6510,7 +6510,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_lodestoneentry",
-      "community": 17,
+      "community": 182,
       "norm_label": "lodestoneentry"
     },
     {
@@ -6520,7 +6520,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_syncresult",
-      "community": 17,
+      "community": 182,
       "norm_label": "syncresult"
     },
     {
@@ -6530,7 +6530,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_srcfromimgtag",
-      "community": 17,
+      "community": 182,
       "norm_label": "srcfromimgtag()"
     },
     {
@@ -6540,7 +6540,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_job_aliases",
-      "community": 17,
+      "community": 182,
       "norm_label": "job_aliases"
     },
     {
@@ -6550,7 +6550,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_decodehtml",
-      "community": 17,
+      "community": 182,
       "norm_label": "decodehtml()"
     },
     {
@@ -6560,7 +6560,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_textfromhtml",
-      "community": 17,
+      "community": 182,
       "norm_label": "textfromhtml()"
     },
     {
@@ -6570,7 +6570,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_parsejoblevels",
-      "community": 17,
+      "community": 182,
       "norm_label": "parsejoblevels()"
     },
     {
@@ -6580,7 +6580,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_parsecharacterpage",
-      "community": 17,
+      "community": 182,
       "norm_label": "parsecharacterpage()"
     },
     {
@@ -6590,7 +6590,7 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "functions_src_scrape_lodestone_fetchlodestonecharacter",
-      "community": 17,
+      "community": 6,
       "norm_label": "fetchlodestonecharacter()"
     },
     {
@@ -8257,7 +8257,7 @@
       "label": "rootRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L32",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "src_app_router_rootroute",
       "community": 30,
@@ -8267,7 +8267,7 @@
       "label": "indexRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L36",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "src_app_router_indexroute",
       "community": 30,
@@ -8277,7 +8277,7 @@
       "label": "pastEventsRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L42",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_app_router_pasteventsroute",
       "community": 30,
@@ -8287,7 +8287,7 @@
       "label": "easter2026Route",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L48",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "src_app_router_easter2026route",
       "community": 30,
@@ -8297,7 +8297,7 @@
       "label": "recruitmentRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L54",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "src_app_router_recruitmentroute",
       "community": 30,
@@ -8307,17 +8307,47 @@
       "label": "fcCollectionRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L60",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "src_app_router_fccollectionroute",
       "community": 30,
       "norm_label": "fccollectionroute"
     },
     {
+      "label": "fcCollectionIndexRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "src_app_router_fccollectionindexroute",
+      "community": 30,
+      "norm_label": "fccollectionindexroute"
+    },
+    {
+      "label": "fcOverviewRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "src_app_router_fcoverviewroute",
+      "community": 30,
+      "norm_label": "fcoverviewroute"
+    },
+    {
+      "label": "fcCollectionsRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L80",
+      "_origin": "ast",
+      "id": "src_app_router_fccollectionsroute",
+      "community": 30,
+      "norm_label": "fccollectionsroute"
+    },
+    {
       "label": "fcTypeRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L66",
+      "source_location": "L86",
       "_origin": "ast",
       "id": "src_app_router_fctyperoute",
       "community": 30,
@@ -8327,17 +8357,37 @@
       "label": "fcLeaderboardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L72",
+      "source_location": "L92",
       "_origin": "ast",
       "id": "src_app_router_fcleaderboardroute",
       "community": 30,
       "norm_label": "fcleaderboardroute"
     },
     {
+      "label": "fcLegacyLeaderboardRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L98",
+      "_origin": "ast",
+      "id": "src_app_router_fclegacyleaderboardroute",
+      "community": 30,
+      "norm_label": "fclegacyleaderboardroute"
+    },
+    {
+      "label": "fcLegacyTypeRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L104",
+      "_origin": "ast",
+      "id": "src_app_router_fclegacytyperoute",
+      "community": 30,
+      "norm_label": "fclegacytyperoute"
+    },
+    {
       "label": "raidStatsRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L78",
+      "source_location": "L112",
       "_origin": "ast",
       "id": "src_app_router_raidstatsroute",
       "community": 30,
@@ -8347,7 +8397,7 @@
       "label": "ucobProgRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L84",
+      "source_location": "L118",
       "_origin": "ast",
       "id": "src_app_router_ucobprogroute",
       "community": 30,
@@ -8357,7 +8407,7 @@
       "label": "mountRouletteRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L90",
+      "source_location": "L124",
       "_origin": "ast",
       "id": "src_app_router_mountrouletteroute",
       "community": 30,
@@ -8367,7 +8417,7 @@
       "label": "craftingBoardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L96",
+      "source_location": "L130",
       "_origin": "ast",
       "id": "src_app_router_craftingboardroute",
       "community": 30,
@@ -8377,7 +8427,7 @@
       "label": "meowketBoardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L102",
+      "source_location": "L136",
       "_origin": "ast",
       "id": "src_app_router_meowketboardroute",
       "community": 30,
@@ -8387,7 +8437,7 @@
       "label": "spudJarRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L108",
+      "source_location": "L142",
       "_origin": "ast",
       "id": "src_app_router_spudjarroute",
       "community": 30,
@@ -8397,7 +8447,7 @@
       "label": "gameServerIndexRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L114",
+      "source_location": "L148",
       "_origin": "ast",
       "id": "src_app_router_gameserverindexroute",
       "community": 30,
@@ -8407,7 +8457,7 @@
       "label": "palworldServerRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L120",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "src_app_router_palworldserverroute",
       "community": 30,
@@ -8417,7 +8467,7 @@
       "label": "dragonwildsServerRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L126",
+      "source_location": "L160",
       "_origin": "ast",
       "id": "src_app_router_dragonwildsserverroute",
       "community": 30,
@@ -8427,7 +8477,7 @@
       "label": "calendarRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L132",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "src_app_router_calendarroute",
       "community": 30,
@@ -8437,7 +8487,7 @@
       "label": "adminRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L138",
+      "source_location": "L172",
       "_origin": "ast",
       "id": "src_app_router_adminroute",
       "community": 30,
@@ -8447,7 +8497,7 @@
       "label": "membersRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L144",
+      "source_location": "L178",
       "_origin": "ast",
       "id": "src_app_router_membersroute",
       "community": 30,
@@ -8457,7 +8507,7 @@
       "label": "memberProfileRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L150",
+      "source_location": "L184",
       "_origin": "ast",
       "id": "src_app_router_memberprofileroute",
       "community": 30,
@@ -8467,7 +8517,7 @@
       "label": "routeTree",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L156",
+      "source_location": "L190",
       "_origin": "ast",
       "id": "src_app_router_routetree",
       "community": 30,
@@ -8477,7 +8527,7 @@
       "label": "router",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L179",
+      "source_location": "L219",
       "_origin": "ast",
       "id": "src_app_router_router",
       "community": 30,
@@ -8487,7 +8537,7 @@
       "label": "@tanstack/react-router",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L181",
+      "source_location": "L221",
       "_origin": "ast",
       "id": "src_app_router_tanstack_react_router",
       "community": 30,
@@ -8497,7 +8547,7 @@
       "label": "Register",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L182",
+      "source_location": "L222",
       "_origin": "ast",
       "id": "src_app_router_register",
       "community": 30,
@@ -12960,7 +13010,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_features_craftingboard_api_xivapi_craftingrecipe",
-      "community": 156,
+      "community": 29,
       "norm_label": "craftingrecipe"
     },
     {
@@ -13080,7 +13130,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "src_features_craftingboard_api_xivapi_getxivapiiconurl",
-      "community": 156,
+      "community": 36,
       "norm_label": "getxivapiiconurl()"
     },
     {
@@ -13230,7 +13280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_createrequestdialog",
-      "community": 156,
+      "community": 29,
       "norm_label": "createrequestdialog.tsx"
     },
     {
@@ -13240,7 +13290,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_createrequestdialog_createrequestdialog",
-      "community": 53,
+      "community": 29,
       "norm_label": "createrequestdialog()"
     },
     {
@@ -13390,7 +13440,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_recipepreview",
-      "community": 156,
+      "community": 29,
       "norm_label": "recipepreview.tsx"
     },
     {
@@ -13400,7 +13450,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_recipepreview_recipepreview",
-      "community": 156,
+      "community": 29,
       "norm_label": "recipepreview()"
     },
     {
@@ -13410,7 +13460,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_searchskeleton",
-      "community": 156,
+      "community": 29,
       "norm_label": "searchskeleton.tsx"
     },
     {
@@ -13420,7 +13470,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_searchskeleton_searchskeleton",
-      "community": 156,
+      "community": 29,
       "norm_label": "searchskeleton()"
     },
     {
@@ -13430,7 +13480,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_crafterchip",
-      "community": 29,
+      "community": 63,
       "norm_label": "crafterchip.tsx"
     },
     {
@@ -13450,7 +13500,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_ingredientgroup",
-      "community": 156,
+      "community": 36,
       "norm_label": "ingredientgroup.tsx"
     },
     {
@@ -13460,7 +13510,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_ingredientgroup_ingredientgroup",
-      "community": 156,
+      "community": 36,
       "norm_label": "ingredientgroup()"
     },
     {
@@ -13470,7 +13520,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_itemicon",
-      "community": 26,
+      "community": 63,
       "norm_label": "itemicon.tsx"
     },
     {
@@ -13480,7 +13530,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_itemicon_itemicon",
-      "community": 26,
+      "community": 63,
       "norm_label": "itemicon()"
     },
     {
@@ -13510,7 +13560,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberavatar",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberavatar.tsx"
     },
     {
@@ -13520,7 +13570,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberavatar_memberavatar",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberavatar()"
     },
     {
@@ -13530,7 +13580,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberline",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberline.tsx"
     },
     {
@@ -13540,7 +13590,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberline_memberline",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberline()"
     },
     {
@@ -13570,7 +13620,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_previewicon",
-      "community": 156,
+      "community": 36,
       "norm_label": "previewicon.tsx"
     },
     {
@@ -13580,7 +13630,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_previewicon_previewicon",
-      "community": 156,
+      "community": 36,
       "norm_label": "previewicon()"
     },
     {
@@ -13590,7 +13640,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_quantitycontrol",
-      "community": 156,
+      "community": 29,
       "norm_label": "quantitycontrol.tsx"
     },
     {
@@ -13600,7 +13650,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_quantitycontrol_quantitycontrol",
-      "community": 156,
+      "community": 29,
       "norm_label": "quantitycontrol()"
     },
     {
@@ -13840,7 +13890,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "src_features_craftingboard_types_craftingrecipesnapshot",
-      "community": 156,
+      "community": 36,
       "norm_label": "craftingrecipesnapshot"
     },
     {
@@ -13850,7 +13900,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_craftingboard_types_craftingselecteditem",
-      "community": 156,
+      "community": 29,
       "norm_label": "craftingselecteditem"
     },
     {
@@ -14020,7 +14070,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_eligibility_combinedeligiblecrafter",
-      "community": 29,
+      "community": 63,
       "norm_label": "combinedeligiblecrafter"
     },
     {
@@ -14160,7 +14210,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_scroll",
-      "community": 156,
+      "community": 29,
       "norm_label": "scroll.ts"
     },
     {
@@ -14170,7 +14220,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_scroll_handlenestedscrollareawheel",
-      "community": 156,
+      "community": 29,
       "norm_label": "handlenestedscrollareawheel()"
     },
     {
@@ -14494,6 +14544,56 @@
       "norm_label": "usefccollection()"
     },
     {
+      "label": "CollectionNavigation.tsx",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/components/CollectionNavigation.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_components_collectionnavigation",
+      "community": 0,
+      "norm_label": "collectionnavigation.tsx"
+    },
+    {
+      "label": "CollectionNavigationProps",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/components/CollectionNavigation.tsx",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_components_collectionnavigation_collectionnavigationprops",
+      "community": 0,
+      "norm_label": "collectionnavigationprops"
+    },
+    {
+      "label": "CollectionNavigation()",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/components/CollectionNavigation.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_components_collectionnavigation_collectionnavigation",
+      "community": 0,
+      "norm_label": "collectionnavigation()"
+    },
+    {
+      "label": "FCCollectionLayout.tsx",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_components_fccollectionlayout",
+      "community": 0,
+      "norm_label": "fccollectionlayout.tsx"
+    },
+    {
+      "label": "FCCollectionLayout()",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
+      "community": 0,
+      "norm_label": "fccollectionlayout()"
+    },
+    {
       "label": "FCCollectionPage.tsx",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
@@ -14507,7 +14607,7 @@
       "label": "FCCollectionPage()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L11",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_fccollectionpage_fccollectionpage",
       "community": 0,
@@ -14567,7 +14667,7 @@
       "label": "ExpansionKey",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L21",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_expansionkey",
       "community": 0,
@@ -14577,7 +14677,7 @@
       "label": "SortKey",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L22",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_sortkey",
       "community": 0,
@@ -14587,7 +14687,7 @@
       "label": "QuickFilter",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L23",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_quickfilter",
       "community": 0,
@@ -14597,7 +14697,7 @@
       "label": "CollectibleGridProps",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L25",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegridprops",
       "community": 0,
@@ -14607,7 +14707,7 @@
       "label": "AnimatedBar()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L32",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_animatedbar",
       "community": 0,
@@ -14617,27 +14717,17 @@
       "label": "FCOwnerBar()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L45",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_fcownerbar",
       "community": 0,
       "norm_label": "fcownerbar()"
     },
     {
-      "label": "animateFilterClick()",
-      "file_type": "code",
-      "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L66",
-      "_origin": "ast",
-      "id": "src_features_fc_collection_components_detail_collectiblegrid_animatefilterclick",
-      "community": 0,
-      "norm_label": "animatefilterclick()"
-    },
-    {
       "label": "CollectibleGrid()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L70",
+      "source_location": "L104",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegrid",
       "community": 0,
@@ -14654,20 +14744,10 @@
       "norm_label": "collectiblepage.tsx"
     },
     {
-      "label": "LoadingSkeleton()",
-      "file_type": "code",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "src_features_fc_collection_components_detail_collectiblepage_loadingskeleton",
-      "community": 0,
-      "norm_label": "loadingskeleton()"
-    },
-    {
       "label": "CollectiblePage()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L54",
+      "source_location": "L9",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
       "community": 0,
@@ -14687,7 +14767,7 @@
       "label": "MemberHeaderProps",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_memberheader_memberheaderprops",
       "community": 0,
@@ -14697,7 +14777,7 @@
       "label": "MemberHeader()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_memberheader_memberheader",
       "community": 0,
@@ -14717,7 +14797,7 @@
       "label": "MemberPickerProps",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L15",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_memberpicker_memberpickerprops",
       "community": 0,
@@ -14727,7 +14807,7 @@
       "label": "MemberPicker()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L23",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_detail_memberpicker_memberpicker",
       "community": 0,
@@ -14747,7 +14827,7 @@
       "label": "LeaderboardPage()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L8",
+      "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
       "community": 0,
@@ -14857,7 +14937,7 @@
       "label": "CollectionOverviewCardsProps",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L14",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcardsprops",
       "community": 0,
@@ -14867,7 +14947,7 @@
       "label": "CollectionOverviewCards()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L21",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcards",
       "community": 0,
@@ -14887,7 +14967,7 @@
       "label": "FCStatsProps",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_fcstats_fcstatsprops",
       "community": 0,
@@ -14897,27 +14977,17 @@
       "label": "MemberAvatar()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_fcstats_memberavatar",
       "community": 0,
       "norm_label": "memberavatar()"
     },
     {
-      "label": "MiniBar()",
-      "file_type": "code",
-      "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L34",
-      "_origin": "ast",
-      "id": "src_features_fc_collection_components_overview_fcstats_minibar",
-      "community": 0,
-      "norm_label": "minibar()"
-    },
-    {
       "label": "FCStats()",
       "file_type": "code",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L45",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_fcstats_fcstats",
       "community": 53,
@@ -15044,6 +15114,36 @@
       "norm_label": "usecollectionscope()"
     },
     {
+      "label": "useCollectionView.ts",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_hooks_usecollectionview",
+      "community": 0,
+      "norm_label": "usecollectionview.ts"
+    },
+    {
+      "label": "CollectionViewContext",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_hooks_usecollectionview_collectionviewcontext",
+      "community": 0,
+      "norm_label": "collectionviewcontext"
+    },
+    {
+      "label": "useCollectionView()",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_hooks_usecollectionview_usecollectionview",
+      "community": 0,
+      "norm_label": "usecollectionview()"
+    },
+    {
       "label": "index.tsx",
       "file_type": "code",
       "source_file": "src/features/fc-collection/index.tsx",
@@ -15114,10 +15214,20 @@
       "norm_label": "collectionscope"
     },
     {
-      "label": "CollectibleSource",
+      "label": "CollectionViewState",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
       "source_location": "L29",
+      "_origin": "ast",
+      "id": "src_features_fc_collection_types_collectionviewstate",
+      "community": 0,
+      "norm_label": "collectionviewstate"
+    },
+    {
+      "label": "CollectibleSource",
+      "file_type": "code",
+      "source_file": "src/features/fc-collection/types.ts",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_collectiblesource",
       "community": 0,
@@ -15127,7 +15237,7 @@
       "label": "Collectible",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L34",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_collectible",
       "community": 0,
@@ -15137,7 +15247,7 @@
       "label": "Mount",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L46",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_mount",
       "community": 0,
@@ -15147,7 +15257,7 @@
       "label": "FCMember",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L52",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_fcmember",
       "community": 0,
@@ -15157,7 +15267,7 @@
       "label": "PreviousOwnedEntry",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L59",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_previousownedentry",
       "community": 0,
@@ -15167,7 +15277,7 @@
       "label": "MemberCacheData",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L64",
+      "source_location": "L70",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_membercachedata",
       "community": 0,
@@ -15177,7 +15287,7 @@
       "label": "MemberWithMounts",
       "file_type": "code",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L71",
+      "source_location": "L77",
       "_origin": "ast",
       "id": "src_features_fc_collection_types_memberwithmounts",
       "community": 0,
@@ -15920,7 +16030,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_dragonwilds_dragonwildsserverindexcard",
-      "community": 164,
+      "community": 48,
       "norm_label": "dragonwildsserverindexcard.tsx"
     },
     {
@@ -15930,7 +16040,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_gameserver_components_dragonwilds_dragonwildsserverindexcard_dragonwildsserverindexcard",
-      "community": 164,
+      "community": 48,
       "norm_label": "dragonwildsserverindexcard()"
     },
     {
@@ -15940,7 +16050,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline",
-      "community": 176,
+      "community": 178,
       "norm_label": "palworldactivitytimeline.tsx"
     },
     {
@@ -15950,7 +16060,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimelineprops",
-      "community": 176,
+      "community": 178,
       "norm_label": "palworldactivitytimelineprops"
     },
     {
@@ -15960,7 +16070,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_action_details",
-      "community": 176,
+      "community": 178,
       "norm_label": "action_details"
     },
     {
@@ -15970,7 +16080,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_result_labels",
-      "community": 176,
+      "community": 178,
       "norm_label": "result_labels"
     },
     {
@@ -15980,7 +16090,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_prefersreducedmotion",
-      "community": 176,
+      "community": 178,
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -15990,7 +16100,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_actorname",
-      "community": 176,
+      "community": 178,
       "norm_label": "actorname()"
     },
     {
@@ -16000,7 +16110,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_formattime",
-      "community": 176,
+      "community": 178,
       "norm_label": "formattime()"
     },
     {
@@ -16010,7 +16120,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_resulttone",
-      "community": 176,
+      "community": 178,
       "norm_label": "resulttone()"
     },
     {
@@ -16020,7 +16130,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
-      "community": 176,
+      "community": 178,
       "norm_label": "palworldactivitytimeline()"
     },
     {
@@ -16510,7 +16620,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus",
-      "community": 155,
+      "community": 183,
       "norm_label": "palworldstartupstatus.tsx"
     },
     {
@@ -16520,7 +16630,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatusprops",
-      "community": 155,
+      "community": 183,
       "norm_label": "palworldstartupstatusprops"
     },
     {
@@ -16530,7 +16640,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_stagestate",
-      "community": 155,
+      "community": 183,
       "norm_label": "stagestate"
     },
     {
@@ -16540,7 +16650,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstage",
-      "community": 155,
+      "community": 183,
       "norm_label": "startupstage"
     },
     {
@@ -16550,7 +16660,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_prefersreducedmotion",
-      "community": 155,
+      "community": 183,
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -16560,7 +16670,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstages",
-      "community": 155,
+      "community": 183,
       "norm_label": "startupstages()"
     },
     {
@@ -16570,7 +16680,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_stageicon",
-      "community": 155,
+      "community": 183,
       "norm_label": "stageicon()"
     },
     {
@@ -16580,7 +16690,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
-      "community": 155,
+      "community": 183,
       "norm_label": "palworldstartupstatus()"
     },
     {
@@ -16590,7 +16700,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_constants",
-      "community": 153,
+      "community": 176,
       "norm_label": "constants.ts"
     },
     {
@@ -16600,7 +16710,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_gameserver_constants_game_servers",
-      "community": 153,
+      "community": 176,
       "norm_label": "game_servers"
     },
     {
@@ -16610,7 +16720,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller",
-      "community": 48,
+      "community": 176,
       "norm_label": "dragonwildscontroller.ts"
     },
     {
@@ -16620,7 +16730,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_status",
-      "community": 48,
+      "community": 176,
       "norm_label": "status"
     },
     {
@@ -16630,7 +16740,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_context",
-      "community": 48,
+      "community": 176,
       "norm_label": "context"
     },
     {
@@ -16640,7 +16750,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_dependencies",
-      "community": 48,
+      "community": 176,
       "norm_label": "dependencies"
     },
     {
@@ -16650,7 +16760,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_emptydragonwildsstate",
-      "community": 137,
+      "community": 176,
       "norm_label": "emptydragonwildsstate()"
     },
     {
@@ -16660,7 +16770,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_createdragonwildscontroller",
-      "community": 137,
+      "community": 176,
       "norm_label": "createdragonwildscontroller()"
     },
     {
@@ -16810,7 +16920,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverdefinition",
-      "community": 153,
+      "community": 176,
       "norm_label": "gameserverdefinition"
     },
     {
@@ -16910,7 +17020,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditaction",
-      "community": 176,
+      "community": 178,
       "norm_label": "gameserverauditaction"
     },
     {
@@ -16920,7 +17030,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditresult",
-      "community": 176,
+      "community": 178,
       "norm_label": "gameserverauditresult"
     },
     {
@@ -16930,7 +17040,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogentry",
-      "community": 176,
+      "community": 178,
       "norm_label": "gameserverauditlogentry"
     },
     {
@@ -16940,7 +17050,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogresponse",
-      "community": 48,
+      "community": 176,
       "norm_label": "gameserverauditlogresponse"
     },
     {
@@ -17020,7 +17130,7 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverstatusresponse",
-      "community": 155,
+      "community": 153,
       "norm_label": "gameserverstatusresponse"
     },
     {
@@ -17030,7 +17140,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameservertelemetryresponse",
-      "community": 153,
+      "community": 176,
       "norm_label": "gameservertelemetryresponse"
     },
     {
@@ -17040,7 +17150,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveractionresponse",
-      "community": 48,
+      "community": 176,
       "norm_label": "gameserveractionresponse"
     },
     {
@@ -17080,7 +17190,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_gameserver_utils_dragonwilds_gameservererror",
-      "community": 48,
+      "community": 176,
       "norm_label": "gameservererror()"
     },
     {
@@ -17090,7 +17200,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_features_gameserver_utils_dragonwilds_isgameserveraccesserror",
-      "community": 48,
+      "community": 176,
       "norm_label": "isgameserveraccesserror()"
     },
     {
@@ -17170,7 +17280,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_features_gameserver_utils_dragonwilds_dragonwildsactionstatus",
-      "community": 48,
+      "community": 176,
       "norm_label": "dragonwildsactionstatus()"
     },
     {
@@ -17567,7 +17677,7 @@
       "label": "archiveImages",
       "file_type": "code",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "_origin": "ast",
       "id": "src_features_home_components_scrapbook_scrapbookpreview_archiveimages",
       "community": 40,
@@ -17577,7 +17687,7 @@
       "label": "scrapbookImages",
       "file_type": "code",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "src_features_home_components_scrapbook_scrapbookpreview_scrapbookimages",
       "community": 40,
@@ -17587,7 +17697,7 @@
       "label": "ScrapbookPreview()",
       "file_type": "code",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L32",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "src_features_home_components_scrapbook_scrapbookpreview_scrapbookpreview",
       "community": 40,
@@ -26034,6 +26144,26 @@
       "norm_label": "login()"
     },
     {
+      "label": "fc-collection-routing.test.mjs",
+      "file_type": "code",
+      "source_file": "tests/fc-collection-routing.test.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_fc_collection_routing_test",
+      "community": 184,
+      "norm_label": "fc-collection-routing.test.mjs"
+    },
+    {
+      "label": "load()",
+      "file_type": "code",
+      "source_file": "tests/fc-collection-routing.test.mjs",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "tests_fc_collection_routing_test_load",
+      "community": 184,
+      "norm_label": "load()"
+    },
+    {
       "label": "game-server-access-lifecycle.test.mjs",
       "file_type": "code",
       "source_file": "tests/game-server-access-lifecycle.test.mjs",
@@ -26190,7 +26320,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "tests_game_server_access_lifecycle_test_settings",
-      "community": 153,
+      "community": 180,
       "norm_label": "settings()"
     },
     {
@@ -27032,6 +27162,86 @@
       "id": "readme_notes",
       "community": 148,
       "norm_label": "notes"
+    },
+    {
+      "label": "design-qa.md",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "design_qa",
+      "community": 179,
+      "norm_label": "design-qa.md"
+    },
+    {
+      "label": "Collection comparison QA",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "design_qa_collection_comparison_qa",
+      "community": 179,
+      "norm_label": "collection comparison qa"
+    },
+    {
+      "label": "Visual evidence",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "design_qa_visual_evidence",
+      "community": 179,
+      "norm_label": "visual evidence"
+    },
+    {
+      "label": "Fidelity review",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "design_qa_fidelity_review",
+      "community": 179,
+      "norm_label": "fidelity review"
+    },
+    {
+      "label": "Findings and fixes",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "design_qa_findings_and_fixes",
+      "community": 179,
+      "norm_label": "findings and fixes"
+    },
+    {
+      "label": "Interaction checks",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "design_qa_interaction_checks",
+      "community": 179,
+      "norm_label": "interaction checks"
+    },
+    {
+      "label": "Checks and limitations",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "design_qa_checks_and_limitations",
+      "community": 179,
+      "norm_label": "checks and limitations"
+    },
+    {
+      "label": "Compact-header follow-up",
+      "file_type": "document",
+      "source_file": "design-qa.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "design_qa_compact_header_follow_up",
+      "community": 179,
+      "norm_label": "compact-header follow-up"
     },
     {
       "label": "admin-auth-implementation.md",
@@ -27907,17 +28117,27 @@
       "label": "Scope Behavior",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L212",
+      "source_location": "L218",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_scope_behavior",
       "community": 104,
       "norm_label": "scope behavior"
     },
     {
+      "label": "Comparison UI",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-implementation.md",
+      "source_location": "L233",
+      "_origin": "ast",
+      "id": "docs_fc_collection_implementation_comparison_ui",
+      "community": 104,
+      "norm_label": "comparison ui"
+    },
+    {
       "label": "Local UI State",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L227",
+      "source_location": "L241",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_local_ui_state",
       "community": 104,
@@ -27927,7 +28147,7 @@
       "label": "Related Consumers",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L240",
+      "source_location": "L254",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_related_consumers",
       "community": 104,
@@ -27937,7 +28157,7 @@
       "label": "Cache Keys",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L279",
+      "source_location": "L293",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_cache_keys",
       "community": 104,
@@ -27947,7 +28167,7 @@
       "label": "Security Rules",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L294",
+      "source_location": "L308",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_security_rules",
       "community": 104,
@@ -27957,7 +28177,7 @@
       "label": "Cost Notes",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L309",
+      "source_location": "L323",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_cost_notes",
       "community": 104,
@@ -27967,7 +28187,7 @@
       "label": "Local Development",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L330",
+      "source_location": "L344",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_local_development",
       "community": 104,
@@ -27977,11 +28197,161 @@
       "label": "Verification",
       "file_type": "document",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L364",
+      "source_location": "L378",
       "_origin": "ast",
       "id": "docs_fc_collection_implementation_verification",
       "community": 104,
       "norm_label": "verification"
+    },
+    {
+      "label": "fc-collection-ui-refactor-handoff.md",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff",
+      "community": 156,
+      "norm_label": "fc-collection-ui-refactor-handoff.md"
+    },
+    {
+      "label": "FC Collection UI redesign handoff",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "community": 156,
+      "norm_label": "fc collection ui redesign handoff"
+    },
+    {
+      "label": "1. The request and product context",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_1_the_request_and_product_context",
+      "community": 156,
+      "norm_label": "1. the request and product context"
+    },
+    {
+      "label": "2. Stack and application shell",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_2_stack_and_application_shell",
+      "community": 156,
+      "norm_label": "2. stack and application shell"
+    },
+    {
+      "label": "3. Routes and source map",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L70",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_3_routes_and_source_map",
+      "community": 156,
+      "norm_label": "3. routes and source map"
+    },
+    {
+      "label": "4. Current overview",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L113",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_4_current_overview",
+      "community": 156,
+      "norm_label": "4. current overview"
+    },
+    {
+      "label": "5. Current collection matrix and detail dialog",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L154",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_5_current_collection_matrix_and_detail_dialog",
+      "community": 156,
+      "norm_label": "5. current collection matrix and detail dialog"
+    },
+    {
+      "label": "6. Current leaderboard",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L199",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_6_current_leaderboard",
+      "community": 156,
+      "norm_label": "6. current leaderboard"
+    },
+    {
+      "label": "7. Data contract and ownership",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L218",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_7_data_contract_and_ownership",
+      "community": 156,
+      "norm_label": "7. data contract and ownership"
+    },
+    {
+      "label": "8. Scope, caching, refresh, and cost constraints",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L302",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_8_scope_caching_refresh_and_cost_constraints",
+      "community": 156,
+      "norm_label": "8. scope, caching, refresh, and cost constraints"
+    },
+    {
+      "label": "9. Shared consumers and refactor boundaries",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L349",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_9_shared_consumers_and_refactor_boundaries",
+      "community": 156,
+      "norm_label": "9. shared consumers and refactor boundaries"
+    },
+    {
+      "label": "10. Existing limitations and useful design considerations",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L368",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_10_existing_limitations_and_useful_design_considerations",
+      "community": 156,
+      "norm_label": "10. existing limitations and useful design considerations"
+    },
+    {
+      "label": "11. Local development and verification",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L385",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_11_local_development_and_verification",
+      "community": 156,
+      "norm_label": "11. local development and verification"
+    },
+    {
+      "label": "12. Repository rules and recommended reading order",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L431",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_12_repository_rules_and_recommended_reading_order",
+      "community": 156,
+      "norm_label": "12. repository rules and recommended reading order"
+    },
+    {
+      "label": "13. Starter prompt for the next chatbot",
+      "file_type": "document",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L462",
+      "_origin": "ast",
+      "id": "docs_fc_collection_ui_refactor_handoff_13_starter_prompt_for_the_next_chatbot",
+      "community": 156,
+      "norm_label": "13. starter prompt for the next chatbot"
     },
     {
       "label": "firebase-data-and-costs.md",
@@ -28417,7 +28787,7 @@
       "label": "File Structure",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L72",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "docs_project_reference_file_structure",
       "community": 141,
@@ -28427,7 +28797,7 @@
       "label": "Coding Conventions",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L116",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "docs_project_reference_coding_conventions",
       "community": 141,
@@ -28437,7 +28807,7 @@
       "label": "Assets",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L128",
+      "source_location": "L131",
       "_origin": "ast",
       "id": "docs_project_reference_assets",
       "community": 141,
@@ -28447,7 +28817,7 @@
       "label": "Animation Pattern",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L134",
+      "source_location": "L137",
       "_origin": "ast",
       "id": "docs_project_reference_animation_pattern",
       "community": 141,
@@ -28457,7 +28827,7 @@
       "label": "Verification",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L168",
+      "source_location": "L171",
       "_origin": "ast",
       "id": "docs_project_reference_verification",
       "community": 175,
@@ -28467,7 +28837,7 @@
       "label": "Homepage Cartel Clubhouse",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L170",
+      "source_location": "L173",
       "_origin": "ast",
       "id": "docs_project_reference_homepage_cartel_clubhouse",
       "community": 175,
@@ -28477,7 +28847,7 @@
       "label": "General checks",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L185",
+      "source_location": "L188",
       "_origin": "ast",
       "id": "docs_project_reference_general_checks",
       "community": 175,
@@ -28487,7 +28857,7 @@
       "label": "Game-server integrated verification",
       "file_type": "document",
       "source_file": "docs/project-reference.md",
-      "source_location": "L195",
+      "source_location": "L198",
       "_origin": "ast",
       "id": "docs_project_reference_game_server_integrated_verification",
       "community": 175,
@@ -45276,7 +45646,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L138",
+      "source_location": "L172",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_adminroute",
@@ -45286,7 +45656,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L132",
+      "source_location": "L166",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_calendarroute",
@@ -45296,7 +45666,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L96",
+      "source_location": "L130",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_craftingboardroute",
@@ -45306,7 +45676,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L126",
+      "source_location": "L160",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_dragonwildsserverroute",
@@ -45316,7 +45686,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L48",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_easter2026route",
@@ -45326,7 +45696,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L60",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_fccollectionindexroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L62",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fccollectionroute",
@@ -45336,7 +45716,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L72",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_fccollectionsroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L92",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fcleaderboardroute",
@@ -45346,7 +45736,37 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L66",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_fclegacyleaderboardroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_fclegacytyperoute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_fcoverviewroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L86",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fctyperoute",
@@ -45356,7 +45776,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L114",
+      "source_location": "L148",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_gameserverindexroute",
@@ -45366,7 +45786,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L36",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_indexroute",
@@ -45376,7 +45796,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L150",
+      "source_location": "L184",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_memberprofileroute",
@@ -45386,7 +45806,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L144",
+      "source_location": "L178",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_membersroute",
@@ -45396,7 +45816,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L102",
+      "source_location": "L136",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_meowketboardroute",
@@ -45406,7 +45826,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L90",
+      "source_location": "L124",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_mountrouletteroute",
@@ -45416,7 +45836,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L120",
+      "source_location": "L154",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_palworldserverroute",
@@ -45426,7 +45846,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_pasteventsroute",
@@ -45436,7 +45856,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L78",
+      "source_location": "L112",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_raidstatsroute",
@@ -45446,7 +45866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L54",
+      "source_location": "L56",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_recruitmentroute",
@@ -45456,7 +45876,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L182",
+      "source_location": "L222",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_register",
@@ -45466,7 +45886,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_rootroute",
@@ -45476,7 +45896,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L179",
+      "source_location": "L219",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_router",
@@ -45486,7 +45906,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L156",
+      "source_location": "L190",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_routetree",
@@ -45496,7 +45916,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L108",
+      "source_location": "L142",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_spudjarroute",
@@ -45506,7 +45926,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L181",
+      "source_location": "L221",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_tanstack_react_router",
@@ -45516,7 +45936,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L84",
+      "source_location": "L118",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_ucobprogroute",
@@ -58184,32 +58604,10 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L4",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L3",
       "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_api_usefccollection",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_api_usefccollection",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
+      "source": "src_features_fc_collection_components_fccollectionlayout",
       "target": "src_features_fc_collection_api_usefccollection",
       "confidence_score": 1.0
     },
@@ -58315,10 +58713,10 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L4",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L3",
       "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
+      "source": "src_features_fc_collection_components_fccollectionlayout",
       "target": "src_features_fc_collection_api_usefccollection_usefccollection",
       "confidence_score": 1.0
     },
@@ -58327,61 +58725,234 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L56",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
-      "target": "src_features_fc_collection_api_usefccollection_usefccollection"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_api_usefccollection_usefccollection",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
       "source_location": "L12",
       "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage_fccollectionpage",
-      "target": "src_features_fc_collection_api_usefccollection_usefccollection"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_api_usefccollection_usefccollection",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
+      "source": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
       "target": "src_features_fc_collection_api_usefccollection_usefccollection"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
+      "source_file": "src/features/fc-collection/components/CollectionNavigation.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_collectionnavigation",
+      "target": "src_features_fc_collection_components_collectionnavigation_collectionnavigation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/CollectionNavigation.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_collectionnavigation",
+      "target": "src_features_fc_collection_components_collectionnavigation_collectionnavigationprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_components_collectionnavigation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_components_collectionnavigation_collectionnavigation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
       "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_components_scope_collectionscopetoggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_components_scope_collectionscopetoggle_collectionscopetoggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_hooks_usecollectionscope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_hooks_usecollectionview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_hooks_usecollectionview_collectionviewcontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_utils_collectiondisplay",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_utils_collectionscope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout",
+      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/index.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_index",
+      "target": "src_features_fc_collection_components_fccollectionlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
+      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
+      "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
+      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope"
+    },
+    {
+      "relation": "re_exports",
+      "context": "re-export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/index.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_index",
+      "target": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
       "target": "src_features_fc_collection_components_fccollectionpage_fccollectionpage",
@@ -58392,7 +58963,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L8",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
       "target": "src_features_fc_collection_components_overview_collectionoverviewcards",
@@ -58403,7 +58974,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L8",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
       "target": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcards",
@@ -58414,7 +58985,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L9",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
       "target": "src_features_fc_collection_components_overview_fcstats",
@@ -58425,7 +58996,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L9",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
       "target": "src_features_fc_collection_components_overview_fcstats_fcstats",
@@ -58436,10 +59007,10 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L7",
+      "source_location": "L3",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_components_scope_collectionscopetoggle",
+      "target": "src_features_fc_collection_hooks_usecollectionview",
       "confidence_score": 1.0
     },
     {
@@ -58447,54 +59018,10 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L7",
+      "source_location": "L3",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_components_scope_collectionscopetoggle_collectionscopetoggle",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_utils_collectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage",
-      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope",
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview",
       "confidence_score": 1.0
     },
     {
@@ -58514,21 +59041,10 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L13",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionpage_fccollectionpage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/FCCollectionPage.tsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_fccollectionpage_fccollectionpage",
-      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope"
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview"
     },
     {
       "relation": "re_exports",
@@ -58609,7 +59125,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L17",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectibledetaildialog",
@@ -58642,7 +59158,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L17",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectibledetaildialog_collectibledetaildialog",
@@ -58652,7 +59168,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L32",
+      "source_location": "L55",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_animatedbar",
@@ -58662,17 +59178,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L66",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblegrid",
-      "target": "src_features_fc_collection_components_detail_collectiblegrid_animatefilterclick",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L70",
+      "source_location": "L104",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegrid",
@@ -58682,7 +59188,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L25",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegridprops",
@@ -58692,7 +59198,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L21",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_expansionkey",
@@ -58702,7 +59208,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L45",
+      "source_location": "L83",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_fcownerbar",
@@ -58712,7 +59218,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L23",
+      "source_location": "L46",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_quickfilter",
@@ -58722,7 +59228,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L22",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_sortkey",
@@ -58733,7 +59239,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L16",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_memberheader",
@@ -58744,7 +59250,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L16",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_memberheader_memberheader",
@@ -58755,7 +59261,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L3",
+      "source_location": "L10",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_memberpicker",
@@ -58766,7 +59272,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L3",
+      "source_location": "L10",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_components_detail_memberpicker_memberpicker",
@@ -58777,7 +59283,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L18",
+      "source_location": "L37",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_constants",
@@ -58788,7 +59294,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L18",
+      "source_location": "L37",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_constants_expansions",
@@ -58799,7 +59305,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L19",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_types",
@@ -58810,7 +59316,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L19",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_types_collectible",
@@ -58821,7 +59327,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L19",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_types_collectibleconfig",
@@ -58832,7 +59338,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L19",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -58843,7 +59349,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L10",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblepage",
       "target": "src_features_fc_collection_components_detail_collectiblegrid",
@@ -58854,7 +59360,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L26",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegridprops",
       "target": "src_features_fc_collection_types_collectible",
@@ -58865,7 +59371,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L28",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegridprops",
       "target": "src_features_fc_collection_types_collectibleconfig",
@@ -58876,21 +59382,10 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L27",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegridprops",
       "target": "src_features_fc_collection_types_memberwithmounts",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectibleGrid.tsx",
-      "source_location": "L230",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegrid",
-      "target": "src_features_fc_collection_components_detail_collectiblegrid_animatefilterclick",
       "confidence_score": 1.0
     },
     {
@@ -58898,7 +59393,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L10",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblepage",
       "target": "src_features_fc_collection_components_detail_collectiblegrid_collectiblegrid",
@@ -58908,42 +59403,10 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L54",
+      "source_location": "L9",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblepage",
       "target": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_components_detail_collectiblepage_loadingskeleton",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_components_scope_collectionscopetoggle",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_components_scope_collectionscopetoggle_collectionscopetoggle",
       "confidence_score": 1.0
     },
     {
@@ -58976,7 +59439,7 @@
       "source_location": "L6",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope",
+      "target": "src_features_fc_collection_hooks_usecollectionview",
       "confidence_score": 1.0
     },
     {
@@ -58987,51 +59450,7 @@
       "source_location": "L6",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_utils_collectiondisplay",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_utils_collectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage",
-      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope",
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview",
       "confidence_score": 1.0
     },
     {
@@ -59039,7 +59458,7 @@
       "context": "export",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/index.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0,
       "source": "src_features_fc_collection_index",
       "target": "src_features_fc_collection_components_detail_collectiblepage",
@@ -59051,39 +59470,17 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L57",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L95",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
-      "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/detail/CollectiblePage.tsx",
-      "source_location": "L58",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
-      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope"
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview"
     },
     {
       "relation": "re_exports",
       "context": "re-export",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/index.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0,
       "source": "src_features_fc_collection_index",
       "target": "src_features_fc_collection_components_detail_collectiblepage_collectiblepage",
@@ -59093,7 +59490,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberheader",
       "target": "src_features_fc_collection_components_detail_memberheader_memberheader",
@@ -59103,7 +59500,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberheader",
       "target": "src_features_fc_collection_components_detail_memberheader_memberheaderprops",
@@ -59114,7 +59511,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L1",
+      "source_location": "L2",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberheader",
       "target": "src_features_fc_collection_types",
@@ -59125,7 +59522,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L1",
+      "source_location": "L2",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberheader",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59136,7 +59533,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberHeader.tsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberheader_memberheaderprops",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59146,7 +59543,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberpicker",
       "target": "src_features_fc_collection_components_detail_memberpicker_memberpicker",
@@ -59156,7 +59553,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberpicker",
       "target": "src_features_fc_collection_components_detail_memberpicker_memberpickerprops",
@@ -59167,7 +59564,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L13",
+      "source_location": "L15",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberpicker",
       "target": "src_features_fc_collection_types",
@@ -59178,7 +59575,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L13",
+      "source_location": "L15",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberpicker",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59189,7 +59586,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/detail/MemberPicker.tsx",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_detail_memberpicker_memberpickerprops",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59199,7 +59596,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L8",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
       "target": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
@@ -59210,7 +59607,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L6",
+      "source_location": "L2",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
       "target": "src_features_fc_collection_components_leaderboard_leaderboardtable",
@@ -59221,7 +59618,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L6",
+      "source_location": "L2",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
       "target": "src_features_fc_collection_components_leaderboard_leaderboardtable_leaderboardtable",
@@ -59232,10 +59629,10 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L5",
+      "source_location": "L1",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_components_scope_collectionscopetoggle",
+      "target": "src_features_fc_collection_hooks_usecollectionview",
       "confidence_score": 1.0
     },
     {
@@ -59243,76 +59640,10 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L5",
+      "source_location": "L1",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_components_scope_collectionscopetoggle_collectionscopetoggle",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_utils_collectiondisplay",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_utils_collectionscope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage",
-      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope",
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview",
       "confidence_score": 1.0
     },
     {
@@ -59320,7 +59651,7 @@
       "context": "export",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/index.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_index",
       "target": "src_features_fc_collection_components_leaderboard_leaderboardpage",
@@ -59332,39 +59663,17 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L11",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
-      "target": "src_features_fc_collection_hooks_usecollectionscope_usecollectionscope"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L32",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
-      "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/features/fc-collection/components/leaderboard/LeaderboardPage.tsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
-      "target": "src_features_fc_collection_utils_collectionscope_filterbycollectionscope"
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview"
     },
     {
       "relation": "re_exports",
       "context": "re-export",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/index.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_index",
       "target": "src_features_fc_collection_components_leaderboard_leaderboardpage_leaderboardpage",
@@ -59564,7 +59873,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L21",
+      "source_location": "L14",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcards",
@@ -59574,7 +59883,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L14",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcardsprops",
@@ -59585,7 +59894,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L11",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_constants",
@@ -59596,7 +59905,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L11",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_constants_collectible_config",
@@ -59607,7 +59916,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L12",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_types",
@@ -59618,7 +59927,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L12",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_types_allcollectibles",
@@ -59629,7 +59938,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L12",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_types_collectionscope",
@@ -59640,7 +59949,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L12",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59651,7 +59960,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L15",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcardsprops",
       "target": "src_features_fc_collection_types_allcollectibles",
@@ -59662,7 +59971,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L17",
+      "source_location": "L10",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcardsprops",
       "target": "src_features_fc_collection_types_collectionscope",
@@ -59673,7 +59982,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx",
-      "source_location": "L18",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_collectionoverviewcards_collectionoverviewcardsprops",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59683,7 +59992,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L45",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_components_overview_fcstats_fcstats",
@@ -59693,7 +60002,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_components_overview_fcstats_fcstatsprops",
@@ -59703,20 +60012,10 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_components_overview_fcstats_memberavatar",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L34",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_overview_fcstats",
-      "target": "src_features_fc_collection_components_overview_fcstats_minibar",
       "confidence_score": 1.0
     },
     {
@@ -59724,7 +60023,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_constants",
@@ -59735,18 +60034,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "source": "src_features_fc_collection_components_overview_fcstats",
-      "target": "src_features_fc_collection_constants_collectible_config",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_constants_collectible_keys",
@@ -59757,7 +60045,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_constants_overview_niches",
@@ -59768,7 +60056,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_types",
@@ -59779,7 +60067,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_types_collectible",
@@ -59790,7 +60078,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_types_collectiblekey",
@@ -59801,7 +60089,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_types_collectionscope",
@@ -59812,7 +60100,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59823,7 +60111,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats_fcstatsprops",
       "target": "src_features_fc_collection_types_collectible",
@@ -59834,7 +60122,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats_fcstatsprops",
       "target": "src_features_fc_collection_types_collectiblekey",
@@ -59845,7 +60133,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats_fcstatsprops",
       "target": "src_features_fc_collection_types_collectionscope",
@@ -59856,7 +60144,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats_fcstatsprops",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -59868,7 +60156,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/features/fc-collection/components/overview/FCStats.tsx",
-      "source_location": "L113",
+      "source_location": "L123",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_overview_fcstats_fcstats",
       "target": "tests_home_scroll_reveal_test_item"
@@ -60098,6 +60386,48 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_hooks_usecollectionview",
+      "target": "src_features_fc_collection_hooks_usecollectionview_collectionviewcontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_hooks_usecollectionview",
+      "target": "src_features_fc_collection_hooks_usecollectionview_usecollectionview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_hooks_usecollectionview",
+      "target": "src_features_fc_collection_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/hooks/useCollectionView.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_hooks_usecollectionview",
+      "target": "src_features_fc_collection_types_collectionviewstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
       "source_location": "L16",
       "weight": 1.0,
@@ -60109,7 +60439,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L34",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_collectible",
@@ -60139,7 +60469,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L29",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_collectiblesource",
@@ -60159,6 +60489,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_types",
+      "target": "src_features_fc_collection_types_collectionviewstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/types.ts",
       "source_location": "L18",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
@@ -60169,7 +60509,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L52",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_fcmember",
@@ -60179,7 +60519,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L64",
+      "source_location": "L70",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_membercachedata",
@@ -60189,7 +60529,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L71",
+      "source_location": "L77",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_memberwithmounts",
@@ -60199,7 +60539,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L46",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_mount",
@@ -60209,7 +60549,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L59",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "src_features_fc_collection_types",
       "target": "src_features_fc_collection_types_previousownedentry",
@@ -60260,6 +60600,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "inherits",
+      "context": "type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/fc-collection/types.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_features_fc_collection_types_collectionviewstate",
+      "target": "src_features_fc_collection_types_fccollectionstate",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -60275,7 +60626,7 @@
       "context": "type",
       "confidence": "EXTRACTED",
       "source_file": "src/features/fc-collection/types.ts",
-      "source_location": "L46",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "src_features_fc_collection_types_mount",
       "target": "src_features_fc_collection_types_collectible",
@@ -66061,7 +66412,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "source": "src_features_home_components_scrapbook_scrapbookpreview",
       "target": "src_features_home_components_newspaper_newspapersectionlabel",
@@ -66083,7 +66434,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "source": "src_features_home_components_scrapbook_scrapbookpreview",
       "target": "src_features_home_components_newspaper_newspapersectionlabel_newspapersectionlabel",
@@ -66175,7 +66526,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "source": "src_features_home_components_scrapbook_scrapbookpreview",
       "target": "src_features_home_components_scrapbook_scrapbookpreview_archiveimages",
@@ -66185,7 +66536,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "source": "src_features_home_components_scrapbook_scrapbookpreview",
       "target": "src_features_home_components_scrapbook_scrapbookpreview_scrapbookimages",
@@ -66195,7 +66546,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/home/components/scrapbook/ScrapbookPreview.tsx",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0,
       "source": "src_features_home_components_scrapbook_scrapbookpreview",
       "target": "src_features_home_components_scrapbook_scrapbookpreview_scrapbookpreview",
@@ -82743,7 +83094,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/ucob-prog/components/UcobProgPage.tsx",
-      "source_location": "L65",
+      "source_location": "L68",
       "weight": 1.0,
       "source": "src_features_ucob_prog_components_ucobprogpage_ucobprogpage",
       "target": "src_features_ucob_prog_utils_formatting_formatdatetime"
@@ -87168,6 +87519,16 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/fc-collection-routing.test.mjs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "tests_fc_collection_routing_test",
+      "target": "tests_fc_collection_routing_test_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tests/game-server-access-lifecycle.test.mjs",
       "source_location": "L53",
       "weight": 1.0,
@@ -88147,6 +88508,76 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "design_qa",
+      "target": "design_qa_collection_comparison_qa",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "design_qa_collection_comparison_qa",
+      "target": "design_qa_checks_and_limitations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "design_qa_collection_comparison_qa",
+      "target": "design_qa_compact_header_follow_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "design_qa_collection_comparison_qa",
+      "target": "design_qa_fidelity_review",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "design_qa_collection_comparison_qa",
+      "target": "design_qa_findings_and_fixes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "design_qa_collection_comparison_qa",
+      "target": "design_qa_interaction_checks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design-qa.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "design_qa_collection_comparison_qa",
+      "target": "design_qa_visual_evidence",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/admin-auth-implementation.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -88628,7 +89059,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L197",
+      "source_location": "L200",
       "weight": 1.0,
       "source": "docs_project_reference",
       "target": "docs_dragonwilds_server_implementation",
@@ -88888,7 +89319,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L279",
+      "source_location": "L293",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_cache_keys",
@@ -88908,7 +89339,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L309",
+      "source_location": "L233",
+      "weight": 1.0,
+      "source": "docs_fc_collection_implementation_fc_collection_implementation",
+      "target": "docs_fc_collection_implementation_comparison_ui",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-implementation.md",
+      "source_location": "L323",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_cost_notes",
@@ -88968,7 +89409,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L330",
+      "source_location": "L344",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_local_development",
@@ -88978,7 +89419,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L227",
+      "source_location": "L241",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_local_ui_state",
@@ -89008,7 +89449,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L240",
+      "source_location": "L254",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_related_consumers",
@@ -89018,7 +89459,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L212",
+      "source_location": "L218",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_scope_behavior",
@@ -89028,7 +89469,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L294",
+      "source_location": "L308",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_security_rules",
@@ -89038,10 +89479,150 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/fc-collection-implementation.md",
-      "source_location": "L364",
+      "source_location": "L378",
       "weight": 1.0,
       "source": "docs_fc_collection_implementation_fc_collection_implementation",
       "target": "docs_fc_collection_implementation_verification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L368",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_10_existing_limitations_and_useful_design_considerations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L385",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_11_local_development_and_verification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L431",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_12_repository_rules_and_recommended_reading_order",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L462",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_13_starter_prompt_for_the_next_chatbot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_1_the_request_and_product_context",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_2_stack_and_application_shell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_3_routes_and_source_map",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L113",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_4_current_overview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L154",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_5_current_collection_matrix_and_detail_dialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L199",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_6_current_leaderboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_7_data_contract_and_ownership",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L302",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_8_scope_caching_refresh_and_cost_constraints",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
+      "source_location": "L349",
+      "weight": 1.0,
+      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
+      "target": "docs_fc_collection_ui_refactor_handoff_9_shared_consumers_and_refactor_boundaries",
       "confidence_score": 1.0
     },
     {
@@ -89398,7 +89979,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L134",
+      "source_location": "L137",
       "weight": 1.0,
       "source": "docs_project_reference_project_reference",
       "target": "docs_project_reference_animation_pattern",
@@ -89418,7 +89999,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L128",
+      "source_location": "L131",
       "weight": 1.0,
       "source": "docs_project_reference_project_reference",
       "target": "docs_project_reference_assets",
@@ -89428,7 +90009,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L116",
+      "source_location": "L119",
       "weight": 1.0,
       "source": "docs_project_reference_project_reference",
       "target": "docs_project_reference_coding_conventions",
@@ -89448,7 +90029,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L72",
+      "source_location": "L75",
       "weight": 1.0,
       "source": "docs_project_reference_project_reference",
       "target": "docs_project_reference_file_structure",
@@ -89478,7 +90059,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L168",
+      "source_location": "L171",
       "weight": 1.0,
       "source": "docs_project_reference_project_reference",
       "target": "docs_project_reference_verification",
@@ -89488,7 +90069,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L195",
+      "source_location": "L198",
       "weight": 1.0,
       "source": "docs_project_reference_verification",
       "target": "docs_project_reference_game_server_integrated_verification",
@@ -89498,7 +90079,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L185",
+      "source_location": "L188",
       "weight": 1.0,
       "source": "docs_project_reference_verification",
       "target": "docs_project_reference_general_checks",
@@ -89508,7 +90089,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/project-reference.md",
-      "source_location": "L170",
+      "source_location": "L173",
       "weight": 1.0,
       "source": "docs_project_reference_verification",
       "target": "docs_project_reference_homepage_cartel_clubhouse",
@@ -89816,5 +90397,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9284180aa69eb56edd5b735a5cdbe77cc320fb53"
+  "built_at_commit": "d1299b694339b2cf1a9c62e854757a4f5caa775e"
 }

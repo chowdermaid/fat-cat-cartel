@@ -180,9 +180,15 @@ The hook normalizes both array-shaped and object-shaped collectible data. This k
 
 Routes are registered in `src/app/router.tsx`.
 
-- `/fc-collection`: overview dashboard.
-- `/fc-collection/$type`: collection matrix for one type.
-- `/fc-collection/leaderboard`: member rankings.
+- `/fc-collection`: redirects to `/fc-collection/overview`.
+- `/fc-collection/overview`: overview dashboard.
+- `/fc-collection/collections`: collection matrix, defaulting to mounts.
+- `/fc-collection/collections/$type`: collection matrix for one type.
+- `/fc-collection/rankings`: member rankings.
+
+All views are children of `FCCollectionLayout`, which owns the header, navigation, scope, and one `useFCCollection` instance. Child views consume `useCollectionView`; tab navigation replaces only the outlet content without remounting the shared loader or header. Scope and loaded collection data remain available across tab switches. Matrix filters and leaderboard controls remain local to their views.
+
+Legacy `/fc-collection/$type` and `/fc-collection/leaderboard` URLs redirect to their corresponding canonical URLs with history replacement. Loader paths, cache keys, calculations, and shared matrix/leaderboard contracts are unchanged. Switching tabs adds no Firebase reads or refresh calls.
 
 The overview page renders aggregate cards for all configured collectible types, FC coverage, niche achievement leaders, rarest owned item, rarest mount collector, and the leaderboard link.
 
@@ -223,6 +229,14 @@ The selected scope is stored in localStorage as `fcc_collection_scope_v1`. The d
 Friends are normal records under `/members` with `fcRank: "Friend"`. They appear in collection views only when scope is `all`, with Friend badges in member-aware controls.
 
 Admin delete writes `/memberExclusions/{lodestoneId}` and removes `/fcCollection/memberData/{lodestoneId}`. This keeps a deleted character from reappearing in collection scope after the next Lodestone or FFLogs sync.
+
+## Comparison UI
+
+Category links share a fixed 40 px row with a compact, right-aligned icon, category heading, and catalog count. The tracked-member count is omitted from that row. On narrow screens, category links scroll horizontally while the summary remains visible. The matrix horizontal scrollbar has a feature-local z-index of 40, above sticky headers (30) and item cells (10).
+
+The four comparison categories share a grouped toolbar with name search, member selection, one expansion Select, multi-source checkbox Popover, visible ownership quick filters, and patch/name sorting. Source changes apply immediately and retain OR matching. The member dialog retains draft/Cancel/Apply semantics, no selection cap, and per-category persistence owned by the grid. Mount Roulette still uses the shared picker with `defaultToAll={false}` and its existing normalization.
+
+The matrix uses one bounded ScrollArea for both axes, with keyboard focus, sticky member headers and item names, opaque sticky backgrounds, and an Owned by selected summary. Member headers use full-catalog totals; row summaries and ownership filters use visible selected members. Item names continue opening the existing detail dialog. Reduced-motion preferences skip the comparison's scripted entrance/count/bar animations when those effects run. No Firebase reads, downloads, listeners, Functions, routes, API contracts, or cache keys were added or changed.
 
 ## Local UI State
 

@@ -2,6 +2,7 @@ import {
   createRouter,
   createRoute,
   createRootRoute,
+  redirect,
 } from "@tanstack/react-router";
 import { RootLayout } from "@/components/layouts/RootLayout";
 import { HomePage } from "@/features/home";
@@ -9,6 +10,7 @@ import { Easter2026Page } from "@/features/easter2026";
 import { PastEventsPage } from "@/features/pastevents";
 import {
   FCCollectionPage,
+  FCCollectionLayout,
   CollectiblePage,
   LeaderboardPage,
 } from "@/features/fc-collection";
@@ -60,19 +62,51 @@ const recruitmentRoute = createRoute({
 const fcCollectionRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/fc-collection",
+  component: FCCollectionLayout,
+});
+
+const fcCollectionIndexRoute = createRoute({
+  getParentRoute: () => fcCollectionRoute,
+  path: "/",
+  beforeLoad: () => { throw redirect({ to: "/fc-collection/overview", replace: true }); },
+});
+
+const fcOverviewRoute = createRoute({
+  getParentRoute: () => fcCollectionRoute,
+  path: "overview",
   component: FCCollectionPage,
 });
 
+const fcCollectionsRoute = createRoute({
+  getParentRoute: () => fcCollectionRoute,
+  path: "collections",
+  component: CollectiblePage,
+});
+
 const fcTypeRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/fc-collection/$type",
+  getParentRoute: () => fcCollectionRoute,
+  path: "collections/$type",
   component: CollectiblePage,
 });
 
 const fcLeaderboardRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/fc-collection/leaderboard",
+  getParentRoute: () => fcCollectionRoute,
+  path: "rankings",
   component: LeaderboardPage,
+});
+
+const fcLegacyLeaderboardRoute = createRoute({
+  getParentRoute: () => fcCollectionRoute,
+  path: "leaderboard",
+  beforeLoad: () => { throw redirect({ to: "/fc-collection/rankings", replace: true }); },
+});
+
+const fcLegacyTypeRoute = createRoute({
+  getParentRoute: () => fcCollectionRoute,
+  path: "$type",
+  beforeLoad: ({ params }) => {
+    throw redirect({ to: "/fc-collection/collections/$type", params: { type: params.type }, replace: true });
+  },
 });
 
 const raidStatsRoute = createRoute({
@@ -158,9 +192,15 @@ const routeTree = rootRoute.addChildren([
   pastEventsRoute,
   easter2026Route,
   recruitmentRoute,
-  fcCollectionRoute,
-  fcTypeRoute,
-  fcLeaderboardRoute,
+  fcCollectionRoute.addChildren([
+    fcCollectionIndexRoute,
+    fcOverviewRoute,
+    fcCollectionsRoute,
+    fcTypeRoute,
+    fcLeaderboardRoute,
+    fcLegacyLeaderboardRoute,
+    fcLegacyTypeRoute,
+  ]),
   raidStatsRoute,
   ucobProgRoute,
   mountRouletteRoute,

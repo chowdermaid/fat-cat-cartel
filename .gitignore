@@ -40,6 +40,7 @@ PROMPT_PLAYBOOK.md
 .claude/
 .codex/
 .codex-plugins/
+/graphify-out/
 .cursor/
 .github/copilot-instructions.md
 .aider*

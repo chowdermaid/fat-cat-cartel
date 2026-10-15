@@ -1,5 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, Minus } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Check, ChevronDown, Minus, Search, ImageOff } from "lucide-react";
 import { MemberPicker } from "./MemberPicker";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,11 +19,27 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { animate, stagger } from "animejs";
-import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MemberHeader } from "./MemberHeader";
 import { CollectibleDetailDialog } from "./CollectibleDetailDialog";
 import { EXPANSIONS } from "../../constants";
-import type { Collectible, CollectibleConfig, MemberWithMounts } from "../../types";
+import type {
+  Collectible,
+  CollectibleConfig,
+  MemberWithMounts,
+} from "../../types";
 
 type ExpansionKey = (typeof EXPANSIONS)[number]["key"];
 type SortKey = "patch" | "name";
@@ -33,11 +56,26 @@ function AnimatedBar({ pct }: { pct: number }) {
   const barRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!barRef.current) return;
-    animate(barRef.current, { width: `${pct}%`, duration: 600, easing: "easeOutQuart" });
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      barRef.current.style.width = `${pct}%`;
+      return;
+    }
+    const animation = animate(barRef.current, {
+      width: `${pct}%`,
+      duration: 600,
+      easing: "easeOutQuart",
+    });
+    return () => {
+      animation.revert();
+    };
   }, [pct]);
   return (
     <div className="flex-1 bg-muted rounded-full h-1.5">
-      <div ref={barRef} className="bg-primary h-1.5 rounded-full" style={{ width: "0%" }} />
+      <div
+        ref={barRef}
+        className="bg-primary h-1.5 rounded-full"
+        style={{ width: "0%" }}
+      />
     </div>
   );
 }
@@ -63,16 +101,13 @@ function FCOwnerBar({
   );
 }
 
-function animateFilterClick(target: HTMLElement) {
-  animate(target, { scale: [0.93, 1], duration: 200, easing: "easeOutCubic" });
-}
-
 export function CollectibleGrid({
   items,
   members,
   config,
   showFriendBadges = false,
 }: CollectibleGridProps) {
+  const sourceId = useId();
   const [search, setSearch] = useState("");
   const [expansion, setExpansion] = useState<ExpansionKey>("all");
   const [selectedSources, setSelectedSources] = useState<Set<string>>(
@@ -81,38 +116,46 @@ export function CollectibleGrid({
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const [sortBy, setSortBy] = useState<SortKey>("patch");
   const storageKey = `fc-member-filter-${config.key}`;
-  const [selectedMemberIds, setSelectedMemberIds] = useState<Set<string>>(() => {
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (!raw) return new Set();
-      return new Set(JSON.parse(raw) as string[]);
-    } catch {
-      return new Set();
-    }
-  });
+  const [selectedMemberIds, setSelectedMemberIds] = useState<Set<string>>(
+    () => {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return new Set();
+        return new Set(JSON.parse(raw) as string[]);
+      } catch {
+        return new Set();
+      }
+    },
+  );
 
-  const updateSelectedMemberIds = useCallback((ids: Set<string>) => {
-    setSelectedMemberIds(ids);
-    try {
-      if (ids.size === 0) localStorage.removeItem(storageKey);
-      else localStorage.setItem(storageKey, JSON.stringify([...ids]));
-    } catch {
-      return;
-    }
-  }, [storageKey]);
+  const updateSelectedMemberIds = useCallback(
+    (ids: Set<string>) => {
+      setSelectedMemberIds(ids);
+      try {
+        if (ids.size === 0) localStorage.removeItem(storageKey);
+        else localStorage.setItem(storageKey, JSON.stringify([...ids]));
+      } catch {
+        return;
+      }
+    },
+    [storageKey],
+  );
 
   useEffect(() => {
     if (selectedMemberIds.size === 0) return;
     const availableIds = new Set(members.map((m) => m.id));
-    const pruned = new Set([...selectedMemberIds].filter((id) => availableIds.has(id)));
+    const pruned = new Set(
+      [...selectedMemberIds].filter((id) => availableIds.has(id)),
+    );
     if (pruned.size === selectedMemberIds.size) return;
     const id = window.setTimeout(() => updateSelectedMemberIds(pruned), 0);
     return () => window.clearTimeout(id);
   }, [members, selectedMemberIds, updateSelectedMemberIds]);
 
-  const visibleMembers = selectedMemberIds.size === 0
-    ? members
-    : members.filter((m) => selectedMemberIds.has(m.id));
+  const visibleMembers =
+    selectedMemberIds.size === 0
+      ? members
+      : members.filter((m) => selectedMemberIds.has(m.id));
 
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const countRef = useRef<HTMLParagraphElement>(null);
@@ -120,7 +163,9 @@ export function CollectibleGrid({
   const allSourceTypes = useMemo(
     () =>
       [
-        ...new Set(items.flatMap((item) => item.sources?.map((s) => s.type) ?? [])),
+        ...new Set(
+          items.flatMap((item) => item.sources?.map((s) => s.type) ?? []),
+        ),
       ].sort(),
     [items],
   );
@@ -181,78 +226,147 @@ export function CollectibleGrid({
 
   useEffect(() => {
     const body = tableBodyRef.current;
-    if (!body) return;
-    const rows = Array.from(body.querySelectorAll(".collectible-row")).slice(0, 80);
+    if (!body || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    const rows = Array.from(body.querySelectorAll(".collectible-row")).slice(
+      0,
+      80,
+    );
     if (!rows.length) return;
-    animate(rows, {
+    const animation = animate(rows, {
       opacity: [0, 1],
       translateY: [5, 0],
       delay: stagger(6),
       duration: 160,
       easing: "easeOutQuad",
     });
+    return () => {
+      animation.revert();
+    };
   }, [filtered]);
 
   useEffect(() => {
-    if (!countRef.current) return;
-    animate(countRef.current, { opacity: [0, 1], duration: 200, easing: "easeOutQuad" });
+    if (
+      !countRef.current ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const animation = animate(countRef.current, {
+      opacity: [0, 1],
+      duration: 200,
+      easing: "easeOutQuad",
+    });
+    return () => {
+      animation.revert();
+    };
   }, [filtered.length]);
 
   return (
     <div className="space-y-4">
-      {/* Filter bar */}
-      <div className="space-y-3">
-        <div className="flex flex-wrap gap-3 items-center">
+      <div
+        aria-label="Collection filters"
+        className="flex flex-wrap items-center gap-2 rounded-lg border bg-card/50 p-3 sm:gap-3"
+      >
+        <div className="relative min-w-40 flex-1 sm:max-w-80">
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
+          />
           <Input
-            placeholder={`Search ${config.label.toLowerCase()}…`}
+            aria-label={`Search ${config.label.toLowerCase()}`}
+            placeholder={`Search ${config.label.toLowerCase()}...`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="max-w-56"
+            className="pl-9"
           />
-          <MemberPicker
-            members={members}
-            selected={selectedMemberIds}
-            onChange={updateSelectedMemberIds}
-            showFriendBadges={showFriendBadges}
-          />
-          <div className="flex items-center gap-1 text-sm text-muted-foreground ml-auto">
-            <span>Sort:</span>
-            {(
-              [
-                { key: "patch", label: "Patch" },
-                { key: "name", label: "Name" },
-              ] as { key: SortKey; label: string }[]
-            ).map((s) => (
-              <Button
-                key={s.key}
-                variant={sortBy === s.key ? "secondary" : "ghost"}
-                size="sm"
-                onClick={(e) => { animateFilterClick(e.currentTarget); setSortBy(s.key); }}
-                className="h-7 text-xs"
-              >
-                {s.label}
-              </Button>
+        </div>
+        <MemberPicker
+          members={members}
+          selected={selectedMemberIds}
+          onChange={updateSelectedMemberIds}
+          showFriendBadges={showFriendBadges}
+        />
+        <Select
+          value={expansion}
+          onValueChange={(value) => setExpansion(value as ExpansionKey)}
+        >
+          <SelectTrigger
+            aria-label="Expansion"
+            className="w-36 shrink-0 sm:w-40"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {EXPANSIONS.map((exp) => (
+              <SelectItem key={exp.key} value={exp.key}>
+                {exp.key === "all" ? "All expansions" : exp.label}
+              </SelectItem>
             ))}
-          </div>
-        </div>
-
-        {/* Expansion tabs */}
-        <div className="flex gap-1 flex-wrap">
-          {EXPANSIONS.map((exp) => (
+          </SelectContent>
+        </Select>
+        <Popover>
+          <PopoverTrigger asChild>
             <Button
-              key={exp.key}
-              variant={expansion === exp.key ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => { animateFilterClick(e.currentTarget); setExpansion(exp.key); }}
-              className="h-7 text-xs"
+              variant="outline"
+              className="w-36 shrink-0 justify-between"
+              disabled={allSourceTypes.length === 0}
             >
-              {exp.label}
+              Sources
+              {selectedSources.size > 0 ? ` (${selectedSources.size})` : ""}
+              <ChevronDown
+                aria-hidden="true"
+                className="h-4 w-4 text-muted-foreground"
+              />
             </Button>
-          ))}
-        </div>
-
-        {/* Quick filters */}
-        <div className="flex gap-1 flex-wrap">
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="w-64 max-w-[calc(100vw-2rem)] p-2"
+          >
+            <div className="flex items-center justify-between border-b px-2 pb-2">
+              <span className="text-sm font-semibold">Sources</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={selectedSources.size === 0}
+                onClick={() => setSelectedSources(new Set())}
+              >
+                Clear
+              </Button>
+            </div>
+            <ScrollArea
+              className="h-60"
+              viewportClassName="h-60 [&>div]:!block"
+            >
+              <div className="space-y-1 py-2 pr-3">
+                {allSourceTypes.map((type, index) => (
+                  <div
+                    key={type}
+                    className="flex items-start gap-2 rounded px-2 py-2 text-sm hover:bg-accent"
+                  >
+                    <Checkbox
+                      id={`${sourceId}-${index}`}
+                      className="mt-0.5"
+                      checked={selectedSources.has(type)}
+                      onCheckedChange={() => toggleSource(type)}
+                    />
+                    <label
+                      htmlFor={`${sourceId}-${index}`}
+                      className="min-w-0 flex-1 cursor-pointer [overflow-wrap:anywhere]"
+                    >
+                      {type}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </PopoverContent>
+        </Popover>
+        <div
+          role="group"
+          aria-label="Ownership by selected members"
+          className="flex max-w-full flex-wrap gap-1 rounded-md border p-0.5"
+        >
           {(
             [
               { key: "all", label: "All" },
@@ -262,65 +376,81 @@ export function CollectibleGrid({
           ).map((q) => (
             <Button
               key={q.key}
-              variant={quickFilter === q.key ? "default" : "outline"}
+              aria-pressed={quickFilter === q.key}
+              variant={quickFilter === q.key ? "default" : "ghost"}
               size="sm"
-              onClick={(e) => { animateFilterClick(e.currentTarget); setQuickFilter(q.key); }}
-              className="h-7 text-xs"
+              onClick={() => setQuickFilter(q.key)}
             >
               {q.label}
             </Button>
           ))}
         </div>
-
-        {/* Source type chips */}
-        {allSourceTypes.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {allSourceTypes.map((type) => (
-              <button
-                key={type}
-                onClick={(e) => { animateFilterClick(e.currentTarget); toggleSource(type); }}
-                className={cn(
-                  "cursor-pointer text-xs px-2 py-0.5 rounded-full border transition-colors",
-                  selectedSources.has(type)
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground",
-                )}
+        <div
+          role="group"
+          aria-label="Sort items"
+          className="ml-auto flex items-center gap-2 text-sm"
+        >
+          <span className="text-muted-foreground">Sort:</span>
+          <div className="flex gap-0.5 rounded-md border p-0.5">
+            {(["patch", "name"] as SortKey[]).map((sort) => (
+              <Button
+                key={sort}
+                aria-pressed={sortBy === sort}
+                variant={sortBy === sort ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setSortBy(sort)}
               >
-                {type}
-              </button>
+                {sort === "patch" ? "Patch" : "Name"}
+              </Button>
             ))}
-            {selectedSources.size > 0 && (
-              <button
-                onClick={() => setSelectedSources(new Set())}
-                className="cursor-pointer text-xs px-2 py-0.5 text-muted-foreground hover:text-foreground"
-              >
-                Clear
-              </button>
-            )}
           </div>
-        )}
-
-        <p ref={countRef} className="text-xs text-muted-foreground">
-          {filtered.length} of {items.length} {config.label.toLowerCase()}
-          {selectedMemberIds.size > 0 && ` · ${visibleMembers.length} of ${members.length} members`}
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <p>
+          Showing {visibleMembers.length} of {members.length} members
+        </p>
+        <p ref={countRef} role="status">
+          {filtered.length.toLocaleString()} results
         </p>
       </div>
 
       {/* Table */}
       <ScrollArea
-        className="z-1 h-[calc(100vh-22rem)] rounded-lg border"
-        viewportClassName="h-[calc(100vh-22rem)]"
+        type="always"
+        className="isolate h-[max(20rem,calc(100dvh-27rem))] rounded-lg border [&>[data-orientation=horizontal]]:z-40 [&>[data-orientation=horizontal]]:bg-background"
+        viewportClassName="h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+        ref={(root) => {
+          const viewport = root?.querySelector<HTMLElement>(
+            "[data-radix-scroll-area-viewport]",
+          );
+          if (viewport) {
+            viewport.tabIndex = 0;
+            viewport.setAttribute("role", "region");
+            viewport.setAttribute(
+              "aria-label",
+              `${config.label} comparison, scroll for more items and members`,
+            );
+          }
+        }}
       >
-        <table className="text-sm w-full">
+        <table className="w-full border-separate border-spacing-0 text-sm [&_td]:border-b [&_th]:border-b">
+          <caption className="sr-only">
+            {config.label} ownership comparison for selected members
+          </caption>
           <TableHeader>
             <TableRow className="bg-background hover:bg-background border-b">
-              <TableHead className="sticky left-0 top-0 bg-background z-30 min-w-[200px] border-r font-semibold text-foreground px-3 py-2 h-auto">
-                {config.label}
+              <TableHead
+                scope="col"
+                className="sticky left-0 top-0 bg-background z-30 w-40 min-w-40 max-w-40 sm:w-72 sm:min-w-72 sm:max-w-72 border-r font-semibold text-foreground px-3 py-2 h-auto"
+              >
+                {config.singular}
               </TableHead>
               {visibleMembers.map((m) => (
                 <TableHead
                   key={m.id}
-                  className="sticky top-0 bg-background border-r last:border-r-0 p-0 h-auto"
+                  scope="col"
+                  className="sticky top-0 z-20 bg-background border-r last:border-r-0 p-0 h-auto"
                 >
                   <MemberHeader
                     member={m}
@@ -330,24 +460,47 @@ export function CollectibleGrid({
                   />
                 </TableHead>
               ))}
-              <TableHead className="sticky top-0 bg-background px-3 h-auto text-xs font-semibold text-muted-foreground whitespace-nowrap text-center">
-                Owned
+              <TableHead
+                scope="col"
+                className="sticky top-0 z-20 min-w-32 bg-background px-3 h-auto text-xs font-semibold text-foreground text-center"
+              >
+                Owned by selected
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody ref={tableBodyRef}>
             {filtered.map((item) => (
-              <TableRow key={item.id} className="collectible-row group border-b last:border-0">
-                <TableCell className="sticky left-0 bg-background group-hover:bg-muted/50 z-10 px-3 py-1.5 border-r">
+              <TableRow
+                key={item.id}
+                className="collectible-row group border-b last:border-0"
+              >
+                <TableCell className="sticky left-0 bg-background group-hover:bg-muted z-10 w-40 min-w-40 max-w-40 sm:w-72 sm:min-w-72 sm:max-w-72 px-3 py-1.5 border-r">
                   <CollectibleDetailDialog item={item}>
-                    <button className="cursor-pointer flex items-center gap-2 text-left hover:text-primary transition-colors w-full">
-                      <img
-                        src={item.icon}
-                        alt=""
-                        className="h-6 w-6 shrink-0 rounded"
-                      />
-                      <span className="text-sm leading-tight">{item.name}</span>
-                    </button>
+                    <Button
+                      variant="ghost"
+                      className="h-auto w-full justify-start gap-2 whitespace-normal px-0 py-0 text-left hover:bg-transparent hover:text-primary"
+                    >
+                      <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded bg-muted">
+                        <ImageOff
+                          aria-hidden="true"
+                          className="h-4 w-4 text-muted-foreground"
+                        />
+                        {item.icon && (
+                          <img
+                            key={item.icon}
+                            src={item.icon}
+                            alt=""
+                            className="absolute inset-0 h-full w-full rounded bg-background object-contain"
+                            onError={(event) => {
+                              event.currentTarget.style.display = "none";
+                            }}
+                          />
+                        )}
+                      </span>
+                      <span className="min-w-0 break-words text-sm leading-tight">
+                        {item.name}
+                      </span>
+                    </Button>
                   </CollectibleDetailDialog>
                 </TableCell>
                 {visibleMembers.map((m) => (
@@ -356,14 +509,32 @@ export function CollectibleGrid({
                     className="text-center px-3 py-1.5 border-r last:border-r-0"
                   >
                     {m.owned[config.key].has(item.id) ? (
-                      <Check className="h-4 w-4 text-green-500 mx-auto" />
+                      <>
+                        <Check
+                          aria-hidden="true"
+                          className="h-4 w-4 text-emerald-700 dark:text-emerald-400 mx-auto"
+                        />
+                        <span className="sr-only">Owned by {m.name}</span>
+                      </>
                     ) : (
-                      <Minus className="h-3 w-3 text-muted-foreground/30 mx-auto" />
+                      <>
+                        <Minus
+                          aria-hidden="true"
+                          className="h-3 w-3 text-muted-foreground mx-auto"
+                        />
+                        <span className="sr-only">
+                          Not recorded as owned by {m.name}
+                        </span>
+                      </>
                     )}
                   </TableCell>
                 ))}
                 <TableCell className="px-3 py-1.5">
-                  <FCOwnerBar item={item} members={visibleMembers} config={config} />
+                  <FCOwnerBar
+                    item={item}
+                    members={visibleMembers}
+                    config={config}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -380,6 +551,17 @@ export function CollectibleGrid({
           </TableBody>
         </table>
       </ScrollArea>
+      <div className="flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+        <p className="flex flex-wrap items-center gap-2">
+          <Check
+            aria-hidden="true"
+            className="h-4 w-4 text-emerald-700 dark:text-emerald-400"
+          />
+          Owned <Minus aria-hidden="true" className="ml-2 h-3 w-3" />
+          Not recorded as owned
+        </p>
+        <p>Select {config.singular.toLowerCase()} name to view details.</p>
+      </div>
     </div>
   );
 }

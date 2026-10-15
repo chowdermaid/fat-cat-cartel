@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Users } from "lucide-react";
+import { Check, Users } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -74,60 +76,63 @@ export function MemberPicker({
           size="sm"
           className="h-9 gap-1.5"
         >
-          <Users className="h-4 w-4" />
+          <Users aria-hidden="true" className="h-4 w-4" />
           {isFiltered ? `${visibleCount} / ${members.length} members` : "Members"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg gap-3">
         <DialogHeader>
           <DialogTitle>Filter Members</DialogTitle>
+          <DialogDescription>Choose members, then Apply to update your selection.</DialogDescription>
         </DialogHeader>
 
         <div className="flex gap-2">
-          <button
+          <Button variant="ghost" size="sm"
             onClick={selectAll}
-            className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Select all
-          </button>
-          <span className="text-xs text-muted-foreground">·</span>
-          <button
+          </Button>
+          <Button variant="ghost" size="sm"
             onClick={clearAll}
-            className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Clear all
-          </button>
+          </Button>
         </div>
 
-        <ScrollArea className="h-72" viewportClassName="h-72">
-          <div className="flex flex-wrap gap-2 pr-3">
+        <ScrollArea className="h-[min(18rem,40dvh)]" viewportClassName="h-full [&>div]:!block">
+          <div className="grid min-w-0 grid-cols-1 gap-2 pr-3 sm:grid-cols-2">
             {members.map((m) => {
               const checked = draft.has(m.id);
               return (
-                <button
+                <Button variant="outline"
+                  aria-pressed={checked}
                   key={m.id}
                   onClick={() => toggleMember(m.id)}
                   className={cn(
-                    "cursor-pointer flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm transition-colors",
+                    "h-auto min-h-10 min-w-0 justify-start whitespace-normal px-2.5 py-2 text-left text-sm",
                     checked
                       ? "bg-primary/10 border-primary text-foreground"
                       : "bg-background border-border text-muted-foreground hover:border-foreground hover:text-foreground",
                   )}
                 >
-                  <img src={m.avatar} alt="" className="h-6 w-6 rounded-full shrink-0 object-cover" />
-                  <span className="whitespace-nowrap">{m.name}</span>
+                  <Avatar aria-hidden="true" className="h-6 w-6">
+                    <AvatarImage src={m.avatar || undefined} alt="" />
+                    <AvatarFallback className="text-xs">{m.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <span className="min-w-0 flex-1 [overflow-wrap:anywhere]">{m.name}</span>
+                  {checked && <Check aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />}
                   {showFriendBadges && m.isFriend && (
                     <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] text-secondary-foreground">
                       Friend
                     </span>
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>
         </ScrollArea>
 
-        <div className="flex justify-between items-center pt-2 border-t">
+        <div className="flex flex-wrap justify-between items-center gap-2 pt-2 border-t">
           <span className="text-xs text-muted-foreground">
             {draft.size} of {members.length} selected
           </span>

@@ -1,48 +1,20 @@
-import { useFCCollection } from "../../api/useFCCollection";
-import { useCollectionScope } from "../../hooks/useCollectionScope";
-import { formatSynced } from "../../utils/collectionDisplay";
-import { filterByCollectionScope } from "../../utils/collectionScope";
-import { CollectionScopeToggle } from "../scope/CollectionScopeToggle";
+import { useCollectionView } from "../../hooks/useCollectionView";
 import { LeaderboardTable } from "./LeaderboardTable";
 
 export function LeaderboardPage() {
-  const { allCollectibles, membersWithMounts, loading, lastFetched } =
-    useFCCollection();
-  const { scope, setScope } = useCollectionScope();
-  const scopedMembers = filterByCollectionScope(membersWithMounts, scope);
+  const { allCollectibles, scopedMembers, loading, scope } = useCollectionView();
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-24 text-muted-foreground text-sm">
-        Loading…
-      </div>
-    );
+    return <p role="status" className="py-12 text-sm text-muted-foreground">Loading rankings…</p>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold font-serif">Leaderboard</h1>
-          <div className="flex items-baseline gap-3 mt-1">
-            <p className="text-muted-foreground">
-              Ranked by collection progress across{" "}
-              {scope === "all" ? "the FC and Friends" : "the FC"}.
-            </p>
-            {formatSynced(lastFetched) && (
-              <span className="text-xs text-muted-foreground/60 shrink-0">
-                Synced {formatSynced(lastFetched)}
-              </span>
-            )}
-          </div>
-        </div>
-        <CollectionScopeToggle scope={scope} onChange={setScope} />
+      <div>
+        <h2 className="font-serif text-xl font-bold">Rankings</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Ranked by collection progress across {scope === "all" ? "the FC and Friends" : "the FC"}.</p>
       </div>
-      <LeaderboardTable
-        members={scopedMembers}
-        allCollectibles={allCollectibles}
-        showFriendBadges={scope === "all"}
-      />
+      <LeaderboardTable members={scopedMembers} allCollectibles={allCollectibles} showFriendBadges={scope === "all"} />
     </div>
   );
 }

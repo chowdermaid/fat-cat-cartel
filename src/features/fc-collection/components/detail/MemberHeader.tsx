@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { MemberWithMounts } from "../../types";
 
 interface MemberHeaderProps {
@@ -16,19 +17,12 @@ export function MemberHeader({
   const pct = total > 0 ? (count / total) * 100 : 0;
 
   return (
-    <div className="flex flex-col items-center gap-1.5 px-3 py-2 min-w-[88px]">
-      {member.avatar ? (
-        <img
-          src={member.avatar}
-          alt={member.name}
-          className="h-10 w-10 rounded-full border object-cover"
-        />
-      ) : (
-        <div className="h-10 w-10 rounded-full border bg-muted flex items-center justify-center text-sm font-semibold text-muted-foreground">
-          {member.name[0]}
-        </div>
-      )}
-      <p className="text-xs font-semibold text-center leading-tight">
+    <div className="flex flex-col items-center gap-1.5 w-32 min-w-32 px-3 py-3">
+      <Avatar aria-hidden="true" className="h-8 w-8 border">
+        <AvatarImage src={member.avatar || undefined} alt="" />
+        <AvatarFallback className="text-xs">{member.name[0]}</AvatarFallback>
+      </Avatar>
+      <p className="text-xs font-semibold w-full break-words text-center leading-tight text-foreground">
         {member.name}
       </p>
       {showFriendBadge && member.isFriend && (
@@ -37,11 +31,11 @@ export function MemberHeader({
         </span>
       )}
       <p className="text-xs text-muted-foreground tabular-nums">
-        {count}/{total}
+        {count}/{total} <span className="ml-1">{Math.round(pct)}%</span>
       </p>
       <div className="w-full bg-muted rounded-full h-1">
         <div
-          className="bg-primary h-1 rounded-full transition-all"
+          className="bg-primary h-1 rounded-full transition-all motion-reduce:transition-none"
           style={{ width: `${pct}%` }}
         />
       </div>

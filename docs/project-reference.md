@@ -50,9 +50,10 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/`: `HomePage`
 - `/members`: `MembersPage`
 - `/members/$lodestoneId`: `MemberProfilePage`
-- `/fc-collection`: `FCCollectionPage`
-- `/fc-collection/$type`: `CollectiblePage`
-- `/fc-collection/leaderboard`: `LeaderboardPage`
+- `/fc-collection`: redirects to `/fc-collection/overview`
+- `/fc-collection/overview`: `FCCollectionPage`
+- `/fc-collection/collections` and `/fc-collection/collections/$type`: `CollectiblePage`
+- `/fc-collection/rankings`: `LeaderboardPage`
 - `/mount-roulette`: `MountRoulettePage`
 - `/craftingboard`: `CraftingBoardPage`
 - `/meowketboard`: `MeowketBoardPage`
@@ -66,6 +67,8 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/gameserver`: authorized game-server catalog
 - `/gameserver/palworld`: existing Palworld controls and player field
 - `/gameserver/dragonwilds`: compact host dashboard, online board and recent activity
+
+FC Collection views share a persistent `FCCollectionLayout` and one cached loader. Legacy `/fc-collection/$type` and `/fc-collection/leaderboard` links redirect to the corresponding nested views.
 
 When adding a page, create `src/features/<name>/index.tsx`, register it in `src/app/router.tsx`, and add a sidebar item only if it belongs in global navigation.
 

@@ -26,6 +26,12 @@ export interface FCCollectionState {
 
 export type CollectionScope = "fc" | "all";
 
+export interface CollectionViewState extends FCCollectionState {
+  scope: CollectionScope;
+  setScope: (scope: CollectionScope) => void;
+  scopedMembers: MemberWithMounts[];
+}
+
 export interface CollectibleSource {
   type: string;
   text: string;
