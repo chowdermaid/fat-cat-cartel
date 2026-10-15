@@ -32,7 +32,7 @@ export interface UcobActivity {
 
 export interface UcobProgressData {
   lastUpdated: number;
-  static: { id: "coils-cartel"; name: "The Coils Cartel"; sourceLodestoneId: string };
+  static: { id: "coils-cartel"; name: "black carbuncles"; sourceLodestoneId: string };
   points: UcobProgressPoint[];
   activities: UcobActivity[];
   summary: {
@@ -156,7 +156,7 @@ export function buildUcobProgressData(sourceLodestoneId: string, points: UcobPro
   const latest = Math.max(0, ...points.map((point) => point.startedAt ?? 0), ...activities.map((activity) => activity.startedAt));
   return {
     lastUpdated: now,
-    static: { id: "coils-cartel", name: "The Coils Cartel", sourceLodestoneId },
+    static: { id: "coils-cartel", name: "black carbuncles", sourceLodestoneId },
     points, activities,
     summary: {
       pullCount: points.length,

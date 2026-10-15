@@ -1770,8 +1770,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1791331954.2803156,
-    "ast_hash": "4848d2cc100589dfcaa6975f68de26f5",
+    "mtime": 1792062456.1760051,
+    "ast_hash": "03e0fd5225d8fc3dd90f3a228bec4393",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -1810,13 +1810,13 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1792046812.571493,
-    "ast_hash": "69b1b16c89e6f7292438c4ef4072d719",
+    "mtime": 1792062456.1610403,
+    "ast_hash": "b0e7cc8b79c18093470e855284b219c6",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
-    "mtime": 1791344722.0608351,
-    "ast_hash": "48069d5d29633a3d1bb5cab3d6df950e",
+    "mtime": 1792062456.1621163,
+    "ast_hash": "22828d1a01a9f04de16c95de3dbb9e89",
     "semantic_hash": ""
   },
   "docs/website-overview.md": {
@@ -2720,28 +2720,28 @@
     "semantic_hash": ""
   },
   "functions/src/ucob-progress.test.ts": {
-    "mtime": 1791331981.8886206,
-    "ast_hash": "acbdce43d79cc4a14bcbd34850979fa1",
+    "mtime": 1792062455.3433454,
+    "ast_hash": "9b1cc6009b45c7fcf9c2f834a1994a5f",
     "semantic_hash": ""
   },
   "functions/src/ucob-progress.ts": {
-    "mtime": 1791330824.5614178,
-    "ast_hash": "6314cbc131192c053dcd5ebc769adafe",
+    "mtime": 1792062455.3417945,
+    "ast_hash": "337d6c1276fa0f3e82994b8013c42ab9",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/api/ucobProgressFetchers.ts": {
-    "mtime": 1791331003.0185795,
-    "ast_hash": "62af79434eae917515549a3cdcde2f16",
+    "mtime": 1792062455.3397052,
+    "ast_hash": "1025866a8f9e4b895d705d2c636051c9",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/api/ucobProgressFixtures.ts": {
-    "mtime": 1791340377.0104558,
-    "ast_hash": "1375b687925309790b65812b26418fce",
+    "mtime": 1792062455.339169,
+    "ast_hash": "b971cf86084389b5c21b975240dcd739",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/UcobProgPage.tsx": {
-    "mtime": 1791346295.4024785,
-    "ast_hash": "5c9bc89d7b0b35d368be4ec45fe77b40",
+    "mtime": 1792062455.3376377,
+    "ast_hash": "b8d169edc2c555b3981cc7e40fa4be99",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/activity/UcobRecentActivity.tsx": {
@@ -2765,8 +2765,8 @@
     "semantic_hash": ""
   },
   "src/features/ucob-prog/constants.ts": {
-    "mtime": 1791341862.9280548,
-    "ast_hash": "b66f5140ed49b4bfd679b16c2807f6d6",
+    "mtime": 1792062455.3371248,
+    "ast_hash": "1398dbb39685acfa32949b231f478420",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/hooks/useUcobProgress.ts": {
@@ -2780,8 +2780,8 @@
     "semantic_hash": ""
   },
   "src/features/ucob-prog/types.ts": {
-    "mtime": 1791342161.4653203,
-    "ast_hash": "dfce36c4d7a502e5df6a2ab34451ce4f",
+    "mtime": 1792062455.3376377,
+    "ast_hash": "ff952cda9b1fb5bd92587081d379abe9",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/utils/chartData.ts": {
@@ -2795,8 +2795,8 @@
     "semantic_hash": ""
   },
   "tests/ucob-progress-client.test.mjs": {
-    "mtime": 1791344021.5380714,
-    "ast_hash": "4fc2a1bc0e46cdd741a1a532852f6061",
+    "mtime": 1792062455.344882,
+    "ast_hash": "63cde79eb1726751f66a9d89a8c8bc64",
     "semantic_hash": ""
   },
   "src/components/ui/avatar.tsx": {
@@ -2805,8 +2805,8 @@
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/chart/UcobEndpointAvatar.tsx": {
-    "mtime": 1791331910.2968333,
-    "ast_hash": "bd6ef215bbf02affb2e27597cfae3fd0",
+    "mtime": 1792062455.3417945,
+    "ast_hash": "9edb636968e96e70b79ae51c83ec2f21",
     "semantic_hash": ""
   },
   "src/assets/icons/dragon.svg": {
@@ -2815,8 +2815,8 @@
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/progress/UcobPhaseProgress.tsx": {
-    "mtime": 1791344691.8892992,
-    "ast_hash": "f9c50edeecfeff8443a83a9168ff9eb4",
+    "mtime": 1792062455.3402557,
+    "ast_hash": "fe8869d8f2ba11ccceeda092d44bc49d",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/utils/phaseProgress.ts": {
@@ -2875,8 +2875,8 @@
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/FCCollectionLayout.tsx": {
-    "mtime": 1792049360.3696642,
-    "ast_hash": "a885bb96cd06a2ca9a3ee69b7c14ef80",
+    "mtime": 1792049433.854894,
+    "ast_hash": "4869f6e1cd7389497eb73ff244393112",
     "semantic_hash": ""
   },
   "src/features/fc-collection/hooks/useCollectionView.ts": {

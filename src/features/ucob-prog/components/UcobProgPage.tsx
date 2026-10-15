@@ -29,7 +29,7 @@ export function UcobProgPage() {
     if (!canRefresh || !auth.sessionToken || refreshing) return;
     setRefreshing(true);
     const toastId = toast.loading(
-      "Refreshing The Coils Cartel's UCOB progress...",
+      `Refreshing ${UCOB_STATIC_NAME}' UCOB progress...`,
     );
     try {
       await triggerUcobProgressRefresh(auth.sessionToken);

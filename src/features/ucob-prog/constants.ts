@@ -1,7 +1,7 @@
 import type { UcobPhaseId } from "./types";
 
 export const UCOB_PAGE_TITLE = "The Unending Coil of Bahamut";
-export const UCOB_STATIC_NAME = "The Coils Cartel";
+export const UCOB_STATIC_NAME = "black carbuncles";
 export const UCOB_PROGRESS_PATH = "raidStats/ucobProgress";
 export const UCOB_USE_STUBS = import.meta.env.VITE_USE_STUBS === "true";
 

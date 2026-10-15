@@ -6050,7 +6050,7 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "functions_src_refresh_fflogs_batchrun",
-      "community": 53,
+      "community": 12,
       "norm_label": "batchrun()"
     },
     {
@@ -14990,7 +14990,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_fcstats_fcstats",
-      "community": 53,
+      "community": 0,
       "norm_label": "fcstats()"
     },
     {
@@ -24077,7 +24077,7 @@
       "label": "triggerUcobProgressRefresh()",
       "file_type": "code",
       "source_file": "src/features/ucob-prog/api/ucobProgressFetchers.ts",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "src_features_ucob_prog_api_ucobprogressfetchers_triggerucobprogressrefresh",
       "community": 96,
@@ -24097,7 +24097,7 @@
       "label": "createUcobProgressFixture()",
       "file_type": "code",
       "source_file": "src/features/ucob-prog/api/ucobProgressFixtures.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_ucob_prog_api_ucobprogressfixtures_createucobprogressfixture",
       "community": 96,
@@ -26577,7 +26577,7 @@
       "label": "render()",
       "file_type": "code",
       "source_file": "tests/ucob-progress-client.test.mjs",
-      "source_location": "L91",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "tests_ucob_progress_client_test_render",
       "community": 152,
@@ -45315,7 +45315,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/ucob-progress-client.test.mjs",
-      "source_location": "L94",
+      "source_location": "L98",
       "weight": 1.0,
       "source": "tests_ucob_progress_client_test_render",
       "target": "package_dependencies_react"
@@ -58921,7 +58921,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/fc-collection/components/FCCollectionLayout.tsx",
-      "source_location": "L15",
+      "source_location": "L18",
       "weight": 1.0,
       "source": "src_features_fc_collection_components_fccollectionlayout_fccollectionlayout",
       "target": "src_features_fc_collection_utils_collectiondisplay_formatsynced"
@@ -82721,7 +82721,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/ucob-prog/api/ucobProgressFetchers.ts",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0,
       "source": "src_features_ucob_prog_api_ucobprogressfetchers",
       "target": "src_features_ucob_prog_api_ucobprogressfetchers_triggerucobprogressrefresh",
@@ -82832,7 +82832,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/ucob-prog/api/ucobProgressFetchers.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "source": "src_features_ucob_prog_api_ucobprogressfetchers_triggerucobprogressrefresh",
       "target": "src_features_ucob_prog_api_ucobprogressfixtures_createucobprogressfixture"
@@ -82852,10 +82852,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/ucob-prog/api/ucobProgressFixtures.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_ucob_prog_api_ucobprogressfixtures",
       "target": "src_features_ucob_prog_api_ucobprogressfixtures_createucobprogressfixture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/ucob-prog/api/ucobProgressFixtures.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_features_ucob_prog_api_ucobprogressfixtures",
+      "target": "src_features_ucob_prog_constants",
       "confidence_score": 1.0
     },
     {
@@ -82897,7 +82908,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/features/ucob-prog/api/ucobProgressFixtures.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "source": "src_features_ucob_prog_api_ucobprogressfixtures_createucobprogressfixture",
       "target": "src_lib_db_stub_progress"
@@ -87959,7 +87970,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/ucob-progress-client.test.mjs",
-      "source_location": "L91",
+      "source_location": "L95",
       "weight": 1.0,
       "source": "tests_ucob_progress_client_test",
       "target": "tests_ucob_progress_client_test_render",
@@ -90397,5 +90408,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d1299b694339b2cf1a9c62e854757a4f5caa775e"
+  "built_at_commit": "eea719a59ba87dcd6f04c8f2ab6703a4f3b064a6"
 }

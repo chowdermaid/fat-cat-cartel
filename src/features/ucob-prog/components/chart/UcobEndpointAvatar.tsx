@@ -6,7 +6,7 @@ export function UcobEndpointAvatar({ cx = 0, cy = 0, name }: { cx?: number; cy?:
     <foreignObject x={cx - 18} y={cy - 18} width={36} height={36}>
       <Avatar className="h-9 w-9 border-2 border-amber-400 bg-background" aria-label={name}>
         <AvatarImage src={staticIcon} alt={name} className="object-contain p-0.5" />
-        <AvatarFallback className="text-[10px] font-semibold">CC</AvatarFallback>
+        <AvatarFallback className="text-[10px] font-semibold">BC</AvatarFallback>
       </Avatar>
     </foreignObject>
   );

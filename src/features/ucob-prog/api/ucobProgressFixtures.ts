@@ -1,4 +1,5 @@
 import type { UcobProgressData, UcobProgressPoint } from "../types";
+import { UCOB_STATIC_NAME } from "../constants";
 
 export function createUcobProgressFixture(now = Date.now()): UcobProgressData {
   let best = 100;
@@ -19,7 +20,7 @@ export function createUcobProgressFixture(now = Date.now()): UcobProgressData {
   const bestPoint = points.reduce((a, b) => a.bossHpRemaining <= b.bossHpRemaining ? a : b);
   return {
     lastUpdated: now,
-    static: { id: "coils-cartel", name: "The Coils Cartel", sourceLodestoneId: "20439006" },
+    static: { id: "coils-cartel", name: UCOB_STATIC_NAME, sourceLodestoneId: "20439006" },
     points,
     activities: [{ id: "sample-session", startedAt: now - 86_400_000, endedAt: now - 64_800_000, clearCount: 0, wipeCount: 72, bestPercent: bestPoint.displayPercentText, killDuration: null, reportUrl: null }],
     summary: {

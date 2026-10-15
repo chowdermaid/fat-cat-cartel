@@ -61,12 +61,16 @@ test("stub reads and refreshes use the dedicated tracker branch", async () => {
   assert(first.points.every((point) => point.bossHpRemaining >= 0 && point.bossHpRemaining <= 100));
   assert(first.points.every((point) => point.bestBossHpRemaining >= 0 && point.bestBossHpRemaining <= point.bossHpRemaining));
   assert(first.points.every((point) => /^P[1-5]$/.test(point.phase)));
+  await direct.db.set(direct.db.ref(direct.db.db, "raidStats/ucobProgress"), {
+    ...first, static: { ...first.static, name: "The Coils Cartel" },
+  });
+  assert.equal((await direct.api.fetchUcobProgress()).static.name, "black carbuncles");
   const members = (await direct.db.get(direct.db.ref(direct.db.db, "members"))).val();
   await direct.db.set(direct.db.ref(direct.db.db, "raidStats/ucobProgress"), null);
   assert.equal(await direct.api.fetchUcobProgress(), null);
   const result = await direct.api.triggerUcobProgressRefresh("synthetic-session");
   assert.equal(result.ok, true);
-  assert.equal((await direct.api.fetchUcobProgress()).static.name, "The Coils Cartel");
+  assert.equal((await direct.api.fetchUcobProgress()).static.name, "black carbuncles");
   assert.deepEqual((await direct.db.get(direct.db.ref(direct.db.db, "members"))).val(), members);
 });
 
@@ -96,7 +100,7 @@ function render({ data, loading = false, error = null, signedIn = true, linked =
 
 test("page identifies the static and exposes refresh before the first cache exists", () => {
   const empty = render({ data: null });
-  assert.match(empty, /The Coils Cartel/);
+  assert.match(empty, /black carbuncles/);
   assert.match(empty, /The Unending Coil of Bahamut/);
   assert.match(empty, /data:image\/svg\+xml/);
   assert.match(empty, /Refresh progress/);

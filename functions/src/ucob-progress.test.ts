@@ -63,7 +63,7 @@ test("activities include only UCOB and deduplicate sessions", () => {
 
 test("static totals count each pull once and report partial time without substituting session duration", () => {
   const data = buildUcobProgressData("20439006", mapUcobProgressionRows(graphRows), mapUcobActivities(activityRows, canonical));
-  assert.equal(data.static.name, "The Coils Cartel");
+  assert.equal(data.static.name, "black carbuncles");
   assert.equal(data.summary.pullCount, 3);
   assert.equal(data.summary.timeSpentMs, 260_000);
   assert.equal(data.summary.timedPullCount, 2);

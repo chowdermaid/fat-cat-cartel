@@ -94,7 +94,7 @@ export function UcobPhaseProgress({
                     className="object-contain p-0.5"
                   />
                   <AvatarFallback className="text-xs font-semibold">
-                    CC
+                    BC
                   </AvatarFallback>
                 </Avatar>
               </div>

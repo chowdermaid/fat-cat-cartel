@@ -1,16 +1,16 @@
 # Graph Report - fat-cat-cartel  (2026-10-15)
 
 ## Corpus Check
-- 468 files · ~2,758,677 words
+- 468 files · ~2,758,694 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2920 nodes · 5786 edges · 185 communities (160 shown, 25 thin omitted)
+- 2920 nodes · 5787 edges · 185 communities (160 shown, 25 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 48 edges (avg confidence: 0.62)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d1299b69`
+- Built from commit: `eea719a5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -201,10 +201,10 @@
   src/features/gameserver/hooks/dragonwildsController.ts → tests/dragonwilds-dashboard.test.mjs
 - `createDragonwildsController()` --indirect_call--> `runAction()`  [INFERRED]
   src/features/gameserver/hooks/dragonwildsController.ts → tests/dragonwilds-dashboard.test.mjs
+- `batchRun()` --indirect_call--> `item()`  [INFERRED]
+  functions/src/refresh-fflogs.ts → tests/home-scroll-reveal.test.ts
 - `mapUcobProgressionRows()` --indirect_call--> `progress()`  [INFERRED]
   functions/src/ucob-progress.ts → src/lib/db.stub.ts
-- `render()` --references--> `react`  [EXTRACTED]
-  tests/ucob-progress-client.test.mjs → package.json
 
 ## Import Cycles
 - None detected.
@@ -213,7 +213,7 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
-Nodes (63): CachePayload, CollectiblesValue, MembersValue, useFCCollection(), CollectionNavigation(), CollectionNavigationProps, CollectibleDetailDialog(), CollectibleDetailDialogProps (+55 more)
+Nodes (64): CachePayload, CollectiblesValue, MembersValue, useFCCollection(), CollectionNavigation(), CollectionNavigationProps, CollectibleDetailDialog(), CollectibleDetailDialogProps (+56 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
@@ -261,7 +261,7 @@ Nodes (44): AdminAuthConfig, AdminOAuthStartConfig, AdminSession, applyDevRoleOv
 
 ### Community 12 - "Community 12"
 Cohesion: 0.10
-Nodes (29): getFFLogsToken(), TokenCache, buildCharacterZonesQuery(), DIFFICULTY, queryFFLogs(), AllStars, buildCharacterParseEntries(), CharacterRankings (+21 more)
+Nodes (30): getFFLogsToken(), TokenCache, buildCharacterZonesQuery(), DIFFICULTY, queryFFLogs(), AllStars, batchRun(), buildCharacterParseEntries() (+22 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.14
@@ -424,8 +424,8 @@ Cohesion: 0.12
 Nodes (17): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, @firebase/rules-unit-testing, globals, tailwindcss (+9 more)
 
 ### Community 53 - "Community 53"
-Cohesion: 0.24
-Nodes (7): batchRun(), batchRun(), FCStats(), animations, fixture(), item(), leaf()
+Cohesion: 0.31
+Nodes (5): batchRun(), animations, fixture(), item(), leaf()
 
 ### Community 54 - "Community 54"
 Cohesion: 0.14
@@ -783,16 +783,16 @@ Nodes (6): PalworldStartupStatus(), PalworldStartupStatusProps, prefersReducedMo
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `item()` connect `Community 53` to `Community 21`, `Community 45`, `Community 29`?**
+- **Why does `item()` connect `Community 53` to `Community 0`, `Community 12`, `Community 45`, `Community 21`, `Community 29`?**
   _High betweenness centrality (0.243) - this node is a cross-community bridge._
-- **Why does `FCStats()` connect `Community 53` to `Community 0`?**
+- **Why does `FCStats()` connect `Community 0` to `Community 53`?**
   _High betweenness centrality (0.171) - this node is a cross-community bridge._
 - **Why does `progress()` connect `Community 9` to `Dragonwilds: phased implementation checklist`, `Community 8`, `PalworldActivityTimeline.tsx`?**
   _High betweenness centrality (0.148) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
   _954 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05493133583021224 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.054212454212454214 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.07191358024691358 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**

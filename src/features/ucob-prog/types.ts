@@ -42,7 +42,7 @@ export interface UcobActivity {
 
 export interface UcobProgressData {
   lastUpdated: number;
-  static: { id: "coils-cartel"; name: "The Coils Cartel"; sourceLodestoneId: string };
+  static: { id: "coils-cartel"; name: "black carbuncles"; sourceLodestoneId: string };
   points: UcobProgressPoint[];
   activities: UcobActivity[];
   summary: {
