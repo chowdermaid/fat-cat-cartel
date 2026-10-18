@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
-import dragonIcon from "@/assets/icons/dragon.svg";
+import blackCarbuncle from "@/assets/black-carbuncle.png";
 import { triggerUcobProgressRefresh } from "../api/ucobProgressFetchers";
 import { UCOB_PAGE_TITLE, UCOB_STATIC_NAME } from "../constants";
 import { useUcobProgress } from "../hooks/useUcobProgress";
@@ -52,9 +52,9 @@ export function UcobProgPage() {
       >
         <div className="flex min-w-0 items-center gap-3">
           <img
-            src={dragonIcon}
+            src={blackCarbuncle}
             alt=""
-            className="h-14 w-14 shrink-0 object-contain dark:invert"
+            className="h-14 w-14 shrink-0 object-contain"
           />
           <div className="min-w-0">
             <p className="text-sm font-medium text-primary">

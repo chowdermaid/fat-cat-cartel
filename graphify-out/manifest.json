@@ -2740,8 +2740,8 @@
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/UcobProgPage.tsx": {
-    "mtime": 1792062455.3376377,
-    "ast_hash": "b8d169edc2c555b3981cc7e40fa4be99",
+    "mtime": 1792305125.0175548,
+    "ast_hash": "524772c7162685f3c5cfdefca286ad9a",
     "semantic_hash": ""
   },
   "src/features/ucob-prog/components/activity/UcobRecentActivity.tsx": {
@@ -2892,6 +2892,16 @@
   "design-qa.md": {
     "mtime": 1792048925.6865118,
     "ast_hash": "1687719f25bd07dc8e28d75eb87a62fc",
+    "semantic_hash": ""
+  },
+  "src/assets/black-carbuncle.png": {
+    "mtime": 1792305088.4826934,
+    "ast_hash": "4c02b9f81c152cd0752780972227bc83",
+    "semantic_hash": ""
+  },
+  "src/assets/icons/black-carbuncle.svg": {
+    "mtime": 1792062585.2133906,
+    "ast_hash": "6124e7c2c3a5e76e64f18a49d0a3ab27",
     "semantic_hash": ""
   }
 }
