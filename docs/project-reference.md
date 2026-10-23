@@ -63,6 +63,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`
+- `/ladders-and-backstabbers`: Boss/Underpaw rulebook and local event crew/card manager
 - `/admin`: `AdminPage`
 - `/gameserver`: authorized game-server catalog
 - `/gameserver/palworld`: existing Palworld controls and player field
@@ -186,6 +187,8 @@ For progress bars or visual meters, keep JSX at the base value and animate the c
 - Pure queue/geometry, stub and controller lifecycle tests run on Node 24 with `node --experimental-test-module-mocks --test tests/clubhouse.test.ts tests/clubhouse-controller.test.ts`. Controller tests mock Anime.js handles to exercise carpet paths, doorway sequencing and capacity, tooltip protection, pause reasons, resize during travel, roster updates and disposal deterministically. They do not replace browser checks for layout, actual animation, tooltip interaction, profile navigation or React Strict Mode.
 
 ### General checks
+
+- Ladders & Backstabbers stores attendees, pairing preview/confirmed crews, hands and one undo snapshot under `fcc_ladders_and_backstabbers_event_v1` in this browser's localStorage. It adds no Firebase operations. Confirmation deals one random ability per crew and locks pairings; odd attendance makes one trio. Hands hold two different abilities at most; duplicates across crews are allowed. Reset requires confirmation and is undoable until the next action. Card effects and missions remain manual. Another tab changing storage blocks stale edits until reload. Invalid saves show an error and require an explicit reset. Verify with `node --test tests/ladders-local-event.test.ts`, plus browser checks for attendee editing, swaps, confirmation, dealing/discarding, undo, refresh and role gating.
 
 - Doc-only changes need no build.
 - TypeScript or route changes: `npm run build`.

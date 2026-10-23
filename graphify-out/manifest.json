@@ -160,8 +160,8 @@
     "semantic_hash": "615851105fdbc32d13f37443a9422443"
   },
   "package.json": {
-    "mtime": 1791342098.352998,
-    "ast_hash": "8c9a2b5803198c79b9c05816d0105d83",
+    "mtime": 1792414391.1044295,
+    "ast_hash": "208ea31a18c439582a71edde7caa35ba",
     "semantic_hash": ""
   },
   "scripts/dev-emulator.mjs": {
@@ -190,8 +190,8 @@
     "semantic_hash": "ffc66b08419b1e517f8640368d378fda"
   },
   "src/app/router.tsx": {
-    "mtime": 1792046568.1174383,
-    "ast_hash": "e50c19de7dd857b4801c27857715b6af",
+    "mtime": 1792324417.6717827,
+    "ast_hash": "3d8e7e46ddae5f91ed29477a712892e9",
     "semantic_hash": ""
   },
   "src/components/auth/AuthAccessState.tsx": {
@@ -220,8 +220,8 @@
     "semantic_hash": "09aa737caac1b43a078e46a3ed091b65"
   },
   "src/components/layouts/AppSidebar.tsx": {
-    "mtime": 1791331910.2983696,
-    "ast_hash": "86a681f6461be3b546f820f783a34a7a",
+    "mtime": 1792798455.1105497,
+    "ast_hash": "c8b74780322c065faf834df6225ecdc3",
     "semantic_hash": ""
   },
   "src/components/layouts/RootLayout.tsx": {
@@ -1810,8 +1810,8 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1792062456.1610403,
-    "ast_hash": "b0e7cc8b79c18093470e855284b219c6",
+    "mtime": 1792412696.1538172,
+    "ast_hash": "07e6c492b83b69c2fe533b108f70b1ca",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
@@ -2902,6 +2902,126 @@
   "src/assets/icons/black-carbuncle.svg": {
     "mtime": 1792062585.2133906,
     "ast_hash": "6124e7c2c3a5e76e64f18a49d0a3ab27",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/LaddersAndBackstabbersPage.tsx": {
+    "mtime": 1792415398.973873,
+    "ast_hash": "911d67447e921f3df4590f15ce7eaabc",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/constants.ts": {
+    "mtime": 1792326893.1917648,
+    "ast_hash": "871c66b21344a41f5e3483effc00f121",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/index.tsx": {
+    "mtime": 1792324417.6692028,
+    "ast_hash": "b38b20a9ed2a965e8128549015fb5f7c",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/RulebookDialog.tsx": {
+    "mtime": 1792326048.7074244,
+    "ast_hash": "7da58b5a5840f7ce95c624f80019a4cd",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/EventHostPanel.tsx": {
+    "mtime": 1792798442.1292088,
+    "ast_hash": "74dfee1c9cf14590149768c3015a64f5",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/hooks/useLocalEvent.ts": {
+    "mtime": 1792412582.7021382,
+    "ast_hash": "1c7490affa3c1249dd0d9e368eb75c45",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/types.ts": {
+    "mtime": 1792414447.1944468,
+    "ast_hash": "bdfd15151dca97dfde19cecddaee91c3",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/utils/localEvent.ts": {
+    "mtime": 1792412696.1517296,
+    "ast_hash": "0f6fdb504fa00d7ff84c63988442ca8a",
+    "semantic_hash": ""
+  },
+  "tests/ladders-local-event.test.ts": {
+    "mtime": 1792412696.1517296,
+    "ast_hash": "d2391fdd74fc6bba72cb0001a58616a2",
+    "semantic_hash": ""
+  },
+  "src/components/ui/tabs.tsx": {
+    "mtime": 1792414447.193936,
+    "ast_hash": "24101eeb0ea0f8ff1cfa925405f9fa0a",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/EventHeader.tsx": {
+    "mtime": 1792798442.1270418,
+    "ast_hash": "8e125712e3045522b32abd9b36477361",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/game/AbilityCard.tsx": {
+    "mtime": 1792415991.7457268,
+    "ast_hash": "fc6a41324497be103be383782be43a20",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/game/CrewHand.tsx": {
+    "mtime": 1792415398.9754274,
+    "ast_hash": "e3cc6a0095c506a189da33dce586f31e",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/rulebook/QuickStart.tsx": {
+    "mtime": 1792414605.2911782,
+    "ast_hash": "9d0499f3ff58d7e4e2bc4d3d31e97dde",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/rulebook/RulebookView.tsx": {
+    "mtime": 1792414605.292711,
+    "ast_hash": "c4247b4dbd5b48cbe24e7770b45b37be",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/presentation.ts": {
+    "mtime": 1792414447.1944468,
+    "ast_hash": "251442f5e27b980569ac33212176bda5",
+    "semantic_hash": ""
+  },
+  "tests/ladders-event-storage.test.mjs": {
+    "mtime": 1792414844.8721693,
+    "ast_hash": "c00f026db7cad5cddc589be5b7a823c2",
+    "semantic_hash": ""
+  },
+  "docs/ladders-and-backstabbers-design-handoff.md": {
+    "mtime": 1792414074.3145587,
+    "ast_hash": "8f24e64b457fb0ae2c11a60b6563f7f6",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/ladders-and-backstabbers/game-board-selected.png": {
+    "mtime": 1792413053.0721047,
+    "ast_hash": "88eddd49b37f4e3d755ded918c007650",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/ladders-and-backstabbers/rulebook-selected.png": {
+    "mtime": 1792413487.261826,
+    "ast_hash": "baea8cfc6de31ef6d2b595976662eeb7",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/components/game/HandSlot.tsx": {
+    "mtime": 1792415991.7457268,
+    "ast_hash": "90ac3af6ef4fcc31b8824b3c1113e137",
+    "semantic_hash": ""
+  },
+  "src/features/ladders-and-backstabbers/hooks/useEventViewAnimation.ts": {
+    "mtime": 1792415398.9713323,
+    "ast_hash": "15e8effb4edbefc7f7d0e18bce51abc8",
+    "semantic_hash": ""
+  },
+  "tests/ladders-animations.test.mjs": {
+    "mtime": 1792415599.359984,
+    "ast_hash": "0c9a54c5e9e36c945ab79da4f43bfcd9",
+    "semantic_hash": ""
+  },
+  "tests/ladders-page-access.test.mjs": {
+    "mtime": 1792798516.8308902,
+    "ast_hash": "bfd65774e17e5339c283f1fba480b507",
     "semantic_hash": ""
   }
 }

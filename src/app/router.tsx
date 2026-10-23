@@ -7,6 +7,7 @@ import {
 import { RootLayout } from "@/components/layouts/RootLayout";
 import { HomePage } from "@/features/home";
 import { Easter2026Page } from "@/features/easter2026";
+import { LaddersAndBackstabbersPage } from "@/features/ladders-and-backstabbers";
 import { PastEventsPage } from "@/features/pastevents";
 import {
   FCCollectionPage,
@@ -57,6 +58,12 @@ const recruitmentRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jointhemeowfia",
   component: RecruitmentPage,
+});
+
+const laddersAndBackstabbersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/ladders-and-backstabbers",
+  component: LaddersAndBackstabbersPage,
 });
 
 const fcCollectionRoute = createRoute({
@@ -191,6 +198,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   pastEventsRoute,
   easter2026Route,
+  laddersAndBackstabbersRoute,
   recruitmentRoute,
   fcCollectionRoute.addChildren([
     fcCollectionIndexRoute,
