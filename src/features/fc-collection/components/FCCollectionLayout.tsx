@@ -4,7 +4,7 @@ import { useFCCollection } from "../api/useFCCollection";
 import { useCollectionScope } from "../hooks/useCollectionScope";
 import { CollectionViewContext } from "../hooks/useCollectionView";
 import { filterByCollectionScope } from "../utils/collectionScope";
-import { formatSynced } from "../utils/collectionDisplay";
+import { collectionFreshness, formatSynced } from "../utils/collectionDisplay";
 import { CollectionScopeToggle } from "./scope/CollectionScopeToggle";
 import { CollectionNavigation } from "./CollectionNavigation";
 
@@ -16,6 +16,8 @@ export function FCCollectionLayout() {
     scope,
   );
   const synced = formatSynced(collection.lastFetched);
+  const unavailableCount = scopedMembers.filter((member) => !member.lastFetched).length;
+  const staleCount = scopedMembers.filter((member) => collectionFreshness(member).stale).length;
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
@@ -53,6 +55,12 @@ export function FCCollectionLayout() {
           </div>
         </div>
         <CollectionNavigation active={active} />
+        {!collection.loading && (unavailableCount > 0 || staleCount > 0) && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {unavailableCount} members have no collection data. {staleCount} members have stale data; their last saved values are shown.
+          </p>
+        )}
+        {collection.error && <p role="alert" className="text-sm text-destructive">{collection.error}</p>}
         <Outlet />
       </div>
     </CollectionViewContext>

@@ -1,3 +1,5 @@
+import { invalidateCollectionCache } from "@/features/fc-collection/utils/collectionCache";
+
 export function clearRaidStatsCache() {
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -16,6 +18,5 @@ export function clearMembersCache() {
 }
 
 export function clearCollectionCache() {
-  localStorage.removeItem("fcc_collection_v3");
-  localStorage.removeItem("fcc_collectibles_v1");
+  invalidateCollectionCache();
 }

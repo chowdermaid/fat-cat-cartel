@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { MemberWithMounts } from "../../types";
+import { collectionFreshness } from "../../utils/collectionDisplay";
 
 interface MemberHeaderProps {
   member: MemberWithMounts;
@@ -15,6 +16,7 @@ export function MemberHeader({
   showFriendBadge = false,
 }: MemberHeaderProps) {
   const pct = total > 0 ? (count / total) * 100 : 0;
+  const freshness = collectionFreshness(member);
 
   return (
     <div className="flex flex-col items-center gap-1.5 w-32 min-w-32 px-3 py-3">
@@ -31,14 +33,15 @@ export function MemberHeader({
         </span>
       )}
       <p className="text-xs text-muted-foreground tabular-nums">
-        {count}/{total} <span className="ml-1">{Math.round(pct)}%</span>
+        {freshness.unavailable ? "Data unavailable" : <>{count}/{total} <span className="ml-1">{Math.round(pct)}%</span></>}
       </p>
-      <div className="w-full bg-muted rounded-full h-1">
+      {!freshness.unavailable && <p className={`text-center text-[10px] ${freshness.stale ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground"}`}>{freshness.label}</p>}
+      {!freshness.unavailable && <div className="w-full bg-muted rounded-full h-1">
         <div
           className="bg-primary h-1 rounded-full transition-all motion-reduce:transition-none"
           style={{ width: `${pct}%` }}
         />
-      </div>
+      </div>}
     </div>
   );
 }

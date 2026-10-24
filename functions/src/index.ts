@@ -649,8 +649,8 @@ export const triggerFCCollectionRefresh = onCall(
   },
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
-    await runRefreshFCCollection();
-    return { ok: true };
+    const summary = await runRefreshFCCollection();
+    return { ok: true, ...summary };
   },
 );
 

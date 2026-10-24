@@ -138,7 +138,11 @@ export async function refreshMemberSource(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown refresh error.";
-    await db.ref(statusPath).set(memberSyncError(now, message));
+    if (source === "collection") {
+      await db.ref(statusPath).update(memberSyncError(now, message));
+    } else {
+      await db.ref(statusPath).set(memberSyncError(now, message));
+    }
 
     if (error instanceof HttpsError) throw error;
     throw new HttpsError("unavailable", message);

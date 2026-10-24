@@ -60,6 +60,8 @@ export function buildMembersWithMounts(
       fcRank: m.fcRank ?? null,
       isFriend: isFriendRank(m.fcRank),
       avatar: cache?.avatar ?? "",
+      lastFetched: cache?.lastFetched ?? 0,
+      lastError: cache?.lastError,
       owned,
       previousOwned,
     };

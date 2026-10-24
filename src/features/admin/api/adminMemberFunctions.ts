@@ -3,7 +3,7 @@ import type { MemberProfile } from "@/features/member-profile/types";
 import type { SyncSource } from "../types";
 
 export function triggerFCCollectionRefresh(adminSessionToken: string) {
-  return callAdminFunction(
+  return callAdminFunction<{ ok: true; total?: number; refreshed?: number; failed?: number }>(
     "triggerFCCollectionRefresh",
     adminSessionToken,
     {},

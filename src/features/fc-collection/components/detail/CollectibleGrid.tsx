@@ -508,7 +508,9 @@ export function CollectibleGrid({
                     key={m.id}
                     className="text-center px-3 py-1.5 border-r last:border-r-0"
                   >
-                    {m.owned[config.key].has(item.id) ? (
+                    {!m.lastFetched ? (
+                      <span className="text-xs text-muted-foreground" aria-label={`Data unavailable for ${m.name}`}>?</span>
+                    ) : m.owned[config.key].has(item.id) ? (
                       <>
                         <Check
                           aria-hidden="true"
@@ -559,6 +561,7 @@ export function CollectibleGrid({
           />
           Owned <Minus aria-hidden="true" className="ml-2 h-3 w-3" />
           Not recorded as owned
+          <span className="ml-2">? Data unavailable</span>
         </p>
         <p>Select {config.singular.toLowerCase()} name to view details.</p>
       </div>

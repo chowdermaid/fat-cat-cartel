@@ -17,12 +17,13 @@ export function CollectionOverviewCards({
   scope,
   scopedMembers,
 }: CollectionOverviewCardsProps) {
+  const availableMembers = scopedMembers.filter((member) => member.lastFetched > 0);
   return (
     <>
       {COLLECTIBLE_CONFIG.map((cfg) => {
         const items = allCollectibles[cfg.key];
-        const avgOwned = memberCount > 0
-          ? Math.round(scopedMembers.reduce((sum, member) => sum + member.owned[cfg.key].size, 0) / memberCount)
+        const avgOwned = availableMembers.length > 0
+          ? Math.round(availableMembers.reduce((sum, member) => sum + member.owned[cfg.key].size, 0) / availableMembers.length)
           : 0;
         const itemIds = new Set(items.map((item) => item.id));
         const ownedByAnyone = new Set(scopedMembers.flatMap((member) =>
@@ -47,7 +48,7 @@ export function CollectionOverviewCards({
               </div>
               <Progress aria-label={`${cfg.label} ${scope === "all" ? "group" : "FC"} catalog coverage`} value={pct} className="mt-1.5 h-2 bg-muted" />
               <p className="mt-2 text-xs text-muted-foreground">
-                {memberCount > 0 ? <>Avg owned: <span className="tabular-nums">{avgOwned.toLocaleString()} / {items.length.toLocaleString()}</span></> : "Average unavailable"}
+                {availableMembers.length > 0 ? <>Avg owned: <span className="tabular-nums">{avgOwned.toLocaleString()} / {items.length.toLocaleString()}</span>{availableMembers.length < memberCount && " (available members)"}</> : "Average unavailable"}
               </p>
               {items.length === 0 && <p className="mt-1 text-xs text-muted-foreground">Catalog data unavailable.</p>}
             </div>

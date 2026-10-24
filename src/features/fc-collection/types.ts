@@ -22,6 +22,7 @@ export interface FCCollectionState {
   memberData: Record<string, MemberCacheData>;
   lastFetched: number | null;
   loading: boolean;
+  error: string | null;
 }
 
 export type CollectionScope = "fc" | "all";
@@ -72,6 +73,7 @@ export interface MemberCacheData {
   owned: Record<CollectibleKey, number[]>;
   previousOwned: Record<CollectibleKey, PreviousOwnedEntry>;
   lastFetched: number;
+  lastError?: string;
 }
 
 export interface MemberWithMounts {
@@ -81,6 +83,8 @@ export interface MemberWithMounts {
   fcRank: string | null;
   isFriend: boolean;
   avatar: string;
+  lastFetched: number;
+  lastError?: string;
   owned: Record<CollectibleKey, Set<number>>;
   previousOwned: Record<CollectibleKey, number>;
 }

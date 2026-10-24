@@ -98,8 +98,14 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
     setFetchingCollection(true);
     const id = toast.loading("Refreshing collection data...");
     try {
-      await triggerFCCollectionRefresh(adminSessionToken);
-      toast.success("Collection data refreshed.", { id });
+      const result = await triggerFCCollectionRefresh(adminSessionToken);
+      clearCollectionCache();
+      setSyncReloadToken((value) => value + 1);
+      if (result.failed) {
+        toast.warning(`${result.refreshed} members refreshed; ${result.failed} failed. Previous values kept.`, { id });
+      } else {
+        toast.success("Collection data refreshed.", { id });
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Refresh failed.", { id });
     } finally {
@@ -167,6 +173,7 @@ export function FCMembersManager({ adminSessionToken }: FCMembersManagerProps) {
       setSyncReloadToken((value) => value + 1);
       toast.success(`${label} refreshed for ${member.name}.`, { id });
     } catch (e) {
+      if (source === "collection") clearCollectionCache();
       setSyncReloadToken((value) => value + 1);
       toast.error(e instanceof Error ? e.message : `${label} refresh failed.`, { id });
     } finally {

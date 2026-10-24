@@ -24,6 +24,8 @@ export const COLLECTIBLE_KEYS: CollectibleKey[] = [
 
 export const FC_COLLECTION_CACHE_KEY = "fcc_collection_v3";
 export const FC_COLLECTION_CACHE_TTL = 3 * 60 * 60 * 1000;
+export const FC_COLLECTION_CACHE_EVENT = "fcc-collection-cache-invalidated";
+export const FC_COLLECTION_FRESHNESS_MS = 26 * 60 * 60 * 1000;
 export const COLLECTION_SCOPE_STORAGE_KEY = "fcc_collection_scope_v1";
 
 export const EXPANSIONS = [

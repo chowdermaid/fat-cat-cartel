@@ -20,8 +20,8 @@
     "semantic_hash": "5d7b615184f0150d56950e8dcd3b90f0"
   },
   "functions/package.json": {
-    "mtime": 1790645500.9555068,
-    "ast_hash": "a1f2952bde2785d01db023de7aac99b6",
+    "mtime": 1792800601.3194754,
+    "ast_hash": "1c3f2cc509c621c86edbae8e3a6c238d",
     "semantic_hash": ""
   },
   "functions/scripts/register-discord-commands.js": {
@@ -95,14 +95,14 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1791331910.2999146,
-    "ast_hash": "86dd7f9a0a2a4e13d5c6718b619dfb86",
+    "mtime": 1792800300.6075141,
+    "ast_hash": "f3a2ab524b23783b07d9bfbcf8b9b319",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
-    "mtime": 1779789499.6205816,
-    "ast_hash": "b25b062f1c2bd9d43bbd7086cc79efbd",
-    "semantic_hash": "b25b062f1c2bd9d43bbd7086cc79efbd"
+    "mtime": 1792800300.6069574,
+    "ast_hash": "75edaac4f21c39bde1a536cc4154d8e1",
+    "semantic_hash": ""
   },
   "functions/src/member-sync-status.ts": {
     "mtime": 1779789499.5087428,
@@ -120,9 +120,9 @@
     "semantic_hash": "d927950616bacbf9a116e47bf2cc0519"
   },
   "functions/src/refresh-fc-collection.ts": {
-    "mtime": 1779789634.7318742,
-    "ast_hash": "17df26f2bf733b52b3142482d9470e05",
-    "semantic_hash": "17df26f2bf733b52b3142482d9470e05"
+    "mtime": 1792800721.9546726,
+    "ast_hash": "d627535f2fb4b937e004da61e260430a",
+    "semantic_hash": ""
   },
   "functions/src/refresh-fflogs.ts": {
     "mtime": 1779794095.57857,
@@ -345,8 +345,8 @@
     "semantic_hash": "9804f82ab3d3a19440c69fa5321238c3"
   },
   "src/features/admin/api/adminMemberFunctions.ts": {
-    "mtime": 1789644994.4075396,
-    "ast_hash": "8a00080896397545a647cb529cd4ba18",
+    "mtime": 1792800333.0390532,
+    "ast_hash": "bcbc546dd43a085d6e0472eb682d5c8c",
     "semantic_hash": ""
   },
   "src/features/admin/api/easterParticipants.ts": {
@@ -385,8 +385,8 @@
     "semantic_hash": "4fe0875b5b2c3047ff6905179fc617ec"
   },
   "src/features/admin/components/members/FCMembersManager.tsx": {
-    "mtime": 1789644994.4092212,
-    "ast_hash": "05bc13b8a5392d10e286753055b444fb",
+    "mtime": 1792800333.0390532,
+    "ast_hash": "e8b1e92bc5ce75122e7324e153e587c0",
     "semantic_hash": ""
   },
   "src/features/admin/components/members/MemberDeleteDialog.tsx": {
@@ -410,9 +410,9 @@
     "semantic_hash": ""
   },
   "src/features/admin/constants.ts": {
-    "mtime": 1781153260.0047271,
-    "ast_hash": "24de313f0b91fc790b247965dcfa896b",
-    "semantic_hash": "24de313f0b91fc790b247965dcfa896b"
+    "mtime": 1792800333.0375402,
+    "ast_hash": "958c3301afd1289f68e82ea7811a8354",
+    "semantic_hash": ""
   },
   "src/features/admin/hooks/useAdminAuth.ts": {
     "mtime": 1790667376.7937005,
@@ -465,9 +465,9 @@
     "semantic_hash": "26fe5a6c997a98e2777a9e4cb2b51775"
   },
   "src/features/admin/utils/cacheInvalidation.ts": {
-    "mtime": 1781153363.6659167,
-    "ast_hash": "86c7c991a8542697d9f6c116e6c68694",
-    "semantic_hash": "86c7c991a8542697d9f6c116e6c68694"
+    "mtime": 1792800684.2772548,
+    "ast_hash": "8dcb212b726072536cd4bcde07c179e2",
+    "semantic_hash": ""
   },
   "src/features/admin/utils/favorites.ts": {
     "mtime": 1781153363.7274778,
@@ -820,9 +820,9 @@
     "semantic_hash": "80b828721cb716bcad68d269383e5e13"
   },
   "src/features/fc-collection/api/useFCCollection.ts": {
-    "mtime": 1781095327.3867445,
-    "ast_hash": "a58b03ca465bfb5f0eb1899397a10fa0",
-    "semantic_hash": "a58b03ca465bfb5f0eb1899397a10fa0"
+    "mtime": 1792800601.3184035,
+    "ast_hash": "2d05f9ca286bc6cc6ab618f3a1805ed7",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/FCCollectionPage.tsx": {
     "mtime": 1792046650.4566047,
@@ -835,8 +835,8 @@
     "semantic_hash": "1ab83354d2b86513ce82954ffcdb6f1f"
   },
   "src/features/fc-collection/components/detail/CollectibleGrid.tsx": {
-    "mtime": 1792049100.6782987,
-    "ast_hash": "44afe15dd1527f070e01e5379da80dc9",
+    "mtime": 1792800721.9572542,
+    "ast_hash": "fcfcf0024ca4a13b308491fb22f5d50e",
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/CollectiblePage.tsx": {
@@ -845,8 +845,8 @@
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/MemberHeader.tsx": {
-    "mtime": 1792047785.6096995,
-    "ast_hash": "fc2fe1f360d0828a0625a50230d072f9",
+    "mtime": 1792800377.683453,
+    "ast_hash": "c9faadb305beea9d1103e28a36b1f3e2",
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/detail/MemberPicker.tsx": {
@@ -860,13 +860,13 @@
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/leaderboard/LeaderboardTable.tsx": {
-    "mtime": 1781095563.3807144,
-    "ast_hash": "ca9ef52e9a88f8768152028657ab1599",
-    "semantic_hash": "ca9ef52e9a88f8768152028657ab1599"
+    "mtime": 1792800377.6819105,
+    "ast_hash": "3b79f524a458c333f19660eae279c32c",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/components/overview/CollectionOverviewCards.tsx": {
-    "mtime": 1792049353.5027711,
-    "ast_hash": "2d58a94f12639c368e7ac0529962170b",
+    "mtime": 1792800601.3194754,
+    "ast_hash": "8786441f049043ddacc96412ba218532",
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/overview/FCStats.tsx": {
@@ -880,8 +880,8 @@
     "semantic_hash": "89cc5166d01f27016d7f84e74260187e"
   },
   "src/features/fc-collection/constants.ts": {
-    "mtime": 1788872333.6659293,
-    "ast_hash": "b0fc1d5503e94b49a93bba7be9fce2cf",
+    "mtime": 1792800333.0329442,
+    "ast_hash": "349154c10528948624f218ae13cfb05d",
     "semantic_hash": ""
   },
   "src/features/fc-collection/hooks/useCollectionScope.ts": {
@@ -895,19 +895,19 @@
     "semantic_hash": ""
   },
   "src/features/fc-collection/types.ts": {
-    "mtime": 1792046523.9495609,
-    "ast_hash": "84287914175a3730096018ed9b81c7e6",
+    "mtime": 1792800333.0360308,
+    "ast_hash": "1d22630e137a293a932de598b961082a",
     "semantic_hash": ""
   },
   "src/features/fc-collection/utils/collectionData.ts": {
-    "mtime": 1781095280.4805305,
-    "ast_hash": "672af5d4537f76fd07de68b2ff92aac6",
-    "semantic_hash": "672af5d4537f76fd07de68b2ff92aac6"
+    "mtime": 1792800333.0370355,
+    "ast_hash": "14e011cb2456597f422ed207d64a2120",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/utils/collectionDisplay.ts": {
-    "mtime": 1781095280.2197604,
-    "ast_hash": "76ea40926a19d85d965fe7ca81084098",
-    "semantic_hash": "76ea40926a19d85d965fe7ca81084098"
+    "mtime": 1792800684.2772548,
+    "ast_hash": "d43b5a12b238ff42fef59f3ba3008d4f",
+    "semantic_hash": ""
   },
   "src/features/fc-collection/utils/collectionScope.ts": {
     "mtime": 1781095280.0153847,
@@ -1790,8 +1790,8 @@
     "semantic_hash": ""
   },
   "docs/fc-collection-implementation.md": {
-    "mtime": 1792048925.6850002,
-    "ast_hash": "90ab3242eb66f91c2cfa64b82d878a7b",
+    "mtime": 1792800721.9572542,
+    "ast_hash": "4775db63029f1c7e5188e3018f12bf2c",
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
@@ -2875,8 +2875,8 @@
     "semantic_hash": ""
   },
   "src/features/fc-collection/components/FCCollectionLayout.tsx": {
-    "mtime": 1792049433.854894,
-    "ast_hash": "4869f6e1cd7389497eb73ff244393112",
+    "mtime": 1792800601.318962,
+    "ast_hash": "2665ca1a79bb0925b4f673ac0d822c3d",
     "semantic_hash": ""
   },
   "src/features/fc-collection/hooks/useCollectionView.ts": {
@@ -3022,6 +3022,26 @@
   "tests/ladders-page-access.test.mjs": {
     "mtime": 1792798516.8308902,
     "ast_hash": "bfd65774e17e5339c283f1fba480b507",
+    "semantic_hash": ""
+  },
+  "functions/src/refresh-fc-collection.test.ts": {
+    "mtime": 1792800721.956743,
+    "ast_hash": "04c2aeeb36d303599ec6f72b74e5c3ab",
+    "semantic_hash": ""
+  },
+  "src/features/fc-collection/utils/collectionCache.ts": {
+    "mtime": 1792800358.3784704,
+    "ast_hash": "3894f2dd30c26646232c04510a360f7b",
+    "semantic_hash": ""
+  },
+  "tests/fc-collection-sync.test.mjs": {
+    "mtime": 1792800683.6439385,
+    "ast_hash": "3301042d496bd9cf190eba86107b653f",
+    "semantic_hash": ""
+  },
+  "docs/fc-collection-lodestone-xivapi-handoff.md": {
+    "mtime": 1792800500.5309534,
+    "ast_hash": "432b07cf7e0b2dc2ce2a9c096cef0e79",
     "semantic_hash": ""
   }
 }

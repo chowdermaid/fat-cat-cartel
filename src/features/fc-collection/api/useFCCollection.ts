@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db, ref, get } from "@/lib/db";
-import { FC_COLLECTION_CACHE_KEY, FC_COLLECTION_CACHE_TTL } from "../constants";
+import { FC_COLLECTION_CACHE_EVENT, FC_COLLECTION_CACHE_KEY, FC_COLLECTION_CACHE_TTL } from "../constants";
 import type {
   AllCollectibles,
   Collectible,
@@ -45,78 +45,115 @@ export function useFCCollection(): FCCollectionState {
   );
   const [lastFetched, setLastFetched] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check localStorage first
-    try {
-      const raw = localStorage.getItem(FC_COLLECTION_CACHE_KEY);
-      if (raw) {
-        const cached = JSON.parse(raw) as CachePayload;
-        if (Date.now() - cached.timestamp < FC_COLLECTION_CACHE_TTL) {
-          const id = window.setTimeout(() => {
-            setMembers(cached.members);
-            setAllCollectibles(normalizeAllCollectibles(cached.allCollectibles));
-            setMemberData(cached.memberData);
-            setLastFetched(cached.lastFetched);
-            setLoading(false);
-          }, 0);
-          return () => window.clearTimeout(id);
-        }
+    let cancelled = false;
+    let inFlight = false;
+    let reloadQueued = false;
+    let loadedAt = 0;
+    let lastAttemptAt = 0;
+
+    function apply(payload: CachePayload) {
+      setMembers(payload.members);
+      setAllCollectibles(normalizeAllCollectibles(payload.allCollectibles));
+      setMemberData(payload.memberData);
+      setLastFetched(payload.lastFetched);
+      setError(null);
+      setLoading(false);
+      loadedAt = payload.timestamp;
+    }
+
+    async function load(force = false) {
+      if (cancelled) return;
+      if (force) loadedAt = 0;
+      if (inFlight) {
+        reloadQueued ||= force;
+        return;
       }
-    } catch {
+      if (!force) {
+        try {
+          const raw = localStorage.getItem(FC_COLLECTION_CACHE_KEY);
+          const cached = raw ? JSON.parse(raw) as CachePayload : null;
+          if (cached && Array.isArray(cached.members) && cached.allCollectibles && cached.memberData
+            && Number.isFinite(cached.timestamp)) {
+            const fresh = Date.now() - cached.timestamp < FC_COLLECTION_CACHE_TTL;
+            if (!loadedAt || (fresh && cached.timestamp !== loadedAt)) apply(cached);
+            if (fresh) return;
+          }
+        } catch {
+          // A blocked or invalid browser cache must not block Firebase reads.
+        }
+        if (loadedAt && Date.now() - loadedAt < FC_COLLECTION_CACHE_TTL) return;
+        if (lastAttemptAt && Date.now() - lastAttemptAt < 30_000) return;
+      }
+      inFlight = true;
+      lastAttemptAt = Date.now();
       try {
-        localStorage.removeItem(FC_COLLECTION_CACHE_KEY);
+        const [membersSnap, collectiblesSnap, memberDataSnap] = await Promise.all([
+          get(ref(db, "members")) as Promise<DbSnapshot<MembersValue>>,
+          get(ref(db, "fcCollection/collectibles")) as Promise<DbSnapshot<CollectiblesValue>>,
+          get(ref(db, "fcCollection/memberData")) as Promise<DbSnapshot<Record<string, MemberCacheData>>>,
+        ]);
+        if (cancelled || reloadQueued) return;
+        const membersVal = membersSnap.val() ?? {};
+        const newMembers: FCMember[] = Object.entries(membersVal).map(
+          ([lodestoneId, m]) => ({
+            id: lodestoneId,
+            name: m.name,
+            lodestoneId,
+            fcRank: m.fcRank ?? null,
+          }),
+        );
+        const payload: CachePayload = {
+          members: newMembers,
+          allCollectibles: normalizeAllCollectibles(collectiblesSnap.val() ?? {}),
+          memberData: memberDataSnap.val() ?? {},
+          lastFetched: (collectiblesSnap.val() as { lastFetched?: number } | null)?.lastFetched ?? null,
+          timestamp: Date.now(),
+        };
+        apply(payload);
+        try {
+          localStorage.setItem(FC_COLLECTION_CACHE_KEY, JSON.stringify(payload));
+        } catch {
+          // The loaded snapshot is still usable without localStorage.
+        }
       } catch {
-        void FC_COLLECTION_CACHE_KEY;
+        if (!cancelled && !reloadQueued) {
+          setError("Unable to load collection data. Any previously loaded values are still shown.");
+          setLoading(false);
+        }
+      } finally {
+        inFlight = false;
+        if (reloadQueued && !cancelled) {
+          reloadQueued = false;
+          void load(true);
+        }
       }
     }
 
-    Promise.all([
-      get(ref(db, "members")) as Promise<DbSnapshot<MembersValue>>,
-      get(ref(db, "fcCollection/collectibles")) as Promise<DbSnapshot<CollectiblesValue>>,
-      get(ref(db, "fcCollection/memberData")) as Promise<DbSnapshot<Record<string, MemberCacheData>>>,
-    ]).then(([membersSnap, collectiblesSnap, memberDataSnap]) => {
-      const membersVal = membersSnap.val() ?? {};
-      const newMembers: FCMember[] = Object.entries(membersVal).map(
-        ([lodestoneId, m]) => ({
-          id: lodestoneId,
-          name: m.name,
-          lodestoneId,
-          fcRank: m.fcRank ?? null,
-        }),
-      );
-
-      // collectibles stored as real objects keyed by item id
-      const collectiblesVal = collectiblesSnap.val() ?? {};
-      const newCollectibles = normalizeAllCollectibles(collectiblesVal);
-
-      const newMemberData = (memberDataSnap.val() ?? {}) as Record<
-        string,
-        MemberCacheData
-      >;
-      const newLastFetched =
-        (collectiblesSnap.val() as { lastFetched?: number } | null)
-          ?.lastFetched ?? null;
-
-      setMembers(newMembers);
-      setAllCollectibles(newCollectibles);
-      setMemberData(newMemberData);
-      setLastFetched(newLastFetched);
-      setLoading(false);
-
-      const payload: CachePayload = {
-        members: newMembers,
-        allCollectibles: newCollectibles,
-        memberData: newMemberData,
-        lastFetched: newLastFetched,
-        timestamp: Date.now(),
-      };
-      try {
-        localStorage.setItem(FC_COLLECTION_CACHE_KEY, JSON.stringify(payload));
-      } catch {
-        return;
+    const revalidate = () => {
+      if (document.visibilityState !== "hidden") void load();
+    };
+    const invalidate = () => { void load(true); };
+    const storageChanged = (event: StorageEvent) => {
+      if (event.key === FC_COLLECTION_CACHE_KEY || event.key === null) {
+        void load(event.newValue === null);
       }
-    });
+    };
+    const initialLoad = window.setTimeout(() => { void load(); }, 0);
+    window.addEventListener("focus", revalidate);
+    document.addEventListener("visibilitychange", revalidate);
+    window.addEventListener(FC_COLLECTION_CACHE_EVENT, invalidate);
+    window.addEventListener("storage", storageChanged);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(initialLoad);
+      window.removeEventListener("focus", revalidate);
+      document.removeEventListener("visibilitychange", revalidate);
+      window.removeEventListener(FC_COLLECTION_CACHE_EVENT, invalidate);
+      window.removeEventListener("storage", storageChanged);
+    };
   }, []);
 
   const membersWithMounts = buildMembersWithMounts(members, memberData);
@@ -128,5 +165,6 @@ export function useFCCollection(): FCCollectionState {
     memberData,
     lastFetched,
     loading,
+    error,
   };
 }

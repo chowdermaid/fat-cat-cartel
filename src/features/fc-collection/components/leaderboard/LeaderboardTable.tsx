@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { animate, stagger } from "animejs";
 import { ACHIEVEMENT_GROUPS, COLLECTIBLE_CONFIG } from "../../constants";
 import type { Collectible, CollectibleKey, MemberWithMounts } from "../../types";
+import { collectionFreshness } from "../../utils/collectionDisplay";
 
 type ActiveTab = CollectibleKey;
 
@@ -92,6 +93,7 @@ export function LeaderboardTable({
 
     return [...members]
       .sort((a, b) => {
+        if (Boolean(a.lastFetched) !== Boolean(b.lastFetched)) return a.lastFetched ? -1 : 1;
         if (pointsMap) {
           const ownedA = itemIdSet ? [...a.owned[key]].filter((id) => itemIdSet.has(id)) : [...a.owned[key]];
           const ownedB = itemIdSet ? [...b.owned[key]].filter((id) => itemIdSet.has(id)) : [...b.owned[key]];
@@ -177,12 +179,13 @@ export function LeaderboardTable({
       ) : (
         <div ref={listRef} className="rounded-lg border divide-y">
           {ranked.map((m) => {
+            const freshness = collectionFreshness(m);
             const pct = total > 0 ? (m.count / total) * 100 : 0;
             return (
               <div key={m.id} className={cn("lb-row px-4 py-3", rankStyles[m.rank])}>
                 <div className="flex items-center gap-4">
                   <span className="w-8 text-center text-lg shrink-0">
-                    {rankLabels[m.rank] ?? m.rank}
+                    {freshness.unavailable ? "-" : rankLabels[m.rank] ?? m.rank}
                   </span>
                   <div className="flex items-center gap-3 w-32 sm:w-40 shrink-0">
                     <MemberAvatar member={m} />
@@ -196,7 +199,7 @@ export function LeaderboardTable({
                   <div className="flex-1 space-y-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-semibold tabular-nums">
-                        {isPoints ? (
+                        {freshness.unavailable ? "Data unavailable" : isPoints ? (
                           <>
                             {m.count.toLocaleString()}
                             <span className="text-muted-foreground font-normal text-xs ml-0.5">pts</span>
@@ -209,13 +212,18 @@ export function LeaderboardTable({
                         )}
                       </span>
                       <span className="text-xs text-muted-foreground tabular-nums">
-                        {pct.toFixed(1)}%
+                        {!freshness.unavailable && `${pct.toFixed(1)}%`}
                       </span>
                     </div>
-                    <AnimatedBar pct={pct} />
+                    {!freshness.unavailable && <AnimatedBar pct={pct} />}
+                    {!freshness.unavailable && (
+                      <p className={cn("text-xs", freshness.stale ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground")}>
+                        {freshness.label}
+                      </p>
+                    )}
                   </div>
                   <div className="w-12 text-right shrink-0">
-                    {m.delta > 0 ? (
+                    {!freshness.unavailable && !freshness.stale && m.delta > 0 ? (
                       <Badge className="bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400 border-0 text-xs">
                         +{m.delta}
                       </Badge>

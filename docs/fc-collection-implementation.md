@@ -86,6 +86,7 @@ Member data shape:
     achievements: { count: number, asOf: number }
   },
   lastFetched: number
+  lastError?: string
 }
 ```
 
@@ -118,18 +119,22 @@ Scheduled or manual collection refresh:
 - Fetches each tracked character's FFXIV Collect profile for avatar data.
 - Fetches owned mounts, minions, titles, and achievements for each tracked character.
 - Stores owned item IDs as arrays under `/fcCollection/memberData/{lodestoneId}/owned`.
-- Writes `/memberSyncStatus/{lodestoneId}/collection` success for each member with a non-zero `lastFetched`.
+- Writes `/memberSyncStatus/{lodestoneId}/collection` success only when all four ownership lists fetched and validated successfully.
 - Stores previous owned counts from the prior refresh under `previousOwned`.
-- Falls back to prior member collection data if a member fetch fails.
+- Leaves prior member collection data untouched if an ownership request fails or returns malformed data, and records an error status.
 - Writes collectibles and all member data through one multipath root update.
 
-On a per-member fetch failure, the function keeps the previous owned arrays and previous avatar if available. `lastFetched` remains the previous timestamp or `0`, which lets the UI continue showing stale but usable data rather than wiping that character.
+Ownership refresh is all-or-nothing per member. HTTP errors, network failures, invalid JSON, and unexpected item-list shapes preserve the complete previous snapshot, including avatar, previous counts, and `lastFetched`. Existing snapshots receive a small `lastError` field; a successful refresh replaces the snapshot and clears that field. New members with failed refreshes receive error status without a fabricated empty ownership snapshot. Properly formatted empty lists remain valid ownership results. Catalogs are also validated before any database write; an empty filtered catalog aborts the run rather than erasing the catalog and making all rankings zero.
+
+The refresh processes at most three members concurrently, with up to five parallel requests each. Each GET has a 15-second timeout and at most two attempts. Network failures, HTTP 429 and HTTP 5xx can retry once. `Retry-After` is honored when its delay is at most five seconds; longer or invalid delays fail the request instead of retrying early. The FC refresh POST is best effort, has a 15-second timeout, and logs unsuccessful responses. It does not establish that all upstream character snapshots are equally fresh.
+
+The full refresh returns `{ total, refreshed, failed }`. Admin refresh reports partial failures and retains usable values. Failed sync status preserves the last known successful timestamp where available. The catalog timestamp describes catalog retrieval only. Rankings and matrix headers display each member's successful fetch time, mark errors or data older than 26 hours as stale, and show missing snapshots as unavailable. Unavailable members have no numeric leaderboard rank; valid empty snapshots still show zero. Overview averages exclude unavailable members.
 
 Single-member collection refresh:
 
 - `runRefreshFCCollectionMember(lodestoneId)` refreshes collection data for one tracked character.
 - It is used by the Discord Friend signup queue worker so new Friends can get collection data without waiting for the next daily maintenance refresh.
-- It writes `/fcCollection/memberData/{lodestoneId}` only. Catalog refresh remains owned by the full collection refresh.
+- It replaces `/fcCollection/memberData/{lodestoneId}` only on success. On failure, it records `lastError` for an existing snapshot and throws so the admin/Friend source wrapper records failure instead of success. Catalog refresh remains owned by the full collection refresh.
 
 ## Lodestone Job Levels
 
@@ -299,9 +304,9 @@ Admin panel:
 
 `useFCCollection` checks `fcc_collection_v3` before reading Firebase. If the cache is fresh, state is populated from localStorage and Firebase is not read.
 
-Admin collection refresh currently does not clear `fcc_collection_v3` after `triggerFCCollectionRefresh` succeeds. A client with a fresh local cache may continue showing old collection data until the 3-hour TTL expires or another action clears the cache.
+Admin full collection refresh clears `fcc_collection_v3` and `fcc_collectibles_v1` after the callable completes, including partial success. Single-member collection attempts also invalidate those caches, so failed attempts can expose their stale-data indicators.
 
-Admin single-member collection refresh clears `fcc_collection_v3` and `fcc_collectibles_v1` after `refreshMemberSource` succeeds.
+Mounted collection loaders reload after same-window invalidation or cross-tab cache removal. Returning focus or visibility to a page rechecks the three-hour TTL; fresh caches cause no Firebase reads. Concurrent events share a loader's in-flight request, and an invalidation during a request discards that result before loading a replacement. Failed reads retain the displayed snapshot and surface an error. An expired browser snapshot can be shown while its replacement loads. Failed ordinary rechecks have a 30-second cooldown; admin invalidation bypasses it. Unmounted loaders remove their browser event handlers and ignore late responses.
 
 Admin member delete clears `fcc_collectibles_v1`, the legacy `fcc_collection_v2`, and raid stat caches. Admin profile save clears `fcc_collection_v3` because rank edits can change FC or Friend scope.
 
@@ -332,14 +337,14 @@ One uncached `useFCCollection` load reads three top-level paths:
 
 That is a relatively large RTDB download because it includes all collectible catalogs and all tracked member ownership arrays. The 3-hour cache is important for Firebase download cost.
 
-Scheduled refresh runs every 3 hours. For each run it fetches:
+Scheduled refresh runs daily at 8:00 AM Australia/Sydney. For each run it fetches:
 
 - One optional FC refresh endpoint.
 - Four collectible catalogs.
 - One character profile per tracked member.
 - Four owned-list endpoints per tracked member.
 
-Total external requests are roughly `5 + trackedMemberCount * 5`, plus any retries or network behavior from FFXIV Collect.
+Normal external requests total `5 + trackedMemberCount * 5`. Bounded retries can increase that to at most `9 + trackedMemberCount * 10` and extend Function runtime. Full refresh still uses one atomic RTDB write request; failed members add small status/error metadata rather than rewriting ownership. Single-member failure with an existing snapshot writes its small error field plus the existing source-wrapper status write. Browser expiry/invalidation can trigger another download of the same three paths per mounted loader, including collection pages in other tabs. Reloading admin sync status after a full refresh adds its existing four-path status read. No new Firebase listeners, polling timers, schedules, external providers, or callable invocations are added.
 
 ## Local Development
 
@@ -381,6 +386,7 @@ Run these checks after collection UI changes:
 
 ```bash
 npm run build
+node --test tests/fc-collection-sync.test.mjs tests/fc-collection-routing.test.mjs
 ```
 
 Run these checks after collection Function changes:
@@ -388,6 +394,7 @@ Run these checks after collection Function changes:
 ```bash
 cd functions
 npm run build
+node --test lib/refresh-fc-collection.test.js
 ```
 
 When changing Firebase paths or refresh behavior, test against the RTDB and Functions emulators first. Use `VITE_USE_STUBS=true` only to confirm the offline fallback still renders.

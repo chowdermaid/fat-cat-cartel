@@ -1,5 +1,6 @@
 import type { MemberProfile } from "@/features/member-profile/types";
 import type { SyncSource } from "./types";
+import { FC_COLLECTION_FRESHNESS_MS } from "@/features/fc-collection/constants";
 
 export const REGION = "us-central1";
 export const USE_FUNCTIONS_EMULATOR =
@@ -23,7 +24,7 @@ export const SOURCE_LABEL: Record<SyncSource, string> = {
 };
 
 export const FRESHNESS_MS: Record<SyncSource, number> = {
-  collection: 4 * 60 * 60 * 1000,
+  collection: FC_COLLECTION_FRESHNESS_MS,
   tomestone: 3 * 60 * 60 * 1000,
   fflogs: 30 * 60 * 60 * 1000,
   lodestone: 7 * 24 * 60 * 60 * 1000,
