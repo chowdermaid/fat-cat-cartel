@@ -18,6 +18,7 @@ Collection functions:
 - `dailyMaintenance`: scheduled daily at `0 8 * * *` Australia/Sydney and runs the FC collection refresh alongside Tomestone and Discord planner sync.
 - `triggerFCCollectionRefresh`: callable admin refresh.
 - `refreshMemberSource`: callable admin per-member refresh. Use source `collection`.
+- `retryFailedFCCollectionMembers`: scheduled every five minutes; processes up to five due failed-member retries without refreshing catalogs or successful members.
 - No Firebase Function secrets are required for collection refresh.
 
 Related functions:
@@ -67,6 +68,7 @@ Related coordination paths:
 - `/memberExclusions/{lodestoneId}`: deleted members that should not be reimported by Lodestone, FFLogs, or Discord signup.
 - `/friendRefreshQueue/{jobId}`: queued Discord Friend signup refresh jobs.
 - `/memberSyncStatus/{lodestoneId}/collection`: per-member collection refresh metadata.
+- `/fcCollectionRetryQueue/{lodestoneId}`: private pending retries, with `attempts`, `failedAt`, and indexed `nextAttemptAt` fields.
 
 Member data shape:
 
@@ -129,6 +131,16 @@ Ownership refresh is all-or-nothing per member. HTTP errors, network failures, i
 The refresh processes at most three members concurrently, with up to five parallel requests each. Each GET has a 15-second timeout and at most two attempts. Network failures, HTTP 429 and HTTP 5xx can retry once. `Retry-After` is honored when its delay is at most five seconds; longer or invalid delays fail the request instead of retrying early. The FC refresh POST is best effort, has a 15-second timeout, and logs unsuccessful responses. It does not establish that all upstream character snapshots are equally fresh.
 
 The full refresh returns `{ total, refreshed, failed }`. Admin refresh reports partial failures and retains usable values. Failed sync status preserves the last known successful timestamp where available. The catalog timestamp describes catalog retrieval only. Rankings and matrix headers display each member's successful fetch time, mark errors or data older than 26 hours as stale, and show missing snapshots as unavailable. Unavailable members have no numeric leaderboard rank; valid empty snapshots still show zero. Overview averages exclude unavailable members.
+
+### Delayed member retries
+
+Failed ownership refreshes from the full daily/admin run or a single-member admin/Friend refresh enqueue that member for a delayed retry. `COLLECTION_RETRY_DELAY_MS` in `functions/src/refresh-fc-collection.ts` defaults to 15 minutes, and `COLLECTION_MAX_DELAYED_RETRIES` limits each failure cycle to three delayed attempts. The existing immediate per-request retry remains unchanged. If an upstream `Retry-After` exceeds 15 minutes, the queued attempt waits until that later time.
+
+The five-minute worker reads only the first five due entries from `/fcCollectionRetryQueue`, ordered by `nextAttemptAt`. In normal operation the first retry runs about 15 to 20 minutes after failure; a backlog can delay it further. It processes these members sequentially, fetching only their profile and four ownership lists. A transaction claims each attempt and moves its due time forward before external work, preventing overlapping workers from duplicating the same queued attempt. Claims also bound attempts if a Function stops unexpectedly.
+
+Success updates ownership and sync status and removes the queue entry. Failure preserves the prior snapshot and schedules the next attempt 15 minutes later, unless the three-attempt limit is reached. The final failure stays visible but has no queued retry; the next daily or explicit refresh can start a new cycle. Successful normal refreshes also cancel pending retries. The worker removes entries for missing/excluded members or snapshots successfully refreshed since the queued failure. Admin deletion clears the queue entry with the existing multipath deletion. Catalog fetch failures do not enqueue the whole roster.
+
+Deploy the updated database rules/index, `retryFailedFCCollectionMembers`, and the existing Functions that call collection refresh (`dailyMaintenance`, `triggerFCCollectionRefresh`, `refreshMemberSource`, `refreshFriendSignup`) for this behavior to become active. Deploy `deleteMember` as well for immediate queue cleanup on deletion. There is no browser listener or new frontend cache invalidation after a background retry; normal cache expiry/focus revalidation shows the recovered data.
 
 Single-member collection refresh:
 
@@ -320,6 +332,7 @@ Current Realtime Database rules:
 - `/members`, `/membersLastUpdated`, `/memberProfiles`, and `/events/easter2026/participants` are not client-writable.
 - `/memberExclusions` is not publicly readable or writable.
 - `/friendRefreshQueue` is not publicly readable or writable.
+- `/fcCollectionRetryQueue` is not publicly readable or writable and indexes `nextAttemptAt` for bounded due-work queries.
 - `/adminSessions` and `/adminOAuthStates` are not publicly readable or writable.
 - `/memberSyncStatus` is publicly readable and not client-writable.
 
@@ -344,7 +357,9 @@ Scheduled refresh runs daily at 8:00 AM Australia/Sydney. For each run it fetche
 - One character profile per tracked member.
 - Four owned-list endpoints per tracked member.
 
-Normal external requests total `5 + trackedMemberCount * 5`. Bounded retries can increase that to at most `9 + trackedMemberCount * 10` and extend Function runtime. Full refresh still uses one atomic RTDB write request; failed members add small status/error metadata rather than rewriting ownership. Single-member failure with an existing snapshot writes its small error field plus the existing source-wrapper status write. Browser expiry/invalidation can trigger another download of the same three paths per mounted loader, including collection pages in other tabs. Reloading admin sync status after a full refresh adds its existing four-path status read. No new Firebase listeners, polling timers, schedules, external providers, or callable invocations are added.
+Normal external requests total `5 + trackedMemberCount * 5`. Immediate retries can increase that to at most `9 + trackedMemberCount * 10` and extend Function runtime. Full refresh still uses one atomic RTDB write request; queue entries and status/error fields join that update. Single-member refresh uses one atomic root update for snapshot/status/queue changes, plus the existing source-wrapper status write. Browser expiry/invalidation can trigger another download of the same three paths per mounted loader, including collection pages in other tabs. Reloading admin sync status after a full refresh adds its existing four-path status read.
+
+Delayed retry adds one scheduled Function every five minutes (288 invocations/day, 8,640 per 30-day month) and one indexed query returning at most five due queue entries per run. Each claimed member adds a small claim transaction, three point reads (member, exclusion, prior collection snapshot), and one atomic result update, or a cleanup transaction when skipped. Each actual member attempt makes five external GETs, up to ten with immediate retries. Three delayed attempts therefore add at most 30 external GETs per failed-member cycle. Only failures enter the queue. Queue entries are removed on success, final exhaustion, or member deletion. No new browser Firebase reads, listeners, callable invocations, or external providers are added by delayed retries.
 
 ## Local Development
 
@@ -395,6 +410,12 @@ Run these checks after collection Function changes:
 cd functions
 npm run build
 node --test lib/refresh-fc-collection.test.js
+```
+
+From the repository root, exercise retry persistence and overlapping claims against the local demo database emulator (build Functions first):
+
+```bash
+firebase emulators:exec --project demo-fat-cat-cartel --only database "node --test tests/database-rules.test.mjs tests/fc-collection-retry-emulator.test.mjs"
 ```
 
 When changing Firebase paths or refresh behavior, test against the RTDB and Functions emulators first. Use `VITE_USE_STUBS=true` only to confirm the offline fallback still renders.

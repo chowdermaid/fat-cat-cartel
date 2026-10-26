@@ -39,6 +39,12 @@
       ".write": false
     },
 
+    "fcCollectionRetryQueue": {
+      ".read": false,
+      ".write": false,
+      ".indexOn": ["nextAttemptAt"]
+    },
+
     "adminOAuthStates": {
       ".read": false,
       ".write": false

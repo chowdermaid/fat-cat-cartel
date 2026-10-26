@@ -2,6 +2,14 @@ import * as admin from "firebase-admin";
 import { memberSyncError, memberSyncSuccess } from "./member-sync-status";
 
 const BASE = "https://ffxivcollect.com/api";
+export const COLLECTION_RETRY_DELAY_MS = 15 * 60 * 1000;
+export const COLLECTION_MAX_DELAYED_RETRIES = 3;
+
+interface CollectionRetry {
+  attempts: number;
+  failedAt: number;
+  nextAttemptAt: number;
+}
 
 const COLLECTIBLE_CONFIG = [
   { key: "mounts",       apiPath: "mounts",        fetchLimit: undefined as number | undefined, categoryFilter: undefined as string[] | undefined },
@@ -38,12 +46,38 @@ interface MemberCacheData {
 
 type MemberFetchResult =
   | { data: MemberCacheData; refreshed: true }
-  | { error: string; refreshed: false };
+  | { error: string; refreshed: false; retryAfterAt?: number };
 
 export interface CollectionRefreshSummary {
   total: number;
   refreshed: number;
   failed: number;
+}
+
+function memberUpdates(
+  lodestoneId: string,
+  attemptAt: number,
+  prev: MemberCacheData | undefined,
+  result: MemberFetchResult,
+  retryAttempts = 0,
+): Record<string, unknown> {
+  if (result.refreshed) {
+    return {
+      [`fcCollection/memberData/${lodestoneId}`]: result.data,
+      [`memberSyncStatus/${lodestoneId}/collection`]: memberSyncSuccess("collection", attemptAt, result.data.lastFetched),
+      [`fcCollectionRetryQueue/${lodestoneId}`]: null,
+    };
+  }
+  return {
+    ...(prev ? { [`fcCollection/memberData/${lodestoneId}/lastError`]: result.error } : {}),
+    [`memberSyncStatus/${lodestoneId}/collection`]: {
+      ...memberSyncError(attemptAt, result.error),
+      ...(prev?.lastFetched ? { lastSuccessAt: prev.lastFetched } : {}),
+    },
+    [`fcCollectionRetryQueue/${lodestoneId}`]: retryAttempts < COLLECTION_MAX_DELAYED_RETRIES
+      ? { attempts: retryAttempts, failedAt: attemptAt, nextAttemptAt: Math.max(Date.now() + COLLECTION_RETRY_DELAY_MS, result.retryAfterAt ?? 0) }
+      : null,
+  };
 }
 
 async function fetchJson(url: string): Promise<unknown> {
@@ -68,7 +102,11 @@ async function fetchJson(url: string): Promise<unknown> {
       await new Promise((resolve) => setTimeout(resolve, delay));
       continue;
     }
-    throw new Error(`${url.replace(BASE, "")} returned HTTP ${response.status}`);
+    const error = new Error(`${url.replace(BASE, "")} returned HTTP ${response.status}`) as Error & { retryAfterAt?: number };
+    if ((response.status === 429 || response.status >= 500) && Number.isFinite(delay) && delay > 0) {
+      error.retryAfterAt = Date.now() + delay;
+    }
+    throw error;
   }
 }
 
@@ -105,6 +143,7 @@ async function fetchMemberCollectionData(
   prev: MemberCacheData | undefined,
 ): Promise<MemberFetchResult> {
   const now = Date.now();
+  let retryAfterAt = 0;
   try {
     // Settle every request before releasing this member's concurrency slot.
     const [character, ...ownedResults] = await Promise.allSettled([
@@ -113,6 +152,12 @@ async function fetchMemberCollectionData(
         fetchJson(`${BASE}/characters/${lodestoneId}/${cfg.apiPath}/owned`).then(parseOwned),
       ),
     ]);
+    for (const response of ownedResults) {
+      if (response.status === "rejected" && response.reason instanceof Error) {
+        const waitUntil = (response.reason as Error & { retryAfterAt?: number }).retryAfterAt;
+        if (waitUntil && Number.isFinite(waitUntil)) retryAfterAt = Math.max(retryAfterAt, waitUntil);
+      }
+    }
     const profile = character.status === "fulfilled" ? character.value as { avatar?: unknown } | null : null;
     const avatar = typeof profile?.avatar === "string" ? profile.avatar : (prev?.avatar ?? "");
     const owned = {} as Record<CollectibleKey, number[]>;
@@ -130,21 +175,22 @@ async function fetchMemberCollectionData(
     return {
       error: err instanceof Error ? err.message : "Collection refresh failed.",
       refreshed: false,
+      ...(retryAfterAt ? { retryAfterAt } : {}),
     };
   }
 }
 
 export async function runRefreshFCCollectionMember(lodestoneId: string): Promise<void> {
   const db = admin.database();
+  const attemptAt = Date.now();
   const prev = ((await db.ref(`fcCollection/memberData/${lodestoneId}`).get()).val() ?? undefined) as
     | MemberCacheData
     | undefined;
   const result = await fetchMemberCollectionData(lodestoneId, prev);
+  await db.ref("/").update(memberUpdates(lodestoneId, attemptAt, prev, result));
   if (!result.refreshed) {
-    if (prev) await db.ref(`fcCollection/memberData/${lodestoneId}/lastError`).set(result.error);
     throw new Error(result.error);
   }
-  await db.ref(`fcCollection/memberData/${lodestoneId}`).set(result.data);
   console.log(`[fccollect] written member ${lodestoneId}`);
 }
 
@@ -212,19 +258,11 @@ export async function runRefreshFCCollection(): Promise<CollectionRefreshSummary
       const attemptAt = Date.now();
       const prev = prevMemberData[lodestoneId];
       const result = await fetchMemberCollectionData(lodestoneId, prev);
+      Object.assign(memberDataUpdate, memberUpdates(lodestoneId, attemptAt, prev, result));
       if (result.refreshed) {
         summary.refreshed++;
-        memberDataUpdate[`fcCollection/memberData/${lodestoneId}`] = result.data;
-        memberDataUpdate[`memberSyncStatus/${lodestoneId}/collection`] = memberSyncSuccess(
-          "collection", attemptAt, result.data.lastFetched,
-        );
       } else {
         summary.failed++;
-        if (prev) memberDataUpdate[`fcCollection/memberData/${lodestoneId}/lastError`] = result.error;
-        memberDataUpdate[`memberSyncStatus/${lodestoneId}/collection`] = {
-          ...memberSyncError(attemptAt, result.error),
-          ...(prev?.lastFetched ? { lastSuccessAt: prev.lastFetched } : {}),
-        };
       }
     }
   }));
@@ -232,4 +270,46 @@ export async function runRefreshFCCollection(): Promise<CollectionRefreshSummary
   await db.ref("/").update(memberDataUpdate);
   console.log("[fccollect] refresh completed", summary);
   return summary;
+}
+
+export async function runRetryFailedFCCollectionMembers(now = Date.now()): Promise<void> {
+  const db = admin.database();
+  const due = await db.ref("fcCollectionRetryQueue")
+    .orderByChild("nextAttemptAt").endAt(now).limitToFirst(5).get();
+  const entries = (due.val() ?? {}) as Record<string, CollectionRetry>;
+
+  for (const [lodestoneId, queued] of Object.entries(entries)) {
+    try {
+      const queueRef = db.ref(`fcCollectionRetryQueue/${lodestoneId}`);
+      // Claim a retry before external requests so overlapping runs cannot duplicate it.
+      const claim = await queueRef.transaction((current: CollectionRetry | null) => {
+        // Null also lets an uncached transaction retry against the server value.
+        if (!current) return null;
+        if (current.failedAt !== queued.failedAt || current.attempts !== queued.attempts
+          || current.nextAttemptAt > now) return undefined;
+        if (current.attempts >= COLLECTION_MAX_DELAYED_RETRIES) return null;
+        return { ...current, attempts: current.attempts + 1, nextAttemptAt: now + COLLECTION_RETRY_DELAY_MS };
+      });
+      if (!claim.committed || !claim.snapshot.exists()) continue;
+      const retry = claim.snapshot.val() as CollectionRetry;
+      const [member, exclusion, snapshot] = await Promise.all([
+        db.ref(`members/${lodestoneId}`).get(),
+        db.ref(`memberExclusions/${lodestoneId}`).get(),
+        db.ref(`fcCollection/memberData/${lodestoneId}`).get(),
+      ]);
+      const prev = (snapshot.val() ?? undefined) as MemberCacheData | undefined;
+      if (!member.exists() || exclusion.exists() || (prev && prev.lastFetched > retry.failedAt)) {
+        await queueRef.transaction((current: CollectionRetry | null) =>
+          current?.failedAt === retry.failedAt && current.attempts === retry.attempts ? null : undefined);
+        continue;
+      }
+
+      const attemptAt = Date.now();
+      const result = await fetchMemberCollectionData(lodestoneId, prev);
+      await db.ref("/").update(memberUpdates(lodestoneId, attemptAt, prev, result, retry.attempts));
+      console.log(`[fccollect] delayed retry ${retry.attempts} for ${lodestoneId}: ${result.refreshed ? "success" : "failed"}`);
+    } catch (error) {
+      console.error(`[fccollect] delayed retry failed for ${lodestoneId}`, error);
+    }
+  }
 }

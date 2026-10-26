@@ -27,6 +27,7 @@ for (const path of [
   "adminOAuthStates/example",
   "adminSessions/example",
   "discordLinks/123456789012345678",
+  "fcCollectionRetryQueue/11111009",
   "gameServerAccess/123456789012345678",
   "dragonwildsServerAccess/123456789012345678",
   "gameServerAuditLog/palworld/example",
@@ -36,6 +37,14 @@ for (const path of [
     await assertFails(get(ref(database, path)));
     await assertFails(set(ref(database, path), { injected: true }));
     assert.ok(true);
+  });
+}
+
+for (const identity of ["member", "claimed-admin"]) {
+  test(`${identity} cannot access the collection retry queue`, async () => {
+    const db = environment.authenticatedContext(identity, identity === "claimed-admin" ? { admin: true } : {}).database();
+    await assertFails(get(ref(db, "fcCollectionRetryQueue")));
+    await assertFails(set(ref(db, "fcCollectionRetryQueue/11111009"), { attempts: 0, nextAttemptAt: 1 }));
   });
 }
 

@@ -1,7 +1,10 @@
 import { strict as assert } from "node:assert";
 import { afterEach, beforeEach, mock, test } from "node:test";
 import * as admin from "firebase-admin";
-import { runRefreshFCCollection, runRefreshFCCollectionMember } from "./refresh-fc-collection";
+import {
+  COLLECTION_MAX_DELAYED_RETRIES, COLLECTION_RETRY_DELAY_MS,
+  runRefreshFCCollection, runRefreshFCCollectionMember, runRetryFailedFCCollectionMembers,
+} from "./refresh-fc-collection";
 import { refreshMemberSource } from "./member-source-refresh";
 
 const id = "11111009";
@@ -16,6 +19,7 @@ let stored: Record<string, unknown>;
 let writes: { path: string; value: Record<string, unknown> }[];
 let requests: string[];
 let delays: number[];
+let now: number;
 let respond: (url: string) => Response | Promise<Response>;
 
 function read(path: string): unknown {
@@ -38,6 +42,8 @@ function normalResponse(url: string) {
 }
 
 beforeEach(() => {
+  now = 1_800_000_000_000;
+  mock.method(Date, "now", () => now);
   stored = {
     members: { [id]: { name: "Chow Chow" } },
     fcCollection: { memberData: { [id]: structuredClone(previous) } },
@@ -46,14 +52,30 @@ beforeEach(() => {
   writes = []; requests = []; delays = [];
   respond = normalResponse;
   mock.method(admin, "database", () => () => ({
-    ref: (path: string) => ({
-      get: async () => ({ val: () => structuredClone(read(path)), exists: () => read(path) != null }),
-      set: async (value: Record<string, unknown>) => { writes.push({ path, value }); write(path, value); },
-      update: async (value: Record<string, unknown>) => {
-        writes.push({ path, value });
-        for (const [key, child] of Object.entries(value)) write(`${path}/${key}`, child);
-      },
-    }),
+    ref: (path: string) => {
+      let endAt = Infinity, limit = Infinity;
+      const reference = {
+        orderByChild: () => reference,
+        endAt: (value: number) => { endAt = value; return reference; },
+        limitToFirst: (value: number) => { limit = value; return reference; },
+        get: async () => ({ val: () => path === "fcCollectionRetryQueue"
+          ? Object.fromEntries(Object.entries((read(path) ?? {}) as Record<string, { nextAttemptAt: number }>)
+            .filter(([, value]) => value && value.nextAttemptAt <= endAt)
+            .sort((a, b) => a[1].nextAttemptAt - b[1].nextAttemptAt).slice(0, limit))
+          : structuredClone(read(path)), exists: () => read(path) != null }),
+        set: async (value: Record<string, unknown>) => { writes.push({ path, value }); write(path, value); },
+        update: async (value: Record<string, unknown>) => {
+          writes.push({ path, value });
+          for (const [key, child] of Object.entries(value)) write(`${path}/${key}`, child);
+        },
+        transaction: async (update: (value: unknown) => unknown) => {
+          const value = update(structuredClone(read(path) ?? null));
+          if (value !== undefined) write(path, value);
+          return { committed: value !== undefined, snapshot: { val: () => read(path), exists: () => read(path) != null } };
+        },
+      };
+      return reference;
+    },
   }), { getter: true });
   mock.method(globalThis, "fetch", async (input: Parameters<typeof fetch>[0]) => {
     const url = String(input);
@@ -166,4 +188,102 @@ test("at most three members fetch concurrently and everyone is eventually attemp
   assert.deepEqual(await runRefreshFCCollection(), { total: 8, refreshed: 8, failed: 0 });
   assert.equal(peak, 15);
   assert.equal(requests.filter((url) => url.includes("/characters/")).length, 40);
+});
+
+test("delayed retry targets failed members only, waits for the due time, and clears on recovery", async () => {
+  write("members/22222009", { name: "Successful member" });
+  respond = (url) => url.endsWith(`${id}/titles/owned`) ? new Response(null, { status: 403 }) : normalResponse(url);
+  await runRefreshFCCollection();
+  assert.deepEqual(read(`fcCollectionRetryQueue/${id}`), {
+    attempts: 0, failedAt: now, nextAttemptAt: now + COLLECTION_RETRY_DELAY_MS,
+  });
+  assert.equal(read("fcCollectionRetryQueue/22222009"), null);
+  requests = [];
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(requests.length, 0);
+  now += COLLECTION_RETRY_DELAY_MS;
+  respond = normalResponse;
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(requests.length, 5);
+  assert.ok(requests.every((url) => url.includes(`/characters/${id}`)));
+  assert.equal(read(`fcCollectionRetryQueue/${id}`), null);
+  assert.equal(read(`memberSyncStatus/${id}/collection/status`), "success");
+  assert.equal(read(`fcCollection/memberData/${id}/lastError`), undefined);
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(requests.length, 5, "recovered members are not retried again");
+});
+
+test("persistent failures stop after three delayed attempts and keep the old values", async () => {
+  respond = (url) => url.endsWith("/titles/owned") ? new Response(null, { status: 403 }) : normalResponse(url);
+  await assert.rejects(runRefreshFCCollectionMember(id));
+  requests = [];
+  for (let attempt = 1; attempt <= COLLECTION_MAX_DELAYED_RETRIES; attempt++) {
+    now += COLLECTION_RETRY_DELAY_MS;
+    await runRetryFailedFCCollectionMembers();
+    assert.equal(requests.length, attempt * 5);
+    assert.deepEqual(read(`fcCollection/memberData/${id}/owned`), previous.owned);
+    assert.equal(read(`fcCollection/memberData/${id}/lastFetched`), previous.lastFetched);
+    if (attempt < COLLECTION_MAX_DELAYED_RETRIES) {
+      assert.equal(read(`fcCollectionRetryQueue/${id}/attempts`), attempt);
+      await runRetryFailedFCCollectionMembers();
+      assert.equal(requests.length, attempt * 5, "not due again yet");
+    }
+  }
+  now += COLLECTION_RETRY_DELAY_MS;
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(read(`fcCollectionRetryQueue/${id}`), null);
+  assert.equal(requests.length, COLLECTION_MAX_DELAYED_RETRIES * 5);
+  assert.equal(read(`memberSyncStatus/${id}/collection/status`), "error");
+});
+
+for (const reason of ["deleted", "excluded", "already refreshed"]) {
+  test(`delayed retry skips a member who was ${reason}`, async () => {
+    respond = (url) => url.endsWith("/titles/owned") ? new Response(null, { status: 403 }) : normalResponse(url);
+    await assert.rejects(runRefreshFCCollectionMember(id));
+    now += COLLECTION_RETRY_DELAY_MS;
+    if (reason === "deleted") write(`members/${id}`, null);
+    if (reason === "excluded") write(`memberExclusions/${id}`, { deletedAt: now });
+    if (reason === "already refreshed") write(`fcCollection/memberData/${id}/lastFetched`, now);
+    requests = [];
+    await runRetryFailedFCCollectionMembers();
+    assert.equal(requests.length, 0);
+    assert.equal(read(`fcCollectionRetryQueue/${id}`), null);
+  });
+}
+
+test("concurrent retry workers cannot claim the same member twice", async () => {
+  write(`fcCollectionRetryQueue/${id}`, { attempts: 0, failedAt: now - COLLECTION_RETRY_DELAY_MS, nextAttemptAt: now });
+  await Promise.all([runRetryFailedFCCollectionMembers(), runRetryFailedFCCollectionMembers()]);
+  assert.equal(requests.length, 5);
+});
+
+test("delayed retries respect a longer upstream Retry-After", async () => {
+  respond = (url) => url.endsWith("/titles/owned")
+    ? new Response(null, { status: 429, headers: { "Retry-After": "3600" } }) : normalResponse(url);
+  await assert.rejects(runRefreshFCCollectionMember(id));
+  assert.equal(read(`fcCollectionRetryQueue/${id}/nextAttemptAt`), now + 60 * 60 * 1000);
+  now += COLLECTION_RETRY_DELAY_MS;
+  requests = [];
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(requests.length, 0);
+});
+
+test("worker processes at most five due members in each run", async () => {
+  for (let n = 1; n <= 8; n++) {
+    const memberId = `${n}1111009`;
+    write(`members/${memberId}`, { name: `Member ${n}` });
+    write(`fcCollectionRetryQueue/${memberId}`, { attempts: 0, failedAt: now - COLLECTION_RETRY_DELAY_MS, nextAttemptAt: now });
+  }
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(requests.length, 25);
+  await runRetryFailedFCCollectionMembers();
+  assert.equal(requests.length, 40);
+});
+
+test("the longest Retry-After wins even if an earlier ownership endpoint also fails", async () => {
+  respond = (url) => url.endsWith("/mounts/owned") ? new Response(null, { status: 403 })
+    : url.endsWith("/titles/owned") ? new Response(null, { status: 429, headers: { "Retry-After": "3600" } })
+      : normalResponse(url);
+  await assert.rejects(runRefreshFCCollectionMember(id));
+  assert.equal(read(`fcCollectionRetryQueue/${id}/nextAttemptAt`), now + 60 * 60 * 1000);
 });

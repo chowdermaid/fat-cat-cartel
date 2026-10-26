@@ -6,7 +6,7 @@ import { defineSecret, defineString } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { runRefreshFFLogs } from "./refresh-fflogs";
 import { runRefreshUcobProgress } from "./ucob-progress";
-import { runRefreshFCCollection } from "./refresh-fc-collection";
+import { runRefreshFCCollection, runRetryFailedFCCollectionMembers } from "./refresh-fc-collection";
 import { runScrapeLodestone } from "./scrape-lodestone";
 import { handleDiscordInteraction } from "./discord/interactions";
 import { deleteTrackedMember, upsertTrackedMember } from "./delete-member";
@@ -502,6 +502,17 @@ export const sendBirthdayWishes = onSchedule(
       new Date(event.scheduleTime),
     );
   },
+);
+
+export const retryFailedFCCollectionMembers = onSchedule(
+  {
+    schedule: "every 5 minutes",
+    timeoutSeconds: 300,
+    region: "us-central1",
+    maxInstances: 1,
+    concurrency: 1,
+  },
+  async () => { await runRetryFailedFCCollectionMembers(); },
 );
 
 export const dailyMaintenance = onSchedule(

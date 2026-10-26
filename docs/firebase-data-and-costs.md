@@ -45,6 +45,7 @@ Important RTDB paths:
 - `/fcCollection/collectibles/{mounts|minions|titles|achievements}`: FFXIV Collect item data keyed by item ID.
 - `/fcCollection/collectibles/lastFetched`: collection refresh timestamp.
 - `/fcCollection/memberData/{lodestoneId}`: avatar, owned collectible IDs, previous counts, and `lastFetched`.
+- `/fcCollectionRetryQueue/{lodestoneId}`: private delayed collection retries with attempt count, failure time, and indexed next attempt time; cleared on success, exhaustion, or deletion.
 - `/raidStats/lastUpdated`: global FFLogs refresh timestamp.
 - `/raidStats/sourceStatus`: Tomestone refresh diagnostics.
 - `/raidStats/fflogsSourceStatus`: FFLogs refresh diagnostics.
@@ -94,6 +95,7 @@ Functions are exported from `functions/src/index.ts`.
 - `refreshFFLogs`: scheduled FFLogs refresh.
 - `triggerFFLogsRefresh`: callable admin FFLogs refresh.
 - `dailyMaintenance`: scheduled daily maintenance refresh for Tomestone raid stats, FC collection, and Discord planner events. It runs at 8:00 AM Australia/Sydney and logs each subtask result.
+- `retryFailedFCCollectionMembers`: runs every five minutes and queries at most five due failed-member retries. Retries wait at least 15 minutes and stop after three delayed attempts per cycle; successful members and catalogs are not fetched again. Adds 288 scheduled invocations/day plus a small indexed queue query per run, and bounded claim transactions, member/exclusion/snapshot point reads, result writes, and external requests for claimed members. See `fc-collection-implementation.md` for the request budget and deployment list.
 - `triggerTomestoneRaidStatsRefresh`: callable admin Tomestone refresh.
 - `triggerFCCollectionRefresh`: callable admin collection refresh.
 - `importLodestoneMembers`: callable Lodestone roster and portrait sync.

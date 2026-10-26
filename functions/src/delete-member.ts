@@ -100,6 +100,7 @@ export async function deleteTrackedMember(data: DeleteMemberRequest): Promise<{ 
       reason: "admin_delete",
     },
     [`fcCollection/memberData/${lodestoneId}`]: null,
+    [`fcCollectionRetryQueue/${lodestoneId}`]: null,
     [`memberActivity/${lodestoneId}`]: null,
     [`memberProgressionGraphs/${lodestoneId}`]: null,
     membersLastUpdated: now,
