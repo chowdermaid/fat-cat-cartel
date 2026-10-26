@@ -50,6 +50,7 @@ export function RulebookView({ active }: { active: boolean }) {
                     className={`h-auto min-h-11 w-full justify-center rounded-l-none border-l-[3px] px-1 py-2 text-left text-sm font-semibold whitespace-normal @[640px]:justify-start @[640px]:gap-2 ${activeChapter === id ? "border-primary bg-primary/10 text-amber-800 dark:border-[#ffd331] dark:text-[#ffd331]" : "border-transparent text-muted-foreground"}`}
                   >
                     <a
+                      data-event-reveal
                       href={`#rulebook-${id}`}
                       aria-current={
                         activeChapter === id ? "location" : undefined
@@ -88,6 +89,7 @@ export function RulebookView({ active }: { active: boolean }) {
               key={id}
               id={`rulebook-${id}`}
               data-rulebook-chapter={id}
+              data-event-reveal
               className="min-w-0 border-t pt-8 first:border-t-0 first:pt-0 last:min-h-[calc(var(--rulebook-viewport-height,0px)-1rem)]"
             >
               {content[id]}

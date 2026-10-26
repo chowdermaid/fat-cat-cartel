@@ -28,7 +28,7 @@ export function PlayerOrderStrip({ players, live, revision, run, disabled }: { p
               </span>
             </>;
             const rowClass = "flex h-auto min-h-11 w-full min-w-0 flex-col items-center gap-2 whitespace-normal rounded-sm border-l-[3px] border-transparent px-1 py-2 text-center @[900px]:flex-row @[900px]:text-left";
-            return <li key={player.id} className="w-44 shrink-0 @[900px]:w-full">
+            return <li key={player.id} data-event-reveal className="w-44 shrink-0 @[900px]:w-full">
               {live ? <PlayerGilInput player={player} revision={revision} run={run} disabled={disabled}>
                 <Button variant="ghost" className={rowClass} disabled={disabled} aria-label={`Edit gil for ${player.name}, ${player.gilWon.toLocaleString("en-AU")} gil accrued`}>{identity}</Button>
               </PlayerGilInput> : <div className={rowClass}>{identity}</div>}

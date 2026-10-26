@@ -15,7 +15,7 @@ export function QuickReference() {
     <section aria-labelledby="quick-reference-heading" className="space-y-4 border-t pt-5">
       <h2 id="quick-reference-heading" className="font-serif text-xl font-bold text-blue-900 dark:text-blue-200">Quick reference</h2>
       <ul className="grid grid-cols-2 gap-3 @[600px]:grid-cols-4 @[1200px]:grid-cols-7">
-        {references.map(({ name, image, effect }) => <li key={name} className="flex min-w-0 flex-col items-center rounded-xl border bg-muted px-2 py-4 text-center">
+        {references.map(({ name, image, effect }) => <li key={name} data-event-reveal className="flex min-w-0 flex-col items-center rounded-xl border bg-muted px-2 py-4 text-center">
           <img src={image} alt="" className="mb-2 size-14 object-contain" />
           <h3 className="text-sm font-extrabold">{name}</h3>
           <p className="mt-2 max-w-28 text-sm leading-snug text-muted-foreground">{effect}</p>

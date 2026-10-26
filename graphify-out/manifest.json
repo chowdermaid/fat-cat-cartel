@@ -160,8 +160,8 @@
     "semantic_hash": "615851105fdbc32d13f37443a9422443"
   },
   "package.json": {
-    "mtime": 1792414391.1044295,
-    "ast_hash": "208ea31a18c439582a71edde7caa35ba",
+    "mtime": 1793007025.8203304,
+    "ast_hash": "7f56f6e6e243a5cf12aff5468fa5ba75",
     "semantic_hash": ""
   },
   "scripts/dev-emulator.mjs": {
@@ -1800,8 +1800,8 @@
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
-    "mtime": 1792932097.567914,
-    "ast_hash": "bd2fbb75b2cfcabb3d15b7c95a65a64a",
+    "mtime": 1793007462.546175,
+    "ast_hash": "f3b56078b58786566bb9cd17065a7e97",
     "semantic_hash": ""
   },
   "docs/meowket-board-implementation.md": {
@@ -2889,11 +2889,6 @@
     "ast_hash": "061c9f7e92dd8634eaf0066be5863f15",
     "semantic_hash": ""
   },
-  "design-qa.md": {
-    "mtime": 1792997784.4091632,
-    "ast_hash": "d045620fab49787178af43827b6a501b",
-    "semantic_hash": ""
-  },
   "src/assets/black-carbuncle.png": {
     "mtime": 1792305088.4826934,
     "ast_hash": "4c02b9f81c152cd0752780972227bc83",
@@ -2945,8 +2940,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/CartelGilRushPage.tsx": {
-    "mtime": 1793001861.645694,
-    "ast_hash": "aa85fcdca2e45acaa01b47164ec6370b",
+    "mtime": 1793007186.5325336,
+    "ast_hash": "16239a7c965bf0521eefc9ca5128720b",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/EventHeader.tsx": {
@@ -2955,8 +2950,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/EventHostPanel.tsx": {
-    "mtime": 1793004984.717846,
-    "ast_hash": "1f4aa1130e24e18fd71c128d0ce7f42f",
+    "mtime": 1793007186.5325336,
+    "ast_hash": "007e487f6fb6fc276f5e346f3431bb2e",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/game/PlayerAvatar.tsx": {
@@ -2965,8 +2960,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/game/PlayerOrderStrip.tsx": {
-    "mtime": 1793004984.7148209,
-    "ast_hash": "c64ffb266021edb7258b37ea62c22d6c",
+    "mtime": 1793007186.534049,
+    "ast_hash": "96ca1d15bd40e5dfcdb9f4ba61aaf7ea",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/game/PlayerSetup.tsx": {
@@ -2985,8 +2980,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/rulebook/RulebookView.tsx": {
-    "mtime": 1793000259.610863,
-    "ast_hash": "22e18d553bb07c1002938ec77bcf8820",
+    "mtime": 1793007186.5355647,
+    "ast_hash": "65d30b6e303deb6838f69f5406ba4b08",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/rulebook/TileCard.tsx": {
@@ -3000,8 +2995,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts": {
-    "mtime": 1792415398.9713323,
-    "ast_hash": "15e8effb4edbefc7f7d0e18bce51abc8",
+    "mtime": 1793007186.531019,
+    "ast_hash": "32f81d286fdb0b8a91e1e60433b8f10b",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/hooks/useLocalEvent.ts": {
@@ -3030,8 +3025,8 @@
     "semantic_hash": ""
   },
   "tests/cartel-gil-rush-animations.test.mjs": {
-    "mtime": 1792928692.8963375,
-    "ast_hash": "d586b642b2bc9edd1b255755092d49b4",
+    "mtime": 1793007413.7525496,
+    "ast_hash": "dc5b338bc96a34bf184452494872d247",
     "semantic_hash": ""
   },
   "tests/cartel-gil-rush-event-storage.test.mjs": {
@@ -3050,23 +3045,23 @@
     "semantic_hash": ""
   },
   "docs/cartel-gil-rush-implementation.md": {
-    "mtime": 1793005707.327707,
-    "ast_hash": "d8b388602026aae8554e86fae470f2dd",
+    "mtime": 1793007802.9954338,
+    "ast_hash": "1572a95376b5de5d2d7cfbda28687fb6",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/game/MoodPanel.tsx": {
-    "mtime": 1793005694.3239417,
-    "ast_hash": "a83c49343b5b2b943403bf79a81df810",
+    "mtime": 1793007186.5325336,
+    "ast_hash": "cf20c3b272baf39fb36f31c86b01190e",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/game/QuickReference.tsx": {
-    "mtime": 1793001083.7059798,
-    "ast_hash": "3763abf13c7448ccc050d643c511f627",
+    "mtime": 1793007186.534049,
+    "ast_hash": "209a9f028c6454068e6080171b337daa",
     "semantic_hash": ""
   },
   "docs/cartel-gil-rush-visual-assets.md": {
-    "mtime": 1793006014.2072303,
-    "ast_hash": "33616f3b11eea79bd78c35c136862f65",
+    "mtime": 1793008405.8523748,
+    "ast_hash": "dbf85dd112beb6b43d1dd7bf11c4cd87",
     "semantic_hash": ""
   },
   "src/assets/cartel-gil-rush/dice.png": {
@@ -3105,8 +3100,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/rulebook/Rewards.tsx": {
-    "mtime": 1792996573.263426,
-    "ast_hash": "01f783b714220350250293679be6b3d9",
+    "mtime": 1793008405.8508592,
+    "ast_hash": "2e1dbbf69ea17859807695e034ac78b8",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/tileArtwork.ts": {
@@ -3332,6 +3327,11 @@
   "src/features/cartel-gil-rush/moodArtwork.ts": {
     "mtime": 1793006042.4979198,
     "ast_hash": "2f6603f8b858a3ed97df29832c317e8e",
+    "semantic_hash": ""
+  },
+  "src/assets/cartel-gil-rush/yan-horn.png": {
+    "mtime": 1793008394.3340073,
+    "ast_hash": "96e41afbe60de0f9cc47369ee496fcf5",
     "semantic_hash": ""
   }
 }

@@ -63,7 +63,7 @@ export function EventHostPanel({ event: { current, error, run, loading, pending,
               {mood && <span className="border-l pl-4">{mood.name}</span>}
             </div>
           </div>
-          <header className="space-y-3">
+          <header data-event-reveal className="space-y-3">
             <h2 className="font-serif text-4xl leading-tight font-extrabold @[1100px]:text-5xl">{live ? "The rush is on." : "Ready to roll?"}</h2>
             <p className="text-lg leading-relaxed font-semibold text-muted-foreground @[1100px]:text-2xl">Roll <span className="font-extrabold text-amber-700 dark:text-[#ffd331]">/random 6</span> when the host calls your turn.</p>
           </header>

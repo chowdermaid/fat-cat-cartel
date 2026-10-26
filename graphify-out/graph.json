@@ -530,7 +530,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "functions_src_admin_auth_parseroleids",
-      "community": 6,
+      "community": 11,
       "norm_label": "parseroleids()"
     },
     {
@@ -540,7 +540,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "functions_src_admin_auth_hasanyrole",
-      "community": 6,
+      "community": 11,
       "norm_label": "hasanyrole()"
     },
     {
@@ -2370,7 +2370,7 @@
       "source_location": "L315",
       "_origin": "ast",
       "id": "functions_src_discord_interactions_hasadminrole",
-      "community": 6,
+      "community": 11,
       "norm_label": "hasadminrole()"
     },
     {
@@ -2780,7 +2780,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "functions_src_game_servers_test",
-      "community": 208,
+      "community": 205,
       "norm_label": "game-servers.test.ts"
     },
     {
@@ -2790,7 +2790,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "functions_src_game_servers_test_ids",
-      "community": 208,
+      "community": 205,
       "norm_label": "ids"
     },
     {
@@ -2800,7 +2800,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "functions_src_game_servers_test_session",
-      "community": 208,
+      "community": 205,
       "norm_label": "session"
     },
     {
@@ -2810,7 +2810,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "functions_src_game_servers_test_fixture",
-      "community": 208,
+      "community": 205,
       "norm_label": "fixture()"
     },
     {
@@ -2820,7 +2820,7 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "functions_src_game_servers_test_expectcode",
-      "community": 208,
+      "community": 205,
       "norm_label": "expectcode()"
     },
     {
@@ -2830,7 +2830,7 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "functions_src_game_servers_test_callableenvironment",
-      "community": 208,
+      "community": 205,
       "norm_label": "callableenvironment()"
     },
     {
@@ -2840,7 +2840,7 @@
       "source_location": "L433",
       "_origin": "ast",
       "id": "functions_src_game_servers_test_invoke",
-      "community": 208,
+      "community": 205,
       "norm_label": "invoke()"
     },
     {
@@ -2860,7 +2860,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "functions_src_game_servers_gameserverid",
-      "community": 208,
+      "community": 205,
       "norm_label": "gameserverid"
     },
     {
@@ -3000,7 +3000,7 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "functions_src_game_servers_gameserverawsconfig",
-      "community": 208,
+      "community": 205,
       "norm_label": "gameserverawsconfig"
     },
     {
@@ -3150,7 +3150,7 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "functions_src_game_servers_normalizestate",
-      "community": 208,
+      "community": 205,
       "norm_label": "normalizestate()"
     },
     {
@@ -3300,7 +3300,7 @@
       "source_location": "L479",
       "_origin": "ast",
       "id": "functions_src_game_servers_systemsession",
-      "community": 205,
+      "community": 138,
       "norm_label": "systemsession()"
     },
     {
@@ -3540,7 +3540,7 @@
       "source_location": "L914",
       "_origin": "ast",
       "id": "functions_src_game_servers_readgameservertelemetry",
-      "community": 138,
+      "community": 205,
       "norm_label": "readgameservertelemetry()"
     },
     {
@@ -3800,7 +3800,7 @@
       "source_location": "L1722",
       "_origin": "ast",
       "id": "functions_src_game_servers_auditentryfromvalue",
-      "community": 208,
+      "community": 176,
       "norm_label": "auditentryfromvalue()"
     },
     {
@@ -3810,7 +3810,7 @@
       "source_location": "L1763",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserverauditlog",
-      "community": 208,
+      "community": 176,
       "norm_label": "listgameserverauditlog()"
     },
     {
@@ -3820,7 +3820,7 @@
       "source_location": "L1775",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserverauditlogforadmin",
-      "community": 208,
+      "community": 176,
       "norm_label": "listgameserverauditlogforadmin()"
     },
     {
@@ -3830,7 +3830,7 @@
       "source_location": "L1782",
       "_origin": "ast",
       "id": "functions_src_game_servers_listgameserverauditlogforsession",
-      "community": 208,
+      "community": 176,
       "norm_label": "listgameserverauditlogforsession()"
     },
     {
@@ -3860,7 +3860,7 @@
       "source_location": "L1829",
       "_origin": "ast",
       "id": "functions_src_game_servers_runautostopidlegameservers",
-      "community": 208,
+      "community": 205,
       "norm_label": "runautostopidlegameservers()"
     },
     {
@@ -8164,10 +8164,20 @@
       "norm_label": "matter-js"
     },
     {
-      "label": "react",
+      "label": "motion",
       "file_type": "code",
       "source_file": "package.json",
       "source_location": "L40",
+      "_origin": "ast",
+      "id": "package_dependencies_motion",
+      "community": 24,
+      "norm_label": "motion"
+    },
+    {
+      "label": "react",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "package_dependencies_react",
       "community": 60,
@@ -8177,7 +8187,7 @@
       "label": "react-country-flag",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "package_dependencies_react_country_flag",
       "community": 24,
@@ -8187,7 +8197,7 @@
       "label": "react-day-picker",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "package_dependencies_react_day_picker",
       "community": 24,
@@ -8197,7 +8207,7 @@
       "label": "react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L43",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "package_dependencies_react_dom",
       "community": 24,
@@ -8207,7 +8217,7 @@
       "label": "recharts",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "package_dependencies_recharts",
       "community": 24,
@@ -8217,7 +8227,7 @@
       "label": "sonner",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "package_dependencies_sonner",
       "community": 24,
@@ -8227,7 +8237,7 @@
       "label": "tailwind-merge",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "package_dependencies_tailwind_merge",
       "community": 24,
@@ -8237,7 +8247,7 @@
       "label": "devDependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L48",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "package_devdependencies",
       "community": 52,
@@ -8247,7 +8257,7 @@
       "label": "@eslint/js",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L49",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "package_devdependencies_eslint_js",
       "community": 52,
@@ -8257,7 +8267,7 @@
       "label": "@firebase/rules-unit-testing",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L50",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "package_devdependencies_firebase_rules_unit_testing",
       "community": 52,
@@ -8267,7 +8277,7 @@
       "label": "@tailwindcss/vite",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L51",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "package_devdependencies_tailwindcss_vite",
       "community": 52,
@@ -8277,7 +8287,7 @@
       "label": "@types/matter-js",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L52",
+      "source_location": "L53",
       "_origin": "ast",
       "id": "package_devdependencies_types_matter_js",
       "community": 52,
@@ -8287,7 +8297,7 @@
       "label": "@types/node",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L53",
+      "source_location": "L54",
       "_origin": "ast",
       "id": "package_devdependencies_types_node",
       "community": 52,
@@ -8297,7 +8307,7 @@
       "label": "@types/react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L54",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "package_devdependencies_types_react",
       "community": 52,
@@ -8307,7 +8317,7 @@
       "label": "@types/react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L55",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "package_devdependencies_types_react_dom",
       "community": 52,
@@ -8317,7 +8327,7 @@
       "label": "@vitejs/plugin-react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L56",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "package_devdependencies_vitejs_plugin_react",
       "community": 52,
@@ -8327,7 +8337,7 @@
       "label": "eslint",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L57",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "package_devdependencies_eslint",
       "community": 52,
@@ -8337,7 +8347,7 @@
       "label": "eslint-plugin-react-hooks",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L58",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "package_devdependencies_eslint_plugin_react_hooks",
       "community": 52,
@@ -8347,7 +8357,7 @@
       "label": "eslint-plugin-react-refresh",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L59",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "package_devdependencies_eslint_plugin_react_refresh",
       "community": 52,
@@ -8357,7 +8367,7 @@
       "label": "globals",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L60",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "package_devdependencies_globals",
       "community": 52,
@@ -8367,7 +8377,7 @@
       "label": "tailwindcss",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L61",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "package_devdependencies_tailwindcss",
       "community": 52,
@@ -8377,7 +8387,7 @@
       "label": "typescript",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L62",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "package_devdependencies_typescript",
       "community": 52,
@@ -8387,7 +8397,7 @@
       "label": "typescript-eslint",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L63",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "package_devdependencies_typescript_eslint",
       "community": 52,
@@ -8397,7 +8407,7 @@
       "label": "vite",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L64",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "package_devdependencies_vite",
       "community": 52,
@@ -11280,7 +11290,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberdeletedialog",
-      "community": 15,
+      "community": 35,
       "norm_label": "memberdeletedialog.tsx"
     },
     {
@@ -11290,7 +11300,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberdeletedialog_memberdeletedialogprops",
-      "community": 15,
+      "community": 35,
       "norm_label": "memberdeletedialogprops"
     },
     {
@@ -11300,7 +11310,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberdeletedialog_memberdeletedialog",
-      "community": 15,
+      "community": 35,
       "norm_label": "memberdeletedialog()"
     },
     {
@@ -11310,7 +11320,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberprofiledialog",
-      "community": 209,
+      "community": 15,
       "norm_label": "memberprofiledialog.tsx"
     },
     {
@@ -11320,7 +11330,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberprofiledialog_memberprofiledialogprops",
-      "community": 209,
+      "community": 15,
       "norm_label": "memberprofiledialogprops"
     },
     {
@@ -11330,7 +11340,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_features_admin_components_members_memberprofiledialog_memberprofiledialog",
-      "community": 209,
+      "community": 15,
       "norm_label": "memberprofiledialog()"
     },
     {
@@ -11410,7 +11420,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_admin_constants",
-      "community": 209,
+      "community": 15,
       "norm_label": "constants.ts"
     },
     {
@@ -11420,7 +11430,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_admin_constants_fc_ranks",
-      "community": 209,
+      "community": 15,
       "norm_label": "fc_ranks"
     },
     {
@@ -11430,7 +11440,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_features_admin_constants_source_label",
-      "community": 209,
+      "community": 15,
       "norm_label": "source_label"
     },
     {
@@ -11440,7 +11450,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_features_admin_constants_freshness_ms",
-      "community": 209,
+      "community": 15,
       "norm_label": "freshness_ms"
     },
     {
@@ -11460,7 +11470,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_features_admin_constants_jobs",
-      "community": 209,
+      "community": 15,
       "norm_label": "jobs"
     },
     {
@@ -11470,7 +11480,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "src_features_admin_constants_months",
-      "community": 209,
+      "community": 15,
       "norm_label": "months"
     },
     {
@@ -11480,7 +11490,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "src_features_admin_constants_days",
-      "community": 209,
+      "community": 15,
       "norm_label": "days"
     },
     {
@@ -11490,7 +11500,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "src_features_admin_constants_empty_profile",
-      "community": 209,
+      "community": 15,
       "norm_label": "empty_profile"
     },
     {
@@ -11840,7 +11850,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_admin_types_fcrank",
-      "community": 209,
+      "community": 15,
       "norm_label": "fcrank"
     },
     {
@@ -11930,7 +11940,7 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "src_features_admin_types_deletetarget",
-      "community": 15,
+      "community": 35,
       "norm_label": "deletetarget"
     },
     {
@@ -13330,7 +13340,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_game_moodpanel_moodpanel",
-      "community": 188,
+      "community": 195,
       "norm_label": "moodpanel()"
     },
     {
@@ -13440,7 +13450,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_game_quickreference",
-      "community": 188,
+      "community": 185,
       "norm_label": "quickreference.tsx"
     },
     {
@@ -13450,7 +13460,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_game_quickreference_references",
-      "community": 188,
+      "community": 185,
       "norm_label": "references"
     },
     {
@@ -13460,7 +13470,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_game_quickreference_quickreference",
-      "community": 188,
+      "community": 185,
       "norm_label": "quickreference()"
     },
     {
@@ -13520,7 +13530,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_boardoverview",
-      "community": 188,
+      "community": 185,
       "norm_label": "boardoverview.tsx"
     },
     {
@@ -13577,7 +13587,7 @@
       "label": "Rewards()",
       "file_type": "code",
       "source_file": "src/features/cartel-gil-rush/components/rulebook/Rewards.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_rewards_rewards",
       "community": 188,
@@ -13780,7 +13790,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_constants_tiles",
-      "community": 188,
+      "community": 185,
       "norm_label": "tiles"
     },
     {
@@ -13814,10 +13824,20 @@
       "norm_label": "useeventviewanimation.ts"
     },
     {
+      "label": "reveal()",
+      "file_type": "code",
+      "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_features_cartel_gil_rush_hooks_useeventviewanimation_reveal",
+      "community": 194,
+      "norm_label": "reveal()"
+    },
+    {
       "label": "useEventViewAnimation()",
       "file_type": "code",
       "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
-      "source_location": "L5",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_hooks_useeventviewanimation_useeventviewanimation",
       "community": 194,
@@ -13890,7 +13910,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_hooks_usesharedevent_localimport",
-      "community": 194,
+      "community": 190,
       "norm_label": "localimport()"
     },
     {
@@ -13980,7 +14000,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_tileartwork",
-      "community": 188,
+      "community": 185,
       "norm_label": "tileartwork.ts"
     },
     {
@@ -13990,7 +14010,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_tileartwork_tileartwork",
-      "community": 188,
+      "community": 185,
       "norm_label": "tileartwork"
     },
     {
@@ -14650,7 +14670,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_features_craftingboard_api_xivapi_craftingrecipe",
-      "community": 165,
+      "community": 29,
       "norm_label": "craftingrecipe"
     },
     {
@@ -14770,7 +14790,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "src_features_craftingboard_api_xivapi_getxivapiiconurl",
-      "community": 165,
+      "community": 36,
       "norm_label": "getxivapiiconurl()"
     },
     {
@@ -14920,7 +14940,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_createrequestdialog",
-      "community": 165,
+      "community": 29,
       "norm_label": "createrequestdialog.tsx"
     },
     {
@@ -14930,7 +14950,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_createrequestdialog_createrequestdialog",
-      "community": 53,
+      "community": 29,
       "norm_label": "createrequestdialog()"
     },
     {
@@ -15080,7 +15100,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_recipepreview",
-      "community": 165,
+      "community": 29,
       "norm_label": "recipepreview.tsx"
     },
     {
@@ -15090,7 +15110,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_recipepreview_recipepreview",
-      "community": 165,
+      "community": 29,
       "norm_label": "recipepreview()"
     },
     {
@@ -15100,7 +15120,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_searchskeleton",
-      "community": 165,
+      "community": 29,
       "norm_label": "searchskeleton.tsx"
     },
     {
@@ -15110,7 +15130,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_searchskeleton_searchskeleton",
-      "community": 165,
+      "community": 29,
       "norm_label": "searchskeleton()"
     },
     {
@@ -15120,7 +15140,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_crafterchip",
-      "community": 29,
+      "community": 63,
       "norm_label": "crafterchip.tsx"
     },
     {
@@ -15140,7 +15160,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_ingredientgroup",
-      "community": 165,
+      "community": 36,
       "norm_label": "ingredientgroup.tsx"
     },
     {
@@ -15150,7 +15170,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_ingredientgroup_ingredientgroup",
-      "community": 165,
+      "community": 36,
       "norm_label": "ingredientgroup()"
     },
     {
@@ -15160,7 +15180,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_itemicon",
-      "community": 26,
+      "community": 63,
       "norm_label": "itemicon.tsx"
     },
     {
@@ -15170,7 +15190,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_itemicon_itemicon",
-      "community": 26,
+      "community": 63,
       "norm_label": "itemicon()"
     },
     {
@@ -15200,7 +15220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberavatar",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberavatar.tsx"
     },
     {
@@ -15210,7 +15230,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberavatar_memberavatar",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberavatar()"
     },
     {
@@ -15220,7 +15240,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberline",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberline.tsx"
     },
     {
@@ -15230,7 +15250,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberline_memberline",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberline()"
     },
     {
@@ -15260,7 +15280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_previewicon",
-      "community": 165,
+      "community": 36,
       "norm_label": "previewicon.tsx"
     },
     {
@@ -15270,7 +15290,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_previewicon_previewicon",
-      "community": 165,
+      "community": 36,
       "norm_label": "previewicon()"
     },
     {
@@ -15280,7 +15300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_quantitycontrol",
-      "community": 165,
+      "community": 29,
       "norm_label": "quantitycontrol.tsx"
     },
     {
@@ -15290,7 +15310,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_quantitycontrol_quantitycontrol",
-      "community": 165,
+      "community": 29,
       "norm_label": "quantitycontrol()"
     },
     {
@@ -15530,7 +15550,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "src_features_craftingboard_types_craftingrecipesnapshot",
-      "community": 165,
+      "community": 36,
       "norm_label": "craftingrecipesnapshot"
     },
     {
@@ -15540,7 +15560,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_craftingboard_types_craftingselecteditem",
-      "community": 165,
+      "community": 29,
       "norm_label": "craftingselecteditem"
     },
     {
@@ -15710,7 +15730,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_eligibility_combinedeligiblecrafter",
-      "community": 29,
+      "community": 63,
       "norm_label": "combinedeligiblecrafter"
     },
     {
@@ -15850,7 +15870,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_scroll",
-      "community": 165,
+      "community": 29,
       "norm_label": "scroll.ts"
     },
     {
@@ -15860,7 +15880,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_scroll_handlenestedscrollareawheel",
-      "community": 165,
+      "community": 29,
       "norm_label": "handlenestedscrollareawheel()"
     },
     {
@@ -16630,7 +16650,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_features_fc_collection_components_overview_fcstats_fcstats",
-      "community": 53,
+      "community": 0,
       "norm_label": "fcstats()"
     },
     {
@@ -17340,7 +17360,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_features_gameserver_api_gameserverstubs_stubgameserveraccessstatus",
-      "community": 167,
+      "community": 137,
       "norm_label": "stubgameserveraccessstatus()"
     },
     {
@@ -17700,7 +17720,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_dragonwilds_dragonwildsserverindexcard",
-      "community": 48,
+      "community": 164,
       "norm_label": "dragonwildsserverindexcard.tsx"
     },
     {
@@ -17710,7 +17730,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_gameserver_components_dragonwilds_dragonwildsserverindexcard_dragonwildsserverindexcard",
-      "community": 48,
+      "community": 164,
       "norm_label": "dragonwildsserverindexcard()"
     },
     {
@@ -17720,7 +17740,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline",
-      "community": 153,
+      "community": 71,
       "norm_label": "palworldactivitytimeline.tsx"
     },
     {
@@ -17730,7 +17750,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimelineprops",
-      "community": 153,
+      "community": 71,
       "norm_label": "palworldactivitytimelineprops"
     },
     {
@@ -17740,7 +17760,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_action_details",
-      "community": 153,
+      "community": 71,
       "norm_label": "action_details"
     },
     {
@@ -17750,7 +17770,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_result_labels",
-      "community": 153,
+      "community": 71,
       "norm_label": "result_labels"
     },
     {
@@ -17760,7 +17780,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_prefersreducedmotion",
-      "community": 153,
+      "community": 71,
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -17770,7 +17790,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_actorname",
-      "community": 153,
+      "community": 71,
       "norm_label": "actorname()"
     },
     {
@@ -17780,7 +17800,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_formattime",
-      "community": 153,
+      "community": 71,
       "norm_label": "formattime()"
     },
     {
@@ -17790,7 +17810,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_resulttone",
-      "community": 153,
+      "community": 71,
       "norm_label": "resulttone()"
     },
     {
@@ -17800,7 +17820,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
-      "community": 153,
+      "community": 71,
       "norm_label": "palworldactivitytimeline()"
     },
     {
@@ -18290,7 +18310,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus",
-      "community": 200,
+      "community": 155,
       "norm_label": "palworldstartupstatus.tsx"
     },
     {
@@ -18300,7 +18320,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatusprops",
-      "community": 200,
+      "community": 155,
       "norm_label": "palworldstartupstatusprops"
     },
     {
@@ -18310,7 +18330,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_stagestate",
-      "community": 200,
+      "community": 155,
       "norm_label": "stagestate"
     },
     {
@@ -18320,7 +18340,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstage",
-      "community": 200,
+      "community": 155,
       "norm_label": "startupstage"
     },
     {
@@ -18330,7 +18350,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_prefersreducedmotion",
-      "community": 200,
+      "community": 155,
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -18340,7 +18360,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_startupstages",
-      "community": 200,
+      "community": 155,
       "norm_label": "startupstages()"
     },
     {
@@ -18350,7 +18370,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_stageicon",
-      "community": 200,
+      "community": 155,
       "norm_label": "stageicon()"
     },
     {
@@ -18360,7 +18380,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldstartupstatus_palworldstartupstatus",
-      "community": 200,
+      "community": 155,
       "norm_label": "palworldstartupstatus()"
     },
     {
@@ -18560,7 +18580,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_types",
-      "community": 153,
+      "community": 167,
       "norm_label": "types.ts"
     },
     {
@@ -18600,7 +18620,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverport",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserverport"
     },
     {
@@ -18610,7 +18630,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserversession",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserversession"
     },
     {
@@ -18630,7 +18650,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessstatusresponse",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserveraccessstatusresponse"
     },
     {
@@ -18640,7 +18660,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessentry",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserveraccessentry"
     },
     {
@@ -18650,7 +18670,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccesslistresponse",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserveraccesslistresponse"
     },
     {
@@ -18660,7 +18680,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccesscandidate",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserveraccesscandidate"
     },
     {
@@ -18670,7 +18690,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccesscandidatesresponse",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserveraccesscandidatesresponse"
     },
     {
@@ -18680,7 +18700,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveraccessupsertresponse",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserveraccessupsertresponse"
     },
     {
@@ -18690,7 +18710,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditaction",
-      "community": 153,
+      "community": 71,
       "norm_label": "gameserverauditaction"
     },
     {
@@ -18700,7 +18720,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditresult",
-      "community": 153,
+      "community": 71,
       "norm_label": "gameserverauditresult"
     },
     {
@@ -18710,7 +18730,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogentry",
-      "community": 153,
+      "community": 71,
       "norm_label": "gameserverauditlogentry"
     },
     {
@@ -18740,7 +18760,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserversettingsresponse",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserversettingsresponse"
     },
     {
@@ -18750,7 +18770,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameservercostsnapshot",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameservercostsnapshot"
     },
     {
@@ -18770,7 +18790,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "src_features_gameserver_types_dragonwildsplayer",
-      "community": 153,
+      "community": 167,
       "norm_label": "dragonwildsplayer"
     },
     {
@@ -18780,7 +18800,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverplayer",
-      "community": 153,
+      "community": 167,
       "norm_label": "gameserverplayer"
     },
     {
@@ -18800,7 +18820,7 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverstatusresponse",
-      "community": 167,
+      "community": 155,
       "norm_label": "gameserverstatusresponse"
     },
     {
@@ -18810,7 +18830,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameservertelemetryresponse",
-      "community": 48,
+      "community": 167,
       "norm_label": "gameservertelemetryresponse"
     },
     {
@@ -19920,7 +19940,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_features_home_types_homeopenerrandsummary",
-      "community": 71,
+      "community": 55,
       "norm_label": "homeopenerrandsummary"
     },
     {
@@ -19970,7 +19990,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "src_features_home_types_homefeaturedtool",
-      "community": 49,
+      "community": 55,
       "norm_label": "homefeaturedtool"
     },
     {
@@ -20290,7 +20310,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_home_utils_openerrand",
-      "community": 71,
+      "community": 55,
       "norm_label": "openerrand.ts"
     },
     {
@@ -20300,7 +20320,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_home_utils_openerrand_material_status_labels",
-      "community": 71,
+      "community": 55,
       "norm_label": "material_status_labels"
     },
     {
@@ -20310,7 +20330,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_home_utils_openerrand_summarizeopenerrand",
-      "community": 71,
+      "community": 55,
       "norm_label": "summarizeopenerrand()"
     },
     {
@@ -25060,7 +25080,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_features_raid_stats_types_parseentry",
-      "community": 50,
+      "community": 51,
       "norm_label": "parseentry"
     },
     {
@@ -25180,7 +25200,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_raid_stats_utils_membermerging",
-      "community": 50,
+      "community": 51,
       "norm_label": "membermerging.ts"
     },
     {
@@ -25190,7 +25210,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_raid_stats_utils_membermerging_memberidentity",
-      "community": 50,
+      "community": 51,
       "norm_label": "memberidentity"
     },
     {
@@ -26430,7 +26450,7 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "src_lib_db_stub_progress",
-      "community": 96,
+      "community": 9,
       "norm_label": "progress()"
     },
     {
@@ -27604,34 +27624,44 @@
       "norm_label": "cartel-gil-rush-animations.test.mjs"
     },
     {
-      "label": "animations",
+      "label": "refs",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_animations_test_refs",
+      "community": 177,
+      "norm_label": "refs"
+    },
+    {
+      "label": "effects",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "tests_cartel_gil_rush_animations_test_animations",
+      "id": "tests_cartel_gil_rush_animations_test_effects",
       "community": 177,
-      "norm_label": "animations"
+      "norm_label": "effects"
     },
     {
-      "label": "panel",
+      "label": "pending",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "tests_cartel_gil_rush_animations_test_panel",
+      "id": "tests_cartel_gil_rush_animations_test_pending",
       "community": 177,
-      "norm_label": "panel"
+      "norm_label": "pending"
     },
     {
-      "label": "selectors",
+      "label": "animations",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "tests_cartel_gil_rush_animations_test_selectors",
+      "id": "tests_cartel_gil_rush_animations_test_animations",
       "community": 177,
-      "norm_label": "selectors"
+      "norm_label": "animations"
     },
     {
       "label": "listeners",
@@ -27654,20 +27684,60 @@
       "norm_label": "media"
     },
     {
-      "label": "revert()",
+      "label": "element()",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L25",
+      "source_location": "L14",
       "_origin": "ast",
-      "id": "tests_cartel_gil_rush_animations_test_revert",
+      "id": "tests_cartel_gil_rush_animations_test_element",
+      "community": 5,
+      "norm_label": "element()"
+    },
+    {
+      "label": "panel",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_animations_test_panel",
       "community": 177,
-      "norm_label": "revert()"
+      "norm_label": "panel"
+    },
+    {
+      "label": "moodContent",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_animations_test_moodcontent",
+      "community": 177,
+      "norm_label": "moodcontent"
+    },
+    {
+      "label": "root",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_animations_test_root",
+      "community": 177,
+      "norm_label": "root"
+    },
+    {
+      "label": "cancel()",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_animations_test_cancel",
+      "community": 177,
+      "norm_label": "cancel()"
     },
     {
       "label": "resolveId()",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L34",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "tests_cartel_gil_rush_animations_test_resolveid",
       "community": 177,
@@ -27677,17 +27747,27 @@
       "label": "load()",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L35",
+      "source_location": "L53",
       "_origin": "ast",
       "id": "tests_cartel_gil_rush_animations_test_load",
       "community": 177,
       "norm_label": "load()"
     },
     {
+      "label": "unmount()",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L61",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_animations_test_unmount",
+      "community": 177,
+      "norm_label": "unmount()"
+    },
+    {
       "label": "render()",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L50",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "tests_cartel_gil_rush_animations_test_render",
       "community": 177,
@@ -27780,7 +27860,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tests_cartel_gil_rush_board_geometry_test_disconnect",
-      "community": 197,
+      "community": 137,
       "norm_label": "disconnect()"
     },
     {
@@ -28330,7 +28410,7 @@
       "source_location": "L269",
       "_origin": "ast",
       "id": "tests_dragonwilds_dashboard_test_refreshstatus",
-      "community": 14,
+      "community": 137,
       "norm_label": "refreshstatus()"
     },
     {
@@ -28350,7 +28430,7 @@
       "source_location": "L269",
       "_origin": "ast",
       "id": "tests_dragonwilds_dashboard_test_runaction",
-      "community": 14,
+      "community": 137,
       "norm_label": "runaction()"
     },
     {
@@ -29504,526 +29584,6 @@
       "norm_label": "notes"
     },
     {
-      "label": "design-qa.md",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "design_qa",
-      "community": 179,
-      "norm_label": "design-qa.md"
-    },
-    {
-      "label": "Compact navigation and shorter Quick start",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "design_qa_compact_navigation_and_shorter_quick_start",
-      "community": 179,
-      "norm_label": "compact navigation and shorter quick start"
-    },
-    {
-      "label": "Rulebook references, mood backgrounds and scroll navigation",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "design_qa_rulebook_references_mood_backgrounds_and_scroll_navigation",
-      "community": 179,
-      "norm_label": "rulebook references, mood backgrounds and scroll navigation"
-    },
-    {
-      "label": "Gold start landmark",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "design_qa_gold_start_landmark",
-      "community": 179,
-      "norm_label": "gold start landmark"
-    },
-    {
-      "label": "Board Overview: alternating rows and clean layout",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L31",
-      "_origin": "ast",
-      "id": "design_qa_board_overview_alternating_rows_and_clean_layout",
-      "community": 179,
-      "norm_label": "board overview: alternating rows and clean layout"
-    },
-    {
-      "label": "Board Overview: connected React board",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L44",
-      "_origin": "ast",
-      "id": "design_qa_board_overview_connected_react_board",
-      "community": 179,
-      "norm_label": "board overview: connected react board"
-    },
-    {
-      "label": "User-supplied tile artwork",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L62",
-      "_origin": "ast",
-      "id": "design_qa_user_supplied_tile_artwork",
-      "community": 179,
-      "norm_label": "user-supplied tile artwork"
-    },
-    {
-      "label": "Uniform challenge tile rows",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L72",
-      "_origin": "ast",
-      "id": "design_qa_uniform_challenge_tile_rows",
-      "community": 179,
-      "norm_label": "uniform challenge tile rows"
-    },
-    {
-      "label": "Challenge tile move and Rewards rename",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L80",
-      "_origin": "ast",
-      "id": "design_qa_challenge_tile_move_and_rewards_rename",
-      "community": 179,
-      "norm_label": "challenge tile move and rewards rename"
-    },
-    {
-      "label": "Shark rule update",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L90",
-      "_origin": "ast",
-      "id": "design_qa_shark_rule_update",
-      "community": 179,
-      "norm_label": "shark rule update"
-    },
-    {
-      "label": "Challenges & rewards paired-card update",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L98",
-      "_origin": "ast",
-      "id": "design_qa_challenges_rewards_paired_card_update",
-      "community": 179,
-      "norm_label": "challenges & rewards paired-card update"
-    },
-    {
-      "label": "Rulebook content revisions QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L108",
-      "_origin": "ast",
-      "id": "design_qa_rulebook_content_revisions_qa",
-      "community": 179,
-      "norm_label": "rulebook content revisions qa"
-    },
-    {
-      "label": "Continuous Rulebook QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L118",
-      "_origin": "ast",
-      "id": "design_qa_continuous_rulebook_qa",
-      "community": 196,
-      "norm_label": "continuous rulebook qa"
-    },
-    {
-      "label": "Behavior and evidence",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L122",
-      "_origin": "ast",
-      "id": "design_qa_behavior_and_evidence",
-      "community": 196,
-      "norm_label": "behavior and evidence"
-    },
-    {
-      "label": "Findings and verification",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L130",
-      "_origin": "ast",
-      "id": "design_qa_findings_and_verification",
-      "community": 196,
-      "norm_label": "findings and verification"
-    },
-    {
-      "label": "Quick start overview removal",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L139",
-      "_origin": "ast",
-      "id": "design_qa_quick_start_overview_removal",
-      "community": 179,
-      "norm_label": "quick start overview removal"
-    },
-    {
-      "label": "Board moods card update",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L147",
-      "_origin": "ast",
-      "id": "design_qa_board_moods_card_update",
-      "community": 179,
-      "norm_label": "board moods card update"
-    },
-    {
-      "label": "Cartel Gil Rush Challenges & rewards QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L155",
-      "_origin": "ast",
-      "id": "design_qa_cartel_gil_rush_challenges_rewards_qa",
-      "community": 204,
-      "norm_label": "cartel gil rush challenges & rewards qa"
-    },
-    {
-      "label": "Previous Board moods QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L169",
-      "_origin": "ast",
-      "id": "design_qa_previous_board_moods_qa",
-      "community": 204,
-      "norm_label": "previous board moods qa"
-    },
-    {
-      "label": "Cartel Gil Rush Board moods QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L171",
-      "_origin": "ast",
-      "id": "design_qa_cartel_gil_rush_board_moods_qa",
-      "community": 203,
-      "norm_label": "cartel gil rush board moods qa"
-    },
-    {
-      "label": "Previous Tiles & movement QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L186",
-      "_origin": "ast",
-      "id": "design_qa_previous_tiles_movement_qa",
-      "community": 203,
-      "norm_label": "previous tiles & movement qa"
-    },
-    {
-      "label": "Cartel Gil Rush Tiles & movement QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L188",
-      "_origin": "ast",
-      "id": "design_qa_cartel_gil_rush_tiles_movement_qa",
-      "community": 193,
-      "norm_label": "cartel gil rush tiles & movement qa"
-    },
-    {
-      "label": "Source, scope and evidence",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L192",
-      "_origin": "ast",
-      "id": "design_qa_source_scope_and_evidence",
-      "community": 193,
-      "norm_label": "source, scope and evidence"
-    },
-    {
-      "label": "Comparison and findings",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L198",
-      "_origin": "ast",
-      "id": "design_qa_comparison_and_findings",
-      "community": 193,
-      "norm_label": "comparison and findings"
-    },
-    {
-      "label": "Interactions and verification",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L207",
-      "_origin": "ast",
-      "id": "design_qa_interactions_and_verification",
-      "community": 193,
-      "norm_label": "interactions and verification"
-    },
-    {
-      "label": "Previous compact layout QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L215",
-      "_origin": "ast",
-      "id": "design_qa_previous_compact_layout_qa",
-      "community": 193,
-      "norm_label": "previous compact layout qa"
-    },
-    {
-      "label": "Cartel Gil Rush compact layout and shared header QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L217",
-      "_origin": "ast",
-      "id": "design_qa_cartel_gil_rush_compact_layout_and_shared_header_qa",
-      "community": 201,
-      "norm_label": "cartel gil rush compact layout and shared header qa"
-    },
-    {
-      "label": "Previous screenshot-scale Rulebook QA (superseded)",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L232",
-      "_origin": "ast",
-      "id": "design_qa_previous_screenshot_scale_rulebook_qa_superseded",
-      "community": 201,
-      "norm_label": "previous screenshot-scale rulebook qa (superseded)"
-    },
-    {
-      "label": "Cartel Gil Rush Rulebook QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L234",
-      "_origin": "ast",
-      "id": "design_qa_cartel_gil_rush_rulebook_qa",
-      "community": 186,
-      "norm_label": "cartel gil rush rulebook qa"
-    },
-    {
-      "label": "Source and evidence",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L238",
-      "_origin": "ast",
-      "id": "design_qa_source_and_evidence",
-      "community": 186,
-      "norm_label": "source and evidence"
-    },
-    {
-      "label": "Full-view and focused comparison",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L247",
-      "_origin": "ast",
-      "id": "design_qa_full_view_and_focused_comparison",
-      "community": 186,
-      "norm_label": "full-view and focused comparison"
-    },
-    {
-      "label": "Findings and iteration history",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L253",
-      "_origin": "ast",
-      "id": "design_qa_findings_and_iteration_history",
-      "community": 186,
-      "norm_label": "findings and iteration history"
-    },
-    {
-      "label": "Required fidelity surfaces",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L262",
-      "_origin": "ast",
-      "id": "design_qa_required_fidelity_surfaces",
-      "community": 186,
-      "norm_label": "required fidelity surfaces"
-    },
-    {
-      "label": "Interaction and checks",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L270",
-      "_origin": "ast",
-      "id": "design_qa_interaction_and_checks",
-      "community": 186,
-      "norm_label": "interaction and checks"
-    },
-    {
-      "label": "Follow-up polish",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L277",
-      "_origin": "ast",
-      "id": "design_qa_follow_up_polish",
-      "community": 186,
-      "norm_label": "follow-up polish"
-    },
-    {
-      "label": "Previous Game view QA (preserved)",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L284",
-      "_origin": "ast",
-      "id": "design_qa_previous_game_view_qa_preserved",
-      "community": 186,
-      "norm_label": "previous game view qa (preserved)"
-    },
-    {
-      "label": "Cartel Gil Rush reference implementation QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L286",
-      "_origin": "ast",
-      "id": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "community": 160,
-      "norm_label": "cartel gil rush reference implementation qa"
-    },
-    {
-      "label": "Source and evidence",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L290",
-      "_origin": "ast",
-      "id": "design_qa_source_and_evidence_290",
-      "community": 160,
-      "norm_label": "source and evidence"
-    },
-    {
-      "label": "Comparison and intentional differences",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L301",
-      "_origin": "ast",
-      "id": "design_qa_comparison_and_intentional_differences",
-      "community": 160,
-      "norm_label": "comparison and intentional differences"
-    },
-    {
-      "label": "Findings and fixes",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L307",
-      "_origin": "ast",
-      "id": "design_qa_findings_and_fixes",
-      "community": 160,
-      "norm_label": "findings and fixes"
-    },
-    {
-      "label": "Required fidelity surfaces",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L316",
-      "_origin": "ast",
-      "id": "design_qa_required_fidelity_surfaces_316",
-      "community": 160,
-      "norm_label": "required fidelity surfaces"
-    },
-    {
-      "label": "Interaction and verification",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L324",
-      "_origin": "ast",
-      "id": "design_qa_interaction_and_verification",
-      "community": 160,
-      "norm_label": "interaction and verification"
-    },
-    {
-      "label": "Follow-up polish",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L331",
-      "_origin": "ast",
-      "id": "design_qa_follow_up_polish_331",
-      "community": 160,
-      "norm_label": "follow-up polish"
-    },
-    {
-      "label": "Implementation checklist",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L336",
-      "_origin": "ast",
-      "id": "design_qa_implementation_checklist",
-      "community": 160,
-      "norm_label": "implementation checklist"
-    },
-    {
-      "label": "Previous QA report (preserved)",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L346",
-      "_origin": "ast",
-      "id": "design_qa_previous_qa_report_preserved",
-      "community": 160,
-      "norm_label": "previous qa report (preserved)"
-    },
-    {
-      "label": "Collection comparison QA",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L348",
-      "_origin": "ast",
-      "id": "design_qa_collection_comparison_qa",
-      "community": 191,
-      "norm_label": "collection comparison qa"
-    },
-    {
-      "label": "Visual evidence",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L352",
-      "_origin": "ast",
-      "id": "design_qa_visual_evidence",
-      "community": 191,
-      "norm_label": "visual evidence"
-    },
-    {
-      "label": "Fidelity review",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L362",
-      "_origin": "ast",
-      "id": "design_qa_fidelity_review",
-      "community": 191,
-      "norm_label": "fidelity review"
-    },
-    {
-      "label": "Findings and fixes",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L371",
-      "_origin": "ast",
-      "id": "design_qa_findings_and_fixes_371",
-      "community": 191,
-      "norm_label": "findings and fixes"
-    },
-    {
-      "label": "Interaction checks",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L379",
-      "_origin": "ast",
-      "id": "design_qa_interaction_checks",
-      "community": 191,
-      "norm_label": "interaction checks"
-    },
-    {
-      "label": "Checks and limitations",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L391",
-      "_origin": "ast",
-      "id": "design_qa_checks_and_limitations",
-      "community": 191,
-      "norm_label": "checks and limitations"
-    },
-    {
-      "label": "Compact-header follow-up",
-      "file_type": "document",
-      "source_file": "design-qa.md",
-      "source_location": "L405",
-      "_origin": "ast",
-      "id": "design_qa_compact_header_follow_up",
-      "community": 191,
-      "norm_label": "compact-header follow-up"
-    },
-    {
       "label": "admin-auth-implementation.md",
       "file_type": "document",
       "source_file": "docs/admin-auth-implementation.md",
@@ -30267,7 +29827,7 @@
       "label": "Data and cost",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L57",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_data_and_cost",
       "community": 94,
@@ -30277,7 +29837,7 @@
       "label": "Verification",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L67",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_verification",
       "community": 94,
@@ -30324,10 +29884,20 @@
       "norm_label": "current mood artwork"
     },
     {
-      "label": "Historical generated artwork",
+      "label": "Reward artwork",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-visual-assets.md",
       "source_location": "L13",
+      "_origin": "ast",
+      "id": "docs_cartel_gil_rush_visual_assets_reward_artwork",
+      "community": 94,
+      "norm_label": "reward artwork"
+    },
+    {
+      "label": "Historical generated artwork",
+      "file_type": "document",
+      "source_file": "docs/cartel-gil-rush-visual-assets.md",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_visual_assets_historical_generated_artwork",
       "community": 94,
@@ -30337,7 +29907,7 @@
       "label": "Prompts",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L19",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_visual_assets_prompts",
       "community": 94,
@@ -31617,7 +31187,7 @@
       "label": "UI Verification",
       "file_type": "document",
       "source_file": "docs/frontend-patterns.md",
-      "source_location": "L66",
+      "source_location": "L67",
       "_origin": "ast",
       "id": "docs_frontend_patterns_ui_verification",
       "community": 147,
@@ -49132,7 +48702,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "package",
       "target": "package_devdependencies",
@@ -49382,6 +48952,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "package_dependencies",
+      "target": "package_dependencies_motion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
       "source_location": "L17",
       "weight": 1.0,
       "source": "package_dependencies",
@@ -49492,7 +49072,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_react",
@@ -49502,7 +49082,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_react_country_flag",
@@ -49512,7 +49092,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_react_day_picker",
@@ -49522,7 +49102,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_react_dom",
@@ -49532,7 +49112,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_recharts",
@@ -49542,7 +49122,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_sonner",
@@ -49552,7 +49132,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "package_dependencies",
       "target": "package_dependencies_tailwind_merge",
@@ -49682,7 +49262,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_eslint",
@@ -49692,7 +49272,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_eslint_js",
@@ -49702,7 +49282,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_eslint_plugin_react_hooks",
@@ -49712,7 +49292,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_eslint_plugin_react_refresh",
@@ -49722,7 +49302,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_firebase_rules_unit_testing",
@@ -49732,7 +49312,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L60",
+      "source_location": "L61",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_globals",
@@ -49742,7 +49322,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L61",
+      "source_location": "L62",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_tailwindcss",
@@ -49752,7 +49332,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_tailwindcss_vite",
@@ -49762,7 +49342,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_types_matter_js",
@@ -49772,7 +49352,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L53",
+      "source_location": "L54",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_types_node",
@@ -49782,7 +49362,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_types_react",
@@ -49792,7 +49372,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_types_react_dom",
@@ -49802,7 +49382,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L62",
+      "source_location": "L63",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_typescript",
@@ -49812,7 +49392,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_typescript_eslint",
@@ -49822,7 +49402,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_vite",
@@ -49832,7 +49412,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_vitejs_plugin_react",
@@ -59724,7 +59304,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/cartel-gil-rush/components/rulebook/Rewards.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_components_rulebook_rewards",
       "target": "src_features_cartel_gil_rush_components_rulebook_rewards_rewards",
@@ -60424,7 +60004,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
-      "source_location": "L5",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_features_cartel_gil_rush_hooks_useeventviewanimation",
+      "target": "src_features_cartel_gil_rush_hooks_useeventviewanimation_reveal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_hooks_useeventviewanimation",
       "target": "src_features_cartel_gil_rush_hooks_useeventviewanimation_useeventviewanimation",
@@ -60435,7 +60025,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_hooks_useeventviewanimation",
       "target": "src_features_cartel_gil_rush_types",
@@ -60446,10 +60036,32 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_hooks_useeventviewanimation",
       "target": "src_features_cartel_gil_rush_types_eventview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_features_cartel_gil_rush_hooks_useeventviewanimation",
+      "target": "src_features_cartel_gil_rush_types_mood",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/cartel-gil-rush/hooks/useEventViewAnimation.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_features_cartel_gil_rush_hooks_useeventviewanimation_useeventviewanimation",
+      "target": "src_features_cartel_gil_rush_hooks_useeventviewanimation_reveal",
       "confidence_score": 1.0
     },
     {
@@ -63567,6 +63179,17 @@
       "weight": 1.0,
       "source": "src_features_craftingboard_components_createrequestdialog_createrequestdialog",
       "target": "src_features_craftingboard_utils_arrays_safearray"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/craftingboard/components/CreateRequestDialog.tsx",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "src_features_craftingboard_components_createrequestdialog_createrequestdialog",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "indirect_call",
@@ -71900,6 +71523,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/gameserver/components/palworld/PalworldPlayerField.tsx",
+      "source_location": "L306",
+      "weight": 1.0,
+      "source": "src_features_gameserver_components_palworld_palworldplayerfield_palworldplayerfield",
+      "target": "tests_cartel_gil_rush_animations_test_element"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/gameserver/components/palworld/PalworldServerHero.tsx",
@@ -72917,6 +72551,17 @@
       "source": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations",
       "target": "src_features_gameserver_hooks_usepalworldserveranimations_reducedmotionpreferred",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/gameserver/hooks/usePalworldServerAnimations.ts",
+      "source_location": "L193",
+      "weight": 1.0,
+      "source": "src_features_gameserver_hooks_usepalworldserveranimations_usepalworldserveranimations",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "contains",
@@ -75516,6 +75161,17 @@
       "source": "src_features_home_hooks_useclubhouse",
       "target": "src_features_home_types_clubhouseprotection",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/home/hooks/useClubhouse.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "src_features_home_hooks_useclubhouse_useclubhouse",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "contains",
@@ -80930,6 +80586,17 @@
       "weight": 1.0,
       "source": "src_features_meowket_board_components_cart_cartitemrow_cartitemrow",
       "target": "src_features_meowket_board_utils_formatting_formatquantity"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/meowket-board/components/Cart/CartItemRow.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_features_meowket_board_components_cart_cartitemrow_cartitemrow",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "imports",
@@ -90066,6 +89733,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/spud-jar/components/ComplaintCoin.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_features_spud_jar_components_complaintcoin_complaintcoin",
+      "target": "tests_cartel_gil_rush_animations_test_element"
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -90286,6 +89964,17 @@
       "source": "src_features_spud_jar_components_spudjarpage",
       "target": "src_features_spud_jar_components_spudjaremptystate",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/spud-jar/components/SpudJarEmptyState.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_features_spud_jar_components_spudjaremptystate_spudjaremptystate",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "imports",
@@ -90627,6 +90316,17 @@
       "source": "src_features_spud_jar_hooks_usespudjarphysics_usespudjarphysics",
       "target": "src_features_spud_jar_hooks_usespudjarphysics_useprefersreducedmotion",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/spud-jar/hooks/useSpudJarPhysics.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "src_features_spud_jar_hooks_usespudjarphysics_usespudjarphysics",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "contains",
@@ -91907,6 +91607,17 @@
       "source": "src_features_ucob_prog_hooks_useucobanimations",
       "target": "src_features_ucob_prog_hooks_useucobanimations_useucobtextchange",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/features/ucob-prog/hooks/useUcobAnimations.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_features_ucob_prog_hooks_useucobanimations_useucobentrance",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "contains",
@@ -95301,10 +95012,40 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L9",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
       "target": "tests_cartel_gil_rush_animations_test_animations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_animations_test",
+      "target": "tests_cartel_gil_rush_animations_test_cancel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_animations_test",
+      "target": "tests_cartel_gil_rush_animations_test_effects",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_animations_test",
+      "target": "tests_cartel_gil_rush_animations_test_element",
       "confidence_score": 1.0
     },
     {
@@ -95321,7 +95062,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L35",
+      "source_location": "L53",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
       "target": "tests_cartel_gil_rush_animations_test_load",
@@ -95341,7 +95082,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L10",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_animations_test",
+      "target": "tests_cartel_gil_rush_animations_test_moodcontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L21",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
       "target": "tests_cartel_gil_rush_animations_test_panel",
@@ -95351,7 +95102,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L50",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_animations_test",
+      "target": "tests_cartel_gil_rush_animations_test_pending",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_animations_test",
+      "target": "tests_cartel_gil_rush_animations_test_refs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-animations.test.mjs",
+      "source_location": "L83",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
       "target": "tests_cartel_gil_rush_animations_test_render",
@@ -95361,7 +95132,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L34",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
       "target": "tests_cartel_gil_rush_animations_test_resolveid",
@@ -95371,21 +95142,32 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
-      "target": "tests_cartel_gil_rush_animations_test_revert",
+      "target": "tests_cartel_gil_rush_animations_test_root",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-animations.test.mjs",
-      "source_location": "L11",
+      "source_location": "L61",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_animations_test",
-      "target": "tests_cartel_gil_rush_animations_test_selectors",
+      "target": "tests_cartel_gil_rush_animations_test_unmount",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/clubhouse-controller.test.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "tests_clubhouse_controller_test_fixture",
+      "target": "tests_cartel_gil_rush_animations_test_element"
     },
     {
       "relation": "contains",
@@ -97052,516 +96834,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L147",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_board_moods_card_update",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L31",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_board_overview_alternating_rows_and_clean_layout",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L44",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_board_overview_connected_react_board",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L171",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_cartel_gil_rush_board_moods_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L155",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_cartel_gil_rush_challenges_rewards_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L217",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_cartel_gil_rush_compact_layout_and_shared_header_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L286",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L234",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_cartel_gil_rush_rulebook_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L188",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_cartel_gil_rush_tiles_movement_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L80",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_challenge_tile_move_and_rewards_rename",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L98",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_challenges_rewards_paired_card_update",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L348",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_collection_comparison_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_compact_navigation_and_shorter_quick_start",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L118",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_continuous_rulebook_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_gold_start_landmark",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L139",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_quick_start_overview_removal",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L108",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_rulebook_content_revisions_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_rulebook_references_mood_backgrounds_and_scroll_navigation",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L90",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_shark_rule_update",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L72",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_uniform_challenge_tile_rows",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L62",
-      "weight": 1.0,
-      "source": "design_qa",
-      "target": "design_qa_user_supplied_tile_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L122",
-      "weight": 1.0,
-      "source": "design_qa_continuous_rulebook_qa",
-      "target": "design_qa_behavior_and_evidence",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L130",
-      "weight": 1.0,
-      "source": "design_qa_continuous_rulebook_qa",
-      "target": "design_qa_findings_and_verification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L169",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_challenges_rewards_qa",
-      "target": "design_qa_previous_board_moods_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L186",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_board_moods_qa",
-      "target": "design_qa_previous_tiles_movement_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L198",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_tiles_movement_qa",
-      "target": "design_qa_comparison_and_findings",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L207",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_tiles_movement_qa",
-      "target": "design_qa_interactions_and_verification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L215",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_tiles_movement_qa",
-      "target": "design_qa_previous_compact_layout_qa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L192",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_tiles_movement_qa",
-      "target": "design_qa_source_scope_and_evidence",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L232",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_compact_layout_and_shared_header_qa",
-      "target": "design_qa_previous_screenshot_scale_rulebook_qa_superseded",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L253",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_findings_and_iteration_history",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L277",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_follow_up_polish",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L247",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_full_view_and_focused_comparison",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L270",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_interaction_and_checks",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L284",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_previous_game_view_qa_preserved",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L262",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_required_fidelity_surfaces",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L238",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_rulebook_qa",
-      "target": "design_qa_source_and_evidence",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L301",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_comparison_and_intentional_differences",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L307",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_findings_and_fixes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L331",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_follow_up_polish_331",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L336",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_implementation_checklist",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L324",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_interaction_and_verification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L346",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_previous_qa_report_preserved",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L316",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_required_fidelity_surfaces_316",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L290",
-      "weight": 1.0,
-      "source": "design_qa_cartel_gil_rush_reference_implementation_qa",
-      "target": "design_qa_source_and_evidence_290",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L391",
-      "weight": 1.0,
-      "source": "design_qa_collection_comparison_qa",
-      "target": "design_qa_checks_and_limitations",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L405",
-      "weight": 1.0,
-      "source": "design_qa_collection_comparison_qa",
-      "target": "design_qa_compact_header_follow_up",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L362",
-      "weight": 1.0,
-      "source": "design_qa_collection_comparison_qa",
-      "target": "design_qa_fidelity_review",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L371",
-      "weight": 1.0,
-      "source": "design_qa_collection_comparison_qa",
-      "target": "design_qa_findings_and_fixes_371",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L379",
-      "weight": 1.0,
-      "source": "design_qa_collection_comparison_qa",
-      "target": "design_qa_interaction_checks",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "design-qa.md",
-      "source_location": "L352",
-      "weight": 1.0,
-      "source": "design_qa_collection_comparison_qa",
-      "target": "design_qa_visual_evidence",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "docs/admin-auth-implementation.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -97753,7 +97025,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation",
       "target": "docs_cartel_gil_rush_visual_assets",
@@ -97773,7 +97045,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_data_and_cost",
@@ -97803,7 +97075,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L67",
+      "source_location": "L69",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_verification",
@@ -97843,7 +97115,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L13",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
       "target": "docs_cartel_gil_rush_visual_assets_historical_generated_artwork",
@@ -97853,10 +97125,20 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L19",
+      "source_location": "L23",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
       "target": "docs_cartel_gil_rush_visual_assets_prompts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cartel-gil-rush-visual-assets.md",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
+      "target": "docs_cartel_gil_rush_visual_assets_reward_artwork",
       "confidence_score": 1.0
     },
     {
@@ -99083,7 +98365,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/frontend-patterns.md",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0,
       "source": "docs_frontend_patterns_frontend_patterns",
       "target": "docs_frontend_patterns_ui_verification",
@@ -99901,5 +99183,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c29e4ebdd681bebf3bf35f68a3d2857b36200e3a"
+  "built_at_commit": "e769f8caba4fa61eb58989f2f3a36df7da68fa0a"
 }

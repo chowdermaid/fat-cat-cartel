@@ -11,7 +11,7 @@ import { RulebookView } from "./rulebook/RulebookView";
 function EventWorkspace({ token }: { token: string | null }) {
   const event = useSharedEvent(token);
   const [view, setView] = useState<EventView>("game");
-  const pageRef = useEventViewAnimation(view);
+  const pageRef = useEventViewAnimation(view, event.current.mood);
 
   return (
     <article ref={pageRef} className={`@container -mx-6 -my-8 flex w-[calc(100%+3rem)] min-w-0 flex-col ${view === "rulebook" ? "h-[calc(100dvh-3rem)] min-h-0 overflow-hidden" : "min-h-[calc(100dvh-3rem)]"}`}>

@@ -10,6 +10,10 @@ No new artwork was generated. The existing `dice.png` is still used by the Game 
 
 The supplied `underdog.png`, `push-your-luck.png` and `workers-compensation.png` replace the Underdog Bonus, Push Your Luck and Workers' Compensation illustrations in both Game and Rulebook Board moods. `moodArtwork.ts` owns their shared mapping, including the existing `dice.png` for Lucky Sixes in both tabs. Existing image slots use `object-contain` and decorative empty alt text alongside the visible mood name. No mood retains Game's dice image. The three supplied PNGs add approximately 1.8 MB of ordinary bundled frontend images, with no Firebase reads, writes or Function calls. Source files are used unchanged; no artwork is generated.
 
+## Reward artwork
+
+`yan-horn.png` is an unchanged local copy of the user-selected [Yan Horn item icon](https://ffxiv.consolegameswiki.com/wiki/File:Yan_horn_icon1.png) ([original PNG](https://ffxiv.consolegameswiki.com/mediawiki/images/1/1d/Yan_horn_icon1.png)). Rewards renders the 128px source in a 56px slot beside the item name and advertised value. The approximately 25KB asset is bundled by Vite, with no runtime wiki request or Firebase operation. No artwork was generated.
+
 ## Historical generated artwork
 
 The tile artwork below is superseded by the user's supplied SVGs; the dice asset remains in use. This section preserves original provenance only.
