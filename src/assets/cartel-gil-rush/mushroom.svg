@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Mushroom</title>
+  <desc id="desc">A squat mushroom with a broad hot pink cap, pale pink spots, a cream rim and a rounded golden tan stalk.</desc>
+  <defs>
+    <linearGradient id="cap" x1="94" y1="32" x2="151" y2="141" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF58AD"/>
+      <stop offset=".55" stop-color="#EB2588"/>
+      <stop offset="1" stop-color="#C7186C"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="128" y1="115" x2="128" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBE3B6"/>
+      <stop offset="1" stop-color="#AE824D"/>
+    </linearGradient>
+    <linearGradient id="stalk" x1="92" y1="168" x2="164" y2="205" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B98349"/>
+      <stop offset=".42" stop-color="#EAC28A"/>
+      <stop offset=".72" stop-color="#D9AC70"/>
+      <stop offset="1" stop-color="#B58148"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#674636" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M102 132C102 151 88 179 89 199C89 221 105 237 128 238C151 237 168 222 167 200C167 179 153 153 153 132Z" fill="url(#stalk)"/>
+    <path d="M109 157C106 177 101 194 105 210M122 160C119 182 117 208 122 222M137 161C138 182 145 202 140 223M149 164C151 181 158 193 155 207" stroke="#AC7844" stroke-width="3" opacity=".48"/>
+    <path d="M21 101C21 76 68 53 128 53C188 53 235 76 235 101L235 115C234 142 186 159 128 159C70 159 22 142 21 115Z" fill="url(#rim)"/>
+    <path d="M22 101C25 64 70 29 128 29C186 29 231 64 234 101C237 125 188 143 128 143C68 143 19 125 22 101Z" fill="url(#cap)" stroke="#F2CBA0" stroke-width="5"/>
+  </g>
+  <g fill="#FFADD0">
+    <ellipse cx="58" cy="76" rx="13" ry="6" transform="rotate(-19 58 76)"/>
+    <ellipse cx="88" cy="46" rx="13" ry="4" transform="rotate(-8 88 46)"/>
+    <ellipse cx="135" cy="39" rx="10" ry="3"/>
+    <ellipse cx="133" cy="63" rx="15" ry="6"/>
+    <ellipse cx="145" cy="83" rx="12" ry="6" transform="rotate(7 145 83)"/>
+    <ellipse cx="184" cy="76" rx="21" ry="10" transform="rotate(15 184 76)"/>
+    <ellipse cx="59" cy="106" rx="10" ry="6" transform="rotate(-16 59 106)"/>
+    <ellipse cx="120" cy="121" rx="14" ry="8"/>
+    <ellipse cx="194" cy="115" rx="17" ry="9" transform="rotate(16 194 115)"/>
+  </g>
+  <path d="M36 88C45 69 61 57 76 50" stroke="#FFCCE2" stroke-width="5" stroke-linecap="round" opacity=".45"/>
+  <path d="M38 132C58 144 91 151 119 151" stroke="#FFE9C4" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+</svg>

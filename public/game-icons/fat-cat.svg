@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Fat Cat</title>
+  <desc id="desc">A squat cream calico cat with orange and charcoal ears, tiny brown eyes, rosy cheeks and a little smiling mouth.</desc>
+  <defs>
+    <clipPath id="cat-shape">
+      <path d="M38 118C25 111 27 95 37 86C43 80 49 78 58 79C64 59 72 39 83 33C92 28 97 47 101 65C116 60 130 60 144 65C148 46 152 27 162 28C173 31 185 58 192 78C211 91 226 113 232 138C239 162 235 188 219 199C202 212 181 207 164 208C140 211 114 211 90 208C73 208 50 213 35 201C21 190 23 165 28 146C31 135 34 126 38 118Z"/>
+    </clipPath>
+  </defs>
+  <path d="M38 118C25 111 27 95 37 86C43 80 49 78 58 79C64 59 72 39 83 33C92 28 97 47 101 65C116 60 130 60 144 65C148 46 152 27 162 28C173 31 185 58 192 78C211 91 226 113 232 138C239 162 235 188 219 199C202 212 181 207 164 208C140 211 114 211 90 208C73 208 50 213 35 201C21 190 23 165 28 146C31 135 34 126 38 118Z" fill="#F4EBCF"/>
+  <g clip-path="url(#cat-shape)">
+    <path d="M22 76L60 67L68 104C54 119 36 125 26 114Z" fill="#E5AC55"/>
+    <path d="M54 101C62 81 63 44 83 26L102 38L103 66L122 65C120 84 98 106 76 110C66 112 58 109 54 101Z" fill="#E5AC55"/>
+    <path d="M139 55L151 22L174 21L201 78L210 106C200 121 180 125 164 114C147 102 141 83 139 55Z" fill="#50504B"/>
+  </g>
+  <path d="M38 118C25 111 27 95 37 86C43 80 49 78 58 79C64 59 72 39 83 33C92 28 97 47 101 65C116 60 130 60 144 65C148 46 152 27 162 28C173 31 185 58 192 78C211 91 226 113 232 138C239 162 235 188 219 199C202 212 181 207 164 208C140 211 114 211 90 208C73 208 50 213 35 201C21 190 23 165 28 146C31 135 34 126 38 118Z" stroke="#58351F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M58 79C52 92 44 105 38 118" stroke="#58351F" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#F0ACA9">
+    <ellipse cx="85" cy="164" rx="10" ry="7" transform="rotate(12 85 164)"/>
+    <ellipse cx="173" cy="164" rx="10" ry="7" transform="rotate(-12 173 164)"/>
+  </g>
+  <g fill="#58351F">
+    <ellipse cx="98" cy="146" rx="7" ry="11" transform="rotate(-18 98 146)"/>
+    <ellipse cx="160" cy="146" rx="7" ry="11" transform="rotate(18 160 146)"/>
+    <path d="M124 155Q129 152 134 155Q133 160 129 161Q125 160 124 155Z"/>
+  </g>
+  <path d="M129 160V166M115 166Q117 176 129 166Q141 176 143 166" stroke="#58351F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

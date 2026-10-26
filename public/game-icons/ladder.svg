@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Green ladder</title>
+  <desc id="desc">A lime-green ladder running diagonally from bottom-left to top-right.</desc>
+  <defs>
+    <linearGradient id="green" x1="0" y1="-34" x2="0" y2="34" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D5F45D"/>
+      <stop offset="1" stop-color="#AFD333"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(128 128) rotate(-45)" stroke-linejoin="round">
+    <path d="M-104-33H104V-17H-104ZM-104 19H104V35H-104Z" fill="#7D9D25" transform="translate(0 4)"/>
+    <path d="M-77-22V22M-46-22V22M-15-22V22M16-22V22M47-22V22M78-22V22" stroke="#83A62A" stroke-width="11" transform="translate(0 3)"/>
+    <path d="M-77-22V22M-46-22V22M-15-22V22M16-22V22M47-22V22M78-22V22" stroke="#C2E64B" stroke-width="10"/>
+    <path d="M-104-34H104V-18H-104ZM-104 18H104V34H-104Z" fill="url(#green)" stroke="#A2C532" stroke-width="1.5"/>
+    <path d="M-101-32H101M-101 20H101" stroke="#E2FA8B" stroke-width="2" opacity=".7"/>
+  </g>
+</svg>

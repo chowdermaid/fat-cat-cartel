@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Red downward arrow</title>
+  <desc id="desc">A bright red arrow pointing diagonally down-left with a long shaft and an open angled arrowhead.</desc>
+  <defs>
+    <linearGradient id="red" x1="71" y1="197" x2="205" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ED131C"/>
+      <stop offset="1" stop-color="#FF343B"/>
+    </linearGradient>
+  </defs>
+  <path d="M202 20L223 41L76 188L132 174L138 198L37 224L63 123L87 129L73 185Z" fill="#AC1020" transform="translate(0 5)" stroke="#AC1020" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M202 20L223 41L76 188L132 174L138 198L37 224L63 123L87 129L73 185Z" fill="url(#red)" stroke="#D91423" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M202 24L217 40M66 127L83 131M80 190L131 178" stroke="#FF6266" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+</svg>

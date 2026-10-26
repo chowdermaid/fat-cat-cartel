@@ -188,8 +188,8 @@ export function AppSidebar() {
               ))}
               {auth.authed && !auth.checking && auth.session?.isAdmin === true && (
                 <NavLink
-                  to="/ladders-and-backstabbers"
-                  label="Ladders & Backstabbers"
+                  to="/cartel-gil-rush"
+                  label="Cartel Gil Rush"
                   icon={Dices}
                 />
               )}

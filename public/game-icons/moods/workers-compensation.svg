@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none" role="img" aria-label="Workers Compensation">
+  <g stroke="#FF625D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 28V23C10 16 14 11 21 10M27 10C34 11 38 16 38 23V28" fill="#FF625D" fill-opacity=".12"/>
+    <path d="M21 23V9C21 7 27 7 27 9V23"/>
+    <rect x="6" y="28" width="36" height="7" rx="2" fill="#FF625D" fill-opacity=".12"/>
+    <path d="M15 41H23"/>
+  </g>
+  <circle cx="34" cy="39" r="6" fill="#171717" stroke="#FFD451" stroke-width="2.5"/>
+  <path d="M34 37V41" stroke="#FFD451" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

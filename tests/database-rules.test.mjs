@@ -57,6 +57,18 @@ test("authenticated browser cannot write Spud Jar", async () => {
   await assertFails(set(ref(database, "tools/spudJar"), { total: 8 }));
 });
 
+test("shared Gil Rush is public-readable but never browser-writable", async () => {
+  const path = "events/cartelGilRush/current";
+  await environment.withSecurityRulesDisabled(async context => {
+    await set(ref(context.database(), path), { version: 1, revision: 1, phase: "setup", round: 1 });
+  });
+  for (const context of [environment.unauthenticatedContext(), environment.authenticatedContext("member"), environment.authenticatedContext("claimed-admin", { isAdmin: true, role: "Boss" })]) {
+    await assertSucceeds(get(ref(context.database(), path)));
+    await assertFails(set(ref(context.database(), path), { revision: 99 }));
+    await assertFails(set(ref(context.database(), `${path}/round`), 99));
+  }
+});
+
 for (const root of ["gameServerAccess", "dragonwildsServerAccess"]) {
   for (const claims of [{}, { admin: true, isAdmin: true, role: "Boss" }]) {
     test(`authenticated browser claims ${JSON.stringify(claims)} cannot access ${root}`, async () => {

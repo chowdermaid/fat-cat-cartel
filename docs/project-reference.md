@@ -63,7 +63,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`
-- `/ladders-and-backstabbers`: Boss/Underpaw rulebook and local event crew/card manager
+- `/cartel-gil-rush`: Boss/Underpaw solo-event host display with static roster rail, mood banner, manual round and rulebook; `/ladders-and-backstabbers` redirects here
 - `/admin`: `AdminPage`
 - `/gameserver`: authorized game-server catalog
 - `/gameserver/palworld`: existing Palworld controls and player field
@@ -188,7 +188,7 @@ For progress bars or visual meters, keep JSX at the base value and animate the c
 
 ### General checks
 
-- Ladders & Backstabbers stores attendees, pairing preview/confirmed crews, hands and one undo snapshot under `fcc_ladders_and_backstabbers_event_v1` in this browser's localStorage. It adds no Firebase operations. Confirmation deals one random ability per crew and locks pairings; odd attendance makes one trio. Hands hold two different abilities at most; duplicates across crews are allowed. Reset requires confirmation and is undoable until the next action. Card effects and missions remain manual. Another tab changing storage blocks stale edits until reload. Invalid saves show an error and require an explicit reset. Verify with `node --test tests/ladders-local-event.test.ts`, plus browser checks for attendee editing, swaps, confirmation, dealing/discarding, undo, refresh and role gating.
+- Cartel Gil Rush shares one current event at `/events/cartelGilRush/current`: fixed solo player order, optional manual mood, independent round and manually entered per-player gil totals. Start requires players only; visible Prev/Next round controls and a named-mood dropdown operate independently. The Boss/Underpaw callable validates every mutation and expected revision; one small live subscription updates hosts. Reset clears the shared event for everyone, retaining revision. Legacy `fcc_cartel_gil_rush_event_v1` saves remain unchanged and can be explicitly imported into an empty shared event with zero gil totals. Existing lazy roster cache behaviour remains. Rulebook content, board, navigation, credit and reading-position restoration are unchanged. Deploy the new Function and rules before the frontend. See `docs/cartel-gil-rush-implementation.md` for cost and verification details.
 
 - Doc-only changes need no build.
 - TypeScript or route changes: `npm run build`.

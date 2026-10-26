@@ -104,6 +104,7 @@ All admin mutations must include `adminSessionToken` and call `requireAdminSessi
 - `updateMemberProfileAdmin`
 - `upsertEasterParticipantAdmin`
 - `deleteEasterParticipantAdmin`
+- `mutateCartelGilRushEvent`: revision-checked shared roster/order, manual round/mood, gil totals, reset and explicit legacy import. Reads are public like Easter; direct browser writes are denied.
 
 Member self profile editing uses `updateOwnMemberProfile`. Housecat event request creation uses `submitCalendarEventRequest`. Both accept the same session token and call `requireMemberSession`; profile edits write only to the linked `/memberProfiles/{lodestoneId}` derived from the verified session. Favorite mount and minion IDs are accepted only when they are present in that member's synced `/fcCollection/memberData/{lodestoneId}/owned` arrays.
 

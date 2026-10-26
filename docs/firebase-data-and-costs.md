@@ -52,6 +52,7 @@ Important RTDB paths:
 - `/memberActivity/{lodestoneId}/tomestone/recent`: compact Tomestone activity rows.
 - `/memberSyncStatus/{lodestoneId}/{source}`: per-member source refresh metadata.
 - `/events/easter2026/participants/{participantId}`: archived Easter event scores and totals.
+- `/events/cartelGilRush/current`: one publicly readable, host-managed Gil Rush event with fixed player order, manual round/mood, per-player gil and monotonic revision. Only the protected `mutateCartelGilRushEvent` callable writes it.
 - `/calendarEvents/{eventId}`: normalized planner events.
 - `/calendarEventRequests/{requestId}`: temporary Housecat event requests awaiting Boss or Underpaw approval.
 - `/calendarSync/discordPlanner`: Raid Helper sync diagnostics.
@@ -121,6 +122,13 @@ Functions are exported from `functions/src/index.ts`.
 - `addSpudJarComplaints` and `undoSpudJarComplaint`: member-authorized atomic updates to `/tools/spudJar`. Additions and removals accept a validated batch of 1 through 1,000 complaints. `resetSpudJar` is a Boss/Underpaw-only atomic reset.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
+
+## Cartel Gil Rush Cost Notes
+
+- Each authorized workspace keeps one live listener on the small current event record, retained through Game/Rulebook switching. Initial data and subsequent saved changes download once per connected host. There is no polling.
+- Each host action calls `mutateCartelGilRushEvent` once. Existing live Boss/Underpaw session validation reads session/link/member data and checks Discord roles. The mutation reads the current event to warm its RTDB transaction cache, holds a temporary server value listener through one revision-checked transaction, then detaches it. Contention can add transaction retries/downloads. There are no automatic client mutation retries.
+- Store only the current event and manually entered totals. No logs, event history, scheduled cleanup or new secrets. Reset retains a monotonically increasing revision. Public event records contain no session tokens.
+- Existing roster cache behaviour and avatar downloads are unchanged. Legacy browser saves are read-only import candidates. Deploy the new Function and rules before the frontend; no deployment is part of this implementation.
 
 ## Spud Jar Cost Notes
 

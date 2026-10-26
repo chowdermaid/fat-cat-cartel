@@ -126,6 +126,11 @@
 
     "events": {
       ".read": true,
+      "cartelGilRush": {
+        "current": {
+          ".write": false
+        }
+      },
       "easter2026": {
         "participants": {
           ".write": false

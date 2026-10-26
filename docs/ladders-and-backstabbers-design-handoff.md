@@ -1,5 +1,7 @@
 # Ladders & Backstabbers: design and implementation handoff
 
+> Superseded on 25 October 2026 by [Cartel Gil Rush](cartel-gil-rush-implementation.md). This file is historical design context. Its crew/card mechanics, route, persistence, undo requirements and acceptance checklist no longer apply. Existing cream card styling is retained for special-tile references; Game / Rulebook layout and accessibility guidance remain relevant.
+
 Approved: 19 October 2026. Target: existing Fat Cat Cartel React/TypeScript website.
 
 ## 1. Approved visual direction

@@ -7,7 +7,7 @@ import {
 import { RootLayout } from "@/components/layouts/RootLayout";
 import { HomePage } from "@/features/home";
 import { Easter2026Page } from "@/features/easter2026";
-import { LaddersAndBackstabbersPage } from "@/features/ladders-and-backstabbers";
+import { CartelGilRushPage } from "@/features/cartel-gil-rush";
 import { PastEventsPage } from "@/features/pastevents";
 import {
   FCCollectionPage,
@@ -60,10 +60,16 @@ const recruitmentRoute = createRoute({
   component: RecruitmentPage,
 });
 
+const cartelGilRushRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/cartel-gil-rush",
+  component: CartelGilRushPage,
+});
+
 const laddersAndBackstabbersRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ladders-and-backstabbers",
-  component: LaddersAndBackstabbersPage,
+  beforeLoad: () => { throw redirect({ to: "/cartel-gil-rush" }); },
 });
 
 const fcCollectionRoute = createRoute({
@@ -199,6 +205,7 @@ const routeTree = rootRoute.addChildren([
   pastEventsRoute,
   easter2026Route,
   laddersAndBackstabbersRoute,
+  cartelGilRushRoute,
   recruitmentRoute,
   fcCollectionRoute.addChildren([
     fcCollectionIndexRoute,

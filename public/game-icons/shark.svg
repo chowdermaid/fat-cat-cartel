@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Shark</title>
+  <desc id="desc">A round blue-grey shark with a cream belly, tiny black eyes and a wide toothy grin.</desc>
+  <defs>
+    <linearGradient id="body" x1="77" y1="48" x2="172" y2="217" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#929DB7"/>
+      <stop offset="1" stop-color="#596782"/>
+    </linearGradient>
+    <linearGradient id="belly" x1="119" y1="143" x2="128" y2="233" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7E5"/>
+      <stop offset="1" stop-color="#D4CFC6"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#303C53" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M141 60C149 40 164 20 173 17C181 26 185 49 181 76Z" fill="url(#body)"/>
+    <path d="M199 153C219 163 231 187 237 211C221 216 204 210 190 200Z" fill="#61718D"/>
+    <path d="M55 156C34 166 23 187 19 206C36 212 54 207 68 196Z" fill="#74839F"/>
+    <path d="M25 134C27 88 76 52 125 52C176 52 222 92 226 144C230 197 191 236 130 238C71 240 20 203 25 134Z" fill="url(#body)"/>
+    <path d="M28 153C47 163 66 166 87 162C125 155 143 161 164 171C187 182 209 173 224 158C222 205 185 237 130 238C79 240 36 212 28 176Z" fill="url(#belly)" stroke="none"/>
+    <path d="M53 178C79 184 112 174 139 177C167 180 186 186 204 179C193 211 163 225 131 225C96 225 68 210 53 178Z" fill="#54232E"/>
+    <path d="M89 210C101 197 121 198 132 206C145 197 163 200 176 211C161 221 148 225 131 225C113 225 99 220 89 210Z" fill="#B75058" stroke="none"/>
+    <path d="M66 181L79 200L88 181M103 178L117 197L128 177M146 179L157 198L170 183M183 184L187 198L198 182M83 210L88 196L101 218M115 224L126 206L138 224M153 221L163 204L170 215" fill="#FFF9EB" stroke="#FFF9EB" stroke-width="2"/>
+    <path d="M53 178C79 184 112 174 139 177C167 180 186 186 204 179C193 211 163 225 131 225C96 225 68 210 53 178Z"/>
+    <path d="M202 132C208 144 208 153 204 161M212 130C218 143 218 152 214 160" stroke="#47546E" stroke-width="4"/>
+  </g>
+  <ellipse cx="65" cy="151" rx="7" ry="10" transform="rotate(-13 65 151)" fill="#151C29"/>
+  <ellipse cx="181" cy="153" rx="9" ry="12" transform="rotate(17 181 153)" fill="#151C29"/>
+  <ellipse cx="183" cy="149" rx="2.5" ry="3" fill="#FFF" opacity=".85"/>
+  <ellipse cx="67" cy="148" rx="2" ry="2.5" fill="#FFF" opacity=".85"/>
+  <path d="M57 113C72 88 97 77 120 76" stroke="#B5BFD1" stroke-width="7" stroke-linecap="round" opacity=".48"/>
+</svg>

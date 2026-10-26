@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Moogle</title>
+  <desc id="desc">A cream FFXIV moogle with pointed ears, closed eyes, a pink nose, little dark bat wings and a large golden pom.</desc>
+  <defs>
+    <linearGradient id="fur" x1="95" y1="104" x2="157" y2="237" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF4"/>
+      <stop offset="1" stop-color="#DAD4C7"/>
+    </linearGradient>
+    <linearGradient id="pom" x1="103" y1="15" x2="152" y2="83" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD48A"/>
+      <stop offset="1" stop-color="#E6A64C"/>
+    </linearGradient>
+    <linearGradient id="wing" x1="128" y1="168" x2="128" y2="199" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#77747A"/>
+      <stop offset="1" stop-color="#494752"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#635D59" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M77 169L45 164C32 170 19 186 13 201C25 191 35 188 43 191L58 204L63 186L82 190Z" fill="url(#wing)"/>
+    <path d="M179 169L211 164C224 170 237 186 243 201C231 191 221 188 213 191L198 204L193 186L174 190Z" fill="url(#wing)"/>
+    <path d="M45 167L63 186M211 167L193 186" stroke="#C6BDB4" stroke-width="2.5"/>
+    <path d="M128 101C125 92 128 87 128 81" stroke="#8E7E65"/>
+    <circle cx="128" cy="48" r="40" fill="url(#pom)" stroke="#C98E49"/>
+    <path d="M99 38C103 26 113 19 125 18" stroke="#FFE3AE" stroke-width="5"/>
+    <path d="M88 177C75 178 68 197 69 214C69 220 73 223 79 220L92 203M168 177C181 178 188 197 187 214C187 220 183 223 177 220L164 203" fill="url(#fur)"/>
+    <path d="M91 180C84 192 79 215 84 232C97 241 113 239 128 239C143 239 159 241 172 232C177 215 172 192 165 180Z" fill="url(#fur)"/>
+    <path d="M99 231C104 227 113 227 119 231M137 231C143 227 152 227 157 231" stroke="#BDB5A8" stroke-width="3"/>
+    <path d="M74 127C63 115 58 100 57 90C73 91 90 98 100 108M156 108C166 98 183 91 199 90C198 105 192 119 182 129" fill="url(#fur)"/>
+    <path d="M70 102L78 123L89 112ZM186 102L178 123L167 112Z" fill="#DDBCB2" stroke="none"/>
+    <path d="M64 148C64 117 89 102 128 102C167 102 192 117 192 148L190 171C187 196 162 208 128 208C94 208 69 196 66 171Z" fill="url(#fur)"/>
+    <path d="M78 165L103 180M178 165L153 180" stroke="#665C51" stroke-width="4.5"/>
+    <ellipse cx="128" cy="188" rx="10" ry="12" fill="#D2A79D" stroke="#BD968A" stroke-width="3"/>
+  </g>
+  <path d="M83 185L96 188M160 188L173 185" stroke="#E9B9AD" stroke-width="5" stroke-linecap="round" opacity=".65"/>
+  <path d="M118 45L120 51M128 44V51M136 45L134 51" stroke="#FFEAC4" stroke-width="3" stroke-linecap="round"/>
+</svg>

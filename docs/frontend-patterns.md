@@ -9,6 +9,8 @@ Use this doc when changing UI layout, navigation, components, styling, assets, o
 - Use compact operational layouts for dashboards and admin tools.
 - Preserve dark mode support on every new surface.
 - Keep text fitting in buttons, cards, sidebar items, and responsive grids.
+- Treat screenshot references as layout guidance, not a requirement to reproduce their scale. Keep practical web sizing: generally 14 to 16px body text, 28 to 32px page headings, and compact icons and spacing.
+- Do not generate image assets. Reuse existing approved assets or add clearly labelled placeholders for the user to replace with their own artwork.
 - Use stable dimensions for boards, grids, charts, toolbars, counters, and roulette controls to avoid layout shift.
 - Avoid decorative gradient orbs, bokeh blobs, and one-note palettes.
 - Avoid nested cards and page sections styled as floating cards.
