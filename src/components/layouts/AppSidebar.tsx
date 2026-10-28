@@ -4,6 +4,7 @@ import {
   CalendarDays,
   Coins,
   Dices,
+  Gamepad2,
   Hammer,
   HandCoins,
   Home,
@@ -49,6 +50,7 @@ const progressItems = [
   { label: "FC Collection", to: "/fc-collection", icon: Library },
   { label: "Raid Stats", to: "/raid-stats", icon: BarChart2 },
   { label: "UCOB Prog", to: "/ucob-prog", icon: DragonIcon },
+  { label: "Keybound Brawler", to: "/keybound-brawler", icon: Gamepad2 },
 ] as const;
 
 const toolItems = [

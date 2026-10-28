@@ -4,6 +4,7 @@
  */
 
 import { createUcobProgressFixture } from "@/features/ucob-prog/api/ucobProgressFixtures";
+import { createKeyboundScoreFixture } from "@/features/keybound-brawler/api/scoreFixtures";
 
 export interface StubRef {
   path: string;
@@ -86,12 +87,12 @@ function maxedJobLevels() {
 
 // Stub members keyed by lodestoneId (new canonical key)
 const STUB_MEMBERS = {
-  "11111001": { name: "Chow Chow",       server: "Sophia", avatarUrl: "/favicon.svg", fcRank: "Boss", jobLevels: maxedJobLevels(), jobLevelsLastFetched: NOW - 900_000, tomestoneProfile: { datacenter: "Materia", portrait: "/icons.svg", achievementPoints: 21400, totalMounts: 192, totalMinions: 301 } },
-  "11111002": { name: "Axo Lotl",        server: "Sophia", avatarUrl: null, fcRank: "Underpaw", jobLevels: { ...sampleJobLevels(), Paladin: null, Warrior: 100, Dragoon: 82, Carpenter: 12 }, jobLevelsLastFetched: NOW - 900_000, tomestoneProfile: { datacenter: "Materia", achievementPoints: 18620, totalMounts: 148, totalMinions: 226 } },
-  "11111003": { name: "Sweet Potatoes",  server: "Sophia", avatarUrl: null, fcRank: "Underpaw", tomestoneProfile: { datacenter: "Materia", achievementPoints: 17310, totalMounts: 121, totalMinions: 204 } },
-  "11111004": { name: "Zalka Tohka",     server: "Sophia", avatarUrl: null, fcRank: "Housecat", tomestoneProfile: { datacenter: "Materia", achievementPoints: 15480, totalMounts: 96, totalMinions: 171 } },
-  "11111005": { name: "Astrid Gertrud",  server: "Sophia", avatarUrl: null, fcRank: "Housecat", tomestoneProfile: { datacenter: "Materia", achievementPoints: 20150, totalMounts: 174, totalMinions: 249 } },
-  "11111006": { name: "Blue Belladonna", server: "Sophia", avatarUrl: null, fcRank: "Stray", tomestoneProfile: { datacenter: "Materia", achievementPoints: 13200, totalMounts: 83, totalMinions: 142 } },
+  "11111001": { name: "Chow Chow",       server: "Sophia", avatarUrl: "https://img2.finalfantasyxiv.com/f/30b89a095fd06717016cd3cb5b1361ff_ba15a18cd3a8fb567e39053022515eb6fc0.jpg?1779772916", fcRank: "Boss", jobLevels: maxedJobLevels(), jobLevelsLastFetched: NOW - 900_000, tomestoneProfile: { datacenter: "Materia", portrait: "/icons.svg", achievementPoints: 21400, totalMounts: 192, totalMinions: 301 } },
+  "11111002": { name: "Axo Lotl",        server: "Sophia", avatarUrl: "https://img2.finalfantasyxiv.com/f/07a353bfbda296d9e79dd58c77a6ca76_ba15a18cd3a8fb567e39053022515eb6fc0.jpg?1779774567", fcRank: "Underpaw", jobLevels: { ...sampleJobLevels(), Paladin: null, Warrior: 100, Dragoon: 82, Carpenter: 12 }, jobLevelsLastFetched: NOW - 900_000, tomestoneProfile: { datacenter: "Materia", achievementPoints: 18620, totalMounts: 148, totalMinions: 226 } },
+  "11111003": { name: "Sweet Potatoes",  server: "Sophia", avatarUrl: "https://img2.finalfantasyxiv.com/f/435049002c50caf5d19d4b31796483c9_ba15a18cd3a8fb567e39053022515eb6fc0.jpg?1779774405", fcRank: "Underpaw", tomestoneProfile: { datacenter: "Materia", achievementPoints: 17310, totalMounts: 121, totalMinions: 204 } },
+  "11111004": { name: "Zalka Tohka",     server: "Sophia", avatarUrl: "https://img2.finalfantasyxiv.com/f/a0d9e4d575fdc8d22b4f70967b776b36_ba15a18cd3a8fb567e39053022515eb6fc0.jpg?1779772272", fcRank: "Housecat", tomestoneProfile: { datacenter: "Materia", achievementPoints: 15480, totalMounts: 96, totalMinions: 171 } },
+  "11111005": { name: "Astrid Gertrud",  server: "Sophia", avatarUrl: "https://img2.finalfantasyxiv.com/f/d72fda7fce6370b65760be41abd4d358_ba15a18cd3a8fb567e39053022515eb6fc0.jpg?1779771853", fcRank: "Housecat", tomestoneProfile: { datacenter: "Materia", achievementPoints: 20150, totalMounts: 174, totalMinions: 249 } },
+  "11111006": { name: "Blue Belladonna", server: "Sophia", avatarUrl: "https://img2.finalfantasyxiv.com/f/98a96e0f1085209b7e5a9bd96695e803_ba15a18cd3a8fb567e39053022515eb6fc0.jpg?1779772253", fcRank: "Stray", tomestoneProfile: { datacenter: "Materia", achievementPoints: 13200, totalMounts: 83, totalMinions: 142 } },
   "11111007": { name: "Hane Miko",       server: "Sophia", avatarUrl: null, fcRank: "Stray", tomestoneProfile: { datacenter: "Materia", achievementPoints: 11940, totalMounts: 77, totalMinions: 133 } },
   "11111008": { name: "Jellyfish Cat",   server: "Sophia", avatarUrl: null, fcRank: "Friend", tomestoneProfile: { datacenter: "Materia", achievementPoints: 10110, totalMounts: 64, totalMinions: 118 } },
   "11111009": { name: "Stub Biscuit", server: "Sophia", avatarUrl: null, fcRank: "Housecat" },
@@ -547,7 +548,8 @@ const STUB_CRAFTING_INDEXES = {
 
 let store: Record<string, unknown> = {
   members: STUB_MEMBERS,
-  membersLastUpdated: Date.UTC(2026, 8, 9),
+  keyboundBrawler: createKeyboundScoreFixture(),
+  membersLastUpdated: Date.UTC(2026, 9, 28),
   fcCollection: {
     collectibles: {
       lastFetched: Date.now() - 900_000,

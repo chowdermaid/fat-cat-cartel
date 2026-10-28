@@ -19,6 +19,7 @@ import { RecruitmentPage } from "@/features/recruitment";
 import { AdminPage } from "@/features/admin";
 import { RaidStatsPage } from "@/features/raid-stats";
 import { UcobProgPage } from "@/features/ucob-prog";
+import { KeyboundBrawlerPage } from "@/features/keybound-brawler";
 import { MountRoulettePage } from "@/features/mount-roulette";
 import { MembersPage } from "@/features/members";
 import { MemberProfilePage } from "@/features/member-profile";
@@ -140,6 +141,12 @@ const mountRouletteRoute = createRoute({
   component: MountRoulettePage,
 });
 
+const keyboundBrawlerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/keybound-brawler",
+  component: KeyboundBrawlerPage,
+});
+
 const craftingBoardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/craftingboard",
@@ -218,6 +225,7 @@ const routeTree = rootRoute.addChildren([
   ]),
   raidStatsRoute,
   ucobProgRoute,
+  keyboundBrawlerRoute,
   mountRouletteRoute,
   craftingBoardRoute,
   meowketBoardRoute,

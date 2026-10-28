@@ -5,8 +5,8 @@
     "semantic_hash": "6148dd831df5d7db22cfc3425f527fb2"
   },
   "database.rules.json": {
-    "mtime": 1793010594.1249597,
-    "ast_hash": "8ba238553a6d1d13c8093b9021ab10d5",
+    "mtime": 1793181471.4156082,
+    "ast_hash": "95c99d574f03e805cf0459e097633be8",
     "semantic_hash": ""
   },
   "eslint.config.js": {
@@ -20,8 +20,8 @@
     "semantic_hash": "5d7b615184f0150d56950e8dcd3b90f0"
   },
   "functions/package.json": {
-    "mtime": 1793004767.4225245,
-    "ast_hash": "4ea47d8d8f34a85c353bd8eb6fe0e9c0",
+    "mtime": 1793181647.4786134,
+    "ast_hash": "978538bf6957a57359887ff108a69407",
     "semantic_hash": ""
   },
   "functions/scripts/register-discord-commands.js": {
@@ -95,8 +95,8 @@
     "semantic_hash": "70d954f136f80d0219316a5296e8f330"
   },
   "functions/src/index.ts": {
-    "mtime": 1793010594.1249597,
-    "ast_hash": "10d4cc1c417a7ef6d80feeac391db037",
+    "mtime": 1793181471.4156082,
+    "ast_hash": "7be807cc8afc0584a636358d621afcf2",
     "semantic_hash": ""
   },
   "functions/src/member-source-refresh.ts": {
@@ -190,8 +190,8 @@
     "semantic_hash": "ffc66b08419b1e517f8640368d378fda"
   },
   "src/app/router.tsx": {
-    "mtime": 1792928135.5612795,
-    "ast_hash": "4317f5db2d8ca956471fb1114a0c7ee5",
+    "mtime": 1793181561.4475224,
+    "ast_hash": "24c169342ff6b393c82b88abe9b814cb",
     "semantic_hash": ""
   },
   "src/components/auth/AuthAccessState.tsx": {
@@ -220,8 +220,8 @@
     "semantic_hash": "09aa737caac1b43a078e46a3ed091b65"
   },
   "src/components/layouts/AppSidebar.tsx": {
-    "mtime": 1792928135.5627959,
-    "ast_hash": "9e7610d1b586ed9d4f85a06e13621428",
+    "mtime": 1793181561.4475224,
+    "ast_hash": "79540c5d168a61e55e0b54c81abddf8d",
     "semantic_hash": ""
   },
   "src/components/layouts/RootLayout.tsx": {
@@ -1665,8 +1665,8 @@
     "semantic_hash": "82564c024de5ea4bf8ce2a4c800cbfc2"
   },
   "src/lib/db.stub.ts": {
-    "mtime": 1791330667.1808286,
-    "ast_hash": "cb596c792ac1d5add576b1e951be2af3",
+    "mtime": 1793185172.2736244,
+    "ast_hash": "3de6139630737226b9d772c0a7318d36",
     "semantic_hash": ""
   },
   "src/lib/db.ts": {
@@ -1770,8 +1770,8 @@
     "semantic_hash": ""
   },
   "docs/admin-auth-implementation.md": {
-    "mtime": 1793004114.1089628,
-    "ast_hash": "1ed244269d37e0e76a6075f01b183466",
+    "mtime": 1793182103.258843,
+    "ast_hash": "d94c195e0ecedfa8de6863660b8c2f56",
     "semantic_hash": ""
   },
   "docs/calendar-events-implementation.md": {
@@ -1795,13 +1795,13 @@
     "semantic_hash": ""
   },
   "docs/firebase-data-and-costs.md": {
-    "mtime": 1793010796.9305112,
-    "ast_hash": "f47e61f7a32ad4303f3e7ac3ff9cf411",
+    "mtime": 1793189882.5951252,
+    "ast_hash": "ac042c9afd353c1890e9dbe598fefaec",
     "semantic_hash": ""
   },
   "docs/frontend-patterns.md": {
-    "mtime": 1793007462.546175,
-    "ast_hash": "f3b56078b58786566bb9cd17065a7e97",
+    "mtime": 1793192375.488871,
+    "ast_hash": "ca888914aaac7e862f1e80727ab4cbc2",
     "semantic_hash": ""
   },
   "docs/meowket-board-implementation.md": {
@@ -1810,8 +1810,8 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1793004264.585273,
-    "ast_hash": "a48426035357be88f430dfdc12e84aba",
+    "mtime": 1793189612.229471,
+    "ast_hash": "a028db3606f28f8b5930032f8c8c3e97",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
@@ -2280,8 +2280,8 @@
     "semantic_hash": ""
   },
   "tests/database-rules.test.mjs": {
-    "mtime": 1793010686.5985684,
-    "ast_hash": "5781602449e4df7c144cefe8f95b5227",
+    "mtime": 1793181647.4786134,
+    "ast_hash": "52f14e6ce12bc90fba32f7557a16f5b9",
     "semantic_hash": ""
   },
   "src/features/gameserver/api/gameServerStubs.ts": {
@@ -3337,6 +3337,236 @@
   "tests/fc-collection-retry-emulator.test.mjs": {
     "mtime": 1793010855.4870012,
     "ast_hash": "1760013a12443f362e384e499e078923",
+    "semantic_hash": ""
+  },
+  "functions/src/keybound-brawler.test.ts": {
+    "mtime": 1793181677.7091503,
+    "ast_hash": "e3cc06ca1311d9833f5a83afc48194e0",
+    "semantic_hash": ""
+  },
+  "functions/src/keybound-brawler.ts": {
+    "mtime": 1793181471.4140913,
+    "ast_hash": "71e04e505ea749512859ce59378b8d32",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/api/keyboundScores.ts": {
+    "mtime": 1793181792.1799808,
+    "ast_hash": "25b687252283a93b77e9d168a3fdc144",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/api/scoreFixtures.ts": {
+    "mtime": 1793181471.4216578,
+    "ast_hash": "2a410aa0b484401c474cb507489094bb",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/components/KeyboundBrawlerPage.tsx": {
+    "mtime": 1793190545.7888095,
+    "ast_hash": "617ddc6fa6fafe443113fdc12b405532",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/components/MemberAvatar.tsx": {
+    "mtime": 1793181561.444312,
+    "ast_hash": "97e6fc8fcea8b3caf66ec1eca33af183",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/components/RankingTable.tsx": {
+    "mtime": 1793192237.1477637,
+    "ast_hash": "683cf3c04abd86fde2ca6e7283f989c6",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/components/ScorePodium.tsx": {
+    "mtime": 1793192338.705896,
+    "ast_hash": "1a6060b5360ac0e5d6176fad2511f300",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/constants.ts": {
+    "mtime": 1793192237.1477637,
+    "ast_hash": "be6972337782231927efb50175a618a6",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/hooks/useKeyboundScores.ts": {
+    "mtime": 1793181677.7122147,
+    "ast_hash": "e5e377219432eee3a73d1c0ccf206d92",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/hooks/useScoreEditor.ts": {
+    "mtime": 1793188784.727557,
+    "ast_hash": "8d163565cc6d4fb6b629c61553310f95",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/index.tsx": {
+    "mtime": 1793181561.4475224,
+    "ast_hash": "ee92aea4834e5ab53aa33cd98f4d9cb1",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/types.ts": {
+    "mtime": 1793188930.6372523,
+    "ast_hash": "27356f68012f615a3bc408dc6ac7a501",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/utils/scores.ts": {
+    "mtime": 1793188930.6372523,
+    "ast_hash": "aae2c686dce15c6e410e32ae00a1a5aa",
+    "semantic_hash": ""
+  },
+  "tests/keybound-brawler-editor.test.mjs": {
+    "mtime": 1793189115.7625182,
+    "ast_hash": "7d6d9dd5e233f3f4acdcdbc2853f8441",
+    "semantic_hash": ""
+  },
+  "tests/keybound-brawler.test.mjs": {
+    "mtime": 1793190616.6334612,
+    "ast_hash": "49546338e488eb68e8e3fddac1ff2cf9",
+    "semantic_hash": ""
+  },
+  "design-qa.md": {
+    "mtime": 1793192375.4898708,
+    "ast_hash": "4e94c56884cfbc73389357b5cc98af56",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/desktop-before-fidelity.jpg": {
+    "mtime": 1793182284.0368128,
+    "ast_hash": "576db2d255338a7c5322b2c780fca4ed",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/desktop-dark.jpg": {
+    "mtime": 1793186200.6950965,
+    "ast_hash": "e90374762c94257ea498a82c5c191684",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/desktop-light.jpg": {
+    "mtime": 1793186274.0659678,
+    "ast_hash": "c5ff69b727492834f5abfde9614ed400",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/mobile-320-boundary.jpg": {
+    "mtime": 1793185930.9268377,
+    "ast_hash": "587c5d55a2e2489596a3c8c4d12c0013",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/mobile-dark.jpg": {
+    "mtime": 1793185906.4845142,
+    "ast_hash": "b40d23bc82429f8f53a9e722c04a8638",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/mobile-light.jpg": {
+    "mtime": 1793185842.6779912,
+    "ast_hash": "5f5836282c4dd607aaaeb4e939d4ca45",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/preview.jpg": {
+    "mtime": 1793192274.430161,
+    "ast_hash": "b86a5fe254bbb8039c6135537caae5ac",
+    "semantic_hash": ""
+  },
+  "src/features/keybound-brawler/components/ScorePopover.tsx": {
+    "mtime": 1793192237.1493247,
+    "ast_hash": "57340ba9c6694654ecdcf4ff4c0e376a",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-desktop-dark.jpg": {
+    "mtime": 1793189429.3370068,
+    "ast_hash": "e4aa25af2b7ddcd0286878224413d885",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-desktop-light.jpg": {
+    "mtime": 1793189504.2103102,
+    "ast_hash": "a7a935e855645af11b647cb45e578924",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-mobile-light.jpg": {
+    "mtime": 1793189527.5600767,
+    "ast_hash": "6bee5e4b1f21b425905ec85fedf439ca",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-popover-desktop.jpg": {
+    "mtime": 1793189443.021833,
+    "ast_hash": "c0bc8f8eed3873cff981a6442260ecc5",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-popover-mobile.jpg": {
+    "mtime": 1793189527.9950492,
+    "ast_hash": "847b5cbbfbddf66b99f9e6d137c88f0c",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/tablet-light.jpg": {
+    "mtime": 1793186316.8691025,
+    "ast_hash": "20ccf1db71fdc21286a9f484970f5190",
+    "semantic_hash": ""
+  },
+  "src/assets/icons/keybound-crown-bronze.svg": {
+    "mtime": 1793189643.1039965,
+    "ast_hash": "b959234742ac70d2d7c86ea4c78a0341",
+    "semantic_hash": ""
+  },
+  "src/assets/icons/keybound-crown-gold.svg": {
+    "mtime": 1793189643.087134,
+    "ast_hash": "234d834c1403f7eb2eea3cea55d08ce0",
+    "semantic_hash": ""
+  },
+  "src/assets/icons/keybound-crown-silver.svg": {
+    "mtime": 1793189643.0957234,
+    "ast_hash": "40e428b5c713dddd03d2102a949803c5",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/crowns-desktop-dark.jpg": {
+    "mtime": 1793190736.9732533,
+    "ast_hash": "c439e6e4d6701a67c34f2ebe03819ecf",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/crowns-desktop-light.jpg": {
+    "mtime": 1793190741.9423642,
+    "ast_hash": "dcd75313269c1b58845934d605ab79ae",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/crowns-mobile-320-dark.jpg": {
+    "mtime": 1793190761.645211,
+    "ast_hash": "f37ac175e702102642f312635afa07ea",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/crowns-mobile-dark.jpg": {
+    "mtime": 1793190756.4744642,
+    "ast_hash": "9eb8a8d637a24a0ad1d6d08a6ac6dc26",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/crowns-mobile-light.jpg": {
+    "mtime": 1793190746.9421883,
+    "ast_hash": "39c037a6fe0aed9cc16fd22d1c43be55",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-mobile-320-dark.jpg": {
+    "mtime": 1793189917.609237,
+    "ast_hash": "783d7ab400f7e2c90cf155fb71a31550",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/revisions-mobile-dark.jpg": {
+    "mtime": 1793189918.672202,
+    "ast_hash": "e9fa67fde9d23f1e893ca8410b352ab2",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/podium-desktop-dark.jpg": {
+    "mtime": 1793192274.3992047,
+    "ast_hash": "b86a5fe254bbb8039c6135537caae5ac",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/podium-desktop-light.jpg": {
+    "mtime": 1793192274.8671758,
+    "ast_hash": "9c5dc3a5e20ea0b34f90d1bc341f4ec9",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/podium-mobile-320-dark.jpg": {
+    "mtime": 1793192345.1892364,
+    "ast_hash": "237edec2e2bdce6d39925bceed5a13d7",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/podium-mobile-dark.jpg": {
+    "mtime": 1793192321.8841445,
+    "ast_hash": "f792938cd2e27786c3757940050f7c67",
+    "semantic_hash": ""
+  },
+  "docs/design-assets/keybound-brawler/podium-mobile-light.jpg": {
+    "mtime": 1793192286.4428253,
+    "ast_hash": "e92c1d5ab7ec6eedf2f563d052fd281c",
     "semantic_hash": ""
   }
 }

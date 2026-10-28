@@ -41,6 +41,7 @@ Older local keys such as `admin_authed`, `fcc_collection_v2`, `fcc_raidstats_v2_
 Important RTDB paths:
 
 - `/members/{lodestoneId}`: canonical member records keyed by Lodestone ID. Fields include `name`, `server`, `fflogsId`, `avatarUrl`, and `fcRank`.
+- `/keyboundBrawler`: public admin-maintained `{ scores: { [lodestoneId]: number }, updatedAt }`. Missing scores are unranked; zero is a real score. Names and avatars remain owned by `/members`. Only `saveKeyboundBrawlerScores` writes scores through the Admin SDK after live admin authorization.
 - `/memberProfiles/{lodestoneId}`: editable profile fields such as `bio`, `birthday` as `MM-DD`, `mainJobs`, timezone, favorites, favorite content type, and optional `clubhouseHatId`. Hat IDs are `fat-cat-cartel-fedora`, `cartel-flat-cap`, `cartel-witch-hat`, `fat-cat-avatar-ears`, and `cartel-tiny-crown`; absent IDs display the fedora.
 - `/fcCollection/collectibles/{mounts|minions|titles|achievements}`: FFXIV Collect item data keyed by item ID.
 - `/fcCollection/collectibles/lastFetched`: collection refresh timestamp.
@@ -124,6 +125,17 @@ Functions are exported from `functions/src/index.ts`.
 - `addSpudJarComplaints` and `undoSpudJarComplaint`: member-authorized atomic updates to `/tools/spudJar`. Additions and removals accept a validated batch of 1 through 1,000 complaints. `resetSpudJar` is a Boss/Underpaw-only atomic reset.
 
 Function code uses `firebase-admin` and direct Admin SDK RTDB writes. App feature code should still use `src/lib/db.ts`.
+
+## Keybound Brawler Cost Notes
+
+- Each page entry makes one one-time read of the small score snapshot. Concurrent initial reads are deduplicated, including React Strict Mode's effect replay. Explicit read-error retries add one read. The shared roster hook retains its existing `membersLastUpdated` check and three-hour member cache; a cache miss/stale roster downloads `/members`. Portraits reuse existing roster URLs. Opening, editing, dismissing or cancelling a popover adds no Firebase work.
+- Each popover Save sends one existing callable containing only that changed member ID and score. Saving three members separately now uses three invocations instead of the former single batch submission. Each invocation retains live Boss/Underpaw verification (session/link/member reads, Discord role lookup, and the existing conditional session last-seen update), adds one member-existence point read, then atomically updates that score child and `updatedAt`. Unchanged values make no request. Success returns the applied change, avoiding a score re-fetch. The backend's validated batch contract remains compatible and invalid batches still never partially update scores.
+- Scores accept nonnegative safe integers up to `Number.MAX_SAFE_INTEGER`, or null to delete. Separate admins editing different members preserve each other's records; overlapping edits use the last successful save. Other clients see changes on their next page entry. Orphaned score IDs are ignored by the roster join; no cleanup jobs or unrelated member-deletion behavior are added.
+- No live listeners, polling, history, scheduled jobs, external game integrations, or new secrets. Stub mode seeds existing roster IDs and supports guest/member/Boss/Underpaw personas without contacting Firebase.
+- Six existing stub identities reuse their portrait URLs from the local roster snapshot; their stub cache timestamp changes once to refresh old initials. These are normal cached image downloads from the existing FFXIV CDN, not Firebase downloads. No live roster export was fetched and production member data/cache keys are unchanged.
+- The supplied laurel SVG, silver/bronze trophies, removed copy/search and viewport layout add no Firebase work. The per-member Save invocation pattern above is the only cost change from the original batch UI; no listeners or polling were introduced. These revisions require a frontend build/hosting release only once the original score callable and rules have been deployed. No deployment was performed.
+- Checks: `node --test tests/keybound-brawler.test.mjs tests/keybound-brawler-editor.test.mjs`; `npm --prefix functions run build` then `node --test functions/lib/keybound-brawler.test.js`; `npm run test:rules`; frontend build and changed-file lint.
+- Deployment handoff only: deploy rules and callable first with `firebase deploy --only database,functions:saveKeyboundBrawlerScores`; build frontend with `npm run build`, then deploy hosting separately with `firebase deploy --only hosting`. Existing `DISCORD_BOT_TOKEN` and admin role configuration are reused. No migration or seed upload is needed; missing score data renders an empty leaderboard. No deployment is part of implementation.
 
 ## Cartel Gil Rush Cost Notes
 

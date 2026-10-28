@@ -13,6 +13,11 @@
       ".write": false
     },
 
+    "keyboundBrawler": {
+      ".read": true,
+      ".write": false
+    },
+
     "discordLinks": {
       ".read": false,
       ".write": false,

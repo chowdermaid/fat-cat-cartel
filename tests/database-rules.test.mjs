@@ -66,6 +66,22 @@ test("authenticated browser cannot write Spud Jar", async () => {
   await assertFails(set(ref(database, "tools/spudJar"), { total: 8 }));
 });
 
+test("Keybound Brawler is public-readable and browser writes always fail", async () => {
+  await environment.withSecurityRulesDisabled(async (context) => {
+    await set(ref(context.database(), "keyboundBrawler"), { scores: { "111": 0, "222": 42 }, updatedAt: 1 });
+  });
+  const contexts = [environment.unauthenticatedContext(), environment.authenticatedContext("member"), environment.authenticatedContext("claimed-admin", { admin: true, isAdmin: true, role: "Boss" })];
+  for (const context of contexts) {
+    const database = context.database();
+    assert.equal((await assertSucceeds(get(ref(database, "keyboundBrawler/scores/111")))).val(), 0);
+    await assertSucceeds(get(ref(database, "keyboundBrawler")));
+    await assertFails(set(ref(database, "keyboundBrawler"), { scores: { "111": 999 } }));
+    await assertFails(set(ref(database, "keyboundBrawler/scores/111"), 999));
+    await assertFails(set(ref(database, "keyboundBrawler/scores/111"), null));
+    await assertFails(set(ref(database, "keyboundBrawler/updatedAt"), 999));
+  }
+});
+
 test("shared Gil Rush is public-readable but never browser-writable", async () => {
   const path = "events/cartelGilRush/current";
   await environment.withSecurityRulesDisabled(async context => {

@@ -54,6 +54,7 @@ import {
 } from "./meowket-board";
 import { mutateSpudJar, parseSpudJarBatchCount } from "./spud-jar";
 import { mutateGilRushEvent } from "./cartel-gil-rush";
+import { saveKeyboundScores } from "./keybound-brawler";
 import { runScheduledDiscordNotifications } from "./scheduled-discord-notifications";
 import {
   deleteGameServerAccessForAdmin,
@@ -1018,6 +1019,14 @@ export const mutateCartelGilRushEvent = onCall(
   async (request) => {
     await requireAdminSession(request.data, adminAuthConfig());
     return mutateGilRushEvent(request.data);
+  },
+);
+
+export const saveKeyboundBrawlerScores = onCall(
+  { cors: true, secrets: [discordBotToken], timeoutSeconds: 30, region: "us-central1" },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return saveKeyboundScores(request.data);
   },
 );
 

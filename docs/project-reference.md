@@ -60,6 +60,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/spud-jar`: `SpudJarPage`
 - `/raid-stats`: `RaidStatsPage`
 - `/ucob-prog`: `UcobProgPage`, black carbuncles' single-static UCOB tracker
+- `/keybound-brawler`: public roster leaderboard with manually maintained best scores and Boss/Underpaw score-editing popovers
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`

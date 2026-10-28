@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="72" viewBox="0 0 96 72" fill="none">
+  <title>Silver podium crown</title>
+  <defs>
+    <linearGradient id="silver-metal" x1="26" y1="10" x2="67" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FAFF"/><stop offset=".42" stop-color="#CBD8E5"/><stop offset="1" stop-color="#8A9AAC"/>
+    </linearGradient>
+    <linearGradient id="silver-band" x1="20" y1="55" x2="77" y2="65" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8A9AAC"/><stop offset=".38" stop-color="#F5FAFF"/><stop offset=".65" stop-color="#CBD8E5"/><stop offset="1" stop-color="#8A9AAC"/>
+    </linearGradient>
+  </defs>
+  <!-- Five points, a tall central spear, and swept outer wings. -->
+  <path d="M20 53 9 27 29 38 31 19 41 33 48 8 55 33 65 19 67 38 87 27 76 53Q48 61 20 53Z" fill="url(#silver-metal)" stroke="#526477" stroke-width="1.1" stroke-linejoin="round"/>
+  <!-- Facets retain definition at small podium sizes. -->
+  <path d="M48 8 48 56 38 54 41 33Z" fill="#FFFFFF" fill-opacity=".35"/>
+  <path d="M48 8 55 33 58 54 48 56Z" fill="#526477" fill-opacity=".16"/>
+  <path d="M9 27 29 38 35 54 20 53Z" fill="#FFFFFF" fill-opacity=".22"/>
+  <path d="M87 27 76 53 62 55 67 38Z" fill="#526477" fill-opacity=".15"/>
+  <path d="m14 31 16 9 2-15M43 31l5-18 5 18M66 25l2 15 14-8" stroke="#FFFFFF" stroke-opacity=".78" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Curved lower band seats naturally above a circular portrait. -->
+  <path d="M20 53Q48 60 76 53L74 61Q48 68 22 61Z" fill="url(#silver-band)" stroke="#526477" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="M23 55Q48 61 73 55" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M24 61Q48 67 72 61" stroke="#526477" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/>
+  <path d="m48 39 3.5 5-3.5 5-3.5-5Z" fill="#FFFFFF" stroke="#8A9AAC" stroke-width=".7"/>
+</svg>
