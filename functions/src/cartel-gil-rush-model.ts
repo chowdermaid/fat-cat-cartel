@@ -1,5 +1,11 @@
 export const GIL_RUSH_PATH = "events/cartelGilRush/current";
 export const GIL_RUSH_PRIVATE_PATH = "cartelGilRushPrivate/current";
+export const GIL_RUSH_PREVIEW_LODESTONE_ID = "51550870";
+
+// Internal mock run: the extra linked member can view, never host.
+export function canViewGilRush(session: { isAdmin?: boolean; isMember?: boolean; lodestoneId?: string | null } | null | undefined): boolean {
+  return session?.isAdmin === true || (session?.isMember === true && session.lodestoneId === GIL_RUSH_PREVIEW_LODESTONE_ID);
+}
 export type MinorityPrize = "200k" | "100k" | "golden-dice" | "50k";
 export interface MinorityAssignments {
   gameId: number;

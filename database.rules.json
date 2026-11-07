@@ -136,13 +136,14 @@
     },
 
     "events": {
-      ".read": true,
+      ".read": false,
       "cartelGilRush": {
         "current": {
           ".write": false
         }
       },
       "easter2026": {
+        ".read": true,
         "participants": {
           ".write": false
         }

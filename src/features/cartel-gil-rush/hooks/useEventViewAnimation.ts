@@ -109,16 +109,17 @@ function reveal(elements: HTMLElement[], staggered = false) {
   return () => { restore(); media.removeEventListener("change", handleMotionChange); };
 }
 
-export function useEventViewAnimation(view: EventView) {
+export function useEventViewAnimation(view: EventView, ready = true) {
   const ref = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
+    if (!ready) return;
     const panel = ref.current?.querySelector<HTMLElement>(`[data-event-view="${view}"]`);
     if (!panel) return;
     if (view === "game") return animateGame(panel);
     const visible = Array.from(panel.querySelectorAll<HTMLElement>("[data-event-reveal]")).filter(isVisible).slice(0, 12);
     return reveal([panel, ...visible], true);
-  }, [view]);
+  }, [view, ready]);
 
   return ref;
 }

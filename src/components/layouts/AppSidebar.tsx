@@ -32,6 +32,7 @@ import {
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
+import { canAccessGilRush } from "@/features/cartel-gil-rush/utils/access";
 import { useGameServerAuth } from "@/features/gameserver/hooks/useGameServerAuth";
 import fatcathi from "../../assets/fatcathi.png";
 import dragonIcon from "@/assets/icons/dragon.svg";
@@ -188,11 +189,11 @@ export function AppSidebar() {
               {bottomItems.map((item) => (
                 <NavLink key={item.to} {...item} />
               ))}
-              <NavLink
+              {canAccessGilRush(auth) && <NavLink
                 to="/cartel-gil-rush"
                 label="Cartel Gil Rush"
                 icon={Dices}
-              />
+              />}
               {auth.sessionWasAdmin && (
                 <NavLink
                   key={adminItem.to}

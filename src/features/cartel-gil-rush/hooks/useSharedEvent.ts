@@ -21,11 +21,12 @@ function localImport() {
   } catch { return null; }
 }
 
-export function useSharedEvent(token: string | null): EventController {
+export function useSharedEvent(token: string | null, canEdit = true): EventController {
   const [current, setCurrent] = useState(emptyGilRushEvent);
   const [loading, setLoading] = useState(true);
   const [pendingKeys, setPendingKeys] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [readError, setReadError] = useState<string | null>(null);
   const [importable] = useState(localImport);
   const latest = useRef(current);
   const ready = useRef(false);
@@ -47,7 +48,7 @@ export function useSharedEvent(token: string | null): EventController {
       event.returnValue = "";
     };
     if (typeof window !== "undefined") window.addEventListener("beforeunload", warnBeforeLeaving);
-    const unsubscribe = subscribeSharedEvent(event => {
+    const unsubscribe = subscribeSharedEvent(token, event => {
       if (generation.current !== active) return;
       if (!ready.current || event.revision >= latest.current.revision) {
         latest.current = event;
@@ -55,10 +56,12 @@ export function useSharedEvent(token: string | null): EventController {
       }
       if (!ready.current && !keys.current.size) setPendingKeys([]);
       ready.current = true;
+      setReadError(null);
       setLoading(false);
     }, cause => {
       if (generation.current !== active) return;
       ready.current = false;
+      setReadError(cause.message);
       setError(cause.message);
       setLoading(false);
     });
@@ -72,7 +75,7 @@ export function useSharedEvent(token: string | null): EventController {
       if (typeof window !== "undefined") window.removeEventListener("beforeunload", warnBeforeLeaving);
       unsubscribe();
     };
-  }, [token]);
+  }, [token, canEdit]);
 
   async function drain(active: number) {
     if (draining.current) return;
@@ -115,7 +118,7 @@ export function useSharedEvent(token: string | null): EventController {
   }
 
   async function run(action: SharedEventAction, expectedRevision = current.revision): Promise<boolean> {
-    if (!ready.current || !token) { setError("Shared event is unavailable. Reload before editing."); return false; }
+    if (!ready.current || !token || !canEdit) { setError("Shared event is unavailable. Reload before editing."); return false; }
     const key = queuedActionKey(action);
     if (keys.current.has(key)) return false;
     if (!canQueueEdit(action) && queue.current.length) return false;
@@ -128,5 +131,5 @@ export function useSharedEvent(token: string | null): EventController {
     });
   }
 
-  return { current, error, loading, pending: pendingKeys.length > 0, pendingKeys, importable, run, hostToken: token };
+  return { current, error, readError, loading, pending: pendingKeys.length > 0, pendingKeys, importable, run, hostToken: canEdit ? token : null };
 }

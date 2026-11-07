@@ -111,16 +111,28 @@ after(async () => {
   delete globalThis.gilRushAnimationHarness;
 });
 
-function render(view, mood = null) {
+function render(view, ready = true) {
   refCursor = 0;
   effectCursor = 0;
   pending = [];
-  useEventViewAnimation(view, mood);
+  useEventViewAnimation(view, ready);
   pending.forEach(run => run());
 }
 
 function mutate() { observers.filter(observer => !observer.disconnected).forEach(observer => observer.callback()); }
 function flush() { for (const [id, callback] of [...frames]) { frames.delete(id); callback(); } }
+
+test("access checking does not animate; admission mounts and starts the selected view", () => {
+  panel.children = [element()];
+  render("game", false);
+  assert.equal(animations.length, 0);
+  assert.equal(observers.length, 0);
+  render("game", true);
+  assert.equal(animations.length, 1);
+  render("game", false);
+  assert.equal(animations[0].cancelled, true);
+  assert.ok(observers.every(observer => observer.disconnected));
+});
 
 test("view changes cancel prior reveals; reduced motion settles panels and cleans listeners", () => {
   panel.children = [element()];
@@ -143,8 +155,8 @@ test("view changes cancel prior reveals; reduced motion settles panels and clean
 test("initial reduced motion skips all reveals", () => {
   media.matches = true;
   render("game");
-  render("game", "yellow");
-  render("rulebook", "yellow");
+  render("game", true);
+  render("rulebook", true);
   assert.equal(animations.length, 0);
   assert.equal(listeners.size, 0);
   assert.equal(panel.style.opacity, "");
@@ -171,7 +183,7 @@ test("only visible content fades; offscreen and clipped rows are excluded and li
 test("missing mounted panel safely skips reveals", () => {
   mounted = false;
   render("game");
-  render("game", "blue");
+  render("game", true);
   assert.equal(animations.length, 0);
 });
 

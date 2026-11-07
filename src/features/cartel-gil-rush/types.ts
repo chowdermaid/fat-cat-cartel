@@ -42,6 +42,7 @@ export type RulebookChapter = "board-overview" | "quick-start" | "special-tiles"
 export interface EventController {
   current: SharedEvent;
   error: string | null;
+  readError: string | null;
   loading: boolean;
   pending: boolean;
   pendingKeys: string[];

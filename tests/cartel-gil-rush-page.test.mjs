@@ -7,6 +7,7 @@ import { createMemoryHistory, createRootRoute, createRoute, createRouter, Router
 import { createServer } from "vite";
 
 const originalStorage = globalThis.localStorage;
+const previewAuth = { authed: true, session: { isAdmin: false, isMember: true, lodestoneId: "51550870" } };
 let saved = null;
 let bingoSaved = null;
 globalThis.localStorage = { getItem: key => key === "fcc_cartel_gil_rush_bingo_v1" ? bingoSaved : saved };
@@ -17,7 +18,7 @@ const server = await createServer({
   plugins: [{ name: "gil-rush-page-auth-boundary", enforce: "pre", load(id) {
     if (id.replaceAll("\\", "/").endsWith("/admin/hooks/useAdminAuth.ts")) return "export const useAdminAuth = () => globalThis.gilRushPageAuth;";
     if (id.replaceAll("\\", "/").endsWith("/hooks/useMinorityAssignments.ts")) return "export const useMinorityAssignments = () => ({ saved: null, loading: false, pending: false, error: null });";
-    if (id.replaceAll("\\", "/").endsWith("/hooks/useSharedEvent.ts")) return "export const useSharedEvent = () => globalThis.gilRushPageEvent;";
+    if (id.replaceAll("\\", "/").endsWith("/hooks/useSharedEvent.ts")) return "export const useSharedEvent = (...args) => { globalThis.gilRushSharedArgs = args; return globalThis.gilRushPageEvent; };";
     if (id.replaceAll("\\", "/").endsWith("/hooks/useMembers.ts")) return "export const useMembers = () => { throw new Error('Roster must not load before player setup is opened'); };";
   } }],
 });
@@ -41,18 +42,20 @@ after(async () => {
   else globalThis.localStorage = originalStorage;
   delete globalThis.gilRushPageAuth;
   delete globalThis.gilRushPageEvent;
+  delete globalThis.gilRushSharedArgs;
 });
 
 function render(auth, eventOverrides = {}, view = "game") {
-  globalThis.gilRushPageAuth = { checking: false, error: null, login: () => {}, ...auth };
+  delete globalThis.gilRushSharedArgs;
+  globalThis.gilRushPageAuth = { checking: false, error: null, sessionToken: "test-token", login: () => {}, ...auth };
   const event = saved ? JSON.parse(saved) : emptyEvent();
-  globalThis.gilRushPageEvent = { current: readGilRushEvent({ ...event, revision: 1, players: event.players.map(player => ({ ...player, gilWon: player.gilWon ?? 0 })) }), error: null, loading: false, pending: false, pendingKeys: [], importable: null, run: async () => true, ...eventOverrides };
+  globalThis.gilRushPageEvent = { current: readGilRushEvent({ ...event, revision: 1, players: event.players.map(player => ({ ...player, gilWon: player.gilWon ?? 0 })) }), error: null, readError: null, loading: false, pending: false, pendingKeys: [], importable: null, run: async () => true, ...eventOverrides };
   return renderToStaticMarkup(createElement(RouterContextProvider, { router: pageRouters[view] }, createElement(CartelGilRushPage)));
 }
 
-test("direct public URLs select the corresponding tab and retain both mounted panels", () => {
+test("allowed direct URLs select the corresponding tab and retain both mounted panels", () => {
   for (const view of ["game", "rulebook"]) {
-    const html = render({ authed: false, session: null }, {}, view);
+    const html = render(previewAuth, {}, view);
     const other = view === "game" ? "rulebook" : "game";
     assert.match(html, new RegExp(`data-state="active"[^>]*data-event-view="${view}"`));
     assert.match(html, new RegExp(`data-state="inactive"[^>]*data-event-view="${other}"`));
@@ -60,26 +63,40 @@ test("direct public URLs select the corresponding tab and retain both mounted pa
   }
 });
 
-test("guests, non-admins and checking sessions get a read-only workspace with no host controls", () => {
+test("guests, other members and checking sessions cannot mount either view or subscribe", () => {
   for (const auth of [
     { authed: false, session: null }, { authed: true, session: null },
     { authed: true, session: { isAdmin: false } }, { authed: true, session: { isAdmin: undefined } },
     { authed: true, session: { isAdmin: false, fcRank: "Boss" } },
     { authed: true, session: { isAdmin: false, fcRank: "Underpaw" } },
     { authed: true, checking: true, session: { isAdmin: true } },
+    { ...previewAuth, session: { ...previewAuth.session, isMember: false } },
+    { ...previewAuth, session: { ...previewAuth.session, lodestoneId: "51550871" } },
+    { ...previewAuth, sessionToken: null },
   ]) {
-    const html = render(auth);
-    assert.match(html, /data-event-view="game"/);
-    assert.match(html, /Live view/);
-    assert.doesNotMatch(html.slice(0, html.indexOf('data-event-view="rulebook"')), /Add players|Manage players|Event options|Reset event|Import local event|Randomise order &amp; start|Play Split or Steal|Open Split or Steal from Chocobo/);
+    for (const view of ["game", "rulebook"]) {
+      const html = render(auth, {}, view);
+      assert.doesNotMatch(html, /data-event-view|data-bingo-mission|Live view|Board Overview/);
+      assert.match(html, /internal|Checking access/);
+      assert.equal(globalThis.gilRushSharedArgs, undefined);
+    }
   }
 });
 
-test("ordinary players can see active trivia teams but no editing or payout controls", () => {
+test("the preview member reads with their session token and loses access on a read failure", () => {
+  render(previewAuth);
+  assert.deepEqual(globalThis.gilRushSharedArgs, ["test-token", false]);
+  for (const state of [{ loading: true }, { readError: "Permission denied" }]) {
+    const html = render(previewAuth, state, "rulebook");
+    assert.doesNotMatch(html, /data-event-view|data-bingo-mission|Board Overview/);
+  }
+});
+
+test("the invited player sees active trivia teams without editing or payout controls", () => {
   saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "guest", name: "Live Player", avatarUrl: null }, { id: "other", name: "Other Player", avatarUrl: null }], minigame: { id: 42, kind: "trivia", teams: [{ id: "guest", team: "A" }, { id: "other", team: "B" }] } });
   try {
     for (const fcRank of ["Housecat", "Stray", "Friend", "Boss", "Underpaw"]) {
-      const html = render({ authed: true, session: { isAdmin: false, fcRank } });
+      const html = render({ ...previewAuth, session: { ...previewAuth.session, fcRank } });
       assert.match(html, /Live Player/);
       assert.match(html, /Other Player/);
       assert.match(html, /aria-label="Team A"/);
@@ -206,7 +223,7 @@ test("Bingo stays playable in Game and has its own explanatory Rulebook chapter 
   const card = { version: 1, eventId: "cartel-gil-rush-1", missionIds: [1, 2, 3, 5, 6, 7, 8, 9, 10], completedIds: [1, 5] };
   bingoSaved = JSON.stringify(card);
   try {
-    for (const auth of [{ authed: false, session: null }, { authed: true, checking: true, session: { isAdmin: true } }, { authed: true, session: { isAdmin: false } }]) {
+    for (const auth of [previewAuth, { authed: true, session: { isAdmin: true } }]) {
       const html = render(auth);
       assert.equal((html.match(/role="tab"/g) ?? []).length, 2);
       assert.doesNotMatch(html, /data-event-view="bingo"/);
@@ -276,7 +293,7 @@ test("active banners keep End minigame host-only and omit lower panels for exter
     for (const kind of ["trivia", "minority", "minority-draw", "eorzeaguessr", "marbles", "deathroll"]) {
       saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "a", name: "Axo", avatarUrl: null }], minigame: { id: 4, kind } });
       for (const isAdmin of [true, false]) {
-        const html = render({ authed: isAdmin, session: isAdmin ? { isAdmin: true } : null });
+        const html = render(isAdmin ? { authed: true, session: { isAdmin: true } } : previewAuth);
         const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
         const banner = game.slice(game.indexOf('aria-label="Active group minigame"'), game.indexOf("</header>"));
         assert.match(banner, /Minigame event/);
@@ -302,7 +319,7 @@ test("Treasure Draw shows saved players before prize reveals without selection c
     const assigned = { ...event, minigame: { ...event.minigame, treasureAssignments: { revision: 1, choices }, chestReveals: [] } };
     saved = JSON.stringify(assigned);
     for (const isAdmin of [true, false]) {
-      const html = render({ authed: isAdmin, session: isAdmin ? { isAdmin: true } : null });
+      const html = render(isAdmin ? { authed: true, session: { isAdmin: true } } : previewAuth);
       const chest2 = html.slice(html.indexOf('aria-label="Chest 2"'), html.indexOf('aria-label="Chest 3"'));
       const chest4 = html.slice(html.indexOf('aria-label="Chest 4"'), html.indexOf('data-event-view="rulebook"'));
       assert.match(chest2, /Axo/);
@@ -312,13 +329,13 @@ test("Treasure Draw shows saved players before prize reveals without selection c
     }
     assigned.minigame.chestReveals = [{ chest: 2, playerIds: ["a"], prize: "100k", revealedAt: Date.now() }];
     saved = JSON.stringify(assigned);
-    const opening = render({ authed: false, session: null });
+    const opening = render(previewAuth);
     const openingChest = opening.slice(opening.indexOf('aria-label="Chest 2"'), opening.indexOf('aria-label="Chest 3"'));
     assert.match(openingChest, /Axo/);
     assert.doesNotMatch(openingChest, /100,000 gil|Revealing players/);
     assigned.minigame.chestReveals[0].revealedAt = 0;
     saved = JSON.stringify(assigned);
-    const complete = render({ authed: false, session: null });
+    const complete = render(previewAuth);
     assert.match(complete.slice(complete.indexOf('aria-label="Chest 2"'), complete.indexOf('aria-label="Chest 3"')), /100,000 gil/);
     saved = JSON.stringify({ ...event, minigame: { ...event.minigame, chests: [{ id: "a", chest: 3 }, { id: "b", chest: 3 }] } });
     const revealed = render({ authed: true, session: { isAdmin: true } });
@@ -332,7 +349,7 @@ test("Split or Steal opens for everyone, hides decisions until reveal and keeps 
   const base = { version: 1, phase: "live", round: 1, players: [{ id: "a", name: "Astrid Gertrud", avatarUrl: null, gilWon: 0 }, { id: "b", name: "Blue Belladonna", avatarUrl: null, gilWon: 0 }], splitChallenge: { id: 9, challenger: "a", partner: "b" } };
   try {
     saved = JSON.stringify(base);
-    const html = render({ authed: false, session: null });
+    const html = render(previewAuth);
     const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
     assert.doesNotMatch(game, /200,000 gil pot/);
     assert.equal((game.match(/Decision hidden/g) ?? []).length, 2);
@@ -344,7 +361,7 @@ test("Split or Steal opens for everyone, hides decisions until reveal and keeps 
     assert.match(host, /aria-label="Landing player: split"/);
     assert.match(host, /aria-label="Partner: steal"/);
     saved = JSON.stringify({ ...base, players: base.players.map(player => ({ ...player, gilWon: player.id === "b" ? 200000 : 0 })), splitResult: { challenger: "a", partner: "b", challengerDecision: "split", partnerDecision: "steal" } });
-    const revealed = render({ authed: false, session: null });
+    const revealed = render(previewAuth);
     const split = revealed.slice(revealed.indexOf('id="split-heading"'), revealed.indexOf('data-event-view="rulebook"'));
     assert.match(split, /0 gil/);
     assert.match(split, /200,000 gil/);
@@ -360,13 +377,13 @@ test("Minority Draw shares three hidden chests and its tie-break status, with ho
   const gameOnly = html => html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
   try {
     saved = JSON.stringify(event);
-    const hidden = gameOnly(render({ authed: false, session: null }));
+    const hidden = gameOnly(render(previewAuth));
     assert.match(hidden, /Minority Draw/);
     assert.equal((hidden.match(/Choices hidden/g) ?? []).length, 3);
     assert.doesNotMatch(hidden, /Chest 4|Record chest assignments|Award winning chest|Deathroll-winning chest/);
     event.minigame.chestReveals = players.map((player, index) => ({ chest: index + 1, playerIds: [player.id], prize: null, revealedAt: 0 }));
     saved = JSON.stringify(event);
-    const viewer = gameOnly(render({ authed: false, session: null }));
+    const viewer = gameOnly(render(previewAuth));
     assert.match(viewer, /Chow hosts the deathroll/);
     assert.equal((viewer.match(/Deathroll tie-break/g) ?? []).length, 4);
     assert.doesNotMatch(viewer, /Prize not recorded|Award winning chest|Deathroll-winning chest|role="combobox"/);
@@ -374,7 +391,7 @@ test("Minority Draw shares three hidden chests and its tie-break status, with ho
     assert.match(host, /Award winning chest/);
     assert.match(host, /aria-label="Deathroll-winning chest"/);
     saved = JSON.stringify({ ...event, minigame: { ...event.minigame, minorityDrawWinner: 2 } });
-    const result = gameOnly(render({ authed: false, session: null }));
+    const result = gameOnly(render(previewAuth));
     assert.match(result, /200,000 gil \+ golden die/);
     assert.equal((result.match(/No prize/g) ?? []).length, 2);
     assert.doesNotMatch(result, /Award winning chest|Deathroll-winning chest|Deathroll tie-break/);

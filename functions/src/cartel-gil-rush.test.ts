@@ -1,6 +1,12 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { emptyGilRushEvent, lockMinorityAssignments, nextMinorityAssignments, readMinorityAssignments, publishTreasureAssignments, nextGilRushEvent, readGilRushEvent, splitPayouts, type GilRushEvent } from "./cartel-gil-rush-model";
+import { canViewGilRush, emptyGilRushEvent, lockMinorityAssignments, nextMinorityAssignments, readMinorityAssignments, publishTreasureAssignments, nextGilRushEvent, readGilRushEvent, splitPayouts, type GilRushEvent } from "./cartel-gil-rush-model";
+
+test("internal viewing requires an admin or exactly the linked preview member", () => {
+  assert.equal(canViewGilRush({ isAdmin: true }), true);
+  assert.equal(canViewGilRush({ isMember: true, lodestoneId: "51550870" }), true);
+  for (const session of [null, {}, { isMember: true, lodestoneId: "51550871" }, { lodestoneId: "51550870" }, { isMember: false, lodestoneId: "51550870" }]) assert.equal(canViewGilRush(session), false);
+});
 
 const add = (id: string) => ({ type: "add", player: { id, name: id, avatarUrl: null } });
 const apply = (event: GilRushEvent, action: unknown) => nextGilRushEvent(event, action, event.revision, () => 0);

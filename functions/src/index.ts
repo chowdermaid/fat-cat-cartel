@@ -53,7 +53,8 @@ import {
   searchMeowketItemsForAdmin,
 } from "./meowket-board";
 import { mutateSpudJar, parseSpudJarBatchCount } from "./spud-jar";
-import { mutateGilRushEvent } from "./cartel-gil-rush";
+import { mutateGilRushEvent, waitForGilRushEvent } from "./cartel-gil-rush";
+import { canViewGilRush } from "./cartel-gil-rush-model";
 import { saveKeyboundScores } from "./keybound-brawler";
 import { runScheduledDiscordNotifications } from "./scheduled-discord-notifications";
 import {
@@ -1011,6 +1012,16 @@ export const undoSpudJarComplaint = onCall(
     );
     const count = parseSpudJarBatchCount(request.data);
     return mutateSpudJar("undo", session.discordUserId, count);
+  },
+);
+
+export const readCartelGilRushEvent = onCall(
+  { cors: true, secrets: [discordBotToken], timeoutSeconds: 40, region: "asia-southeast1" },
+  async (request) => {
+    const session = await requireMemberSession(request.data, adminAuthConfig());
+    if (!canViewGilRush(session)) throw new HttpsError("permission-denied", "This event is internal to Boss, Underpaw and the invited preview member.");
+    const event = await waitForGilRushEvent(request.data?.afterRevision ?? null, Math.max(0, Math.min(20_000, session.expiresAt - Date.now())));
+    return { event };
   },
 );
 

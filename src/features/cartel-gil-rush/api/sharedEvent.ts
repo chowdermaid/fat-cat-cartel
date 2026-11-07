@@ -1,7 +1,6 @@
-import { db, ref, onValue } from "@/lib/db";
 import { callAdminFunction } from "@/features/admin/api/adminFunctions";
 import { DEV_AUTH_LAYER_ENABLED } from "@/lib/dev/personas";
-import { GIL_RUSH_PATH, readGilRushEvent } from "../../../../functions/src/cartel-gil-rush-model";
+import { readGilRushEvent } from "../../../../functions/src/cartel-gil-rush-model";
 import type { MinorityAssignments } from "../../../../functions/src/cartel-gil-rush-model";
 import type { SharedEvent, SharedEventAction } from "../types";
 import { loadStubMinority, mutateStubEvent, saveStubMinority, subscribeStubEvent } from "./sharedEventStub";
@@ -21,12 +20,50 @@ export async function saveMinorityAssignments(token: string, gameId: number, cho
   return (await callAdminFunction<{ assignments: MinorityAssignments }>(callableName, token, { action: { type: "save-minority-assignments", gameId, choices }, expectedRevision: revision }, callableOptions)).assignments;
 }
 
-export function subscribeSharedEvent(receive: (event: SharedEvent) => void, fail: (error: Error) => void): () => void {
+export function subscribeSharedEvent(token: string | null, receive: (event: SharedEvent) => void, fail: (error: Error) => void): () => void {
+  if (!token) { queueMicrotask(() => fail(new Error("Sign in to view this internal event."))); return () => {}; }
   if (useStub) return subscribeStubEvent(receive, fail);
-  return onValue(ref(db, GIL_RUSH_PATH), (snapshot: { val: () => unknown }) => {
-    try { receive(readGilRushEvent(snapshot.val())); }
-    catch (error) { fail(error instanceof Error ? error : new Error("Shared event is invalid.")); }
-  }, fail);
+  let active = true;
+  let revision: number | null = null;
+  let resume: (() => void) | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const wait = (delay: number) => new Promise<void>(resolve => { resume = resolve; timer = setTimeout(() => { resume = undefined; timer = undefined; resolve(); }, delay); });
+  const visible = () => typeof document === "undefined" || !document.hidden;
+  const onVisibility = () => {
+    if (visible() && resume) { clearTimeout(timer); timer = undefined; const resolve = resume; resume = undefined; resolve(); }
+  };
+  if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+  async function listen() {
+    while (active) {
+      if (!visible()) { await new Promise<void>(resolve => { resume = resolve; }); continue; }
+      try {
+        const result = await callAdminFunction<{ event: unknown | null }>("readCartelGilRushEvent", token!, { afterRevision: revision }, { ...callableOptions, timeout: 45_000 });
+        if (!active) return;
+        if (result.event !== null) {
+          const event = readGilRushEvent(result.event);
+          revision = event.revision;
+          receive(event);
+        }
+        await wait(1000);
+      } catch (cause) {
+        if (!active) return;
+        const error = cause instanceof Error ? cause : new Error("Could not read the shared event.");
+        fail(error);
+        const code = (cause as { code?: string } | null)?.code;
+        if (code === "functions/permission-denied" || code === "functions/unauthenticated") return;
+        revision = null;
+        await wait(5000);
+      }
+    }
+  }
+  void listen();
+  return () => {
+    active = false;
+    clearTimeout(timer);
+    resume?.();
+    resume = undefined;
+    if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+  };
 }
 
 export async function mutateSharedEvent(token: string, action: SharedEventAction, expectedRevision: number): Promise<SharedEvent> {

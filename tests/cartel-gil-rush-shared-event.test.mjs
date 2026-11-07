@@ -35,7 +35,7 @@ const { emptyGilRushEvent, nextGilRushEvent } = await server.ssrLoadModule("/fun
 const { PlayerGilInput } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/PlayerGilInput.tsx");
 after(async () => { await server.close(); globalThis.localStorage = originalStorage; delete globalThis.sharedHarness; });
 
-function mount(saved = null, token = "host-token") {
+function mount(saved = null, token = "host-token", canEdit = true) {
   let cursor = 0;
   const slots = [];
   const requests = [];
@@ -49,10 +49,10 @@ function mount(saved = null, token = "host-token") {
       return [slots[index], value => { slots[index] = typeof value === "function" ? value(slots[index]) : value; }];
     },
     useRef(initial) { const index = cursor++; return slots[index] ??= { current: initial }; },
-    subscribe(callback, error) { receive = callback; fail = error; return () => { stopped = true; }; },
+    subscribe(readToken, callback, error) { assert.equal(readToken, token); receive = callback; fail = error; return () => { stopped = true; }; },
     mutate(token, action, revision) { return new Promise((resolve, reject) => requests.push({ token, action, revision, resolve, reject })); },
   };
-  function render() { cursor = 0; return useSharedEvent(token); }
+  function render() { cursor = 0; return useSharedEvent(token, canEdit); }
   render();
   const cleanup = globalThis.sharedHarness.effects[0]();
   return { render, receive: value => receive(value), fail: value => fail(value), requests, cleanup, get stopped() { return stopped; } };
@@ -69,12 +69,15 @@ test("load guards mutations; one subscription survives rerenders; legacy import 
   assert.equal(fixture.stopped, true);
 });
 
-test("spectators subscribe to the shared event but cannot send mutations without a host token", async () => {
-  const viewer = mount(null, null);
+test("an invited viewer reads with a session token but cannot send host mutations", async () => {
+  const viewer = mount(null, "viewer-token", false);
   viewer.receive(emptyGilRushEvent());
   assert.equal(viewer.render().loading, false);
   assert.equal(await viewer.render().run({ type: "start-split" }), false);
   assert.equal(viewer.requests.length, 0);
+  assert.equal(viewer.render().hostToken, null);
+  viewer.fail(new Error("Viewing permission revoked"));
+  assert.equal(viewer.render().readError, "Viewing permission revoked");
   viewer.cleanup();
   assert.equal(viewer.stopped, true);
 });

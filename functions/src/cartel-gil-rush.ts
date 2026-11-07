@@ -3,6 +3,29 @@ import { HttpsError } from "firebase-functions/v2/https";
 import { GIL_RUSH_PATH, GIL_RUSH_PRIVATE_PATH, GilRushError, lockMinorityAssignments, minorityChestCount, nextGilRushEvent, nextMinorityAssignments, publishTreasureAssignments, readGilRushEvent, readMinorityAssignments, requireMinorityGame } from "./cartel-gil-rush-model";
 import type { MinorityAssignments } from "./cartel-gil-rush-model";
 
+export function waitForGilRushEvent(afterRevision: unknown, waitMs = 20_000) {
+  if (afterRevision !== null && (!Number.isSafeInteger(afterRevision) || Number(afterRevision) < 0)) throw new HttpsError("invalid-argument", "Invalid event revision.");
+  const ref = admin.database().ref(GIL_RUSH_PATH);
+  return new Promise<ReturnType<typeof readGilRushEvent> | null>((resolve, reject) => {
+    let settled = false;
+    const finish = (error?: Error, event: ReturnType<typeof readGilRushEvent> | null = null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      ref.off("value", receive);
+      if (error) reject(error); else resolve(event);
+    };
+    const receive = (snapshot: admin.database.DataSnapshot) => {
+      try {
+        const event = readGilRushEvent(snapshot.val());
+        if (afterRevision === null || event.revision !== afterRevision) finish(undefined, event);
+      } catch (error) { finish(error instanceof Error ? error : new Error("Invalid shared event.")); }
+    };
+    const timer = setTimeout(() => finish(), waitMs);
+    ref.on("value", receive, error => finish(error));
+  });
+}
+
 async function transact(ref: admin.database.Reference, transform: (value: unknown) => unknown) {
   const warmCache = () => {};
   try {

@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 
 const enabled = Boolean(process.env.FIREBASE_DATABASE_EMULATOR_HOST);
 const require = createRequire(new URL("../functions/package.json", import.meta.url));
-let admin, callable, legacyCallable;
+let admin, callable, legacyCallable, readCallable;
 const originalFetch = globalThis.fetch;
 let roles = ["test-boss"];
 
@@ -19,6 +19,7 @@ if (enabled) {
   const functions = require("./lib/index.js");
   callable = functions.mutateCartelGilRushEventAsia;
   legacyCallable = functions.mutateCartelGilRushEvent;
+  readCallable = functions.readCartelGilRushEvent;
   globalThis.fetch = async (url, ...args) => {
     if (String(url).startsWith("https://discord.com/api/")) return new Response(JSON.stringify({ roles }), { status: 200 });
     return originalFetch(url, ...args);
@@ -29,12 +30,58 @@ after(async () => { globalThis.fetch = originalFetch; if (enabled) await Promise
 const token = "gil-rush-emulator-test-session-token-000000000000000000";
 const hash = createHash("sha256").update(token).digest("hex");
 const path = "events/cartelGilRush/current";
-async function session(expired = false) {
+async function session(expired = false, lodestoneId = "test-player") {
   await admin.database().ref(`adminSessions/${hash}`).set({ discordUserId: "test-user", expiresAt: expired ? 1 : Date.now() + 60_000, lastSeenAt: Date.now() });
-  await admin.database().ref("discordLinks/test-user").set({ lodestoneId: "test-player" });
-  await admin.database().ref("members/test-player").set({ name: "Host", fcRank: "Boss" });
+  await admin.database().ref("discordLinks/test-user").set({ lodestoneId });
+  await admin.database().ref(`members/${lodestoneId}`).set({ name: "Host", fcRank: "Boss" });
 }
 const call = (action, expectedRevision, adminSessionToken = token) => callable.run({ data: { adminSessionToken, action, expectedRevision } });
+
+test("internal reads verify live roles and the real character link; the invited viewer cannot host", { skip: !enabled, timeout: 30_000 }, async () => {
+  assert.deepEqual(readCallable.__endpoint.region, ["asia-southeast1"]);
+  const read = data => readCallable.run({ data: { adminSessionToken: token, afterRevision: null, ...data } });
+  await assert.rejects(read({ adminSessionToken: "" }), error => error.code === "unauthenticated");
+  await session(true);
+  await assert.rejects(read(), error => error.code === "unauthenticated");
+  await session();
+  await admin.database().ref(path).set({ version: 1, revision: 7, phase: "setup", round: 1, players: [] });
+  for (const role of ["test-boss", "test-underpaw"]) {
+    roles = [role];
+    assert.equal((await read()).event.revision, 7);
+  }
+  roles = ["test-member"];
+  await assert.rejects(read({ lodestoneId: "51550870", isAdmin: true, isMember: true }), error => error.code === "permission-denied");
+  await admin.database().ref(`adminSessions/${hash}`).update({ lodestoneId: "51550870", isAdmin: true });
+  await assert.rejects(read(), error => error.code === "permission-denied");
+  await session(false, "51550870");
+  assert.equal((await read()).event.revision, 7);
+  for (const endpoint of [callable, legacyCallable]) {
+    for (const action of [{ type: "reset" }, { type: "load-minority-assignments", gameId: 7 }]) {
+      await assert.rejects(endpoint.run({ data: { adminSessionToken: token, action, expectedRevision: 7 } }), error => error.code === "permission-denied");
+    }
+  }
+  roles = [];
+  await assert.rejects(read(), error => error.code === "permission-denied");
+  roles = ["test-member"];
+  await admin.database().ref("discordLinks/test-user").set({ lodestoneId: "test-player" });
+  await assert.rejects(read(), error => error.code === "permission-denied");
+  await session(false, "51550870");
+  await admin.database().ref("members/51550870").remove();
+  await assert.rejects(read());
+  assert.equal((await admin.database().ref(path).get()).val().revision, 7);
+});
+
+test("private live reads wait for changes, time out without a snapshot and reject malformed revisions", { skip: !enabled, timeout: 30_000 }, async () => {
+  roles = ["test-boss"];
+  await session();
+  await admin.database().ref(path).set({ version: 1, revision: 8, phase: "setup", round: 1, players: [] });
+  const { waitForGilRushEvent } = require("./lib/cartel-gil-rush.js");
+  assert.equal(await waitForGilRushEvent(8, 10), null);
+  const pending = readCallable.run({ data: { adminSessionToken: token, afterRevision: 8 } });
+  await admin.database().ref(`${path}/revision`).set(9);
+  assert.equal((await pending).event.revision, 9);
+  await assert.rejects(readCallable.run({ data: { adminSessionToken: token, afterRevision: "9" } }), error => error.code === "invalid-argument");
+});
 
 test("real callable authorizes sessions and transactions reject concurrent/stale hosts", { skip: !enabled, timeout: 30_000 }, async () => {
   assert.deepEqual(callable.__endpoint.region, ["asia-southeast1"]);
