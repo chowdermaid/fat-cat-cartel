@@ -61,7 +61,7 @@ Use this doc when changing UI layout, navigation, components, styling, assets, o
 ## Animation
 
 - Import AnimeJS with `import { animate, stagger } from "animejs";`.
-- Cartel Gil Rush uses Motion (`motion/mini` for fades) for its Game / Rulebook transitions, as requested. Keep this scoped to the feature and respect reduced motion.
+- Cartel Gil Rush uses AnimeJS for Game entrances and state changes; Rulebook view fades keep Motion (`motion/mini`). Respect reduced motion, restore animation styles on completion/cleanup and leave banner/board dimensions unchanged.
 - Use mount-time stagger animations from a `ref` for page sections, cards, member grids, and skeletons.
 - For loading states, prefer skeleton blocks with `animate-pulse` and a `.sk` class only on elements that should individually cascade.
 - For table or list refreshes, animate only visible rows and cap long lists.

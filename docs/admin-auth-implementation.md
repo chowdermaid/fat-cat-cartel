@@ -104,7 +104,7 @@ All admin mutations must include `adminSessionToken` and call `requireAdminSessi
 - `updateMemberProfileAdmin`
 - `upsertEasterParticipantAdmin`
 - `deleteEasterParticipantAdmin`
-- `mutateCartelGilRushEvent`: revision-checked shared roster/order, manual round/mood, gil totals, reset and explicit legacy import. Reads are public like Easter; direct browser writes are denied.
+- `mutateCartelGilRushEventAsia` (Singapore) and compatibility `mutateCartelGilRushEvent` (US): the same live-admin-checked shared Gil Rush handler, including roster/order, rounds, gil/dice, minigames, reset and import. New Gil Rush clients route to Singapore through the admin helper's per-call region option; other calls/OAuth retain the US default. Emulator hookup is tracked per regional Functions instance. Reads are public like Easter; direct browser writes are denied. See [region migration](cartel-gil-rush-region-migration.md).
 - `saveKeyboundBrawlerScores`: Boss/Underpaw-only atomic batch of changed scores. Validates unique numeric Lodestone IDs, current member existence, and nonnegative safe integer scores or null to clear. Client admin hints and FC ranks grant no authority. `/keyboundBrawler` is public-readable and browser writes are denied at every depth.
 
 Member self profile editing uses `updateOwnMemberProfile`. Housecat event request creation uses `submitCalendarEventRequest`. Both accept the same session token and call `requireMemberSession`; profile edits write only to the linked `/memberProfiles/{lodestoneId}` derived from the verified session. Favorite mount and minion IDs are accepted only when they are present in that member's synced `/fcCollection/memberData/{lodestoneId}/owned` arrays.

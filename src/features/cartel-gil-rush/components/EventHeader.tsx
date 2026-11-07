@@ -22,9 +22,9 @@ export function EventHeader({ view, onBackToGame, children }: EventHeaderProps) 
           <p className="text-xs tracking-wider text-muted-foreground uppercase">Draft</p>
         </div>
       </div>
-      <TabsList aria-label="Event views" className="order-3 flex w-full justify-start gap-3">
-        <TabsTrigger value="game" className="min-h-14 gap-3 px-[22px] text-base dark:data-[state=active]:border-[#ffd331] dark:data-[state=active]:text-[#ffd331]"><Users aria-hidden="true" className="size-5" />Game</TabsTrigger>
-        <TabsTrigger value="rulebook" className="min-h-14 gap-3 px-[22px] text-base dark:data-[state=active]:border-[#ffd331] dark:data-[state=active]:text-[#ffd331]"><BookOpen aria-hidden="true" className="size-5" />Rulebook</TabsTrigger>
+      <TabsList aria-label="Event views" className="order-3 flex w-full justify-start gap-1 @[600px]:gap-3">
+        <TabsTrigger value="game" className="min-h-14 min-w-0 flex-1 gap-1.5 px-2 text-sm @[600px]:flex-none @[600px]:gap-3 @[600px]:px-[22px] @[600px]:text-base dark:data-[state=active]:border-[#ffd331] dark:data-[state=active]:text-[#ffd331]"><Users aria-hidden="true" className="size-5" />Game</TabsTrigger>
+        <TabsTrigger value="rulebook" className="min-h-14 min-w-0 flex-1 gap-1.5 px-2 text-sm @[600px]:flex-none @[600px]:gap-3 @[600px]:px-[22px] @[600px]:text-base dark:data-[state=active]:border-[#ffd331] dark:data-[state=active]:text-[#ffd331]"><BookOpen aria-hidden="true" className="size-5" />Rulebook</TabsTrigger>
       </TabsList>
       <div className="ml-auto flex min-h-11 min-w-0 basis-full items-center justify-end @[900px]:basis-auto">
         <div className={view === "game" ? "min-w-0" : "hidden"}>{children}</div>

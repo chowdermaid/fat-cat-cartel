@@ -75,3 +75,12 @@ No actionable P0/P1/P2 visual issues remained in the inspected states. The previ
 The earlier implementation used batch editing, approximate wheat decoration and a maintenance footer. Subsequent revisions applied supplied laurels, viewport-filling rankings and per-member popover saves, then matched the FC Collection heading, replaced trophies with supplied crowns and removed the table caption/header row. The latest pass removes the podium frame, seats crowns on portraits, lowers laurels, increases first-place score size and applies medal colors to scores/avatar rims. Desktop and mobile were re-inspected in both themes, plus 320px dark mode; document dimensions still match each viewport. `podium-*` files show the current UI; earlier screenshots remain for history. This visual-only update adds no Firebase reads, writes or Function calls.
 
 final result: passed
+
+
+## Gil Rush Bingo implementation, 7 November 2026
+
+Source: the conversation Bingo screenshot, used as a reference only; the written spec and existing site assets/styles control implementation. Local preview: http://127.0.0.1:5177/cartel-gil-rush in stub mode, without development admin auth.
+
+The in-app browser access host is unavailable. Native Chrome was present, but Computer Use stopped before opening the preview because it could not reliably determine the current browser URL to enforce policy. No screenshot comparison, desktop/mobile readability pass, live keyboard interaction, console check or browser refresh test could be performed. These remain pending; build and automated persistence/render checks do not constitute visual verification.
+
+Bingo final result: blocked (browser verification only).

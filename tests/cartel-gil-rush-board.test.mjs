@@ -24,25 +24,25 @@ test("all 90 cells occupy unique serpentine positions with continuous adjacent s
   for (const invalid of [0, 91, 1.5, NaN, Infinity]) assert.throws(() => getBoardPosition(invalid), RangeError);
 });
 
-test("the revised 24 special tiles and eight routes are reproduced exactly", () => {
+test("the revised 25 special tiles and eight routes are reproduced exactly", () => {
   const expected = {
-    6: "mushroom", 10: "moogle", 14: "ladder", 19: "fatcat", 23: "chocobo", 25: "shark",
+    6: "mushroom", 10: "moogle", 13: "ladder", 19: "fatcat", 23: "chocobo", 25: "shark",
     33: "ladder", 34: "red-arrow", 35: "fatcat", 39: "moogle", 49: "mushroom", 53: "shark",
     54: "red-arrow", 57: "chocobo", 62: "moogle", 68: "red-arrow", 70: "fatcat", 72: "red-arrow",
-    74: "red-arrow", 76: "shark", 81: "chocobo", 87: "red-arrow", 89: "mushroom", 90: "finish",
+    74: "red-arrow", 76: "shark", 78: "moogle", 81: "chocobo", 87: "red-arrow", 89: "mushroom", 90: "finish",
   };
   assert.deepEqual(Object.fromEntries(boardCells.filter(({ symbol }) => symbol).map(({ number, symbol }) => [number, symbol])), expected);
   assert.deepEqual(boardConnections.map(({ kind, from, to }) => [kind, from, to]), [
-    ["ladder", 14, 45], ["ladder", 33, 60], ["fall", 34, 3], ["fall", 54, 24], ["fall", 68, 20], ["fall", 72, 51], ["fall", 74, 13], ["fall", 87, 59],
+    ["ladder", 13, 45], ["ladder", 33, 60], ["fall", 34, 3], ["fall", 54, 24], ["fall", 68, 20], ["fall", 72, 51], ["fall", 74, 13], ["fall", 87, 59],
   ]);
   for (const cell of boardCells) assert.deepEqual(cell.incoming, boardConnections.filter(({ to }) => to === cell.number));
   const thirteen = boardCells[12];
-  assert.equal(thirteen.symbol, null);
-  assert.equal(thirteen.outgoing, null);
+  assert.equal(thirteen.symbol, "ladder");
+  assert.equal(thirteen.outgoing.to, 45);
   assert.deepEqual(thirteen.incoming.map(({ from }) => from), [74]);
-  assert.equal(describeBoardCell(thirteen), "Tile 13. Fall destination from 74");
-  assert.equal(boardCells[13].outgoing.to, 45);
-  assert.equal(describeBoardCell(boardCells[13]), "Tile 14. Ladder to 45");
+  assert.equal(describeBoardCell(thirteen), "Tile 13. Ladder to 45. Fall destination from 74");
+  assert.equal(boardCells[12].outgoing.to, 45);
+  assert.equal(describeBoardCell(boardCells[12]), "Tile 13. Ladder to 45. Fall destination from 74");
   assert.equal(describeBoardCell(boardCells[24]), "Tile 25. Shark");
 });
 
@@ -93,8 +93,8 @@ test("floor panels alternate by numbered row, preserve role colours and contrast
   const special = new Map();
   for (const [numbers, colour, ink] of [
     [[25, 53, 76], "10BDCD", "171717"], [[6, 49, 89], "741744", "FFFFFF"],
-    [[10, 39, 62], "C18B43", "171717"], [[23, 57, 81], "FF741F", "171717"],
-    [[19, 35, 70], "F4CB54", "171717"], [[14, 33, 45, 60], "C4E94B", "171717"],
+    [[10, 39, 62, 78], "C18B43", "171717"], [[23, 57, 81], "FF741F", "171717"],
+    [[19, 35, 70], "F4CB54", "171717"], [[13, 33, 45, 60], "C4E94B", "171717"],
     [[34, 54, 68, 72, 74, 87], "B60922", "FFFFFF"], [[1, 90], "FFD451", "171717"],
   ]) for (const number of numbers) special.set(number, [colour, ink]);
   assert.equal(panels.size, 90);
@@ -114,4 +114,16 @@ test("route highlighting dims the other seven connections without removing them"
   const html = renderToStaticMarkup(createElement(BoardConnections, { geometry: { width: 840, height: 400, cellSize: 48, centers }, selected: "fall-74-13" }));
   assert.match(html, /data-board-connection="fall-74-13"[^>]+opacity="1"/);
   assert.equal((html.match(/opacity="0.12"/g) ?? []).length, 7);
+});
+
+test("Chocobo board actions are opt-in and respect the host's disabled state", () => {
+  const base = { active: false, selected: null, onSelect() {} };
+  const viewer = renderToStaticMarkup(createElement(BoardGrid, base));
+  assert.doesNotMatch(viewer, /Open Split or Steal from Chocobo/);
+  for (const disabled of [false, true]) {
+    const host = renderToStaticMarkup(createElement(BoardGrid, { ...base, onChocoboClick() {}, chocoboDisabled: disabled }));
+    const buttons = [...host.matchAll(/<button\b[^>]*aria-label="Open Split or Steal from Chocobo tile (\d+)"[^>]*>/g)];
+    assert.deepEqual(buttons.map(match => Number(match[1])), [23, 57, 81]);
+    assert.ok(buttons.every(match => /disabled=""/.test(match[0]) === disabled));
+  }
 });

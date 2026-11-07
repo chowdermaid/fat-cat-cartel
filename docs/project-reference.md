@@ -64,7 +64,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`
-- `/cartel-gil-rush`: Boss/Underpaw solo-event host display with static roster rail, mood banner, manual round and rulebook; `/ladders-and-backstabbers` redirects here
+- `/cartel-gil-rush`: public live event display with Boss/Underpaw host controls and static roster rail, scheduled group minigames, bonus dice, Split or Steal, manual round, rulebook and browser-only Bingo; `/ladders-and-backstabbers` redirects here
 - `/admin`: `AdminPage`
 - `/gameserver`: authorized game-server catalog
 - `/gameserver/palworld`: existing Palworld controls and player field
@@ -189,7 +189,7 @@ For progress bars or visual meters, keep JSX at the base value and animate the c
 
 ### General checks
 
-- Cartel Gil Rush shares one current event at `/events/cartelGilRush/current`: fixed solo player order, optional manual mood, independent round and manually entered per-player gil totals. Start requires players only; visible Prev/Next round controls and a named-mood dropdown operate independently. The Boss/Underpaw callable validates every mutation and expected revision; one small live subscription updates hosts. Reset clears the shared event for everyone, retaining revision. Legacy `fcc_cartel_gil_rush_event_v1` saves remain unchanged and can be explicitly imported into an empty shared event with zero gil totals. Existing lazy roster cache behaviour remains. Rulebook content, board, navigation, credit and reading-position restoration are unchanged. Deploy the new Function and rules before the frontend. See `docs/cartel-gil-rush-implementation.md` for cost and verification details.
+- Cartel Gil Rush shares one current event at `/events/cartelGilRush/current`: fixed solo order, manual rounds/gil, golden D10 movement bonuses lasting until the next group minigame, group minigames and Split or Steal. Moods are removed. Trivia shuffles balanced teams and atomically awards manually entered per-team winnings once on finalisation; Split or Steal reveals both decisions and awards its event-funded payouts. Split or Steal opens a shared challenge before host-only decisions are revealed. Treasure Draw saves a once-shuffled prize map in a server-only record, publishes prize-free player assignments after Save, then reveals each chest prize independently. Minority Draw assignments remain private until revealed. Split or Steal decisions stay tab-local until reveal. Spectators have a read-only live view. Minority chest prizes shuffle once per minigame and are awarded automatically on reveal. Starting the next group minigame clears golden dice. One live subscription per host/spectator and one revision-checked callable per saved host action remain; private draft edits add no requests. Deploy the updated Function before the frontend. See `docs/cartel-gil-rush-implementation.md` for workflow, privacy, compatibility, cost and checks.
 
 - Doc-only changes need no build.
 - TypeScript or route changes: `npm run build`.

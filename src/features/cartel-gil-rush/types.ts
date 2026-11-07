@@ -21,15 +21,33 @@ export interface LocalEvent {
 }
 
 export type EventView = "game" | "rulebook";
-export type RulebookChapter = "board-overview" | "quick-start" | "special-tiles" | "board-moods" | "rewards";
+export interface BingoMission {
+  id: number;
+  text: string;
+  icon: Tile["id"] | "coins" | "die" | "golden-die" | "minority-draw" | "eorzeaguessr" | "marbles" | "flag";
+}
+export interface BingoCardState {
+  version: 1;
+  eventId: string;
+  missionIds: number[];
+  completedIds: number[];
+}
+export interface BingoController {
+  card: BingoCardState;
+  storageUnavailable: boolean;
+  toggle: (id: number) => void;
+}
+export type RulebookChapter = "board-overview" | "quick-start" | "special-tiles" | "group-minigames" | "bingo" | "rewards";
 
 export interface EventController {
   current: SharedEvent;
   error: string | null;
   loading: boolean;
   pending: boolean;
+  pendingKeys: string[];
   importable: LocalEvent | null;
   run: (action: SharedEventAction, expectedRevision?: number) => Promise<boolean>;
+  hostToken?: string | null;
 }
 
 export type EventAction =

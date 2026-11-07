@@ -1,19 +1,13 @@
-import { ArrowDown, ArrowUp, Bird, Cat, ClipboardList, Cloud, Fish, LayoutGrid, Map, Palette, Trophy, Undo2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Bird, Cat, ClipboardList, Cloud, Fish, Grid3X3, LayoutGrid, Map, Users, Trophy, Undo2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { Mood, RulebookChapter, Tile } from "./types";
-
-export const moodAccents: Record<Mood, string> = {
-  yellow: "text-amber-800 dark:text-amber-300",
-  blue: "text-blue-700 dark:text-blue-300",
-  violet: "text-violet-700 dark:text-violet-300",
-  red: "text-red-700 dark:text-red-300",
-};
+import type { RulebookChapter, Tile } from "./types";
 
 export const chapters: { id: RulebookChapter; title: string; icon: LucideIcon }[] = [
   { id: "board-overview", title: "Board Overview", icon: LayoutGrid },
   { id: "quick-start", title: "Quick start", icon: ClipboardList },
   { id: "special-tiles", title: "Tiles & movement", icon: Map },
-  { id: "board-moods", title: "Board moods", icon: Palette },
+  { id: "group-minigames", title: "Group minigames", icon: Users },
+  { id: "bingo", title: "Bingo", icon: Grid3X3 },
   { id: "rewards", title: "Rewards", icon: Trophy },
 ];
 

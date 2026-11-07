@@ -1022,6 +1022,14 @@ export const mutateCartelGilRushEvent = onCall(
   },
 );
 
+export const mutateCartelGilRushEventAsia = onCall(
+  { cors: true, secrets: [discordBotToken], timeoutSeconds: 30, region: "asia-southeast1" },
+  async (request) => {
+    await requireAdminSession(request.data, adminAuthConfig());
+    return mutateGilRushEvent(request.data);
+  },
+);
+
 export const saveKeyboundBrawlerScores = onCall(
   { cors: true, secrets: [discordBotToken], timeoutSeconds: 30, region: "us-central1" },
   async (request) => {

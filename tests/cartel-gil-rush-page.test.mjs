@@ -7,13 +7,15 @@ import { createServer } from "vite";
 
 const originalStorage = globalThis.localStorage;
 let saved = null;
-globalThis.localStorage = { getItem: () => saved };
+let bingoSaved = null;
+globalThis.localStorage = { getItem: key => key === "fcc_cartel_gil_rush_bingo_v1" ? bingoSaved : saved };
 const server = await createServer({
   configFile: false, envFile: false, logLevel: "silent",
   server: { middlewareMode: true, ws: false },
   resolve: { alias: { "@": path.resolve("src") } },
   plugins: [{ name: "gil-rush-page-auth-boundary", enforce: "pre", load(id) {
     if (id.replaceAll("\\", "/").endsWith("/admin/hooks/useAdminAuth.ts")) return "export const useAdminAuth = () => globalThis.gilRushPageAuth;";
+    if (id.replaceAll("\\", "/").endsWith("/hooks/useMinorityAssignments.ts")) return "export const useMinorityAssignments = () => ({ saved: null, loading: false, pending: false, error: null });";
     if (id.replaceAll("\\", "/").endsWith("/hooks/useSharedEvent.ts")) return "export const useSharedEvent = () => globalThis.gilRushPageEvent;";
     if (id.replaceAll("\\", "/").endsWith("/hooks/useMembers.ts")) return "export const useMembers = () => { throw new Error('Roster must not load before player setup is opened'); };";
   } }],
@@ -22,6 +24,7 @@ const { CartelGilRushPage } = await server.ssrLoadModule("/src/features/cartel-g
 const { TileCard } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/rulebook/TileCard.tsx");
 const { RuleText } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/rulebook/RuleText.tsx");
 const { tiles } = await server.ssrLoadModule("/src/features/cartel-gil-rush/constants.ts");
+const { readGilRushEvent } = await server.ssrLoadModule("/functions/src/cartel-gil-rush-model.ts");
 const { emptyEvent, updateEvent } = await server.ssrLoadModule("/src/features/cartel-gil-rush/utils/localEvent.ts");
 
 after(async () => {
@@ -32,14 +35,14 @@ after(async () => {
   delete globalThis.gilRushPageEvent;
 });
 
-function render(auth) {
+function render(auth, eventOverrides = {}) {
   globalThis.gilRushPageAuth = { checking: false, error: null, login: () => {}, ...auth };
   const event = saved ? JSON.parse(saved) : emptyEvent();
-  globalThis.gilRushPageEvent = { current: { ...event, revision: 1, players: event.players.map(player => ({ ...player, gilWon: 0 })) }, error: null, loading: false, pending: false, importable: null, run: async () => true };
+  globalThis.gilRushPageEvent = { current: readGilRushEvent({ ...event, revision: 1, players: event.players.map(player => ({ ...player, gilWon: player.gilWon ?? 0 })) }), error: null, loading: false, pending: false, pendingKeys: [], importable: null, run: async () => true, ...eventOverrides };
   return renderToStaticMarkup(createElement(CartelGilRushPage));
 }
 
-test("guest, non-admin and checking sessions cannot render workspace", () => {
+test("guests, non-admins and checking sessions get a read-only workspace with no host controls", () => {
   for (const auth of [
     { authed: false, session: null }, { authed: true, session: null },
     { authed: true, session: { isAdmin: false } }, { authed: true, session: { isAdmin: undefined } },
@@ -48,21 +51,24 @@ test("guest, non-admin and checking sessions cannot render workspace", () => {
     { authed: true, checking: true, session: { isAdmin: true } },
   ]) {
     const html = render(auth);
-    assert.match(html, /Boss or Underpaw Discord role/);
-    assert.doesNotMatch(html, /data-event-view|Add players|DRAFT/);
+    assert.match(html, /data-event-view="game"/);
+    assert.match(html, /Live view/);
+    assert.doesNotMatch(html.slice(0, html.indexOf('data-event-view="rulebook"')), /Add players|Manage players|Event options|Reset event|Import local event|Randomise order &amp; start|Play Split or Steal|Open Split or Steal from Chocobo/);
   }
 });
 
-test("live event does not expose either tab or edit controls to non-admin sessions", () => {
-  let event = updateEvent(emptyEvent(), { type: "add", player: { id: "guest", name: "Live Player", avatarUrl: null } });
-  event = updateEvent(event, { type: "set-mood", mood: "blue" });
-  event = updateEvent(event, { type: "start" });
-  saved = JSON.stringify(event);
+test("ordinary players can see active trivia teams but no editing or payout controls", () => {
+  saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "guest", name: "Live Player", avatarUrl: null }, { id: "other", name: "Other Player", avatarUrl: null }], minigame: { id: 42, kind: "trivia", teams: [{ id: "guest", team: "A" }, { id: "other", team: "B" }] } });
   try {
     for (const fcRank of ["Housecat", "Stray", "Friend", "Boss", "Underpaw"]) {
       const html = render({ authed: true, session: { isAdmin: false, fcRank } });
-      assert.match(html, /Boss or Underpaw Discord role/);
-      assert.doesNotMatch(html, /data-event-view|Live Player|Edit gil|Change round|Board mood/);
+      assert.match(html, /Live Player/);
+      assert.match(html, /Other Player/);
+      assert.match(html, /aria-label="Team A"/);
+      assert.match(html, /aria-label="Team B"/);
+      assert.equal((html.match(/data-round-display="7"/g) ?? []).length, 2);
+      assert.doesNotMatch(html.slice(0, html.indexOf('data-event-view="rulebook"')), /Edit gil|Change round|Shuffle into two teams|winnings per player|Finalise game|End minigame|Play Split or Steal|Open Split or Steal from Chocobo|Assign golden die|Record private/);
+      assert.doesNotMatch(html, /<input/);
     }
   } finally { saved = null; }
 });
@@ -89,23 +95,47 @@ test("live view shows fixed display-only order and independent host controls", (
     const html = render({ authed: true, session: { isAdmin: true } });
     assert.match(html, /Fixed player turn order/);
     assert.match(html, /Long Guest Name/);
-    assert.match(html, /50,000 gil/);
+    assert.match(html, /Group minigames/);
     assert.match(html, /Change round, currently round 7/);
-    assert.match(html, /aria-label="Board mood"/);
+    assert.doesNotMatch(html, /aria-label="Board mood"/);
+    assert.match(html, /aria-label="Open Split or Steal from Chocobo tile 23"/);
+    assert.doesNotMatch(html, /Assign golden die|Remove golden die/);
     assert.match(html, /aria-label="Previous round"/);
     assert.match(html, /Next round/);
     assert.match(html, /Edit gil for Long Guest Name, 0 gil accrued/);
     assert.doesNotMatch(html, /View players/);
-    assert.match(html, /Quick reference/);
-    assert.match(html, /Roll \/random 10. Move the result: even forward, odd back./);
     const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+    assert.match(game, /aria-labelledby="game-board-overview-heading"/);
+    assert.equal((game.match(/data-round-display="7"/g) ?? []).length, 2);
+    assert.match(game, />Guide<\/h2>/);
+    assert.doesNotMatch(game, /Board Overview|Layout and original idea|Thornhart/);
+    assert.equal(game.split('data-board-tile="').length - 1, 90);
+    assert.doesNotMatch(game, /Quick reference/);
     assert.doesNotMatch(game, /Randomise order &amp; start|Complete turn|Finish turn|Confirm finish|turns remaining|aria-current/);
+  } finally { saved = null; }
+});
+
+test("a pending player save leaves other players, rounds and trivia drafts editable while payout commands wait", () => {
+  saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "a", name: "Axo", avatarUrl: null }, { id: "b", name: "Chow", avatarUrl: null }], minigame: { id: 7, kind: "trivia", teams: [{ id: "a", team: "A" }, { id: "b", team: "B" }] } });
+  try {
+    const html = render({ authed: true, session: { isAdmin: true } }, { pending: true, pendingKeys: ["player:a"] });
+    const button = label => html.match(new RegExp('<button[^>]*aria-label="' + label + '"[^>]*>'))?.[0];
+    assert.match(button("Edit gil for Axo, 0 gil accrued"), / disabled=/);
+    assert.doesNotMatch(button("Edit gil for Chow, 0 gil accrued"), / disabled=/);
+    assert.doesNotMatch(button("Next round"), / disabled=/);
+    const input = html.match(/<input[^>]*aria-label="Team A winnings per player \(gil\)"[^>]*>/)?.[0];
+    assert.ok(input);
+    assert.doesNotMatch(input, / disabled=/);
+    assert.match(html, /Saving 1 change/);
+    assert.match(html, /<button[^>]* disabled=""[^>]*>Finalise game &amp; add gil<\/button>/);
+    assert.match(html, /<button[^>]* disabled=""[^>]*>End minigame<\/button>/);
   } finally { saved = null; }
 });
 
 test("rulebook renders every chapter once with location links and no chapter-switch controls", () => {
   const html = render({ authed: true, session: { isAdmin: true } });
-  const ids = ["board-overview", "quick-start", "special-tiles", "board-moods", "rewards"];
+  const rulebook = html.slice(html.indexOf('data-event-view="rulebook"'));
+  const ids = ["board-overview", "quick-start", "special-tiles", "group-minigames", "bingo", "rewards"];
   let previous = -1;
   for (const id of ids) {
     assert.equal(html.split(`id="rulebook-${id}"`).length - 1, 1);
@@ -116,36 +146,72 @@ test("rulebook renders every chapter once with location links and no chapter-swi
   }
   assert.equal(html.split('aria-current="location"').length - 1, 1);
   assert.match(html, /href="#rulebook-board-overview" aria-current="location"/);
-  assert.equal(html.split('data-board-tile="').length - 1, 90);
-  assert.equal(html.split('data-board-symbol="').length - 1, 24);
-  assert.equal([...html.matchAll(/aria-label="Tile \d+. Ladder to \d+"/g)].length, 2);
-  assert.equal([...html.matchAll(/aria-label="Tile \d+. Fall to \d+"/g)].length, 6);
-  assert.match(html, /Tile 13. Fall destination from 74/);
-  assert.match(html, /Tile 14. Ladder to 45/);
+  assert.equal(rulebook.split('data-board-tile="').length - 1, 90);
+  assert.equal(rulebook.split('data-board-symbol="').length - 1, 25);
+  assert.equal([...rulebook.matchAll(/aria-label="Tile \d+. Ladder to \d+[^"]*"/g)].length, 2);
+  assert.equal([...rulebook.matchAll(/aria-label="Tile \d+. Fall to \d+"/g)].length, 6);
+  assert.match(html, /Tile 13. Ladder to 45/);
+  assert.match(html, /Tile 78. Moogle/);
   const overview = html.slice(html.indexOf('id="rulebook-board-overview"'), html.indexOf('id="rulebook-quick-start"'));
+  assert.match(overview, /Board Overview/);
+  assert.match(overview, /Layout and original idea by/);
   assert.doesNotMatch(overview, /90 tiles|6 rows|figcaption|Clear selection|All 8 connections shown|Ladder routes|Fall routes|Follow the blue|Only your normal landing tile activates/);
   assert.doesNotMatch(html, /role="tablist"[^>]*aria-label="Rulebook chapters"|rulebook-chapter-label|Next: Tiles|chapter navigation/);
-  assert.match(html, /The first three to reach the crown can choose a prize. Game stops after 3 finishers/);
+  assert.match(html, /Finished racers stop taking board turns but remain eligible for group minigames and gil prizes/);
   const quickStart = html.slice(html.indexOf('id="rulebook-quick-start"'), html.indexOf('id="rulebook-special-tiles"'));
   const quickText = quickStart.replace(/<[^>]*>/g, "");
   assert.doesNotMatch(quickText, /Check the active mood before rolling|Blue pays|Under violet|Higher: add both|Only your landing tile activates|Extra tile movement does not chain/);
   assert.match(quickText, /Roll once when called/);
   assert.match(quickText, /Follow the numbered path/);
-  assert.ok(quickStart.indexOf('id="quick-finish-heading"') < quickStart.indexOf("Board moods apply from round"));
+  assert.doesNotMatch(quickStart, /Group minigames after every six|Proposed schedule, started manually/);
   assert.doesNotMatch(html, /Violet example:|90 tiles. Up to three finishers.|Ordinary tile:|host-guide|Host guide &amp; finishing/);
-  const tileSection = html.slice(html.indexOf('id="rulebook-special-tiles"'), html.indexOf('id="rulebook-board-moods"'));
+  const tileSection = html.slice(html.indexOf('id="rulebook-special-tiles"'), html.indexOf('id="rulebook-group-minigames"'));
   const rewardsSection = html.slice(html.indexOf('id="rulebook-rewards"'));
-  const moodsSection = html.slice(html.indexOf('id="rulebook-board-moods"'), html.indexOf('id="rulebook-rewards"'));
+  const moodsSection = html.slice(html.indexOf('id="rulebook-group-minigames"'), html.indexOf('id="rulebook-rewards"'));
   assert.deepEqual([...tileSection.matchAll(/<dt\b[^>]*>([^<]+)/g)].map((match) => match[1]), ["Shark", "Moogle", "Mushroom", "Fatcat", "Chocobo", "Ladder", "Red arrow", "Crown / finish"]);
   assert.doesNotMatch(rewardsSection, /Fatcat|Chocobo/);
   assert.doesNotMatch(rewardsSection, /Keep all earned gil/);
   assert.equal(rewardsSection.split('rounded-lg border bg-muted p-4').length - 1, 3);
   assert.match(html, /last:min-h-\[calc\(var\(--rulebook-viewport-height,0px\)-1rem\)\]/);
-  assert.doesNotMatch(tileSection, /Only your landing tile activates|Fatcat and Chocobo: one attempt|Passing over tiles|violet second roll is part|standalone tile rolls|A mushroom onto a red arrow|Standing on a special tile/);
+  assert.doesNotMatch(tileSection, /Only the destination of normal movement activates a tile|Extra tile movement does not activate another tile|Movement stops at the start or crown/);
   assert.doesNotMatch(moodsSection, />Yellow<|>Blue<|>Violet<|>Red</);
-  for (const colour of ["amber", "blue", "violet", "red"]) assert.ok(moodsSection.includes(`bg-${colour}-100`));
+  assert.match(moodsSection, /Group Trivia/);
+  assert.match(moodsSection, /Treasure Draw/);
+  assert.match(moodsSection, /Minority Draw/);
+  assert.doesNotMatch(moodsSection, /Everyone plays, including finished racers|Every six full rounds|Bonus movement dice|One golden bonus die per player/);
+  assert.doesNotMatch(html, /Board moods|Lucky Sixes|Workers&#x27; Compensation/);
   assert.equal(rewardsSection.split('aria-label="Prize option ').length - 1, 3);
-  assert.doesNotMatch(html, /Challenges &amp; rewards|Resolve your turn before claiming a place|The host announces the prize options before play|A later normal landing grants another attempt|Gil is paid by the host or recorded separately|Placement rewards are additional to earned gil/);
+  assert.doesNotMatch(html, /Challenges &amp; rewards|Resolve your turn before claiming a place|The host announces the prize options before play|Gil is paid by the host or recorded separately|Placement rewards are additional to earned gil/);
+});
+
+test("Bingo stays playable in Game and has its own explanatory Rulebook chapter without a tab", () => {
+  const card = { version: 1, eventId: "cartel-gil-rush-1", missionIds: [1, 2, 3, 5, 6, 7, 8, 9, 10], completedIds: [1, 5] };
+  bingoSaved = JSON.stringify(card);
+  try {
+    for (const auth of [{ authed: false, session: null }, { authed: true, checking: true, session: { isAdmin: true } }, { authed: true, session: { isAdmin: false } }]) {
+      const html = render(auth);
+      assert.equal((html.match(/role="tab"/g) ?? []).length, 2);
+      assert.doesNotMatch(html, /data-event-view="bingo"/);
+      const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+      assert.match(game, /2 of 9 complete/);
+      assert.deepEqual([...game.matchAll(/data-bingo-mission="(\d+)"/g)].map(match => Number(match[1])), card.missionIds);
+      assert.equal((game.match(/aria-pressed="true"/g) ?? []).length, 2);
+      const rulebook = html.slice(html.indexOf('data-event-view="rulebook"'));
+      assert.doesNotMatch(rulebook, /data-bingo-mission|aria-label="Bingo card"|aria-label="Bingo missions"|of 9 complete/);
+      const minigames = rulebook.slice(rulebook.indexOf('id="rulebook-group-minigames"'), rulebook.indexOf('id="rulebook-bingo"'));
+      assert.doesNotMatch(minigames, /Nine random missions|bingo-heading|bingo.png/);
+      const bingo = rulebook.slice(rulebook.indexOf('id="rulebook-bingo"'), rulebook.indexOf('id="rulebook-rewards"'));
+      assert.match(bingo, /aria-labelledby="bingo-heading"/);
+      assert.match(bingo, /bingo.png/);
+      assert.match(bingo, /Nine random missions/);
+      assert.match(bingo, /screenshot to Chow/);
+      assert.ok(bingo.includes("3+ missions: 250k gil"));
+      assert.ok(bingo.includes("6+ missions: 500k gil"));
+      assert.match(bingo, /All 9: 1m gil/);
+      assert.match(bingo, /Highest tier only/);
+      assert.doesNotMatch(html, /Roll a 10 using a golden die/);
+    }
+  } finally { bingoSaved = null; }
 });
 
 test("rule references pair rolls, movement and gil with the appropriate inline icons", () => {
@@ -167,39 +233,132 @@ test("all seven tile cards retain cream styling with corrected solo effects", ()
   assert.match(html, /Standalone tile roll: \/random 10/);
   assert.match(html, /Even: move forward by the result. Odd: move backwards by the result./);
   assert.doesNotMatch(html, /Move backwards 3 spaces/);
-  assert.doesNotMatch(html, /500,000|100,000|partners|Deal a card|Discard/);
+  assert.match(html, /100,000 gil each/);
+  assert.doesNotMatch(html, /Lucky Sixes|violet attempt|Axo&#x27;s Trivia|Deal a card|Discard/);
 });
 
-test("manual mood is displayed independently of round and has no colour label", () => {
-  let event = updateEvent(emptyEvent(), { type: "add", player: { id: "a", name: "Axo", avatarUrl: null } });
-  event = updateEvent(event, { type: "set-mood", mood: "yellow" });
-  event = updateEvent(event, { type: "start" });
+test("legacy moods never appear; live rewards and minigames render from the shared model", () => {
+  saved = JSON.stringify({ version: 1, phase: "live", round: 7, mood: "yellow", players: [{ id: "a", name: "Axo", avatarUrl: null, gilWon: 100000, bonusDie: 10 }, { id: "b", name: "Chow", avatarUrl: null, gilWon: 0 }], minigame: { id: 3, kind: "trivia", teams: [{ id: "a", team: "A" }, { id: "b", team: "B" }], questionWins: ["A", null, null] } });
   try {
-    for (const round of [1, 3, 4, 7, 2]) {
-      event = updateEvent(event, { type: "set-round", round });
-      saved = JSON.stringify(event);
-      const html = render({ authed: true, session: { isAdmin: true } });
-      const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
-      assert.match(game, /id="active-mood-heading"[^>]*>Lucky Sixes/);
-      assert.doesNotMatch(game, /Choose first mood|First mood selected|>Yellow<|>Blue<|>Violet<|>Red<|From round 4/);
-      assert.equal(JSON.parse(saved).mood, "yellow");
+    const html = render({ authed: true, session: { isAdmin: true } });
+    assert.match(html, /Can use \/random 10 for normal movement until the next minigame/);
+    assert.match(html, /golden-dice\.png/);
+    assert.match(html, /100,000 gil/);
+    assert.match(html, /aria-label="Team A"/);
+    assert.match(html, /aria-label="Team B"/);
+    assert.doesNotMatch(html, /Finalised. Winnings added/);
+    assert.match(html, /Team A winnings per player \(gil\)/);
+    assert.doesNotMatch(html, /Question 1:|Awaiting result|Move to A|Assign team/);
+    assert.doesNotMatch(html, /Board mood|Lucky Sixes/);
+  } finally { saved = null; }
+});
+
+test("active banners keep End minigame host-only and omit lower panels for externally played games", () => {
+  try {
+    for (const kind of ["trivia", "minority", "minority-draw", "eorzeaguessr", "marbles", "deathroll"]) {
+      saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "a", name: "Axo", avatarUrl: null }], minigame: { id: 4, kind } });
+      for (const isAdmin of [true, false]) {
+        const html = render({ authed: isAdmin, session: isAdmin ? { isAdmin: true } : null });
+        const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+        const banner = game.slice(game.indexOf('aria-label="Active group minigame"'), game.indexOf("</header>"));
+        assert.match(banner, /Minigame event/);
+        assert.equal((game.match(/End minigame/g) ?? []).length, isAdmin ? 1 : 0);
+        if (isAdmin) assert.match(banner, /End minigame/);
+        if (["eorzeaguessr", "marbles", "deathroll"].includes(kind)) {
+          assert.doesNotMatch(game, /id="minigame-heading"|Record gil|Suggested rule|Confirm starting value/);
+        }
+        if (kind === "marbles") assert.match(banner, /<strong>Chow will stream Marble Rush\.<\/strong>/);
+      }
     }
   } finally { saved = null; }
 });
 
-test("Game mood explanation matches Rulebook's main rule without secondary notes", () => {
+test("Treasure Draw shows saved players before prize reveals without selection counts", () => {
+  const event = { version: 1, phase: "live", round: 7, players: [{ id: "a", name: "Axo", avatarUrl: null }, { id: "b", name: "Chow", avatarUrl: null }], minigame: { id: 4, kind: "minority" } };
   try {
-    for (const [mood, rule] of [
-      ["yellow", "Roll a natural 6 on your normal first roll to earn the announced Lucky Sixes gil reward."],
-      ["blue", "Start your turn tied for last among unfinished players to receive 50,000 gil."],
-      ["violet", "Keep your first roll, or roll once more. Strictly higher: add both rolls. Equal or lower: move only 1 space."],
-      ["red", "Resolve a fall down a red arrow, then receive 200,000 gil."],
-    ]) {
-      saved = JSON.stringify({ ...emptyEvent(), mood });
-      const html = render({ authed: true, session: { isAdmin: true } });
-      const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
-      assert.ok(game.includes(rule));
-      assert.doesNotMatch(game, /One full rotation|Update round separately|The host handles|The host announces the payout|Standing on a special tile|First-roll 6 earns/);
+    saved = JSON.stringify(event);
+    const hidden = render({ authed: true, session: { isAdmin: true } });
+    assert.equal((hidden.match(/No players assigned/g) ?? []).length, 4);
+    assert.doesNotMatch(hidden, /selections<|Chest [1-4] wins/);
+    const choices = [{ id: "a", chest: 2 }, { id: "b", chest: 4 }];
+    const assigned = { ...event, minigame: { ...event.minigame, treasureAssignments: { revision: 1, choices }, chestReveals: [] } };
+    saved = JSON.stringify(assigned);
+    for (const isAdmin of [true, false]) {
+      const html = render({ authed: isAdmin, session: isAdmin ? { isAdmin: true } : null });
+      const chest2 = html.slice(html.indexOf('aria-label="Chest 2"'), html.indexOf('aria-label="Chest 3"'));
+      const chest4 = html.slice(html.indexOf('aria-label="Chest 4"'), html.indexOf('data-event-view="rulebook"'));
+      assert.match(chest2, /Axo/);
+      assert.doesNotMatch(chest2, /Chow|Choices hidden|100,000 gil|golden-dice/);
+      assert.match(chest4, /Chow/);
+      assert.equal(chest2.includes("Reveal chest 2"), isAdmin);
     }
+    assigned.minigame.chestReveals = [{ chest: 2, playerIds: ["a"], prize: "100k", revealedAt: Date.now() }];
+    saved = JSON.stringify(assigned);
+    const opening = render({ authed: false, session: null });
+    const openingChest = opening.slice(opening.indexOf('aria-label="Chest 2"'), opening.indexOf('aria-label="Chest 3"'));
+    assert.match(openingChest, /Axo/);
+    assert.doesNotMatch(openingChest, /100,000 gil|Revealing players/);
+    assigned.minigame.chestReveals[0].revealedAt = 0;
+    saved = JSON.stringify(assigned);
+    const complete = render({ authed: false, session: null });
+    assert.match(complete.slice(complete.indexOf('aria-label="Chest 2"'), complete.indexOf('aria-label="Chest 3"')), /100,000 gil/);
+    saved = JSON.stringify({ ...event, minigame: { ...event.minigame, chests: [{ id: "a", chest: 3 }, { id: "b", chest: 3 }] } });
+    const revealed = render({ authed: true, session: { isAdmin: true } });
+    assert.doesNotMatch(revealed, /\d+ selections/);
+    assert.match(revealed, /Prize not recorded/);
+    assert.doesNotMatch(revealed, /Choices hidden/);
+  } finally { saved = null; }
+});
+
+test("Split or Steal opens for everyone, hides decisions until reveal and keeps all controls host-only", () => {
+  const base = { version: 1, phase: "live", round: 1, players: [{ id: "a", name: "Astrid Gertrud", avatarUrl: null, gilWon: 0 }, { id: "b", name: "Blue Belladonna", avatarUrl: null, gilWon: 0 }], splitChallenge: { id: 9, challenger: "a", partner: "b" } };
+  try {
+    saved = JSON.stringify(base);
+    const html = render({ authed: false, session: null });
+    const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+    assert.doesNotMatch(game, /200,000 gil pot/);
+    assert.equal((game.match(/Decision hidden/g) ?? []).length, 2);
+    assert.match(game, /Astrid Gertrud/);
+    assert.match(game, /Blue Belladonna/);
+    assert.doesNotMatch(game, /Submit &amp; reveal|Clear result|Cancel challenge|Private decision|Landing player: split|Partner: steal|role="combobox"|<input/);
+    const host = render({ authed: true, session: { isAdmin: true } });
+    assert.match(host, /Submit &amp; reveal/);
+    assert.match(host, /aria-label="Landing player: split"/);
+    assert.match(host, /aria-label="Partner: steal"/);
+    saved = JSON.stringify({ ...base, players: base.players.map(player => ({ ...player, gilWon: player.id === "b" ? 200000 : 0 })), splitResult: { challenger: "a", partner: "b", challengerDecision: "split", partnerDecision: "steal" } });
+    const revealed = render({ authed: false, session: null });
+    const split = revealed.slice(revealed.indexOf('id="split-heading"'), revealed.indexOf('data-event-view="rulebook"'));
+    assert.match(split, /0 gil/);
+    assert.match(split, /200,000 gil/);
+    assert.doesNotMatch(split, /Decision hidden|Clear result|Submit &amp; reveal/);
+    assert.match(render({ authed: true, session: { isAdmin: true } }), /Clear result/);
+  } finally { saved = null; }
+});
+
+
+test("Minority Draw shares three hidden chests and its tie-break status, with host-only settlement", () => {
+  const players = ["a", "b", "c"].map(id => ({ id, name: "Player " + id, avatarUrl: null, gilWon: 0 }));
+  const event = { version: 1, phase: "live", round: 7, players, minigame: { id: 18, kind: "minority-draw", chestReveals: [], minorityDrawWinner: null } };
+  const gameOnly = html => html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+  try {
+    saved = JSON.stringify(event);
+    const hidden = gameOnly(render({ authed: false, session: null }));
+    assert.match(hidden, /Minority Draw/);
+    assert.equal((hidden.match(/Choices hidden/g) ?? []).length, 3);
+    assert.doesNotMatch(hidden, /Chest 4|Record chest assignments|Award winning chest|Deathroll-winning chest/);
+    event.minigame.chestReveals = players.map((player, index) => ({ chest: index + 1, playerIds: [player.id], prize: null, revealedAt: 0 }));
+    saved = JSON.stringify(event);
+    const viewer = gameOnly(render({ authed: false, session: null }));
+    assert.match(viewer, /Chow hosts the deathroll/);
+    assert.equal((viewer.match(/Deathroll tie-break/g) ?? []).length, 4);
+    assert.doesNotMatch(viewer, /Prize not recorded|Award winning chest|Deathroll-winning chest|role="combobox"/);
+    const host = gameOnly(render({ authed: true, session: { isAdmin: true } }));
+    assert.match(host, /Award winning chest/);
+    assert.match(host, /aria-label="Deathroll-winning chest"/);
+    saved = JSON.stringify({ ...event, minigame: { ...event.minigame, minorityDrawWinner: 2 } });
+    const result = gameOnly(render({ authed: false, session: null }));
+    assert.match(result, /200,000 gil \+ golden die/);
+    assert.equal((result.match(/No prize/g) ?? []).length, 2);
+    assert.doesNotMatch(result, /Award winning chest|Deathroll-winning chest|Deathroll tie-break/);
   } finally { saved = null; }
 });

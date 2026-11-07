@@ -24,6 +24,7 @@ after(async () => {
 });
 
 for (const path of [
+  "cartelGilRushPrivate/current",
   "adminOAuthStates/example",
   "adminSessions/example",
   "discordLinks/123456789012345678",
@@ -140,5 +141,13 @@ for (const identity of ["anonymous", "member"]) {
       assert.equal(value.val().testValue, "public-fixture");
       await assertFails(set(ref(db, path), { testValue: "injected" }));
     }
+  });
+}
+
+for (const identity of ["member", "claimed-admin"]) {
+  test(identity + " cannot directly read or write private Gil Rush chest assignments", async () => {
+    const database = environment.authenticatedContext(identity, { admin: true, isAdmin: true }).database();
+    await assertFails(get(ref(database, "cartelGilRushPrivate/current")));
+    await assertFails(set(ref(database, "cartelGilRushPrivate/current"), { choices: [] }));
   });
 }

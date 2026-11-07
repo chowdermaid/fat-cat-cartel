@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,23 +13,26 @@ interface PlayerSetupProps {
   players: Player[];
   run: EventController["run"];
   disabled: boolean;
+  pendingKeys?: string[];
 }
 
-export function PlayerSetupDialog({ players, run, error, onClose, disabled }: PlayerSetupProps & { error: string | null; onClose: () => void }) {
+export function PlayerSetupDialog({ players, run, error, onClose, disabled, pendingKeys = [] }: PlayerSetupProps & { error: string | null; onClose: () => void }) {
   const members = useMembers();
   return (
     <DialogContent className="flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] flex-col [&>button]:size-11">
       <DialogHeader className="pr-10 text-left"><DialogTitle>Manage players</DialogTitle><DialogDescription>Choose members or add guests. Starting randomises and locks the order.</DialogDescription></DialogHeader>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      <ScrollArea className="min-h-0 flex-1" viewportClassName="max-h-[60dvh] [&>div]:!block"><div className="pr-3"><PlayerSetup players={players} run={run} members={members} disabled={disabled} /></div></ScrollArea>
+      <ScrollArea className="min-h-0 flex-1" viewportClassName="max-h-[60dvh] [&>div]:!block"><div className="pr-3"><PlayerSetup players={players} run={run} members={members} disabled={disabled} pendingKeys={pendingKeys} /></div></ScrollArea>
       <Button variant="outline" className="min-h-11 shrink-0" onClick={onClose}>Done</Button>
     </DialogContent>
   );
 }
 
-function PlayerSetup({ players, run, members, disabled }: PlayerSetupProps & { members: Record<string, Member> }) {
+function PlayerSetup({ players, run, members, disabled, pendingKeys = [] }: PlayerSetupProps & { members: Record<string, Member> }) {
   const [search, setSearch] = useState("");
   const [guestName, setGuestName] = useState("");
+  const [guestPending, setGuestPending] = useState(false);
+  const guestSaving = useRef(false);
   const visibleMembers = Object.entries(members).filter(([, member]) => member.name.toLowerCase().includes(search.toLowerCase())).sort(([, a], [, b]) => a.name.localeCompare(b.name));
 
   return (
@@ -41,11 +44,12 @@ function PlayerSetup({ players, run, members, disabled }: PlayerSetupProps & { m
           <ul className="divide-y pr-3">
             {visibleMembers.map(([rosterId, member]) => {
               const selected = players.some((player) => player.rosterId === rosterId || player.name.toLowerCase() === member.name.trim().replace(/\s+/g, " ").toLowerCase());
+              const saving = pendingKeys.includes(`roster:${rosterId}`);
               return <li key={rosterId}>
-                <Button variant="ghost" className="h-auto min-h-14 w-full justify-start gap-3 whitespace-normal px-2 py-2 text-left" disabled={selected} onClick={() => run({ type: "add", player: { id: crypto.randomUUID(), rosterId, name: member.name, avatarUrl: member.avatarUrl ?? null } })}>
+                <Button variant="ghost" className="h-auto min-h-14 w-full justify-start gap-3 whitespace-normal px-2 py-2 text-left" disabled={selected || saving} aria-busy={saving || undefined} onClick={() => run({ type: "add", player: { id: crypto.randomUUID(), rosterId, name: member.name, avatarUrl: member.avatarUrl ?? null } })}>
                   <PlayerAvatar player={member} />
                   <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">{member.name}<span className="block text-xs text-muted-foreground">{member.fcRank === "Friend" ? "Friend" : member.server}</span></span>
-                  {selected ? <><Check aria-hidden="true" className="size-4 shrink-0" /><span className="sr-only">Already added</span></> : <><Plus aria-hidden="true" className="size-4 shrink-0" /><span className="sr-only">Add player</span></>}
+                  {saving ? <span className="text-xs">Saving…</span> : selected ? <><Check aria-hidden="true" className="size-4 shrink-0" /><span className="sr-only">Already added</span></> : <><Plus aria-hidden="true" className="size-4 shrink-0" /><span className="sr-only">Add player</span></>}
                 </Button>
               </li>;
             })}
@@ -55,10 +59,16 @@ function PlayerSetup({ players, run, members, disabled }: PlayerSetupProps & { m
       </section>
       <form className="space-y-2 border-t pt-4" onSubmit={async (event) => {
         event.preventDefault();
-        if (await run({ type: "add", player: { id: crypto.randomUUID(), name: guestName, avatarUrl: null } })) setGuestName("");
+        if (disabled || guestSaving.current) return;
+        guestSaving.current = true;
+        setGuestPending(true);
+        const submittedName = guestName;
+        try {
+          if (await run({ type: "add", player: { id: crypto.randomUUID(), name: submittedName, avatarUrl: null } })) setGuestName(value => value === submittedName ? "" : value);
+        } finally { guestSaving.current = false; setGuestPending(false); }
       }}>
         <label htmlFor="guest-name" className="text-sm font-semibold">Add a guest</label>
-        <div className="flex gap-2"><Input id="guest-name" placeholder="Character name" value={guestName} maxLength={80} onChange={(event) => setGuestName(event.target.value)} className="h-11 min-w-0" /><Button type="submit" className="min-h-11" disabled={!guestName.trim()}><Plus aria-hidden="true" className="size-4" />Add</Button></div>
+        <div className="flex gap-2"><Input id="guest-name" placeholder="Character name" disabled={guestPending} value={guestName} maxLength={80} onChange={(event) => setGuestName(event.target.value)} className="h-11 min-w-0" /><Button type="submit" className="min-h-11" disabled={guestPending || !guestName.trim()}><Plus aria-hidden="true" className="size-4" />{guestPending ? "Saving…" : "Add"}</Button></div>
       </form>
       <section className="space-y-2 border-t pt-4" aria-labelledby="selected-players-heading">
         <h3 id="selected-players-heading" className="text-sm font-semibold">Selected players ({players.length})</h3>
@@ -68,8 +78,8 @@ function PlayerSetup({ players, run, members, disabled }: PlayerSetupProps & { m
           const name = new FormData(event.currentTarget).get("name");
           if (typeof name === "string") run({ type: "rename", id: player.id, name });
         }}>
-          {player.rosterId ? <span className="min-w-0 flex-1 py-2 text-sm break-words [overflow-wrap:anywhere]">{player.name}</span> : <><Input name="name" defaultValue={player.name} maxLength={80} aria-label={`Rename ${player.name}`} className="h-11 min-w-0" /><Button type="submit" variant="ghost" size="icon" className="size-11 shrink-0" aria-label={`Save name for ${player.name}`}><Check aria-hidden="true" className="size-4" /></Button></>}
-          <Button type="button" variant="ghost" size="icon" className="size-11 shrink-0" aria-label={`Remove ${player.name}`} onClick={() => run({ type: "remove", id: player.id })}><Trash2 aria-hidden="true" className="size-4" /></Button>
+          {player.rosterId ? <span className="min-w-0 flex-1 py-2 text-sm break-words [overflow-wrap:anywhere]">{player.name}</span> : <><Input name="name" defaultValue={player.name} maxLength={80} aria-label={`Rename ${player.name}`} disabled={pendingKeys.includes(`player:${player.id}`)} className="h-11 min-w-0" /><Button type="submit" variant="ghost" size="icon" className="size-11 shrink-0" disabled={pendingKeys.includes(`player:${player.id}`)} aria-label={`Save name for ${player.name}`}><Check aria-hidden="true" className="size-4" /></Button></>}
+          <Button type="button" variant="ghost" size="icon" className="size-11 shrink-0" aria-label={`Remove ${player.name}`} disabled={pendingKeys.includes(`player:${player.id}`)} onClick={() => run({ type: "remove", id: player.id })}><Trash2 aria-hidden="true" className="size-4" /></Button>
         </form>)}
       </section>
     </fieldset>

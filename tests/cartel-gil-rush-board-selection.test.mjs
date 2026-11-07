@@ -25,14 +25,14 @@ test("origin selection toggles locally and Escape restores all routes without ex
   const find = predicate => descendants(render(true)).find(predicate);
   const grid = () => find(element => element.type?.name === "BoardGrid");
   assert.equal(grid().props.selected, null);
-  grid().props.onSelect("ladder-14-45");
-  assert.equal(grid().props.selected, "ladder-14-45");
+  grid().props.onSelect("ladder-13-45");
+  assert.equal(grid().props.selected, "ladder-13-45");
   grid().props.onSelect("fall-74-13");
   assert.equal(grid().props.selected, "fall-74-13");
   assert.match(find(element => element.props?.role === "status").props.children, /Fall from 74 to 13 selected/);
   grid().props.onSelect("fall-74-13");
   assert.equal(grid().props.selected, null);
-  grid().props.onSelect("ladder-14-45");
+  grid().props.onSelect("ladder-13-45");
   render(true).props.onKeyDown({ key: "Escape" });
   assert.equal(grid().props.selected, null);
   assert.equal(find(element => element.props?.['aria-label'] === "Ladder routes"), undefined);

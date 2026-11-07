@@ -35,11 +35,11 @@ function mount() {
   const scrolls = [];
   const focus = [];
   const contentStyles = new Map();
-  const ids = ["board-overview", "quick-start", "special-tiles", "board-moods", "rewards"];
+  const ids = ["board-overview", "quick-start", "special-tiles", "group-minigames", "bingo", "rewards"];
   let cursor = 0, frameId = 0, effect, cleanup, dependencies, api;
   let reducedMotion = false;
   const viewport = {
-    scrollTop: 0, clientHeight: 500, scrollHeight: 3000,
+    scrollTop: 0, clientHeight: 500, scrollHeight: 3600,
     setAttribute() {}, getBoundingClientRect: () => ({ top: 200 }),
     addEventListener: (_, listener) => scrollListeners.add(listener),
     removeEventListener: (_, listener) => scrollListeners.delete(listener),
@@ -86,14 +86,17 @@ test("navigation focuses headings without ancestor scrolling and honours reduced
   const app = mount();
   try {
     const api = app.render();
-    api.navigateToChapter("board-moods");
+    api.navigateToChapter("group-minigames");
     assert.equal(api.activeChapter, "board-overview");
     assert.deepEqual(app.scrolls.at(-1), { top: 1800, behavior: "smooth" });
-    assert.deepEqual(app.focus.at(-1), { id: "board-moods", options: { preventScroll: true } });
-    assert.equal(app.flush().activeChapter, "board-moods");
+    assert.deepEqual(app.focus.at(-1), { id: "group-minigames", options: { preventScroll: true } });
+    assert.equal(app.flush().activeChapter, "group-minigames");
     app.setReducedMotion(true);
-    app.render().navigateToChapter("rewards");
+    app.render().navigateToChapter("bingo");
     assert.deepEqual(app.scrolls.at(-1), { top: 2400, behavior: "instant" });
+    assert.equal(app.flush().activeChapter, "bingo");
+    app.render().navigateToChapter("rewards");
+    assert.deepEqual(app.scrolls.at(-1), { top: 3000, behavior: "instant" });
     assert.equal(app.flush().activeChapter, "rewards");
   } finally { app.unmount(); }
 });
@@ -115,7 +118,7 @@ test("scroll updates coalesce, passive reading keeps focus, hidden views restore
     app.render();
     app.scroll(500); app.scroll(1900);
     assert.equal(app.frames.size, 1);
-    assert.equal(app.flush().activeChapter, "board-moods");
+    assert.equal(app.flush().activeChapter, "group-minigames");
     assert.equal(app.focus.length, 0);
     app.scroll(2000);
     const hidden = app.render(false);
@@ -128,7 +131,7 @@ test("scroll updates coalesce, passive reading keeps focus, hidden views restore
     app.viewport.scrollTop = 0;
     app.render(true);
     assert.equal(app.viewport.scrollTop, 2000);
-    assert.equal(app.render().activeChapter, "board-moods");
+    assert.equal(app.render().activeChapter, "group-minigames");
     assert.equal(app.observers.at(-1).targets.length, 2);
     app.observers.at(-1).callback();
     assert.equal(app.frames.size, 1);

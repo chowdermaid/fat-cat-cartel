@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/tooltip";
 import { useRulebookScroll } from "../../hooks/useRulebookScroll";
 import { chapters } from "../../presentation";
-import { BoardMoods } from "./BoardMoods";
+import { GroupMinigames } from "./GroupMinigames";
+import { Bingo } from "./Bingo";
 import { BoardOverview } from "./BoardOverview";
 import { Rewards } from "./Rewards";
 import { QuickStart } from "./QuickStart";
@@ -18,7 +19,8 @@ import { TilesMovement } from "./TilesMovement";
 const chapterContent = {
   "quick-start": <QuickStart />,
   "special-tiles": <TilesMovement />,
-  "board-moods": <BoardMoods />,
+  "group-minigames": <GroupMinigames />,
+  bingo: <Bingo />,
   rewards: <Rewards />,
 };
 
@@ -90,7 +92,7 @@ export function RulebookView({ active }: { active: boolean }) {
               id={`rulebook-${id}`}
               data-rulebook-chapter={id}
               data-event-reveal
-              className="min-w-0 border-t pt-8 first:border-t-0 first:pt-0 last:min-h-[calc(var(--rulebook-viewport-height,0px)-1rem)]"
+              className={`min-w-0 pt-8 first:border-t-0 first:pt-0 last:min-h-[calc(var(--rulebook-viewport-height,0px)-1rem)] ${id === "group-minigames" ? "" : "border-t"}`}
             >
               {content[id]}
             </div>

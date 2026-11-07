@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <title>Treasure chest</title>
+  <path d="M36 128V100C36 69.1 61.1 44 92 44H164C194.9 44 220 69.1 220 100V128H36Z" fill="#D6AF48" stroke="#292A2B" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M42 128H214V200C214 206.6 208.6 212 202 212H54C47.4 212 42 206.6 42 200V128Z" fill="#D6AF48" stroke="#292A2B" stroke-width="12" stroke-linejoin="round"/>
+  <rect x="110" y="112" width="36" height="44" rx="6" fill="#D6AF48" stroke="#292A2B" stroke-width="10"/>
+</svg>

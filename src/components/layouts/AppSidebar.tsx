@@ -188,13 +188,11 @@ export function AppSidebar() {
               {bottomItems.map((item) => (
                 <NavLink key={item.to} {...item} />
               ))}
-              {auth.authed && !auth.checking && auth.session?.isAdmin === true && (
-                <NavLink
-                  to="/cartel-gil-rush"
-                  label="Cartel Gil Rush"
-                  icon={Dices}
-                />
-              )}
+              <NavLink
+                to="/cartel-gil-rush"
+                label="Cartel Gil Rush"
+                icon={Dices}
+              />
               {auth.sessionWasAdmin && (
                 <NavLink
                   key={adminItem.to}
