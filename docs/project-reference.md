@@ -64,7 +64,7 @@ Routes are manually registered in `src/app/router.tsx`.
 - `/jointhemeowfia`: `RecruitmentPage`
 - `/pastevents`: `PastEventsPage`
 - `/pastevents/easter2026`: `Easter2026Page`
-- `/cartel-gil-rush`: public live event display with Boss/Underpaw host controls and static roster rail, scheduled group minigames, bonus dice, Split or Steal, manual round, rulebook and browser-only Bingo; `/ladders-and-backstabbers` redirects here
+- `/cartel-gil-rush/game` and `/cartel-gil-rush/rulebook`: public event views with Boss/Underpaw host controls and static roster rail, scheduled group minigames, bonus dice, Split or Steal, manual round, rulebook and browser-only Bingo; `/cartel-gil-rush` and `/ladders-and-backstabbers` redirect to Game
 - `/admin`: `AdminPage`
 - `/gameserver`: authorized game-server catalog
 - `/gameserver/palworld`: existing Palworld controls and player field

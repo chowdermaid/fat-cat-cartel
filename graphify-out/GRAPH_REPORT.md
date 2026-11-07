@@ -1,16 +1,16 @@
 # Graph Report - fat-cat-cartel  (2026-11-07)
 
 ## Corpus Check
-- 566 files · ~3,469,764 words
+- 562 files · ~3,318,558 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3420 nodes · 6884 edges · 208 communities (182 shown, 26 thin omitted)
+- 3364 nodes · 6828 edges · 206 communities (180 shown, 26 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 90 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `01966261`
+- Built from commit: `9a06cd60`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -170,7 +170,6 @@
 - avatar.tsx
 - getGameServerAccessStatusForIdentity
 - cleanText
-- DRAGONWILDS_IMPLEMENTATION_PLAN.md
 - 4. Proposed implementation
 - Phase 4: build the Dragonwilds page and online board
 - types.ts
@@ -187,13 +186,10 @@
 - Keybound Brawler design QA
 - localEvent.ts
 - openErrand.ts
-- SpudJarPage.tsx
 - CartelGilRushPage.tsx
 - PlayerSetup.tsx
-- Cartel Gil Rush visual assets
 - PalworldActivityTimeline.tsx
 - Cartel Gil Rush
-- 6. Rulebook view
 - adminFunctions.ts
 - cartel-gil-rush-emulator.test.mjs
 - admin-callable-regions.test.mjs
@@ -226,7 +222,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (208 total, 26 thin omitted)
+## Communities (206 total, 26 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -265,8 +261,8 @@ Cohesion: 0.07
 Nodes (39): firebase, AnyFn, Callback, getAtPath(), listeners, makeSnapshot(), maxedJobLevels(), notifyPath() (+31 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.12
-Nodes (29): ActivityPayload, ActivityRow, CompactActivity, compactProfile(), computeMostPlayedJobs(), configuredEncountersByCanonical(), emptyEncounterSummary(), fetchRecentActivity() (+21 more)
+Cohesion: 0.10
+Nodes (32): ActivityPayload, ActivityRow, CompactActivity, compactProfile(), computeMostPlayedJobs(), configuredEncountersByCanonical(), emptyEncounterSummary(), fetchRecentActivity() (+24 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -278,7 +274,7 @@ Nodes (44): AdminAuthConfig, AdminOAuthStartConfig, AdminSession, applyDevRoleOv
 
 ### Community 12 - "Community 12"
 Cohesion: 0.10
-Nodes (30): getFFLogsToken(), TokenCache, buildCharacterZonesQuery(), DIFFICULTY, queryFFLogs(), AllStars, batchRun(), buildCharacterParseEntries() (+22 more)
+Nodes (29): getFFLogsToken(), TokenCache, buildCharacterZonesQuery(), DIFFICULTY, queryFFLogs(), AllStars, buildCharacterParseEntries(), CharacterRankings (+21 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.14
@@ -293,8 +289,8 @@ Cohesion: 0.18
 Nodes (17): callAdminFunction(), deleteMember(), importLodestoneMembers(), refreshMemberSource(), triggerFCCollectionRefresh(), triggerFFLogsRefresh(), triggerTomestoneRaidStatsRefresh(), updateMemberProfileAdmin() (+9 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.11
-Nodes (30): acceptCraftingRequest(), byCompletedAtDesc(), byUpdatedAtDesc(), closeCraftingRequest(), completeCraftingRequest(), CRAFTING_REQUEST_PATHS, CraftingLifecycleInput, CraftingMemberTotals (+22 more)
+Cohesion: 0.13
+Nodes (27): acceptCraftingRequest(), byCompletedAtDesc(), byUpdatedAtDesc(), closeCraftingRequest(), completeCraftingRequest(), CRAFTING_REQUEST_PATHS, CraftingLifecycleInput, CraftingMemberTotals (+19 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.14
@@ -333,8 +329,8 @@ Cohesion: 0.19
 Nodes (18): accessEntryFromValue(), cleanText(), deleteGameServerAccessForAdmin(), gameServerGrantRoot(), getGameServerAccessStatusForIdentity(), getGameServerAccessStatusForSession(), getGameServerSettingsForAdmin(), isGameServerAccessEntryActive() (+10 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.24
-Nodes (17): CompletedRequestButton(), LanePagination(), RequestCard(), ItemIcon(), CraftingRequestDashboardRecord, CraftingRequestMember, safeArray(), completedByMember() (+9 more)
+Cohesion: 0.22
+Nodes (17): CompletedRequestButton(), LanePagination(), RequestCard(), MemberAvatar(), MemberLine(), CraftingRequestDashboardRecord, CraftingRequestMember, completedByMember() (+9 more)
 
 ### Community 27 - "Community 27"
 Cohesion: 0.19
@@ -345,12 +341,12 @@ Cohesion: 0.08
 Nodes (24): compilerOptions, allowImportingTsExtensions, baseUrl, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+16 more)
 
 ### Community 29 - "Community 29"
-Cohesion: 0.20
-Nodes (11): EligibleCrafters(), CrafterChip(), MemberAvatar(), MemberLine(), CraftingEligibleCrafter, combinedEligibility(), CombinedEligibleCrafter, EligibilityResult (+3 more)
+Cohesion: 0.16
+Nodes (16): CraftingRecipe, CreateRequestDialog(), EligibleCrafters(), RecipePreview(), SearchSkeleton(), CrafterChip(), QuantityControl(), CraftingEligibleCrafter (+8 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.06
-Nodes (33): adminRoute, calendarRoute, cartelGilRushRoute, craftingBoardRoute, dragonwildsServerRoute, easter2026Route, fcCollectionIndexRoute, fcCollectionRoute (+25 more)
+Cohesion: 0.05
+Nodes (36): adminRoute, calendarRoute, cartelGilRushGameRoute, cartelGilRushIndexRoute, cartelGilRushRoute, cartelGilRushRulebookRoute, craftingBoardRoute, dragonwildsServerRoute (+28 more)
 
 ### Community 31 - "Community 31"
 Cohesion: 0.17
@@ -373,8 +369,8 @@ Cohesion: 0.10
 Nodes (29): MemberDeleteDialog(), MemberDeleteDialogProps, MemberRosterTable(), MemberRosterTableProps, StatusCell(), MemberSyncToolbar(), MemberSyncToolbarProps, FRESHNESS_MS (+21 more)
 
 ### Community 36 - "Community 36"
-Cohesion: 0.15
-Nodes (18): CraftingRecipe, getXivapiIconUrl(), RequestedItem(), RecipePreview(), SearchSkeleton(), IngredientGroup(), PreviewIcon(), QuantityControl() (+10 more)
+Cohesion: 0.16
+Nodes (14): getXivapiIconUrl(), RequestedItem(), IngredientGroup(), PreviewIcon(), CRAFTING_MATERIAL_STATUSES, CRAFTING_REQUEST_STATUSES, CraftingDiscordMessageMetadata, CraftingPrecraftSnapshot (+6 more)
 
 ### Community 37 - "Community 37"
 Cohesion: 0.15
@@ -421,20 +417,20 @@ Cohesion: 0.11
 Nodes (18): dependencies, @aws-sdk/client-ec2, @aws-sdk/client-ssm, firebase-admin, firebase-functions, devDependencies, @types/node, typescript (+10 more)
 
 ### Community 48 - "Community 48"
-Cohesion: 0.13
-Nodes (25): actionLabels, DragonwildsActivity(), resultLabels, DragonwildsConnectionPanel(), DragonwildsConnectionPanelProps, DragonwildsOnlineBoard(), DragonwildsServerIndexCard(), DragonwildsDashboard() (+17 more)
+Cohesion: 0.21
+Nodes (16): actionLabels, DragonwildsActivity(), resultLabels, DragonwildsConnectionPanel(), DragonwildsConnectionPanelProps, DragonwildsOnlineBoard(), DragonwildsServerIndexCard(), DragonwildsDashboard() (+8 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.13
 Nodes (18): ClassifiedLink(), ClippingCard(), FcHangoutCard(), FeaturedToolCard(), HomeWidgets(), excerptBio(), MemberSpotlightCard(), StatusBoardCard() (+10 more)
 
 ### Community 50 - "Community 50"
-Cohesion: 0.13
-Nodes (16): formatDate(), KillTimeline(), Props, AllStars, EncounterKey, EncounterProgress, FirstKillData, ParseBuckets (+8 more)
+Cohesion: 0.15
+Nodes (14): formatDate(), KillTimeline(), Props, AllStars, EncounterKey, EncounterProgress, FirstKillData, ParseBuckets (+6 more)
 
 ### Community 51 - "Community 51"
-Cohesion: 0.21
-Nodes (10): CARD_COPY, CARD_ICONS, Props, RaidStatsHome(), EMPTY_ENCOUNTERS, useRaidStatsPageState(), mergeRaidStatsMembers(), ZONE_TABS (+2 more)
+Cohesion: 0.17
+Nodes (12): CARD_COPY, CARD_ICONS, Props, RaidStatsHome(), EMPTY_ENCOUNTERS, useRaidStatsPageState(), ParseEntry, MemberIdentity (+4 more)
 
 ### Community 52 - "Community 52"
 Cohesion: 0.12
@@ -442,7 +438,7 @@ Nodes (17): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, esli
 
 ### Community 53 - "Community 53"
 Cohesion: 0.27
-Nodes (6): batchRun(), CreateRequestDialog(), animations, fixture(), item(), leaf()
+Nodes (6): batchRun(), batchRun(), animations, fixture(), item(), leaf()
 
 ### Community 54 - "Community 54"
 Cohesion: 0.14
@@ -457,8 +453,8 @@ Cohesion: 0.24
 Nodes (9): saveOwnMemberProfile(), useProfileEditor(), ActivityChartType, CraftingProfileStats, MemberProfile, ProfileParseType, encodeBirthday(), parseBirthday() (+1 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.22
-Nodes (8): Background, carpet, and door motion, Cartel Clubhouse handoff, Commands in this environment, Current product behavior, Data and scope, Files to inspect, Resume context, Verification status
+Cohesion: 0.23
+Nodes (11): ACTION_DETAILS, actorName(), formatTime(), PalworldActivityTimeline(), PalworldActivityTimelineProps, prefersReducedMotion(), RESULT_LABELS, resultTone() (+3 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.26
@@ -477,12 +473,12 @@ Cohesion: 0.15
 Nodes (12): Carousel, CarouselApi, CarouselContent, CarouselContext, CarouselContextProps, CarouselItem, CarouselNext, CarouselOptions (+4 more)
 
 ### Community 62 - "Community 62"
-Cohesion: 0.20
-Nodes (10): children, shutdown(), start(), CraftingBoardPage(), LoadingBoard(), RequestSection(), Metric(), useCraftingRequests() (+2 more)
+Cohesion: 0.24
+Nodes (8): EMPTY_DASHBOARD_DATA, CraftingBoardPage(), LoadingBoard(), Metric(), CraftingRequestsState, useCraftingRequests(), CraftingMaterialStatus, isCraftingAdminSession()
 
 ### Community 63 - "Community 63"
-Cohesion: 0.24
-Nodes (7): JobIcon(), CRAFTING_JOB_ICON_SLUG, materialStatusLabels, RequestSectionConfig, jobIconMap, jobIconSrc(), handleNestedScrollAreaWheel()
+Cohesion: 0.23
+Nodes (8): ItemIcon(), JobIcon(), CRAFTING_JOB_ICON_SLUG, materialStatusLabels, RequestSectionConfig, CombinedEligibleCrafter, jobIconMap, jobIconSrc()
 
 ### Community 64 - "Community 64"
 Cohesion: 0.21
@@ -593,12 +589,12 @@ Cohesion: 0.33
 Nodes (5): Member, Participant, SCORE_CATEGORIES, ScoreCategory, Scores
 
 ### Community 93 - "EventHostPanel.tsx"
-Cohesion: 0.12
-Nodes (17): GAME_SERVER_FIXTURE_TIME, gameServerFixture, Actor, createGameServerMockState(), parseMockCatalogServerIds(), parseMockServerId(), Storage, actor (+9 more)
+Cohesion: 0.15
+Nodes (14): GAME_SERVER_FIXTURE_TIME, gameServerFixture, Actor, createGameServerMockState(), parseMockCatalogServerIds(), parseMockServerId(), Storage, actor (+6 more)
 
 ### Community 94 - "Community 94"
-Cohesion: 0.11
-Nodes (18): 10. Responsive and accessible behaviour, 11. Implementation order, 12. Acceptance checklist, 1. Approved visual direction, 2. Outcome and scope, 3. Existing implementation to preserve, 4. Shared page header, 5. Game view (+10 more)
+Cohesion: 0.50
+Nodes (4): children, shutdown(), start(), RequestSection()
 
 ### Community 96 - "Dragonwilds: phased implementation checklist"
 Cohesion: 0.13
@@ -629,12 +625,12 @@ Cohesion: 0.11
 Nodes (19): Cache Keys, Collectible Types, Comparison UI, Cost Notes, Data Sources, Database Shape, Delayed member retries, FC Collection Implementation (+11 more)
 
 ### Community 105 - "Community 105"
-Cohesion: 0.09
-Nodes (35): fixture(), fixture(), fixture(), fetchKeyboundScores(), saveKeyboundScores(), KeyboundBrawlerPage(), LeaderboardContent(), MemberAvatar() (+27 more)
+Cohesion: 0.07
+Nodes (38): fixture(), saveKeyboundBrawlerScores, change, fixture(), run(), fixture(), fetchKeyboundScores(), saveKeyboundScores() (+30 more)
 
 ### Community 137 - "types.ts"
-Cohesion: 0.23
-Nodes (18): callGameServerFunction(), getGameServerAccessStatus(), getGameServers(), getGameServerStatus(), getGameServerTelemetry(), listGameServerEvents(), sharedRead(), startGameServer() (+10 more)
+Cohesion: 0.25
+Nodes (16): callGameServerFunction(), getGameServerAccessStatus(), getGameServers(), getGameServerStatus(), getGameServerTelemetry(), listGameServerEvents(), sharedRead(), startGameServer() (+8 more)
 
 ### Community 138 - "profile.ts"
 Cohesion: 0.06
@@ -653,7 +649,7 @@ Cohesion: 0.15
 Nodes (13): Animation Pattern, App Entry And Shell, Assets, Coding Conventions, Commands, File Structure, Game-server integrated verification, General checks (+5 more)
 
 ### Community 142 - "Admin Auth Implementation"
-Cohesion: 0.17
+Cohesion: 0.15
 Nodes (12): Admin Auth Implementation, Client Surfaces, Database Rules, Independent Game Server Entitlements, Local Emulator Development, OAuth Flow, Phase 6 local security verification, Profile Editor Layout and Main Jobs (+4 more)
 
 ### Community 143 - "Database Cleanup Inventory"
@@ -697,16 +693,16 @@ Cohesion: 0.08
 Nodes (11): animations, effects, frames, listeners, media, moodContent, observers, panel (+3 more)
 
 ### Community 154 - "refresh-fc-collection.ts"
-Cohesion: 0.10
-Nodes (20): 10. Phase 7 catalog bridge and gated release, 1. Scope and evidence status, 2. Provisioning requirements and deployment inventory, 4. Player-status contract for Phase 2, 5. Fixture capture and live acceptance, 6. Costs, handoff checks and remaining gates, 7. Phase 2 backend groundwork, 8. Phase 5 independent authorization (local implementation) (+12 more)
+Cohesion: 0.12
+Nodes (16): 10. Phase 7 catalog bridge and gated release, 1. Scope and evidence status, 2. Provisioning requirements and deployment inventory, 4. Player-status contract for Phase 2, 5. Fixture capture and live acceptance, 6. Costs, handoff checks and remaining gates, 8. Phase 5 independent authorization (local implementation), 9. Phase 6 local verification and release handoff (+8 more)
 
 ### Community 155 - "PalworldStartupStatus.tsx"
 Cohesion: 0.18
 Nodes (12): PalworldConnectionPanel(), PalworldConnectionPanelProps, PalworldServerHero(), PalworldServerHeroProps, stateTheme(), formatDateTime(), formatPlayers(), friendlyStatus() (+4 more)
 
 ### Community 156 - "PalworldServerIndexCard.tsx"
-Cohesion: 0.13
-Nodes (14): 10. Existing limitations and useful design considerations, 11. Local development and verification, 12. Repository rules and recommended reading order, 13. Starter prompt for the next chatbot, 1. The request and product context, 2. Stack and application shell, 3. Routes and source map, 4. Current overview (+6 more)
+Cohesion: 0.50
+Nodes (4): 7. Phase 2 backend groundwork, Implemented boundaries, Runtime cost impact after deployment, Validation and release limits
 
 ### Community 157 - "updateMonthlyCostSnapshot"
 Cohesion: 0.31
@@ -721,8 +717,8 @@ Cohesion: 0.22
 Nodes (18): triggerUcobProgressRefresh, fetchTomestone(), buildUcobProgressData(), duration(), mapUcobActivities(), mapUcobProgressionRows(), numeric(), percent() (+10 more)
 
 ### Community 160 - "db.ts"
-Cohesion: 0.14
-Nodes (15): DeleteMemberRequest, deleteTrackedMember(), emptyBuckets(), ParseBuckets, ParseData, parseDeleteMemberRequest(), ParseEntry, percentileBucket() (+7 more)
+Cohesion: 0.22
+Nodes (12): DeleteMemberRequest, deleteTrackedMember(), emptyBuckets(), ParseBuckets, ParseData, parseDeleteMemberRequest(), ParseEntry, percentileBucket() (+4 more)
 
 ### Community 162 - "PalworldPlayerField.tsx"
 Cohesion: 0.21
@@ -760,10 +756,6 @@ Nodes (3): Avatar, AvatarFallback, AvatarImage
 Cohesion: 0.12
 Nodes (54): award(), awardMinorityDraw(), checkUnique(), chestRevealsOf(), chestsOf(), decisionOf(), dieOf(), emptyGilRushEvent() (+46 more)
 
-### Community 173 - "DRAGONWILDS_IMPLEMENTATION_PLAN.md"
-Cohesion: 0.15
-Nodes (4): Cost and checks, Deploy in this order, Gil Rush Singapore migration, Verify
-
 ### Community 174 - "4. Proposed implementation"
 Cohesion: 0.22
 Nodes (10): AddCurrentCraftButton(), CartItemRow(), CartLineIcon(), CartRouteItem, prefersReducedMotion(), CartRouteByWorld(), MathTooltip(), SummaryCard() (+2 more)
@@ -785,24 +777,24 @@ Cohesion: 0.50
 Nodes (3): TabsContent, TabsList, TabsTrigger
 
 ### Community 180 - "game-server-access-lifecycle.test.mjs"
-Cohesion: 0.14
-Nodes (12): api, auth(), calls, component(), find(), handlers, manager(), mount() (+4 more)
+Cohesion: 0.13
+Nodes (13): api, auth(), calls, component(), find(), handlers, manager(), mount() (+5 more)
 
 ### Community 182 - "scrape-lodestone.ts"
 Cohesion: 0.15
 Nodes (18): COLLECTIBLE_CONFIG, CollectibleKey, CollectionRefreshSummary, CollectionRetry, fetchJson(), fetchMemberCollectionData(), MemberCacheData, MemberFetchResult (+10 more)
 
 ### Community 185 - "types.ts"
-Cohesion: 0.12
-Nodes (26): MinorityPrize, boardConnections, boardSymbols, connections, BoardConnections(), BoardGrid(), BoardGridProps, tileFaces (+18 more)
+Cohesion: 0.17
+Nodes (19): boardConnections, boardSymbols, connections, BoardConnections(), BoardGrid(), BoardGridProps, tileFaces, useBoardGeometry() (+11 more)
 
 ### Community 187 - "element"
 Cohesion: 0.25
 Nodes (10): MinorityChestReveal, loadMinorityAssignments(), chestArtwork, GoldenDieBadge(), MinorityChest(), MinorityGame(), minorityPrizes, useMinorityAssignments() (+2 more)
 
 ### Community 188 - "EventHostPanel.tsx"
-Cohesion: 0.21
-Nodes (11): artwork, BingoCard(), rewardTiers, bingoMissions, loadCard(), BingoCardState, BingoMission, bingoReward() (+3 more)
+Cohesion: 0.10
+Nodes (26): MinigameKind, MinorityPrize, artwork, BingoCard(), rewardTiers, bannerAccents, games, MinigameSummary() (+18 more)
 
 ### Community 189 - "Keybound Brawler design QA"
 Cohesion: 0.22
@@ -816,33 +808,21 @@ Nodes (13): loadEvent(), useLocalEvent(), EventAction, LocalEvent, Mood, emptyEv
 Cohesion: 0.15
 Nodes (10): auditEntryFromValue(), GameServerAwsConfig, GameServerId, listGameServerAuditLog(), listGameServerAuditLogForAdmin(), listGameServerAuditLogForSession(), listGameServersForSession(), runAutoStopIdleGameServers() (+2 more)
 
-### Community 193 - "SpudJarPage.tsx"
-Cohesion: 0.40
-Nodes (3): saveKeyboundBrawlerScores, change, run()
-
 ### Community 194 - "CartelGilRushPage.tsx"
-Cohesion: 0.12
-Nodes (19): CartelGilRushPage(), EventWorkspace(), EventHostPanel(), useBingoCard(), animateGame(), gameAnimations, isVisible(), reveal() (+11 more)
+Cohesion: 0.11
+Nodes (20): CartelGilRushPage(), EventWorkspace(), EventHostPanel(), useBingoCard(), animateGame(), gameAnimations, isVisible(), reveal() (+12 more)
 
 ### Community 195 - "PlayerSetup.tsx"
 Cohesion: 0.13
 Nodes (24): GilRushAction, GilRushPlayer, SplitDecision, splitPayouts(), EventHeader(), EventHeaderProps, EventHostPanelProps, BonusDieControl() (+16 more)
 
-### Community 200 - "Cartel Gil Rush visual assets"
-Cohesion: 0.25
-Nodes (7): Bingo artwork, Cartel Gil Rush visual assets, Current mood artwork, Current tile artwork, Historical generated artwork, Prompts, Reward artwork
-
 ### Community 201 - "PalworldActivityTimeline.tsx"
-Cohesion: 0.09
-Nodes (24): MinigameKind, bannerAccents, games, MinigameSummary(), Bingo(), BoardOverview(), GroupMinigames(), QuickStart() (+16 more)
+Cohesion: 0.13
+Nodes (16): Bingo(), BoardOverview(), QuickStart(), steps, Rewards(), chapterContent, RulebookView(), RuleText() (+8 more)
 
 ### Community 202 - "Cartel Gil Rush"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (11): Background host saves, Bingo, Cartel Gil Rush, Group Trivia, Host workflow, Minority Draw, Other minigames and rules, Split or Steal (+3 more)
-
-### Community 204 - "6. Rulebook view"
-Cohesion: 0.33
-Nodes (6): 6. Rulebook view, Ability cards, Navigation and layout, Quick start: match the selected second rulebook image, Secret missions, Special tiles
 
 ### Community 205 - "adminFunctions.ts"
 Cohesion: 0.70
@@ -853,27 +833,27 @@ Cohesion: 0.29
 Nodes (4): enabled, hash, require, roles
 
 ### Community 211 - "PalworldActivityTimeline.tsx"
-Cohesion: 0.10
-Nodes (23): ACTION_DETAILS, actorName(), formatTime(), PalworldActivityTimeline(), PalworldActivityTimelineProps, prefersReducedMotion(), RESULT_LABELS, resultTone() (+15 more)
+Cohesion: 0.09
+Nodes (25): GAME_SERVERS, Context, createDragonwildsController(), Dependencies, emptyDragonwildsState(), Status, DragonwildsPlayer, GameServerAccessCandidate (+17 more)
 
 ## Knowledge Gaps
-- **1067 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+1062 more)
+- **1022 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+1017 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **26 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `item()` connect `Community 53` to `Community 0`, `Community 12`, `Community 45`, `Community 21`, `Community 29`?**
-  _High betweenness centrality (0.152) - this node is a cross-community bridge._
-- **Why does `element()` connect `Community 5` to `Dragonwilds: phased implementation checklist`, `PalworldPlayerField.tsx`, `CartelGilRushPage.tsx`, `4. Proposed implementation`, `Community 53`, `Community 55`, `types.ts`, `PalworldStartupStatus.tsx`, `SpudJarPage.tsx`?**
-  _High betweenness centrality (0.148) - this node is a cross-community bridge._
+- **Why does `item()` connect `Community 53` to `Community 0`, `Community 21`, `Community 45`, `Community 29`?**
+  _High betweenness centrality (0.147) - this node is a cross-community bridge._
+- **Why does `element()` connect `Community 5` to `Dragonwilds: phased implementation checklist`, `PalworldPlayerField.tsx`, `CartelGilRushPage.tsx`, `4. Proposed implementation`, `Community 55`, `types.ts`, `PalworldStartupStatus.tsx`, `Community 29`, `SpudJarPage.tsx`?**
+  _High betweenness centrality (0.146) - this node is a cross-community bridge._
 - **Why does `event()` connect `Community 1` to `CartelGilRushPage.tsx`, `Community 10`, `Community 3`, `Community 60`?**
-  _High betweenness centrality (0.100) - this node is a cross-community bridge._
+  _High betweenness centrality (0.102) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `registerDefaultHandlers()` (e.g. with `event()` and `payload()`) actually correct?**
   _`registerDefaultHandlers()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
-  _1067 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1022 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.053534660260809885 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**

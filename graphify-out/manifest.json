@@ -190,8 +190,8 @@
     "semantic_hash": "ffc66b08419b1e517f8640368d378fda"
   },
   "src/app/router.tsx": {
-    "mtime": 1793181561.4475224,
-    "ast_hash": "24c169342ff6b393c82b88abe9b814cb",
+    "mtime": 1794048004.1830685,
+    "ast_hash": "b2c8be12cbd0207d72241a34b8ab0a96",
     "semantic_hash": ""
   },
   "src/components/auth/AuthAccessState.tsx": {
@@ -1810,8 +1810,8 @@
     "semantic_hash": ""
   },
   "docs/project-reference.md": {
-    "mtime": 1794042684.797536,
-    "ast_hash": "52786cd18817bb186c68e99c938a7a04",
+    "mtime": 1794048136.587634,
+    "ast_hash": "2bbae2208e7adb4aa2e6100b882594fc",
     "semantic_hash": ""
   },
   "docs/raid-stats-implementation.md": {
@@ -2574,11 +2574,6 @@
     "ast_hash": "b8ab60ecb19715340185d6c58af366c2",
     "semantic_hash": ""
   },
-  "docs/clubhouse-handoff.md": {
-    "mtime": 1788939222.3806746,
-    "ast_hash": "383250868f794197836a3c3be0eabd9d",
-    "semantic_hash": ""
-  },
   "src/assets/clubhouse/clubhouse-bg-night.png": {
     "mtime": 1788939086.747021,
     "ast_hash": "b2bdddb5d5a699c9884a2e310e9ecc10",
@@ -2864,11 +2859,6 @@
     "ast_hash": "b7f780791873259d54b02df214d2e855",
     "semantic_hash": ""
   },
-  "docs/fc-collection-ui-refactor-handoff.md": {
-    "mtime": 1792028179.6050644,
-    "ast_hash": "b52ec42c6b1b157ea8cb6cef9f967a95",
-    "semantic_hash": ""
-  },
   "src/features/fc-collection/components/CollectionNavigation.tsx": {
     "mtime": 1792049353.5011945,
     "ast_hash": "72ce5687bc2f0a22f6ae198ba8eb5252",
@@ -2904,11 +2894,6 @@
     "ast_hash": "24101eeb0ea0f8ff1cfa925405f9fa0a",
     "semantic_hash": ""
   },
-  "docs/ladders-and-backstabbers-design-handoff.md": {
-    "mtime": 1792928692.8970234,
-    "ast_hash": "81d7a8cb273599e96a291e5f52254ac6",
-    "semantic_hash": ""
-  },
   "functions/src/refresh-fc-collection.test.ts": {
     "mtime": 1793010943.594218,
     "ast_hash": "6102a4fc90f9bdbf580eb31c825a04ac",
@@ -2930,8 +2915,8 @@
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/CartelGilRushPage.tsx": {
-    "mtime": 1794043748.2337062,
-    "ast_hash": "2bc2afd4adeda444af9bde66b842d65d",
+    "mtime": 1794048004.1830685,
+    "ast_hash": "70a3a1d7fd4db0f2fdd17e308c1c587d",
     "semantic_hash": ""
   },
   "src/features/cartel-gil-rush/components/EventHeader.tsx": {
@@ -3030,18 +3015,13 @@
     "semantic_hash": ""
   },
   "tests/cartel-gil-rush-page.test.mjs": {
-    "mtime": 1794047326.977679,
-    "ast_hash": "d32a52ca2fe8546f20a133f88a95abb3",
+    "mtime": 1794048041.841795,
+    "ast_hash": "9f8b47f1f7d8d3ca231806dc3940ae80",
     "semantic_hash": ""
   },
   "docs/cartel-gil-rush-implementation.md": {
-    "mtime": 1794047578.6584208,
-    "ast_hash": "8e86979905aa423596d7f40785767b1d",
-    "semantic_hash": ""
-  },
-  "docs/cartel-gil-rush-visual-assets.md": {
-    "mtime": 1794044262.8808024,
-    "ast_hash": "f47c9d51f877e1370c3ac8b17eec7339",
+    "mtime": 1794048136.587634,
+    "ast_hash": "d5cd77fbb4117131bd0d3af7f1c76414",
     "semantic_hash": ""
   },
   "src/assets/cartel-gil-rush/dice.png": {
@@ -3284,21 +3264,6 @@
     "ast_hash": "2c3e821dd140c9f8caeb3dd1e64e1487",
     "semantic_hash": ""
   },
-  "src/assets/cartel-gil-rush/push-your-luck.png": {
-    "mtime": 1793004625.8412118,
-    "ast_hash": "1502d14528afd59979dd496e647fd987",
-    "semantic_hash": ""
-  },
-  "src/assets/cartel-gil-rush/underdog.png": {
-    "mtime": 1793004602.3874888,
-    "ast_hash": "bc9a3c0d937b8cb5bddc3ef4e44f6dd3",
-    "semantic_hash": ""
-  },
-  "src/assets/cartel-gil-rush/workers-compensation.png": {
-    "mtime": 1793004640.7439942,
-    "ast_hash": "2c3e821dd140c9f8caeb3dd1e64e1487",
-    "semantic_hash": ""
-  },
   "src/assets/cartel-gil-rush/yan-horn.png": {
     "mtime": 1793008394.3340073,
     "ast_hash": "96e41afbe60de0f9cc47369ee496fcf5",
@@ -3509,11 +3474,6 @@
     "ast_hash": "2fee783ce6b60425017bec2ee716a9c8",
     "semantic_hash": ""
   },
-  "output/minigame-icons/golden-d10-cartoon.png": {
-    "mtime": 1793798609.5095932,
-    "ast_hash": "78329e2995d6693f606d6476090a466e",
-    "semantic_hash": ""
-  },
   "src/assets/cartel-gil-rush/golden-dice.png": {
     "mtime": 1793861297.6164956,
     "ast_hash": "d41d44132cfafdd7a35c278cb3c16bb1",
@@ -3589,14 +3549,14 @@
     "ast_hash": "fb9b2064563d5a59067f41a4bc74c45a",
     "semantic_hash": ""
   },
-  "docs/cartel-gil-rush-region-migration.md": {
-    "mtime": 1794047578.6584208,
-    "ast_hash": "53e6227bd70f8d35c9cf93e205278e5c",
-    "semantic_hash": ""
-  },
   "src/features/cartel-gil-rush/utils/sharedEventQueue.ts": {
     "mtime": 1794046863.1541016,
     "ast_hash": "bf93f738f08491807df8cc8722049077",
+    "semantic_hash": ""
+  },
+  "tests/cartel-gil-rush-routing.test.mjs": {
+    "mtime": 1794048085.8327732,
+    "ast_hash": "313d3ba3b0038f75d39b836a922de1fb",
     "semantic_hash": ""
   }
 }

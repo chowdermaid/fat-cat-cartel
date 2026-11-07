@@ -1,6 +1,8 @@
 # Cartel Gil Rush
 
-Cartel Gil Rush lives at `/cartel-gil-rush`; `/ladders-and-backstabbers` redirects here. Everyone can open the Game / Rulebook views through the sidebar. Bingo progress is editable by each visitor in their own browser. Signed-in Boss/Underpaw accounts receive host controls; guests, ordinary players and sessions still checking receive a read-only live view. The server revalidates every mutation. Hosts and spectators share one current event through Firebase. Existing themes and reduced-motion view transitions remain. Gameplay and rolls happen in FFXIV.
+Cartel Gil Rush has public `/cartel-gil-rush/game` and `/cartel-gil-rush/rulebook` URLs. `/cartel-gil-rush` and the legacy `/ladders-and-backstabbers` replace their history entry with a redirect to Game. Everyone can open the Game / Rulebook views through the sidebar. The selected tab follows the URL; tab clicks and Back to game navigate without resetting page scroll, and browser Back/Forward restores the view. Both child routes share the mounted parent workspace, retaining the existing event listener, save queue, local drafts, Rulebook state and Bingo card across view switches. Firebase Hosting's existing SPA rewrite already supports direct links and refreshes; no backend, auth, data-path or Firebase cost change is needed.
+
+Bingo progress is editable by each visitor in their own browser. Signed-in Boss/Underpaw accounts receive host controls; guests, ordinary players and sessions still checking receive a read-only live view. The server revalidates every mutation. Hosts and spectators share one current event through Firebase. Existing themes and reduced-motion view transitions remain. Gameplay and rolls happen in FFXIV.
 
 ## Host workflow
 

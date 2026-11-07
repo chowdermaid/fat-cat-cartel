@@ -1260,7 +1260,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "functions_src_cartel_gil_rush_model_minorityprize",
-      "community": 185,
+      "community": 188,
       "norm_label": "minorityprize"
     },
     {
@@ -1290,7 +1290,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "functions_src_cartel_gil_rush_model_minigamekind",
-      "community": 201,
+      "community": 188,
       "norm_label": "minigamekind"
     },
     {
@@ -5170,7 +5170,7 @@
       "source_location": "L1033",
       "_origin": "ast",
       "id": "functions_src_index_savekeyboundbrawlerscores",
-      "community": 193,
+      "community": 105,
       "norm_label": "savekeyboundbrawlerscores"
     },
     {
@@ -5270,7 +5270,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "functions_src_keybound_brawler_test",
-      "community": 193,
+      "community": 105,
       "norm_label": "keybound-brawler.test.ts"
     },
     {
@@ -5280,7 +5280,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "functions_src_keybound_brawler_test_change",
-      "community": 193,
+      "community": 105,
       "norm_label": "change"
     },
     {
@@ -5290,7 +5290,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "functions_src_keybound_brawler_test_hascode",
-      "community": 193,
+      "community": 105,
       "norm_label": "hascode()"
     },
     {
@@ -5300,7 +5300,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "functions_src_keybound_brawler_test_run",
-      "community": 193,
+      "community": 105,
       "norm_label": "run()"
     },
     {
@@ -6860,7 +6860,7 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "functions_src_refresh_fflogs_batchrun",
-      "community": 12,
+      "community": 53,
       "norm_label": "batchrun()"
     },
     {
@@ -8060,7 +8060,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "functions_src_zones",
-      "community": 160,
+      "community": 9,
       "norm_label": "zones.ts"
     },
     {
@@ -8070,7 +8070,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "functions_src_zones_contenttype",
-      "community": 160,
+      "community": 9,
       "norm_label": "contenttype"
     },
     {
@@ -8080,7 +8080,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "functions_src_zones_zoneencounter",
-      "community": 160,
+      "community": 9,
       "norm_label": "zoneencounter"
     },
     {
@@ -8090,7 +8090,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "functions_src_zones_zoneconfig",
-      "community": 160,
+      "community": 9,
       "norm_label": "zoneconfig"
     },
     {
@@ -8110,7 +8110,7 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "functions_src_zones_zones_by_content_type",
-      "community": 160,
+      "community": 9,
       "norm_label": "zones_by_content_type()"
     },
     {
@@ -8890,7 +8890,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_dev_emulator",
-      "community": 62,
+      "community": 94,
       "norm_label": "dev-emulator.mjs"
     },
     {
@@ -8900,7 +8900,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "scripts_dev_emulator_children",
-      "community": 62,
+      "community": 94,
       "norm_label": "children"
     },
     {
@@ -8910,7 +8910,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "scripts_dev_emulator_start",
-      "community": 62,
+      "community": 94,
       "norm_label": "start()"
     },
     {
@@ -8920,7 +8920,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "scripts_dev_emulator_shutdown",
-      "community": 62,
+      "community": 94,
       "norm_label": "shutdown()"
     },
     {
@@ -9144,10 +9144,40 @@
       "norm_label": "cartelgilrushroute"
     },
     {
-      "label": "laddersAndBackstabbersRoute",
+      "label": "cartelGilRushIndexRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
       "source_location": "L70",
+      "_origin": "ast",
+      "id": "src_app_router_cartelgilrushindexroute",
+      "community": 30,
+      "norm_label": "cartelgilrushindexroute"
+    },
+    {
+      "label": "cartelGilRushGameRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L77",
+      "_origin": "ast",
+      "id": "src_app_router_cartelgilrushgameroute",
+      "community": 30,
+      "norm_label": "cartelgilrushgameroute"
+    },
+    {
+      "label": "cartelGilRushRulebookRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L82",
+      "_origin": "ast",
+      "id": "src_app_router_cartelgilrushrulebookroute",
+      "community": 30,
+      "norm_label": "cartelgilrushrulebookroute"
+    },
+    {
+      "label": "laddersAndBackstabbersRoute",
+      "file_type": "code",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "src_app_router_laddersandbackstabbersroute",
       "community": 30,
@@ -9157,7 +9187,7 @@
       "label": "fcCollectionRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L76",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "src_app_router_fccollectionroute",
       "community": 30,
@@ -9167,7 +9197,7 @@
       "label": "fcCollectionIndexRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L82",
+      "source_location": "L99",
       "_origin": "ast",
       "id": "src_app_router_fccollectionindexroute",
       "community": 30,
@@ -9177,7 +9207,7 @@
       "label": "fcOverviewRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L88",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "src_app_router_fcoverviewroute",
       "community": 30,
@@ -9187,7 +9217,7 @@
       "label": "fcCollectionsRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L94",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "src_app_router_fccollectionsroute",
       "community": 30,
@@ -9197,7 +9227,7 @@
       "label": "fcTypeRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L100",
+      "source_location": "L117",
       "_origin": "ast",
       "id": "src_app_router_fctyperoute",
       "community": 30,
@@ -9207,7 +9237,7 @@
       "label": "fcLeaderboardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L106",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "src_app_router_fcleaderboardroute",
       "community": 30,
@@ -9217,7 +9247,7 @@
       "label": "fcLegacyLeaderboardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L112",
+      "source_location": "L129",
       "_origin": "ast",
       "id": "src_app_router_fclegacyleaderboardroute",
       "community": 30,
@@ -9227,7 +9257,7 @@
       "label": "fcLegacyTypeRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L118",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "src_app_router_fclegacytyperoute",
       "community": 30,
@@ -9237,7 +9267,7 @@
       "label": "raidStatsRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L126",
+      "source_location": "L143",
       "_origin": "ast",
       "id": "src_app_router_raidstatsroute",
       "community": 30,
@@ -9247,7 +9277,7 @@
       "label": "ucobProgRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L132",
+      "source_location": "L149",
       "_origin": "ast",
       "id": "src_app_router_ucobprogroute",
       "community": 30,
@@ -9257,7 +9287,7 @@
       "label": "mountRouletteRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L138",
+      "source_location": "L155",
       "_origin": "ast",
       "id": "src_app_router_mountrouletteroute",
       "community": 30,
@@ -9267,7 +9297,7 @@
       "label": "keyboundBrawlerRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L144",
+      "source_location": "L161",
       "_origin": "ast",
       "id": "src_app_router_keyboundbrawlerroute",
       "community": 30,
@@ -9277,7 +9307,7 @@
       "label": "craftingBoardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L150",
+      "source_location": "L167",
       "_origin": "ast",
       "id": "src_app_router_craftingboardroute",
       "community": 30,
@@ -9287,7 +9317,7 @@
       "label": "meowketBoardRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L156",
+      "source_location": "L173",
       "_origin": "ast",
       "id": "src_app_router_meowketboardroute",
       "community": 30,
@@ -9297,7 +9327,7 @@
       "label": "spudJarRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L162",
+      "source_location": "L179",
       "_origin": "ast",
       "id": "src_app_router_spudjarroute",
       "community": 30,
@@ -9307,7 +9337,7 @@
       "label": "gameServerIndexRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L168",
+      "source_location": "L185",
       "_origin": "ast",
       "id": "src_app_router_gameserverindexroute",
       "community": 30,
@@ -9317,7 +9347,7 @@
       "label": "palworldServerRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L174",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "src_app_router_palworldserverroute",
       "community": 30,
@@ -9327,7 +9357,7 @@
       "label": "dragonwildsServerRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L180",
+      "source_location": "L197",
       "_origin": "ast",
       "id": "src_app_router_dragonwildsserverroute",
       "community": 30,
@@ -9337,7 +9367,7 @@
       "label": "calendarRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L186",
+      "source_location": "L203",
       "_origin": "ast",
       "id": "src_app_router_calendarroute",
       "community": 30,
@@ -9347,7 +9377,7 @@
       "label": "adminRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L192",
+      "source_location": "L209",
       "_origin": "ast",
       "id": "src_app_router_adminroute",
       "community": 30,
@@ -9357,7 +9387,7 @@
       "label": "membersRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L198",
+      "source_location": "L215",
       "_origin": "ast",
       "id": "src_app_router_membersroute",
       "community": 30,
@@ -9367,7 +9397,7 @@
       "label": "memberProfileRoute",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L204",
+      "source_location": "L221",
       "_origin": "ast",
       "id": "src_app_router_memberprofileroute",
       "community": 30,
@@ -9377,7 +9407,7 @@
       "label": "routeTree",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L210",
+      "source_location": "L227",
       "_origin": "ast",
       "id": "src_app_router_routetree",
       "community": 30,
@@ -9387,7 +9417,7 @@
       "label": "router",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L242",
+      "source_location": "L263",
       "_origin": "ast",
       "id": "src_app_router_router",
       "community": 30,
@@ -9397,7 +9427,7 @@
       "label": "@tanstack/react-router",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L244",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "src_app_router_tanstack_react_router",
       "community": 30,
@@ -9407,7 +9437,7 @@
       "label": "Register",
       "file_type": "code",
       "source_file": "src/app/router.tsx",
-      "source_location": "L245",
+      "source_location": "L266",
       "_origin": "ast",
       "id": "src_app_router_register",
       "community": 30,
@@ -13817,7 +13847,7 @@
       "label": "CartelGilRushPage()",
       "file_type": "code",
       "source_file": "src/features/cartel-gil-rush/components/CartelGilRushPage.tsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_cartelgilrushpage_cartelgilrushpage",
       "community": 194,
@@ -13890,7 +13920,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_minigamesummary",
-      "community": 201,
+      "community": 188,
       "norm_label": "minigamesummary.tsx"
     },
     {
@@ -13900,7 +13930,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_minigamesummary_games",
-      "community": 201,
+      "community": 188,
       "norm_label": "games"
     },
     {
@@ -13910,7 +13940,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_minigamesummary_banneraccents",
-      "community": 201,
+      "community": 188,
       "norm_label": "banneraccents"
     },
     {
@@ -13920,7 +13950,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_minigamesummary_minigamesummary",
-      "community": 201,
+      "community": 188,
       "norm_label": "minigamesummary()"
     },
     {
@@ -14300,7 +14330,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_boardoverview",
-      "community": 185,
+      "community": 188,
       "norm_label": "boardoverview.tsx"
     },
     {
@@ -14320,7 +14350,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_groupminigames",
-      "community": 201,
+      "community": 188,
       "norm_label": "groupminigames.tsx"
     },
     {
@@ -14330,7 +14360,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_groupminigames_groupminigames",
-      "community": 201,
+      "community": 188,
       "norm_label": "groupminigames()"
     },
     {
@@ -14460,7 +14490,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_tileruletooltip",
-      "community": 185,
+      "community": 188,
       "norm_label": "tileruletooltip.tsx"
     },
     {
@@ -14470,7 +14500,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_tileruletooltip_tileruletooltip",
-      "community": 185,
+      "community": 188,
       "norm_label": "tileruletooltip()"
     },
     {
@@ -14480,7 +14510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_tilesmovement",
-      "community": 185,
+      "community": 188,
       "norm_label": "tilesmovement.tsx"
     },
     {
@@ -14490,7 +14520,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_tilesmovement_tilereferences",
-      "community": 185,
+      "community": 188,
       "norm_label": "tilereferences"
     },
     {
@@ -14500,7 +14530,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_components_rulebook_tilesmovement_tilesmovement",
-      "community": 201,
+      "community": 188,
       "norm_label": "tilesmovement()"
     },
     {
@@ -14570,7 +14600,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_constants",
-      "community": 185,
+      "community": 188,
       "norm_label": "constants.ts"
     },
     {
@@ -14600,7 +14630,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_constants_minigames",
-      "community": 201,
+      "community": 188,
       "norm_label": "minigames"
     },
     {
@@ -14610,7 +14640,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_constants_tiles",
-      "community": 185,
+      "community": 188,
       "norm_label": "tiles"
     },
     {
@@ -14620,7 +14650,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_constants_chocobomovementrules",
-      "community": 185,
+      "community": 188,
       "norm_label": "chocobomovementrules"
     },
     {
@@ -14630,7 +14660,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_constants_tilemovementrules",
-      "community": 185,
+      "community": 188,
       "norm_label": "tilemovementrules"
     },
     {
@@ -14900,7 +14930,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_tileartwork",
-      "community": 185,
+      "community": 188,
       "norm_label": "tileartwork.ts"
     },
     {
@@ -14910,7 +14940,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_tileartwork_tileartwork",
-      "community": 185,
+      "community": 188,
       "norm_label": "tileartwork"
     },
     {
@@ -15060,7 +15090,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "src_features_cartel_gil_rush_types_tile",
-      "community": 201,
+      "community": 188,
       "norm_label": "tile"
     },
     {
@@ -15490,7 +15520,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_features_craftingboard_api_craftingrequests_empty_dashboard_data",
-      "community": 16,
+      "community": 62,
       "norm_label": "empty_dashboard_data"
     },
     {
@@ -15720,7 +15750,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_features_craftingboard_api_xivapi_craftingrecipe",
-      "community": 36,
+      "community": 29,
       "norm_label": "craftingrecipe"
     },
     {
@@ -15990,7 +16020,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_createrequestdialog",
-      "community": 36,
+      "community": 29,
       "norm_label": "createrequestdialog.tsx"
     },
     {
@@ -16000,7 +16030,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_createrequestdialog_createrequestdialog",
-      "community": 53,
+      "community": 29,
       "norm_label": "createrequestdialog()"
     },
     {
@@ -16120,7 +16150,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_requests_requestsection_requestsection",
-      "community": 62,
+      "community": 94,
       "norm_label": "requestsection()"
     },
     {
@@ -16150,7 +16180,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_recipepreview",
-      "community": 36,
+      "community": 29,
       "norm_label": "recipepreview.tsx"
     },
     {
@@ -16160,7 +16190,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_recipepreview_recipepreview",
-      "community": 36,
+      "community": 29,
       "norm_label": "recipepreview()"
     },
     {
@@ -16170,7 +16200,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_searchskeleton",
-      "community": 36,
+      "community": 29,
       "norm_label": "searchskeleton.tsx"
     },
     {
@@ -16180,7 +16210,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_search_searchskeleton_searchskeleton",
-      "community": 36,
+      "community": 29,
       "norm_label": "searchskeleton()"
     },
     {
@@ -16190,7 +16220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_crafterchip",
-      "community": 29,
+      "community": 63,
       "norm_label": "crafterchip.tsx"
     },
     {
@@ -16230,7 +16260,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_itemicon",
-      "community": 26,
+      "community": 63,
       "norm_label": "itemicon.tsx"
     },
     {
@@ -16240,7 +16270,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_itemicon_itemicon",
-      "community": 26,
+      "community": 63,
       "norm_label": "itemicon()"
     },
     {
@@ -16270,7 +16300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberavatar",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberavatar.tsx"
     },
     {
@@ -16280,7 +16310,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberavatar_memberavatar",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberavatar()"
     },
     {
@@ -16290,7 +16320,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberline",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberline.tsx"
     },
     {
@@ -16300,7 +16330,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_memberline_memberline",
-      "community": 29,
+      "community": 26,
       "norm_label": "memberline()"
     },
     {
@@ -16350,7 +16380,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_quantitycontrol",
-      "community": 36,
+      "community": 29,
       "norm_label": "quantitycontrol.tsx"
     },
     {
@@ -16360,7 +16390,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_features_craftingboard_components_shared_quantitycontrol_quantitycontrol",
-      "community": 36,
+      "community": 29,
       "norm_label": "quantitycontrol()"
     },
     {
@@ -16410,7 +16440,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_hooks_usecraftingboardanimations",
-      "community": 16,
+      "community": 36,
       "norm_label": "usecraftingboardanimations.ts"
     },
     {
@@ -16420,7 +16450,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_features_craftingboard_hooks_usecraftingboardanimations_usecraftingboardanimations",
-      "community": 16,
+      "community": 36,
       "norm_label": "usecraftingboardanimations()"
     },
     {
@@ -16480,7 +16510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_hooks_usecraftingrequests",
-      "community": 16,
+      "community": 62,
       "norm_label": "usecraftingrequests.ts"
     },
     {
@@ -16490,7 +16520,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_features_craftingboard_hooks_usecraftingrequests_craftingrequestsstate",
-      "community": 16,
+      "community": 62,
       "norm_label": "craftingrequestsstate"
     },
     {
@@ -16610,7 +16640,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_craftingboard_types_craftingselecteditem",
-      "community": 36,
+      "community": 29,
       "norm_label": "craftingselecteditem"
     },
     {
@@ -16670,7 +16700,7 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "src_features_craftingboard_types_craftingrequestdashboarddata",
-      "community": 16,
+      "community": 36,
       "norm_label": "craftingrequestdashboarddata"
     },
     {
@@ -16680,7 +16710,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_arrays",
-      "community": 26,
+      "community": 29,
       "norm_label": "arrays.ts"
     },
     {
@@ -16690,7 +16720,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_arrays_safearray",
-      "community": 26,
+      "community": 29,
       "norm_label": "safearray()"
     },
     {
@@ -16780,7 +16810,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_eligibility_combinedeligiblecrafter",
-      "community": 29,
+      "community": 63,
       "norm_label": "combinedeligiblecrafter"
     },
     {
@@ -16920,7 +16950,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_scroll",
-      "community": 63,
+      "community": 29,
       "norm_label": "scroll.ts"
     },
     {
@@ -16930,7 +16960,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_features_craftingboard_utils_scroll_handlenestedscrollareawheel",
-      "community": 63,
+      "community": 29,
       "norm_label": "handlenestedscrollareawheel()"
     },
     {
@@ -18790,7 +18820,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline",
-      "community": 211,
+      "community": 57,
       "norm_label": "palworldactivitytimeline.tsx"
     },
     {
@@ -18800,7 +18830,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimelineprops",
-      "community": 211,
+      "community": 57,
       "norm_label": "palworldactivitytimelineprops"
     },
     {
@@ -18810,7 +18840,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_action_details",
-      "community": 211,
+      "community": 57,
       "norm_label": "action_details"
     },
     {
@@ -18820,7 +18850,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_result_labels",
-      "community": 211,
+      "community": 57,
       "norm_label": "result_labels"
     },
     {
@@ -18830,7 +18860,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_prefersreducedmotion",
-      "community": 211,
+      "community": 57,
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -18840,7 +18870,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_actorname",
-      "community": 211,
+      "community": 57,
       "norm_label": "actorname()"
     },
     {
@@ -18850,7 +18880,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_formattime",
-      "community": 211,
+      "community": 57,
       "norm_label": "formattime()"
     },
     {
@@ -18860,7 +18890,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_resulttone",
-      "community": 211,
+      "community": 57,
       "norm_label": "resulttone()"
     },
     {
@@ -18870,7 +18900,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_features_gameserver_components_palworld_palworldactivitytimeline_palworldactivitytimeline",
-      "community": 211,
+      "community": 57,
       "norm_label": "palworldactivitytimeline()"
     },
     {
@@ -19440,7 +19470,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_constants",
-      "community": 93,
+      "community": 211,
       "norm_label": "constants.ts"
     },
     {
@@ -19450,7 +19480,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_gameserver_constants_game_servers",
-      "community": 93,
+      "community": 211,
       "norm_label": "game_servers"
     },
     {
@@ -19460,7 +19490,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller",
-      "community": 48,
+      "community": 211,
       "norm_label": "dragonwildscontroller.ts"
     },
     {
@@ -19470,7 +19500,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_status",
-      "community": 48,
+      "community": 211,
       "norm_label": "status"
     },
     {
@@ -19480,7 +19510,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_context",
-      "community": 48,
+      "community": 211,
       "norm_label": "context"
     },
     {
@@ -19490,7 +19520,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_dependencies",
-      "community": 48,
+      "community": 211,
       "norm_label": "dependencies"
     },
     {
@@ -19500,7 +19530,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_emptydragonwildsstate",
-      "community": 137,
+      "community": 211,
       "norm_label": "emptydragonwildsstate()"
     },
     {
@@ -19510,7 +19540,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_features_gameserver_hooks_dragonwildscontroller_createdragonwildscontroller",
-      "community": 137,
+      "community": 211,
       "norm_label": "createdragonwildscontroller()"
     },
     {
@@ -19660,7 +19690,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverdefinition",
-      "community": 93,
+      "community": 211,
       "norm_label": "gameserverdefinition"
     },
     {
@@ -19760,7 +19790,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditaction",
-      "community": 211,
+      "community": 57,
       "norm_label": "gameserverauditaction"
     },
     {
@@ -19770,7 +19800,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditresult",
-      "community": 211,
+      "community": 57,
       "norm_label": "gameserverauditresult"
     },
     {
@@ -19780,7 +19810,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogentry",
-      "community": 211,
+      "community": 57,
       "norm_label": "gameserverauditlogentry"
     },
     {
@@ -19790,7 +19820,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserverauditlogresponse",
-      "community": 48,
+      "community": 211,
       "norm_label": "gameserverauditlogresponse"
     },
     {
@@ -19880,7 +19910,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameservertelemetryresponse",
-      "community": 48,
+      "community": 211,
       "norm_label": "gameservertelemetryresponse"
     },
     {
@@ -19890,7 +19920,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "src_features_gameserver_types_gameserveractionresponse",
-      "community": 48,
+      "community": 211,
       "norm_label": "gameserveractionresponse"
     },
     {
@@ -19930,7 +19960,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_features_gameserver_utils_dragonwilds_gameservererror",
-      "community": 48,
+      "community": 211,
       "norm_label": "gameservererror()"
     },
     {
@@ -19940,7 +19970,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_features_gameserver_utils_dragonwilds_isgameserveraccesserror",
-      "community": 48,
+      "community": 211,
       "norm_label": "isgameserveraccesserror()"
     },
     {
@@ -20020,7 +20050,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_features_gameserver_utils_dragonwilds_dragonwildsactionstatus",
-      "community": 48,
+      "community": 211,
       "norm_label": "dragonwildsactionstatus()"
     },
     {
@@ -26470,7 +26500,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_features_raid_stats_types_parseentry",
-      "community": 50,
+      "community": 51,
       "norm_label": "parseentry"
     },
     {
@@ -26590,7 +26620,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_raid_stats_utils_membermerging",
-      "community": 50,
+      "community": 51,
       "norm_label": "membermerging.ts"
     },
     {
@@ -26600,7 +26630,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_features_raid_stats_utils_membermerging_memberidentity",
-      "community": 50,
+      "community": 51,
       "norm_label": "memberidentity"
     },
     {
@@ -29777,21 +29807,51 @@
       "label": "load()",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-page.test.mjs",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "tests_cartel_gil_rush_page_test_load",
       "community": 194,
       "norm_label": "load()"
     },
     {
+      "label": "pageRouters",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-page.test.mjs",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_page_test_pagerouters",
+      "community": 194,
+      "norm_label": "pagerouters"
+    },
+    {
       "label": "render()",
       "file_type": "code",
       "source_file": "tests/cartel-gil-rush-page.test.mjs",
-      "source_location": "L38",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "tests_cartel_gil_rush_page_test_render",
       "community": 194,
       "norm_label": "render()"
+    },
+    {
+      "label": "cartel-gil-rush-routing.test.mjs",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-routing.test.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_routing_test",
+      "community": 193,
+      "norm_label": "cartel-gil-rush-routing.test.mjs"
+    },
+    {
+      "label": "load()",
+      "file_type": "code",
+      "source_file": "tests/cartel-gil-rush-routing.test.mjs",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "tests_cartel_gil_rush_routing_test_load",
+      "community": 193,
+      "norm_label": "load()"
     },
     {
       "label": "cartel-gil-rush-rulebook-hook.test.mjs",
@@ -30470,7 +30530,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "tests_game_server_access_lifecycle_test_settings",
-      "community": 93,
+      "community": 180,
       "norm_label": "settings()"
     },
     {
@@ -31580,7 +31640,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_admin_auth_implementation",
-      "community": 173,
+      "community": 142,
       "norm_label": "admin-auth-implementation.md"
     },
     {
@@ -31780,7 +31840,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation",
-      "community": 173,
+      "community": 202,
       "norm_label": "cartel-gil-rush-implementation.md"
     },
     {
@@ -31797,7 +31857,7 @@
       "label": "Host workflow",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L5",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_host_workflow",
       "community": 202,
@@ -31807,7 +31867,7 @@
       "label": "Background host saves",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L15",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_background_host_saves",
       "community": 202,
@@ -31817,7 +31877,7 @@
       "label": "Bingo",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L25",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_bingo",
       "community": 202,
@@ -31827,7 +31887,7 @@
       "label": "Group Trivia",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L35",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_group_trivia",
       "community": 202,
@@ -31837,7 +31897,7 @@
       "label": "Treasure Draw",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L45",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_treasure_draw",
       "community": 202,
@@ -31847,7 +31907,7 @@
       "label": "Minority Draw",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L59",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_minority_draw",
       "community": 202,
@@ -31857,7 +31917,7 @@
       "label": "Split or Steal",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L69",
+      "source_location": "L71",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_split_or_steal",
       "community": 202,
@@ -31867,7 +31927,7 @@
       "label": "Other minigames and rules",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L83",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_other_minigames_and_rules",
       "community": 202,
@@ -31877,7 +31937,7 @@
       "label": "State, compatibility and cost",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L99",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_state_compatibility_and_cost",
       "community": 202,
@@ -31887,231 +31947,11 @@
       "label": "Verification",
       "file_type": "document",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L111",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "docs_cartel_gil_rush_implementation_verification",
       "community": 202,
       "norm_label": "verification"
-    },
-    {
-      "label": "cartel-gil-rush-region-migration.md",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_region_migration",
-      "community": 173,
-      "norm_label": "cartel-gil-rush-region-migration.md"
-    },
-    {
-      "label": "Gil Rush Singapore migration",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_region_migration_gil_rush_singapore_migration",
-      "community": 173,
-      "norm_label": "gil rush singapore migration"
-    },
-    {
-      "label": "Deploy in this order",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L7",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_region_migration_deploy_in_this_order",
-      "community": 173,
-      "norm_label": "deploy in this order"
-    },
-    {
-      "label": "Verify",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L30",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_region_migration_verify",
-      "community": 173,
-      "norm_label": "verify"
-    },
-    {
-      "label": "Cost and checks",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L42",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_region_migration_cost_and_checks",
-      "community": 173,
-      "norm_label": "cost and checks"
-    },
-    {
-      "label": "cartel-gil-rush-visual-assets.md",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets",
-      "community": 200,
-      "norm_label": "cartel-gil-rush-visual-assets.md"
-    },
-    {
-      "label": "Cartel Gil Rush visual assets",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "community": 200,
-      "norm_label": "cartel gil rush visual assets"
-    },
-    {
-      "label": "Current tile artwork",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_current_tile_artwork",
-      "community": 200,
-      "norm_label": "current tile artwork"
-    },
-    {
-      "label": "Current mood artwork",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_current_mood_artwork",
-      "community": 200,
-      "norm_label": "current mood artwork"
-    },
-    {
-      "label": "Reward artwork",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_reward_artwork",
-      "community": 200,
-      "norm_label": "reward artwork"
-    },
-    {
-      "label": "Bingo artwork",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L19",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_bingo_artwork",
-      "community": 200,
-      "norm_label": "bingo artwork"
-    },
-    {
-      "label": "Historical generated artwork",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_historical_generated_artwork",
-      "community": 200,
-      "norm_label": "historical generated artwork"
-    },
-    {
-      "label": "Prompts",
-      "file_type": "document",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L33",
-      "_origin": "ast",
-      "id": "docs_cartel_gil_rush_visual_assets_prompts",
-      "community": 200,
-      "norm_label": "prompts"
-    },
-    {
-      "label": "clubhouse-handoff.md",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff",
-      "community": 57,
-      "norm_label": "clubhouse-handoff.md"
-    },
-    {
-      "label": "Cartel Clubhouse handoff",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "community": 57,
-      "norm_label": "cartel clubhouse handoff"
-    },
-    {
-      "label": "Resume context",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_resume_context",
-      "community": 57,
-      "norm_label": "resume context"
-    },
-    {
-      "label": "Current product behavior",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_current_product_behavior",
-      "community": 57,
-      "norm_label": "current product behavior"
-    },
-    {
-      "label": "Background, carpet, and door motion",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_background_carpet_and_door_motion",
-      "community": 57,
-      "norm_label": "background, carpet, and door motion"
-    },
-    {
-      "label": "Files to inspect",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L48",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_files_to_inspect",
-      "community": 57,
-      "norm_label": "files to inspect"
-    },
-    {
-      "label": "Data and scope",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L64",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_data_and_scope",
-      "community": 57,
-      "norm_label": "data and scope"
-    },
-    {
-      "label": "Verification status",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L70",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_verification_status",
-      "community": 57,
-      "norm_label": "verification status"
-    },
-    {
-      "label": "Commands in this environment",
-      "file_type": "document",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L84",
-      "_origin": "ast",
-      "id": "docs_clubhouse_handoff_commands_in_this_environment",
-      "community": 57,
-      "norm_label": "commands in this environment"
     },
     {
       "label": "crafting-board-implementation.md",
@@ -32510,7 +32350,7 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "docs_dragonwilds_server_implementation_7_phase_2_backend_groundwork",
-      "community": 154,
+      "community": 156,
       "norm_label": "7. phase 2 backend groundwork"
     },
     {
@@ -32520,7 +32360,7 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "docs_dragonwilds_server_implementation_implemented_boundaries",
-      "community": 154,
+      "community": 156,
       "norm_label": "implemented boundaries"
     },
     {
@@ -32530,7 +32370,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "docs_dragonwilds_server_implementation_runtime_cost_impact_after_deployment",
-      "community": 154,
+      "community": 156,
       "norm_label": "runtime cost impact after deployment"
     },
     {
@@ -32540,7 +32380,7 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "docs_dragonwilds_server_implementation_validation_and_release_limits",
-      "community": 154,
+      "community": 156,
       "norm_label": "validation and release limits"
     },
     {
@@ -32934,156 +32774,6 @@
       "norm_label": "resume point"
     },
     {
-      "label": "fc-collection-ui-refactor-handoff.md",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff",
-      "community": 156,
-      "norm_label": "fc-collection-ui-refactor-handoff.md"
-    },
-    {
-      "label": "FC Collection UI redesign handoff",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "community": 156,
-      "norm_label": "fc collection ui redesign handoff"
-    },
-    {
-      "label": "1. The request and product context",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L7",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_1_the_request_and_product_context",
-      "community": 156,
-      "norm_label": "1. the request and product context"
-    },
-    {
-      "label": "2. Stack and application shell",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_2_stack_and_application_shell",
-      "community": 156,
-      "norm_label": "2. stack and application shell"
-    },
-    {
-      "label": "3. Routes and source map",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L70",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_3_routes_and_source_map",
-      "community": 156,
-      "norm_label": "3. routes and source map"
-    },
-    {
-      "label": "4. Current overview",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L113",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_4_current_overview",
-      "community": 156,
-      "norm_label": "4. current overview"
-    },
-    {
-      "label": "5. Current collection matrix and detail dialog",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L154",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_5_current_collection_matrix_and_detail_dialog",
-      "community": 156,
-      "norm_label": "5. current collection matrix and detail dialog"
-    },
-    {
-      "label": "6. Current leaderboard",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L199",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_6_current_leaderboard",
-      "community": 156,
-      "norm_label": "6. current leaderboard"
-    },
-    {
-      "label": "7. Data contract and ownership",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L218",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_7_data_contract_and_ownership",
-      "community": 156,
-      "norm_label": "7. data contract and ownership"
-    },
-    {
-      "label": "8. Scope, caching, refresh, and cost constraints",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L302",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_8_scope_caching_refresh_and_cost_constraints",
-      "community": 156,
-      "norm_label": "8. scope, caching, refresh, and cost constraints"
-    },
-    {
-      "label": "9. Shared consumers and refactor boundaries",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L349",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_9_shared_consumers_and_refactor_boundaries",
-      "community": 156,
-      "norm_label": "9. shared consumers and refactor boundaries"
-    },
-    {
-      "label": "10. Existing limitations and useful design considerations",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L368",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_10_existing_limitations_and_useful_design_considerations",
-      "community": 156,
-      "norm_label": "10. existing limitations and useful design considerations"
-    },
-    {
-      "label": "11. Local development and verification",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L385",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_11_local_development_and_verification",
-      "community": 156,
-      "norm_label": "11. local development and verification"
-    },
-    {
-      "label": "12. Repository rules and recommended reading order",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L431",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_12_repository_rules_and_recommended_reading_order",
-      "community": 156,
-      "norm_label": "12. repository rules and recommended reading order"
-    },
-    {
-      "label": "13. Starter prompt for the next chatbot",
-      "file_type": "document",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L462",
-      "_origin": "ast",
-      "id": "docs_fc_collection_ui_refactor_handoff_13_starter_prompt_for_the_next_chatbot",
-      "community": 156,
-      "norm_label": "13. starter prompt for the next chatbot"
-    },
-    {
       "label": "firebase-data-and-costs.md",
       "file_type": "document",
       "source_file": "docs/firebase-data-and-costs.md",
@@ -33322,256 +33012,6 @@
       "id": "docs_frontend_patterns_ui_verification",
       "community": 147,
       "norm_label": "ui verification"
-    },
-    {
-      "label": "ladders-and-backstabbers-design-handoff.md",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff",
-      "community": 173,
-      "norm_label": "ladders-and-backstabbers-design-handoff.md"
-    },
-    {
-      "label": "Ladders & Backstabbers: design and implementation handoff",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "community": 94,
-      "norm_label": "ladders & backstabbers: design and implementation handoff"
-    },
-    {
-      "label": "1. Approved visual direction",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L7",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_1_approved_visual_direction",
-      "community": 94,
-      "norm_label": "1. approved visual direction"
-    },
-    {
-      "label": "Game: open tabletop with cream ability cards",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_game_open_tabletop_with_cream_ability_cards",
-      "community": 94,
-      "norm_label": "game: open tabletop with cream ability cards"
-    },
-    {
-      "label": "Rulebook: chapter rail and illustrated quick start",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L15",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_rulebook_chapter_rail_and_illustrated_quick_start",
-      "community": 94,
-      "norm_label": "rulebook: chapter rail and illustrated quick start"
-    },
-    {
-      "label": "2. Outcome and scope",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_2_outcome_and_scope",
-      "community": 94,
-      "norm_label": "2. outcome and scope"
-    },
-    {
-      "label": "3. Existing implementation to preserve",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L36",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_3_existing_implementation_to_preserve",
-      "community": 94,
-      "norm_label": "3. existing implementation to preserve"
-    },
-    {
-      "label": "4. Shared page header",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L58",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_4_shared_page_header",
-      "community": 94,
-      "norm_label": "4. shared page header"
-    },
-    {
-      "label": "5. Game view",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L71",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_5_game_view",
-      "community": 94,
-      "norm_label": "5. game view"
-    },
-    {
-      "label": "Layout",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L73",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_layout",
-      "community": 94,
-      "norm_label": "layout"
-    },
-    {
-      "label": "Playing cards",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L82",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_playing_cards",
-      "community": 94,
-      "norm_label": "playing cards"
-    },
-    {
-      "label": "Toolbar and actions",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L98",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_toolbar_and_actions",
-      "community": 94,
-      "norm_label": "toolbar and actions"
-    },
-    {
-      "label": "Avatars and brand artwork",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L119",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_avatars_and_brand_artwork",
-      "community": 94,
-      "norm_label": "avatars and brand artwork"
-    },
-    {
-      "label": "6. Rulebook view",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L123",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "community": 204,
-      "norm_label": "6. rulebook view"
-    },
-    {
-      "label": "Navigation and layout",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L125",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_navigation_and_layout",
-      "community": 204,
-      "norm_label": "navigation and layout"
-    },
-    {
-      "label": "Quick start: match the selected second rulebook image",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L135",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_quick_start_match_the_selected_second_rulebook_image",
-      "community": 204,
-      "norm_label": "quick start: match the selected second rulebook image"
-    },
-    {
-      "label": "Special tiles",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L151",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_special_tiles",
-      "community": 204,
-      "norm_label": "special tiles"
-    },
-    {
-      "label": "Ability cards",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L167",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_ability_cards",
-      "community": 204,
-      "norm_label": "ability cards"
-    },
-    {
-      "label": "Secret missions",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L183",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_secret_missions",
-      "community": 204,
-      "norm_label": "secret missions"
-    },
-    {
-      "label": "7. Visual system",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L189",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_7_visual_system",
-      "community": 94,
-      "norm_label": "7. visual system"
-    },
-    {
-      "label": "8. shadcn and Lucide mapping",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L212",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_8_shadcn_and_lucide_mapping",
-      "community": 94,
-      "norm_label": "8. shadcn and lucide mapping"
-    },
-    {
-      "label": "9. Suggested feature organisation",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L250",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_9_suggested_feature_organisation",
-      "community": 94,
-      "norm_label": "9. suggested feature organisation"
-    },
-    {
-      "label": "10. Responsive and accessible behaviour",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L269",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_10_responsive_and_accessible_behaviour",
-      "community": 94,
-      "norm_label": "10. responsive and accessible behaviour"
-    },
-    {
-      "label": "11. Implementation order",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L283",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_11_implementation_order",
-      "community": 94,
-      "norm_label": "11. implementation order"
-    },
-    {
-      "label": "12. Acceptance checklist",
-      "file_type": "document",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L295",
-      "_origin": "ast",
-      "id": "docs_ladders_and_backstabbers_design_handoff_12_acceptance_checklist",
-      "community": 94,
-      "norm_label": "12. acceptance checklist"
     },
     {
       "label": "meowket-board-implementation.md",
@@ -53770,7 +53210,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L192",
+      "source_location": "L209",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_adminroute",
@@ -53780,10 +53220,30 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L186",
+      "source_location": "L203",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_calendarroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_cartelgilrushgameroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_cartelgilrushindexroute",
       "confidence_score": 1.0
     },
     {
@@ -53800,7 +53260,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L150",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "src_app_router",
+      "target": "src_app_router_cartelgilrushrulebookroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/router.tsx",
+      "source_location": "L167",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_craftingboardroute",
@@ -53810,7 +53280,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L180",
+      "source_location": "L197",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_dragonwildsserverroute",
@@ -53830,7 +53300,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L82",
+      "source_location": "L99",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fccollectionindexroute",
@@ -53840,7 +53310,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L76",
+      "source_location": "L93",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fccollectionroute",
@@ -53850,7 +53320,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L94",
+      "source_location": "L111",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fccollectionsroute",
@@ -53860,7 +53330,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L106",
+      "source_location": "L123",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fcleaderboardroute",
@@ -53870,7 +53340,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L112",
+      "source_location": "L129",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fclegacyleaderboardroute",
@@ -53880,7 +53350,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L118",
+      "source_location": "L135",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fclegacytyperoute",
@@ -53890,7 +53360,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L88",
+      "source_location": "L105",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fcoverviewroute",
@@ -53900,7 +53370,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L100",
+      "source_location": "L117",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_fctyperoute",
@@ -53910,7 +53380,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L168",
+      "source_location": "L185",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_gameserverindexroute",
@@ -53930,7 +53400,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L144",
+      "source_location": "L161",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_keyboundbrawlerroute",
@@ -53940,7 +53410,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L70",
+      "source_location": "L87",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_laddersandbackstabbersroute",
@@ -53950,7 +53420,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L204",
+      "source_location": "L221",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_memberprofileroute",
@@ -53960,7 +53430,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L198",
+      "source_location": "L215",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_membersroute",
@@ -53970,7 +53440,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L156",
+      "source_location": "L173",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_meowketboardroute",
@@ -53980,7 +53450,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L138",
+      "source_location": "L155",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_mountrouletteroute",
@@ -53990,7 +53460,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L174",
+      "source_location": "L191",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_palworldserverroute",
@@ -54010,7 +53480,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L126",
+      "source_location": "L143",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_raidstatsroute",
@@ -54030,7 +53500,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L245",
+      "source_location": "L266",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_register",
@@ -54050,7 +53520,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L242",
+      "source_location": "L263",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_router",
@@ -54060,7 +53530,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L210",
+      "source_location": "L227",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_routetree",
@@ -54070,7 +53540,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L162",
+      "source_location": "L179",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_spudjarroute",
@@ -54080,7 +53550,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L244",
+      "source_location": "L265",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_tanstack_react_router",
@@ -54090,7 +53560,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/router.tsx",
-      "source_location": "L132",
+      "source_location": "L149",
       "weight": 1.0,
       "source": "src_app_router",
       "target": "src_app_router_ucobprogroute",
@@ -62579,7 +62049,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/cartel-gil-rush/components/CartelGilRushPage.tsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_components_cartelgilrushpage",
       "target": "src_features_cartel_gil_rush_components_cartelgilrushpage_cartelgilrushpage",
@@ -62754,7 +62224,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/cartel-gil-rush/components/CartelGilRushPage.tsx",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_components_cartelgilrushpage_eventworkspace",
       "target": "src_features_cartel_gil_rush_hooks_useeventviewanimation_useeventviewanimation",
@@ -62777,7 +62247,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/cartel-gil-rush/components/CartelGilRushPage.tsx",
-      "source_location": "L27",
+      "source_location": "L31",
       "weight": 1.0,
       "source": "src_features_cartel_gil_rush_components_cartelgilrushpage_cartelgilrushpage",
       "target": "src_features_cartel_gil_rush_hooks_usebingocard_usebingocard"
@@ -62799,7 +62269,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/cartel-gil-rush-page.test.mjs",
-      "source_location": "L42",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_page_test_render",
       "target": "src_features_cartel_gil_rush_components_cartelgilrushpage_cartelgilrushpage"
@@ -102865,7 +102335,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-page.test.mjs",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_page_test",
       "target": "tests_cartel_gil_rush_page_test_load",
@@ -102875,10 +102345,30 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/cartel-gil-rush-page.test.mjs",
-      "source_location": "L38",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_page_test",
+      "target": "tests_cartel_gil_rush_page_test_pagerouters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-page.test.mjs",
+      "source_location": "L46",
       "weight": 1.0,
       "source": "tests_cartel_gil_rush_page_test",
       "target": "tests_cartel_gil_rush_page_test_render",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cartel-gil-rush-routing.test.mjs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "tests_cartel_gil_rush_routing_test",
+      "target": "tests_cartel_gil_rush_routing_test_load",
       "confidence_score": 1.0
     },
     {
@@ -104576,16 +104066,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/admin-auth-implementation.md",
-      "source_location": "L107",
-      "weight": 1.0,
-      "source": "docs_admin_auth_implementation",
-      "target": "docs_cartel_gil_rush_region_migration",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/admin-auth-implementation.md",
@@ -104766,30 +104246,10 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L109",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_implementation",
-      "target": "docs_cartel_gil_rush_region_migration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff",
-      "target": "docs_cartel_gil_rush_implementation",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_background_host_saves",
@@ -104799,7 +104259,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L25",
+      "source_location": "L27",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_bingo",
@@ -104809,7 +104269,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L35",
+      "source_location": "L37",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_group_trivia",
@@ -104819,7 +104279,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L5",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_host_workflow",
@@ -104829,7 +104289,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L59",
+      "source_location": "L61",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_minority_draw",
@@ -104839,7 +104299,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L83",
+      "source_location": "L85",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_other_minigames_and_rules",
@@ -104849,7 +104309,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L69",
+      "source_location": "L71",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_split_or_steal",
@@ -104859,7 +104319,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L99",
+      "source_location": "L101",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_state_compatibility_and_cost",
@@ -104869,7 +104329,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_treasure_draw",
@@ -104879,210 +104339,10 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/cartel-gil-rush-implementation.md",
-      "source_location": "L111",
+      "source_location": "L113",
       "weight": 1.0,
       "source": "docs_cartel_gil_rush_implementation_cartel_gil_rush",
       "target": "docs_cartel_gil_rush_implementation_verification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_region_migration",
-      "target": "docs_cartel_gil_rush_region_migration_gil_rush_singapore_migration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/firebase-data-and-costs.md",
-      "source_location": "L146",
-      "weight": 1.0,
-      "source": "docs_firebase_data_and_costs",
-      "target": "docs_cartel_gil_rush_region_migration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L42",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_region_migration_gil_rush_singapore_migration",
-      "target": "docs_cartel_gil_rush_region_migration_cost_and_checks",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L7",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_region_migration_gil_rush_singapore_migration",
-      "target": "docs_cartel_gil_rush_region_migration_deploy_in_this_order",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-region-migration.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_region_migration_gil_rush_singapore_migration",
-      "target": "docs_cartel_gil_rush_region_migration_verify",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L19",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_bingo_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_current_mood_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_current_tile_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_historical_generated_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L33",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_prompts",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/cartel-gil-rush-visual-assets.md",
-      "source_location": "L13",
-      "weight": 1.0,
-      "source": "docs_cartel_gil_rush_visual_assets_cartel_gil_rush_visual_assets",
-      "target": "docs_cartel_gil_rush_visual_assets_reward_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_background_carpet_and_door_motion",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L84",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_commands_in_this_environment",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L13",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_current_product_behavior",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L64",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_data_and_scope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L48",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_files_to_inspect",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_resume_context",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/clubhouse-handoff.md",
-      "source_location": "L70",
-      "weight": 1.0,
-      "source": "docs_clubhouse_handoff_cartel_clubhouse_handoff",
-      "target": "docs_clubhouse_handoff_verification_status",
       "confidence_score": 1.0
     },
     {
@@ -105898,146 +105158,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L368",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_10_existing_limitations_and_useful_design_considerations",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L385",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_11_local_development_and_verification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L431",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_12_repository_rules_and_recommended_reading_order",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L462",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_13_starter_prompt_for_the_next_chatbot",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L7",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_1_the_request_and_product_context",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_2_stack_and_application_shell",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L70",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_3_routes_and_source_map",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L113",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_4_current_overview",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L154",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_5_current_collection_matrix_and_detail_dialog",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L199",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_6_current_leaderboard",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L218",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_7_data_contract_and_ownership",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L302",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_8_scope_caching_refresh_and_cost_constraints",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/fc-collection-ui-refactor-handoff.md",
-      "source_location": "L349",
-      "weight": 1.0,
-      "source": "docs_fc_collection_ui_refactor_handoff_fc_collection_ui_redesign_handoff",
-      "target": "docs_fc_collection_ui_refactor_handoff_9_shared_consumers_and_refactor_boundaries",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "docs/firebase-data-and-costs.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -106253,246 +105373,6 @@
       "weight": 1.0,
       "source": "docs_frontend_patterns_frontend_patterns",
       "target": "docs_frontend_patterns_ui_verification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L269",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_10_responsive_and_accessible_behaviour",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L283",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_11_implementation_order",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L295",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_12_acceptance_checklist",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L7",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_1_approved_visual_direction",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_2_outcome_and_scope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L36",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_3_existing_implementation_to_preserve",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L58",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_4_shared_page_header",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L71",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_5_game_view",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L123",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L189",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_7_visual_system",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L212",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_8_shadcn_and_lucide_mapping",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L250",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_ladders_backstabbers_design_and_implementation_handoff",
-      "target": "docs_ladders_and_backstabbers_design_handoff_9_suggested_feature_organisation",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L11",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_1_approved_visual_direction",
-      "target": "docs_ladders_and_backstabbers_design_handoff_game_open_tabletop_with_cream_ability_cards",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L15",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_1_approved_visual_direction",
-      "target": "docs_ladders_and_backstabbers_design_handoff_rulebook_chapter_rail_and_illustrated_quick_start",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L119",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_5_game_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_avatars_and_brand_artwork",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L73",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_5_game_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_layout",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L82",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_5_game_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_playing_cards",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L98",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_5_game_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_toolbar_and_actions",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L167",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_ability_cards",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L125",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_navigation_and_layout",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L135",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_quick_start_match_the_selected_second_rulebook_image",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L183",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_secret_missions",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/ladders-and-backstabbers-design-handoff.md",
-      "source_location": "L151",
-      "weight": 1.0,
-      "source": "docs_ladders_and_backstabbers_design_handoff_6_rulebook_view",
-      "target": "docs_ladders_and_backstabbers_design_handoff_special_tiles",
       "confidence_score": 1.0
     },
     {
@@ -107067,5 +105947,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0196626152132b6bf466eed00280d9dd1e0d61c3"
+  "built_at_commit": "9a06cd600d55b0ff5a919aa730d6d736dc2319f7"
 }

@@ -3,6 +3,7 @@ import { after, test } from "node:test";
 import path from "node:path";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { createMemoryHistory, createRootRoute, createRoute, createRouter, RouterContextProvider } from "@tanstack/react-router";
 import { createServer } from "vite";
 
 const originalStorage = globalThis.localStorage;
@@ -26,6 +27,13 @@ const { RuleText } = await server.ssrLoadModule("/src/features/cartel-gil-rush/c
 const { tiles } = await server.ssrLoadModule("/src/features/cartel-gil-rush/constants.ts");
 const { readGilRushEvent } = await server.ssrLoadModule("/functions/src/cartel-gil-rush-model.ts");
 const { emptyEvent, updateEvent } = await server.ssrLoadModule("/src/features/cartel-gil-rush/utils/localEvent.ts");
+const pageRouters = {};
+for (const view of ["game", "rulebook"]) {
+  const root = createRootRoute();
+  const route = createRoute({ getParentRoute: () => root, path: `/cartel-gil-rush/${view}` });
+  pageRouters[view] = createRouter({ routeTree: root.addChildren([route]), history: createMemoryHistory({ initialEntries: [`/cartel-gil-rush/${view}`] }), isServer: true });
+  await pageRouters[view].load();
+}
 
 after(async () => {
   await server.close();
@@ -35,12 +43,22 @@ after(async () => {
   delete globalThis.gilRushPageEvent;
 });
 
-function render(auth, eventOverrides = {}) {
+function render(auth, eventOverrides = {}, view = "game") {
   globalThis.gilRushPageAuth = { checking: false, error: null, login: () => {}, ...auth };
   const event = saved ? JSON.parse(saved) : emptyEvent();
   globalThis.gilRushPageEvent = { current: readGilRushEvent({ ...event, revision: 1, players: event.players.map(player => ({ ...player, gilWon: player.gilWon ?? 0 })) }), error: null, loading: false, pending: false, pendingKeys: [], importable: null, run: async () => true, ...eventOverrides };
-  return renderToStaticMarkup(createElement(CartelGilRushPage));
+  return renderToStaticMarkup(createElement(RouterContextProvider, { router: pageRouters[view] }, createElement(CartelGilRushPage)));
 }
+
+test("direct public URLs select the corresponding tab and retain both mounted panels", () => {
+  for (const view of ["game", "rulebook"]) {
+    const html = render({ authed: false, session: null }, {}, view);
+    const other = view === "game" ? "rulebook" : "game";
+    assert.match(html, new RegExp(`data-state="active"[^>]*data-event-view="${view}"`));
+    assert.match(html, new RegExp(`data-state="inactive"[^>]*data-event-view="${other}"`));
+    assert.equal(html.includes("Back to game"), view === "rulebook");
+  }
+});
 
 test("guests, non-admins and checking sessions get a read-only workspace with no host controls", () => {
   for (const auth of [

@@ -67,10 +67,27 @@ const cartelGilRushRoute = createRoute({
   component: CartelGilRushPage,
 });
 
+const cartelGilRushIndexRoute = createRoute({
+  getParentRoute: () => cartelGilRushRoute,
+  path: "/",
+  beforeLoad: () => { throw redirect({ to: "/cartel-gil-rush/game", replace: true }); },
+});
+
+// The parent keeps both views mounted, preserving drafts and pending saves.
+const cartelGilRushGameRoute = createRoute({
+  getParentRoute: () => cartelGilRushRoute,
+  path: "game",
+});
+
+const cartelGilRushRulebookRoute = createRoute({
+  getParentRoute: () => cartelGilRushRoute,
+  path: "rulebook",
+});
+
 const laddersAndBackstabbersRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ladders-and-backstabbers",
-  beforeLoad: () => { throw redirect({ to: "/cartel-gil-rush" }); },
+  beforeLoad: () => { throw redirect({ to: "/cartel-gil-rush/game", replace: true }); },
 });
 
 const fcCollectionRoute = createRoute({
@@ -212,7 +229,11 @@ const routeTree = rootRoute.addChildren([
   pastEventsRoute,
   easter2026Route,
   laddersAndBackstabbersRoute,
-  cartelGilRushRoute,
+  cartelGilRushRoute.addChildren([
+    cartelGilRushIndexRoute,
+    cartelGilRushGameRoute,
+    cartelGilRushRulebookRoute,
+  ]),
   recruitmentRoute,
   fcCollectionRoute.addChildren([
     fcCollectionIndexRoute,
