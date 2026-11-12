@@ -1,12 +1,8 @@
+import { drawNamazuEffect, drawNamazuTarget, NAMAZU_EFFECTS, NAMAZU_TILES } from "./cartel-gil-rush-namazu";
+
 export const GIL_RUSH_PATH = "events/cartelGilRush/current";
 export const GIL_RUSH_PRIVATE_PATH = "cartelGilRushPrivate/current";
-export const GIL_RUSH_PREVIEW_LODESTONE_ID = "51550870";
-
-// Internal mock run: the extra linked member can view, never host.
-export function canViewGilRush(session: { isAdmin?: boolean; isMember?: boolean; lodestoneId?: string | null } | null | undefined): boolean {
-  return session?.isAdmin === true || (session?.isMember === true && session.lodestoneId === GIL_RUSH_PREVIEW_LODESTONE_ID);
-}
-export type MinorityPrize = "200k" | "100k" | "golden-dice" | "50k";
+export type MinorityPrize = "300k" | "200k" | "100k" | "50k";
 export interface MinorityAssignments {
   gameId: number;
   revision: number;
@@ -52,7 +48,14 @@ export interface GilRushPlayer {
   rosterId?: string;
   avatarUrl: string | null;
   gilWon: number;
-  bonusDie: number | null;
+}
+export interface NamazuEncounter {
+  id: number;
+  tile: number;
+  effect: number;
+  target: string | null;
+  targetDraw: number;
+  payout: { perPlayer: number; roll: number | null } | null;
 }
 export interface GilRushEvent {
   version: 1;
@@ -64,14 +67,14 @@ export interface GilRushEvent {
   splitResult: SplitResult | null;
   splitChallenge: SplitChallenge | null;
   splitPartners: { challenger: string; partner: string }[];
+  namazu: NamazuEncounter | null;
   round: number;
 }
 export type GilRushAction =
-  | { type: "add"; player: Omit<GilRushPlayer, "gilWon" | "bonusDie"> }
+  | { type: "add"; player: Omit<GilRushPlayer, "gilWon"> }
   | { type: "rename"; id: string; name: string }
   | { type: "remove"; id: string }
   | { type: "start" }
-  | { type: "set-bonus-die"; id: string; sides: number | null }
   | { type: "start-minigame"; kind: MinigameKind }
   | { type: "end-minigame" }
   | { type: "shuffle-trivia"; gameId: number }
@@ -82,6 +85,10 @@ export type GilRushAction =
   | { type: "set-split-players"; challengeId: number; challenger: string | null; partner: string | null }
   | { type: "reveal-split"; challengeId: number; challengerDecision: SplitDecision; partnerDecision: SplitDecision }
   | { type: "clear-split" }
+  | { type: "start-namazu"; tile: number }
+  | { type: "reroll-namazu-target"; encounterId: number }
+  | { type: "award-namazu-gil"; encounterId: number; roll: number }
+  | { type: "clear-namazu"; encounterId: number }
   | { type: "set-round"; round: number }
   | { type: "set-gil"; id: string; gilWon: number }
   | { type: "reset" }
@@ -127,12 +134,6 @@ function kindOf(value: unknown): MinigameKind {
   return value;
 }
 
-function dieOf(value: unknown): number | null {
-  if (value === null || value === undefined) return null;
-  integer(value, 2, "Die sides");
-  return 10;
-}
-
 function decisionOf(value: unknown): SplitDecision {
   if (value !== "split" && value !== "steal") throw new GilRushError("Choose Split or Steal for both players.");
   return value;
@@ -174,7 +175,8 @@ function chestsOf(value: unknown, players: GilRushPlayer[], count = 4): { id: st
 }
 
 function prizeOf(value: unknown): MinorityPrize {
-  if (value !== "200k" && value !== "100k" && value !== "golden-dice" && value !== "50k") throw new GilRushError("Choose a chest prize.");
+  if (value === "golden-dice") return "300k";
+  if (value !== "300k" && value !== "200k" && value !== "100k" && value !== "50k") throw new GilRushError("Choose a chest prize.");
   return value;
 }
 
@@ -208,7 +210,7 @@ export function nextMinorityAssignments(value: unknown, event: GilRushEvent, inp
   const revision = current?.revision ?? 0;
   if (integer(expectedRevision, 0, "Assignment revision") !== revision) throw new GilRushError("Assignments changed on another host. Reload the saved assignments before retrying.", "aborted");
   if (revision === Number.MAX_SAFE_INTEGER) throw new GilRushError("Assignment revision limit reached.");
-  const prizes: MinorityPrize[] = current ? [...current.prizes] : game.kind === "minority-draw" ? [] : ["200k", "100k", "golden-dice", "50k"];
+  const prizes: MinorityPrize[] = current ? [...current.prizes] : game.kind === "minority-draw" ? [] : ["300k", "200k", "100k", "50k"];
   if (!current) for (let index = prizes.length - 1; index > 0; index--) {
     const other = Math.floor(random() * (index + 1));
     [prizes[index], prizes[other]] = [prizes[other], prizes[index]];
@@ -242,7 +244,7 @@ function chestRevealsOf(value: unknown, players: GilRushPlayer[], kind: Minigame
   const reveals = value.map(value => {
     const row = record(value), chest = integer(row.chest, 1, "Chest");
     if (chest > minorityChestCount(kind) || !Array.isArray(row.playerIds ?? []) || (kind === "minority-draw" && row.prize != null)) throw new GilRushError("Chest reveal is invalid.");
-    return { chest, playerIds: ((row.playerIds ?? []) as unknown[]).map(id => playerId(id, players)), prize: row.prize == null ? null : prizeOf(row.prize), revealedAt: integer(row.revealedAt, 0, "Reveal time") };
+    return { chest, playerIds: ((row.playerIds ?? []) as unknown[]).map(id => playerId(id, players)), prize: row.prize == null || row.prize === "golden-dice" ? null : prizeOf(row.prize), revealedAt: integer(row.revealedAt, 0, "Reveal time") };
   });
   const ids = reveals.flatMap(row => row.playerIds);
   if (new Set(reveals.map(row => row.chest)).size !== reveals.length || new Set(ids).size !== ids.length) throw new GilRushError("Chest reveals contain duplicate entries.");
@@ -257,10 +259,10 @@ function minigameOf(value: unknown, players: GilRushPlayer[]): GilRushMinigame |
   const mapped = teams.map(value => { const row = record(value); return { id: playerId(row.id, players), team: teamOf(row.team) }; });
   if (new Set(mapped.map(t => t.id)).size !== mapped.length) throw new GilRushError("Assign each player once.");
   const wins = data.questionWins ?? {};
-  if (!wins || typeof wins !== "object" || (Array.isArray(wins) && wins.length > 3) || Object.keys(wins).some(key => !["0", "1", "2"].includes(key))) throw new GilRushError("Trivia has three questions.");
+  if (!wins || typeof wins !== "object" || (Array.isArray(wins) && wins.length > 5) || Object.keys(wins).some(key => !["0", "1", "2", "3", "4"].includes(key))) throw new GilRushError("Trivia has five questions.");
   // RTDB returns sparse arrays as numeric-keyed objects and omits all-null arrays.
   const results = wins as Record<number, unknown>;
-  const questionWins = Array.from({ length: 3 }, (_, index) => results[index] == null ? null : teamOf(results[index]));
+  const questionWins = Array.from({ length: 5 }, (_, index) => results[index] == null ? null : teamOf(results[index]));
   const savedWinnings = data.triviaWinnings == null ? null : record(data.triviaWinnings);
   const triviaWinnings = savedWinnings ? { A: integer(savedWinnings.A, 0, "Team A winnings"), B: integer(savedWinnings.B, 0, "Team B winnings") }
     : kind === "trivia" && questionWins.some(Boolean) ? { A: questionWins.filter(team => team === "A").length * 100_000, B: questionWins.filter(team => team === "B").length * 100_000 } : null;
@@ -296,7 +298,7 @@ function award(players: GilRushPlayer[], amounts: Map<string, number>): GilRushP
 
 function awardMinorityDraw(players: GilRushPlayer[], reveals: MinorityChestReveal[], chest: number) {
   const ids = reveals.find(row => row.chest === chest)!.playerIds;
-  return award(players, new Map(ids.map(id => [id, 200_000]))).map(player => ids.includes(player.id) ? { ...player, bonusDie: 10 } : player);
+  return award(players, new Map(ids.map(id => [id, 300_000])));
 }
 
 function playerOf(value: unknown, importing = false): GilRushPlayer {
@@ -307,7 +309,6 @@ function playerOf(value: unknown, importing = false): GilRushPlayer {
     id: idOf(player.id), name: nameOf(player.name), avatarUrl,
     ...(player.rosterId === undefined ? {} : { rosterId: idOf(player.rosterId) }),
     gilWon: importing ? 0 : integer(player.gilWon, 0, "Gil"),
-    bonusDie: importing ? null : dieOf(player.bonusDie),
   };
 }
 
@@ -317,8 +318,32 @@ function checkUnique(players: GilRushPlayer[]): void {
   }
 }
 
+function namazuOf(value: unknown, players: GilRushPlayer[]): NamazuEncounter | null {
+  if (value == null) return null;
+  const data = record(value);
+  const tile = integer(data.tile, 1, "Namazu tile");
+  if (!(NAMAZU_TILES as readonly number[]).includes(tile)) throw new GilRushError("Choose a Namazu tile.");
+  const effect = integer(data.effect, 1, "Namazu effect");
+  if (effect > NAMAZU_EFFECTS.length) throw new GilRushError("Invalid Namazu effect.");
+  const target = data.target == null ? null : playerId(data.target, players);
+  const targetDraw = integer(data.targetDraw ?? 0, 0, "Namazu target draw");
+  const randomTarget = effect === 5 || effect === 6 || effect === 8;
+  if ((!randomTarget && (target !== null || targetDraw !== 0)) || (randomTarget && targetDraw === 0 && target !== null)) throw new GilRushError("Invalid Namazu target.");
+  if ((effect === 5 || effect === 8) && targetDraw > 0 && target === null) throw new GilRushError("Choose a Namazu target.");
+  if (effect === 6 && ((players.length > 1 && targetDraw > 0 && target === null) || (players.length < 2 && target !== null))) throw new GilRushError("Invalid swap selection.");
+  let payout: NamazuEncounter["payout"] = null;
+  if (data.payout != null) {
+    const receipt = record(data.payout);
+    const roll = receipt.roll == null ? null : integer(receipt.roll, 1, "Namazu roll");
+    const perPlayer = integer(receipt.perPlayer, 1, "Namazu payout");
+    if (effect === 3 ? perPlayer !== 50_000 || roll !== null : effect !== 7 || roll === null || roll > 6 || perPlayer !== roll * 10_000) throw new GilRushError("Invalid Namazu payout receipt.");
+    payout = { perPlayer, roll };
+  }
+  return { id: integer(data.id, 1, "Namazu encounter"), tile, effect, target, targetDraw, payout };
+}
+
 export function emptyGilRushEvent(): GilRushEvent {
-  return { version: 1, revision: 0, phase: "setup", players: [], round: 1, minigame: null, lastMinigameRound: 0, splitResult: null, splitChallenge: null, splitPartners: [] };
+  return { version: 1, revision: 0, phase: "setup", players: [], round: 1, minigame: null, lastMinigameRound: 0, splitResult: null, splitChallenge: null, splitPartners: [], namazu: null };
 }
 
 export function readGilRushEvent(value: unknown, importing = false): GilRushEvent {
@@ -341,6 +366,7 @@ export function readGilRushEvent(value: unknown, importing = false): GilRushEven
     minigame: importing ? null : minigameOf(data.minigame, players), lastMinigameRound: importing ? 0 : integer(data.lastMinigameRound ?? 0, 0, "Minigame round"),
     splitResult: importing || data.splitResult == null ? null : splitOf(data.splitResult, players),
     splitChallenge: importing ? null : splitChallengeOf(data.splitChallenge, players),
+    namazu: importing ? null : namazuOf(data.namazu, players),
     splitPartners: splitPartners.map(value => { const row = record(value); return { challenger: playerId(row.challenger, players), partner: playerId(row.partner, players) }; }),
   };
 }
@@ -361,18 +387,37 @@ export function nextGilRushEvent(value: unknown, input: unknown, expectedRevisio
     if (!isEmptyGilRushEvent(current)) throw new GilRushError("Import requires an empty shared event.", "failed-precondition");
     return { ...readGilRushEvent(action.event, true), revision: next.revision };
   }
-  if (["set-bonus-die", "start-minigame", "end-minigame", "shuffle-trivia", "finalise-trivia", "reveal-minority-chest", "resolve-minority-draw", "start-split", "set-split-players", "reveal-split", "clear-split"].includes(String(action.type))) {
+  if (["start-minigame", "end-minigame", "shuffle-trivia", "finalise-trivia", "reveal-minority-chest", "resolve-minority-draw", "start-split", "set-split-players", "reveal-split", "clear-split", "start-namazu", "reroll-namazu-target", "award-namazu-gil", "clear-namazu"].includes(String(action.type))) {
     if (current.phase !== "live") throw new GilRushError("Start the event first.", "failed-precondition");
-    if (action.type === "set-bonus-die") {
-      const id = playerId(action.id, current.players);
-      if (action.sides !== null && action.sides !== 10) throw new GilRushError("Assign a golden D10 or remove it.");
-      const bonusDie = dieOf(action.sides);
-      next.players = current.players.map(p => p.id === id ? { ...p, bonusDie } : p);
+    if (action.type === "start-namazu") {
+      if (current.namazu) throw new GilRushError("Clear the current Namazu encounter first.");
+      const effect = drawNamazuEffect(random);
+      const payout = effect === 3 ? { perPlayer: 50_000, roll: null } : null;
+      next.namazu = namazuOf({ id: next.revision, tile: action.tile, effect, target: null, targetDraw: 0, payout }, current.players);
+      if (payout) next.players = award(current.players, new Map(current.players.map(player => [player.id, payout.perPlayer])));
+    } else if (action.type === "reroll-namazu-target" || action.type === "award-namazu-gil" || action.type === "clear-namazu") {
+      const encounter = current.namazu;
+      if (!encounter || action.encounterId !== encounter.id) throw new GilRushError("This Namazu encounter is no longer active.");
+      if (action.type === "clear-namazu") next.namazu = null;
+      else if (action.type === "award-namazu-gil") {
+        if (encounter.effect !== 7) throw new GilRushError("Only the /random 6 effect needs a roll payout.");
+        if (encounter.payout) throw new GilRushError("Namazu gil has already been awarded.");
+        const roll = integer(action.roll, 1, "Namazu roll");
+        if (roll > 6) throw new GilRushError("Enter a /random 6 result from 1 to 6.");
+        const perPlayer = roll * 10_000;
+        next.players = award(current.players, new Map(current.players.map(player => [player.id, perPlayer])));
+        next.namazu = { ...encounter, payout: { perPlayer, roll } };
+      }
+      else {
+        if (![5, 6, 8].includes(encounter.effect)) throw new GilRushError("This effect has no player selection to reroll.");
+        if (encounter.effect === 6 && current.players.length < 2) throw new GilRushError("No other player is available.");
+        const target = drawNamazuTarget(encounter.effect, current.players.map(player => player.id), random);
+        next.namazu = { ...encounter, target, targetDraw: integer(encounter.targetDraw + 1, 1, "Namazu target draw") };
+      }
     } else if (action.type === "start-minigame") {
       if (current.minigame) throw new GilRushError("End the current minigame first.");
       const kind = kindOf(action.kind);
-      next.minigame = { id: next.revision, kind, teams: [], questionWins: [null, null, null], triviaWinnings: null, chests: null, chestReveals: [], ...(kind === "minority-draw" ? { minorityDrawWinner: null } : {}) };
-      next.players = current.players.map(player => ({ ...player, bonusDie: null }));
+      next.minigame = { id: next.revision, kind, teams: [], questionWins: [null, null, null, null, null], triviaWinnings: null, chests: null, chestReveals: [], ...(kind === "minority-draw" ? { minorityDrawWinner: null } : {}) };
       next.lastMinigameRound = current.round;
     } else if (action.type === "end-minigame") {
       next.minigame = null;
@@ -431,9 +476,8 @@ export function nextGilRushEvent(value: unknown, input: unknown, expectedRevisio
               next.minigame.minorityDrawWinner = winners[0];
             }
           }
-        } else if (prize === "golden-dice") next.players = current.players.map(player => playerIds.includes(player.id) ? { ...player, bonusDie: 10 } : player);
-        else {
-          const amount = prize === "200k" ? 200_000 : prize === "100k" ? 100_000 : 50_000;
+        } else {
+          const amount = prize === "300k" ? 300_000 : prize === "200k" ? 200_000 : prize === "100k" ? 100_000 : 50_000;
           next.players = award(current.players, new Map(playerIds.map(id => [id, amount])));
         }
         if (!draw) {

@@ -15,6 +15,7 @@ export const tilePresentation: Record<Tile["id"], { icon: LucideIcon; accent: st
   shark: { icon: Fish, accent: "border-[#60859a] text-[#355d75]" },
   fatcat: { icon: Cat, accent: "border-[#bd872f] text-[#8a5b14]" },
   chocobo: { icon: Bird, accent: "border-[#bd872f] text-[#8a5b14]" },
+  namazu: { icon: Fish, accent: "border-[#7c83a8] text-[#4e5578]" },
   moogle: { icon: Cloud, accent: "border-[#b65a80] text-[#943d65]" },
   mushroom: { icon: Undo2, accent: "border-[#9464a3] text-[#734480]" },
   ladder: { icon: ArrowUp, accent: "border-[#64826c] text-[#3c6246]" },

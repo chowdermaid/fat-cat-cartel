@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { EventController, SharedPlayer } from "../../types";
-import { BonusDieControl } from "./BonusDieControl";
 
 export function PlayerGilInput({ player, revision, run, disabled, pending = false, children }: { player: SharedPlayer; revision: number; run: EventController["run"]; disabled: boolean; pending?: boolean; children: ReactNode }) {
   const [draft, setDraft] = useState<{ value: string; baseGil: number; failed: boolean } | null>(null);
@@ -53,7 +52,6 @@ export function PlayerGilInput({ player, revision, run, disabled, pending = fals
       {draft && <p className="break-words text-xs text-muted-foreground" aria-live="polite">Saved: {player.gilWon.toLocaleString("en-AU")} gil</p>}
       {message && <p role="alert" className="text-xs text-destructive">{message}</p>}
     </form>
-      <BonusDieControl player={player} revision={revision} run={run} disabled={disabled || pending} />
       </PopoverContent>
     </Popover>
   );

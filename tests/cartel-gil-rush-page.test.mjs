@@ -63,7 +63,7 @@ test("allowed direct URLs select the corresponding tab and retain both mounted p
   }
 });
 
-test("guests, other members and checking sessions cannot mount either view or subscribe", () => {
+test("guests, other members and checking sessions can view both public tabs without host controls", () => {
   for (const auth of [
     { authed: false, session: null }, { authed: true, session: null },
     { authed: true, session: { isAdmin: false } }, { authed: true, session: { isAdmin: undefined } },
@@ -76,27 +76,29 @@ test("guests, other members and checking sessions cannot mount either view or su
   ]) {
     for (const view of ["game", "rulebook"]) {
       const html = render(auth, {}, view);
-      assert.doesNotMatch(html, /data-event-view|data-bingo-mission|Live view|Board Overview/);
-      assert.match(html, /internal|Checking access/);
-      assert.equal(globalThis.gilRushSharedArgs, undefined);
+      assert.match(html, /data-event-view="game"/);
+      assert.match(html, /data-event-view="rulebook"/);
+      assert.match(html, /Come back on the 13th of December!/);
+      assert.doesNotMatch(html, /Add players|Manage players|Event options|Randomise order|Log in|Checking access|internal/);
+      assert.deepEqual(globalThis.gilRushSharedArgs, [null, false]);
     }
   }
 });
 
-test("the preview member reads with their session token and loses access on a read failure", () => {
+test("public viewers need no session token, while read failures still block stale gameplay", () => {
   render(previewAuth);
-  assert.deepEqual(globalThis.gilRushSharedArgs, ["test-token", false]);
+  assert.deepEqual(globalThis.gilRushSharedArgs, [null, false]);
   for (const state of [{ loading: true }, { readError: "Permission denied" }]) {
     const html = render(previewAuth, state, "rulebook");
     assert.doesNotMatch(html, /data-event-view|data-bingo-mission|Board Overview/);
   }
 });
 
-test("the invited player sees active trivia teams without editing or payout controls", () => {
+test("public players see active trivia teams without editing or payout controls", () => {
   saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "guest", name: "Live Player", avatarUrl: null }, { id: "other", name: "Other Player", avatarUrl: null }], minigame: { id: 42, kind: "trivia", teams: [{ id: "guest", team: "A" }, { id: "other", team: "B" }] } });
   try {
-    for (const fcRank of ["Housecat", "Stray", "Friend", "Boss", "Underpaw"]) {
-      const html = render({ ...previewAuth, session: { ...previewAuth.session, fcRank } });
+    for (const auth of [{ authed: false, session: null, sessionToken: null }, ...["Housecat", "Stray", "Friend", "Boss", "Underpaw"].map(fcRank => ({ ...previewAuth, session: { ...previewAuth.session, fcRank } }))]) {
+      const html = render(auth);
       assert.match(html, /Live Player/);
       assert.match(html, /Other Player/);
       assert.match(html, /aria-label="Team A"/);
@@ -150,6 +152,68 @@ test("live view shows fixed display-only order and independent host controls", (
   } finally { saved = null; }
 });
 
+test("setup shows the December announcement while retaining host setup; a live race shows the board without a minigame", () => {
+  const player = { id: "a", name: "Axo", avatarUrl: null, gilWon: 0 };
+  const gameOnly = html => html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+  for (const players of [[], [player]]) {
+    const current = readGilRushEvent({ version: 1, revision: 1, phase: "setup", round: 1, players });
+    for (const auth of [previewAuth, ...["Boss", "Underpaw"].map(fcRank => ({ authed: true, session: { isAdmin: true, fcRank } }))]) {
+      const html = render(auth, { current });
+      const game = gameOnly(html);
+      assert.match(game, /Come back on the 13th of December!/);
+      if (players.length) {
+        assert.match(game, /aria-label="Players before randomisation"/);
+        assert.match(game, /Axo/);
+      } else assert.match(game, /data-game-transition="empty-players"/);
+      assert.doesNotMatch(game, /data-bingo-mission|game-board-overview-heading|Group minigames|\/random 6|data-round-display/);
+      if (auth.session.isAdmin) {
+        assert.match(html, players.length ? /Manage players/ : /Add players/);
+        assert.match(game, /Randomise order &amp; start/);
+      } else assert.doesNotMatch(html, /Manage players|Add players|Randomise order/);
+    }
+  }
+  const current = readGilRushEvent({ version: 1, revision: 2, phase: "live", round: 1, players: [player] });
+  const live = gameOnly(render(previewAuth, { current }));
+  assert.doesNotMatch(live, /Come back on the 13th of December!/);
+  assert.match(live, /game-board-overview-heading/);
+  assert.match(live, /data-bingo-mission/);
+});
+
+test("a due minigame prompts only hosts and does not render an active event banner", () => {
+  saved = JSON.stringify({ version: 1, phase: "live", round: 6, lastMinigameRound: 0, players: [{ id: "a", name: "Axo", avatarUrl: null }] });
+  try {
+    const gameOnly = html => html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+    const host = gameOnly(render({ authed: true, session: { isAdmin: true } }));
+    assert.match(host, /aria-label="Group minigame reminder"/);
+    assert.match(host, /Round 6: time for a minigame/);
+    assert.match(host, /Start minigame/);
+    assert.doesNotMatch(host, /aria-label="Active group minigame"/);
+    const viewer = gameOnly(render(previewAuth));
+    assert.doesNotMatch(viewer, /Group minigame reminder|Round 6: time for a minigame|Start minigame/);
+  } finally { saved = null; }
+});
+
+test("Namazu is shared with viewers while only hosts can open, reroll or close it", () => {
+  saved = JSON.stringify({ version: 1, phase: "live", round: 6, players: [{ id: "a", name: "Axo", avatarUrl: null }, { id: "b", name: "Chow", avatarUrl: null }], namazu: { id: 7, tile: 43, effect: 6, target: "a", targetDraw: 1 } });
+  try {
+    const gameOnly = html => html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
+    const host = gameOnly(render({ authed: true, session: { isAdmin: true } }));
+    assert.match(host, /id="namazu-heading"/);
+    assert.match(host, /landing player swaps positions/);
+    assert.match(host, /Reroll player/);
+    assert.match(host, /End event/);
+    assert.match(host, /aria-label="Event!"[^>]*bg-\[#E8B58C\]/);
+    assert.match(host, /id="namazu-heading"[^>]*>Event!<\/h3>/);
+    assert.equal((host.match(/aria-label="Open Namazu from tile/g) ?? []).length, 3);
+    assert.doesNotMatch(host, /Namazu landing player|Draw effect/);
+    assert.doesNotMatch(host, /Resolve movement, swaps|Reroll an ineligible player/);
+    const viewer = gameOnly(render(previewAuth));
+    assert.match(viewer, /id="namazu-heading"/);
+    assert.match(viewer, /landing player swaps positions/);
+    assert.doesNotMatch(viewer, /Reroll player|End event|Open Namazu from tile/);
+  } finally { saved = null; }
+});
+
 test("a pending player save leaves other players, rounds and trivia drafts editable while payout commands wait", () => {
   saved = JSON.stringify({ version: 1, phase: "live", round: 7, players: [{ id: "a", name: "Axo", avatarUrl: null }, { id: "b", name: "Chow", avatarUrl: null }], minigame: { id: 7, kind: "trivia", teams: [{ id: "a", team: "A" }, { id: "b", team: "B" }] } });
   try {
@@ -182,11 +246,11 @@ test("rulebook renders every chapter once with location links and no chapter-swi
   assert.equal(html.split('aria-current="location"').length - 1, 1);
   assert.match(html, /href="#rulebook-board-overview" aria-current="location"/);
   assert.equal(rulebook.split('data-board-tile="').length - 1, 90);
-  assert.equal(rulebook.split('data-board-symbol="').length - 1, 25);
+  assert.equal(rulebook.split('data-board-symbol="').length - 1, 27);
   assert.equal([...rulebook.matchAll(/aria-label="Tile \d+. Ladder to \d+[^"]*"/g)].length, 2);
   assert.equal([...rulebook.matchAll(/aria-label="Tile \d+. Fall to \d+"/g)].length, 6);
   assert.match(html, /Tile 13. Ladder to 45/);
-  assert.match(html, /Tile 78. Moogle/);
+  assert.match(html, /Tile 29. Moogle/);
   const overview = html.slice(html.indexOf('id="rulebook-board-overview"'), html.indexOf('id="rulebook-quick-start"'));
   assert.match(overview, /Board Overview/);
   assert.match(overview, /Layout and original idea by/);
@@ -203,7 +267,10 @@ test("rulebook renders every chapter once with location links and no chapter-swi
   const tileSection = html.slice(html.indexOf('id="rulebook-special-tiles"'), html.indexOf('id="rulebook-group-minigames"'));
   const rewardsSection = html.slice(html.indexOf('id="rulebook-rewards"'));
   const moodsSection = html.slice(html.indexOf('id="rulebook-group-minigames"'), html.indexOf('id="rulebook-rewards"'));
-  assert.deepEqual([...tileSection.matchAll(/<dt\b[^>]*>([^<]+)/g)].map((match) => match[1]), ["Shark", "Moogle", "Mushroom", "Fatcat", "Chocobo", "Ladder", "Red arrow", "Crown / finish"]);
+  assert.match(moodsSection, /Group minigames<\/h2><p class="text-sm[^>]*>Every 6 rounds<\/p>/);
+  assert.deepEqual([...tileSection.matchAll(/<dt\b[^>]*>([^<]+)/g)].map((match) => match[1]), ["Shark", "Moogle", "Mushroom", "Fatcat", "Chocobo", "Namazu", "Ladder", "Red arrow", "Crown / finish"]);
+  assert.match(tileSection, /Namazu<\/dt><dd[^>]*>Perform a random event<\/dd>/);
+  assert.doesNotMatch(tileSection, /All players tied for the lead|The bottom three players|The host checks eligibility/);
   assert.doesNotMatch(rewardsSection, /Fatcat|Chocobo/);
   assert.doesNotMatch(rewardsSection, /Keep all earned gil/);
   assert.equal(rewardsSection.split('rounded-lg border bg-muted p-4').length - 1, 3);
@@ -220,11 +287,11 @@ test("rulebook renders every chapter once with location links and no chapter-swi
 });
 
 test("Bingo stays playable in Game and has its own explanatory Rulebook chapter without a tab", () => {
-  const card = { version: 1, eventId: "cartel-gil-rush-1", missionIds: [1, 2, 3, 5, 6, 7, 8, 9, 10], completedIds: [1, 5] };
+  const card = { version: 1, eventId: "cartel-gil-rush-1", missionIds: [1, 2, 28, 5, 6, 7, 8, 9, 10], completedIds: [1, 5] };
   bingoSaved = JSON.stringify(card);
   try {
-    for (const auth of [previewAuth, { authed: true, session: { isAdmin: true } }]) {
-      const html = render(auth);
+    for (const auth of [{ authed: false, session: null, sessionToken: null }, previewAuth, { authed: true, session: { isAdmin: true } }]) {
+      const html = render(auth, { current: readGilRushEvent({ version: 1, revision: 1, phase: "live", round: 1, players: [{ id: "a", name: "Axo", avatarUrl: null, gilWon: 0 }] }) });
       assert.equal((html.match(/role="tab"/g) ?? []).length, 2);
       assert.doesNotMatch(html, /data-event-view="bingo"/);
       const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
@@ -243,7 +310,6 @@ test("Bingo stays playable in Game and has its own explanatory Rulebook chapter 
       assert.ok(bingo.includes("3+ missions: 250k gil"));
       assert.ok(bingo.includes("6+ missions: 500k gil"));
       assert.match(bingo, /All 9: 1m gil/);
-      assert.match(bingo, /Highest tier only/);
       assert.doesNotMatch(html, /Roll a 10 using a golden die/);
     }
   } finally { bingoSaved = null; }
@@ -256,9 +322,9 @@ test("rule references pair rolls, movement and gil with the appropriate inline i
   assert.match(html, /aria-hidden="true"/);
 });
 
-test("all seven tile cards retain cream styling with corrected solo effects", () => {
+test("all eight tile cards retain cream styling with corrected solo effects", () => {
   const html = tiles.map((tile) => renderToStaticMarkup(createElement(TileCard, { tile }))).join("");
-  assert.equal(tiles.length, 7);
+  assert.equal(tiles.length, 8);
   for (const name of ["Shark", "Fatcat", "Chocobo", "Moogle", "Mushroom", "Ladder", "Red arrow"]) assert.ok(html.includes(`aria-label="${name} tile"`));
   assert.match(html, /bg-\[#f6efdf\]/);
   assert.match(html, /min-h-\[420px\]/);
@@ -276,8 +342,7 @@ test("legacy moods never appear; live rewards and minigames render from the shar
   saved = JSON.stringify({ version: 1, phase: "live", round: 7, mood: "yellow", players: [{ id: "a", name: "Axo", avatarUrl: null, gilWon: 100000, bonusDie: 10 }, { id: "b", name: "Chow", avatarUrl: null, gilWon: 0 }], minigame: { id: 3, kind: "trivia", teams: [{ id: "a", team: "A" }, { id: "b", team: "B" }], questionWins: ["A", null, null] } });
   try {
     const html = render({ authed: true, session: { isAdmin: true } });
-    assert.match(html, /Can use \/random 10 for normal movement until the next minigame/);
-    assert.match(html, /golden-dice\.png/);
+    assert.doesNotMatch(html, /Can use \/random 10|golden-dice|Golden die|Assign golden|Earn a golden/);
     assert.match(html, /100,000 gil/);
     assert.match(html, /aria-label="Team A"/);
     assert.match(html, /aria-label="Team B"/);
@@ -340,7 +405,7 @@ test("Treasure Draw shows saved players before prize reveals without selection c
     saved = JSON.stringify({ ...event, minigame: { ...event.minigame, chests: [{ id: "a", chest: 3 }, { id: "b", chest: 3 }] } });
     const revealed = render({ authed: true, session: { isAdmin: true } });
     assert.doesNotMatch(revealed, /\d+ selections/);
-    assert.match(revealed, /Prize not recorded/);
+    assert.match(revealed, /Prize no longer available/);
     assert.doesNotMatch(revealed, /Choices hidden/);
   } finally { saved = null; }
 });
@@ -351,13 +416,16 @@ test("Split or Steal opens for everyone, hides decisions until reveal and keeps 
     saved = JSON.stringify(base);
     const html = render(previewAuth);
     const game = html.slice(html.indexOf('data-event-view="game"'), html.indexOf('data-event-view="rulebook"'));
-    assert.doesNotMatch(game, /200,000 gil pot/);
+    assert.match(game, /aria-label="200,000 gil pot"/);
     assert.equal((game.match(/Decision hidden/g) ?? []).length, 2);
     assert.match(game, /Astrid Gertrud/);
     assert.match(game, /Blue Belladonna/);
-    assert.doesNotMatch(game, /Submit &amp; reveal|Clear result|Cancel challenge|Private decision|Landing player: split|Partner: steal|role="combobox"|<input/);
+    assert.doesNotMatch(game, /Reveal both decisions|Clear result|Cancel challenge|Private decision|Choice recorded|Awaiting choice|Landing player: split|Partner: steal|role="combobox"|<input/);
     const host = render({ authed: true, session: { isAdmin: true } });
-    assert.match(host, /Submit &amp; reveal/);
+    assert.match(host, /aria-label="Reveal both decisions"/);
+    assert.match(host, /data-split-layout="portraits"/);
+    assert.match(host, /aria-label="Split or Steal"[^>]*bg-\[#FFB45F\]/);
+    assert.equal((host.match(/>Cancel challenge<\/button>/g) ?? []).length, 1);
     assert.match(host, /aria-label="Landing player: split"/);
     assert.match(host, /aria-label="Partner: steal"/);
     saved = JSON.stringify({ ...base, players: base.players.map(player => ({ ...player, gilWon: player.id === "b" ? 200000 : 0 })), splitResult: { challenger: "a", partner: "b", challengerDecision: "split", partnerDecision: "steal" } });
@@ -365,7 +433,7 @@ test("Split or Steal opens for everyone, hides decisions until reveal and keeps 
     const split = revealed.slice(revealed.indexOf('id="split-heading"'), revealed.indexOf('data-event-view="rulebook"'));
     assert.match(split, /0 gil/);
     assert.match(split, /200,000 gil/);
-    assert.doesNotMatch(split, /Decision hidden|Clear result|Submit &amp; reveal/);
+    assert.doesNotMatch(split, /Decision hidden|Clear result|Reveal both decisions/);
     assert.match(render({ authed: true, session: { isAdmin: true } }), /Clear result/);
   } finally { saved = null; }
 });
@@ -386,13 +454,13 @@ test("Minority Draw shares three hidden chests and its tie-break status, with ho
     const viewer = gameOnly(render(previewAuth));
     assert.match(viewer, /Chow hosts the deathroll/);
     assert.equal((viewer.match(/Deathroll tie-break/g) ?? []).length, 4);
-    assert.doesNotMatch(viewer, /Prize not recorded|Award winning chest|Deathroll-winning chest|role="combobox"/);
+    assert.doesNotMatch(viewer, /Prize no longer available|Award winning chest|Deathroll-winning chest|role="combobox"/);
     const host = gameOnly(render({ authed: true, session: { isAdmin: true } }));
     assert.match(host, /Award winning chest/);
     assert.match(host, /aria-label="Deathroll-winning chest"/);
     saved = JSON.stringify({ ...event, minigame: { ...event.minigame, minorityDrawWinner: 2 } });
     const result = gameOnly(render(previewAuth));
-    assert.match(result, /200,000 gil \+ golden die/);
+    assert.match(result, /300,000 gil/);
     assert.equal((result.match(/No prize/g) ?? []).length, 2);
     assert.doesNotMatch(result, /Award winning chest|Deathroll-winning chest|Deathroll tie-break/);
   } finally { saved = null; }

@@ -17,8 +17,8 @@ const { bingoMissions, BINGO_EVENT_ID } = await server.ssrLoadModule("/src/featu
 const { BingoCard } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/bingo/BingoCard.tsx");
 after(() => server.close());
 
-test("cards use nine distinct missions from the exact 18-mission pool, including all added movement outcomes", () => {
-  const expected = [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 24, 25, 27];
+test("cards use nine distinct missions from the 22-mission pool, including Namazu outcomes", () => {
+  const expected = [1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 24, 25, 27, 28, 29, 30, 31, 32];
   assert.deepEqual(bingoMissions.map(mission => mission.id), expected);
   const seen = new Set(), orders = new Set();
   let seed = 7531;
@@ -28,6 +28,7 @@ test("cards use nine distinct missions from the exact 18-mission pool, including
     assert.equal(card.missionIds.length, 9);
     assert.equal(new Set(card.missionIds).size, 9);
     assert.ok(card.missionIds.every(id => expected.includes(id)));
+    assert.ok(!card.missionIds.includes(3));
     assert.ok(!card.missionIds.includes(4));
     assert.deepEqual(card.completedIds, []);
     card.missionIds.forEach(id => seen.add(id));
@@ -38,6 +39,8 @@ test("cards use nine distinct missions from the exact 18-mission pool, including
 });
 
 test("saved card validation preserves grid order and completion, rejecting malformed, old-event and removed missions", () => {
+  const existingCard = { version: 1, eventId: BINGO_EVENT_ID, missionIds: [7, 15, 2, 1, 10, 9, 27, 25, 12], completedIds: [7, 2] };
+  assert.deepEqual(readBingoCard(JSON.stringify(existingCard)), existingCard);
   const card = generateBingoCard(BINGO_EVENT_ID, () => 0.3);
   card.completedIds = [card.missionIds[8], card.missionIds[0]];
   assert.deepEqual(readBingoCard(JSON.stringify(card)), card);
@@ -82,7 +85,7 @@ test("the public card has nine accessible toggle buttons, three reward tiers and
   assert.equal((html.match(/aria-pressed="true"/g) ?? []).length, 3);
   assert.equal((html.match(/aria-pressed="false"/g) ?? []).length, 6);
   for (const id of card.missionIds) assert.ok(html.includes(bingoMissions.find(mission => mission.id === id).text));
-  for (const text of ["3 of 9 complete", "End-of-event reward", "3+ lines", "6+ lines", "9 lines", "250k gil", "500k gil", "1m gil", "Tick and screenshot to Chow at the end of the event"]) assert.ok(html.includes(text));
+  for (const text of ["3 of 9 complete", "End-of-event reward", "3+ tiles", "6+ tiles", "9 tiles", "250k gil", "500k gil", "1m gil", "Tick and screenshot to Chow at the end of the event"]) assert.ok(html.includes(text));
   assert.doesNotMatch(html, /Guide|Reset|Event options|Log in|Loading|line-clamp|truncate|No reward|Any missions count/);
   const rewards = html.slice(html.indexOf('aria-label="End-of-event reward"'));
   assert.equal((rewards.match(/lucide-coins/g) ?? []).length, 3);

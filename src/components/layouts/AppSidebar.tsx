@@ -32,7 +32,6 @@ import {
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
-import { canAccessGilRush } from "@/features/cartel-gil-rush/utils/access";
 import { useGameServerAuth } from "@/features/gameserver/hooks/useGameServerAuth";
 import fatcathi from "../../assets/fatcathi.png";
 import dragonIcon from "@/assets/icons/dragon.svg";
@@ -45,6 +44,7 @@ const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Members", to: "/members", icon: Users },
   { label: "Calendar", to: "/calendar", icon: CalendarDays },
+  { label: "Cartel Gil Rush", to: "/cartel-gil-rush", icon: Dices },
 ] as const;
 
 const progressItems = [
@@ -189,11 +189,6 @@ export function AppSidebar() {
               {bottomItems.map((item) => (
                 <NavLink key={item.to} {...item} />
               ))}
-              {canAccessGilRush(auth) && <NavLink
-                to="/cartel-gil-rush"
-                label="Cartel Gil Rush"
-                icon={Dices}
-              />}
               {auth.sessionWasAdmin && (
                 <NavLink
                   key={adminItem.to}

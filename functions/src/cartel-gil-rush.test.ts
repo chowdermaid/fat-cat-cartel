@@ -1,12 +1,7 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { canViewGilRush, emptyGilRushEvent, lockMinorityAssignments, nextMinorityAssignments, readMinorityAssignments, publishTreasureAssignments, nextGilRushEvent, readGilRushEvent, splitPayouts, type GilRushEvent } from "./cartel-gil-rush-model";
-
-test("internal viewing requires an admin or exactly the linked preview member", () => {
-  assert.equal(canViewGilRush({ isAdmin: true }), true);
-  assert.equal(canViewGilRush({ isMember: true, lodestoneId: "51550870" }), true);
-  for (const session of [null, {}, { isMember: true, lodestoneId: "51550871" }, { lodestoneId: "51550870" }, { isMember: false, lodestoneId: "51550870" }]) assert.equal(canViewGilRush(session), false);
-});
+import { emptyGilRushEvent, lockMinorityAssignments, nextMinorityAssignments, readMinorityAssignments, publishTreasureAssignments, nextGilRushEvent, readGilRushEvent, splitPayouts, type GilRushEvent } from "./cartel-gil-rush-model";
+import { drawNamazuEffect, drawNamazuTarget, NAMAZU_EFFECTS } from "./cartel-gil-rush-namazu";
 
 const add = (id: string) => ({ type: "add", player: { id, name: id, avatarUrl: null } });
 const apply = (event: GilRushEvent, action: unknown) => nextGilRushEvent(event, action, event.revision, () => 0);
@@ -23,6 +18,103 @@ function minorityDraw(placements: number[]) {
   const reveal = (current: GilRushEvent, chest: number) => nextGilRushEvent(current, { type: "reveal-minority-chest", gameId, chest }, current.revision, Math.random, locked, 1000 + chest);
   return { event, gameId, choices, saved, locked, reveal };
 }
+
+test("Namazu effects occupy eight equal random buckets; player draws use the full roster", () => {
+  assert.equal(NAMAZU_EFFECTS.length, 8);
+  assert.deepEqual(Array.from({ length: 8 }, (_, index) => drawNamazuEffect(() => (index + 0.5) / 8)), [1, 2, 3, 4, 5, 6, 7, 8]);
+  for (const effect of [5, 6, 8]) {
+    assert.deepEqual([0, 0.4, 0.999].map(value => drawNamazuTarget(effect, ["Axo", "Chow", "Third"], () => value)), ["Axo", "Chow", "Third"]);
+  }
+  assert.equal(drawNamazuTarget(6, ["Axo"]), null);
+  assert.equal(drawNamazuTarget(5, ["Axo"]), "Axo");
+  for (const effect of [1, 2, 3, 4, 7]) assert.equal(drawNamazuTarget(effect, ["Axo"], () => { throw new Error("No target draw expected"); }), null);
+});
+
+test("Namazu opens once per landing, defers player selection and only effect 3 pays immediately", () => {
+  let base = apply(apply(apply(emptyGilRushEvent(), add("Axo")), add("Chow")), { type: "start" });
+  for (let effect = 1; effect <= 8; effect++) {
+    const opened = nextGilRushEvent(base, { type: "start-namazu", tile: 16 }, base.revision, () => (effect - 0.5) / 8);
+    assert.equal(opened.namazu?.effect, effect);
+    const expectedPlayers = base.players.map(player => ({ ...player, gilWon: player.gilWon + (effect === 3 ? 50_000 : 0) }));
+    assert.deepEqual(opened.players, expectedPlayers);
+    assert.equal(opened.namazu!.target, null);
+    assert.equal(opened.namazu!.targetDraw, 0);
+    assert.equal(opened.namazu!.payout?.perPlayer ?? null, effect === 3 ? 50_000 : null);
+    assert.equal(opened.round, base.round);
+    assert.equal(opened.minigame, base.minigame);
+    assert.deepEqual(readGilRushEvent(JSON.parse(JSON.stringify(opened))), opened);
+    assert.throws(() => apply(opened, { type: "start-namazu", tile: 43 }), /Clear/);
+    const cleared = apply(opened, { type: "clear-namazu", encounterId: opened.namazu!.id });
+    assert.equal(cleared.namazu, null);
+    assert.deepEqual(cleared.players, expectedPlayers);
+  }
+});
+
+test("Namazu rerolls change only the target and reject stale, closed or non-random encounters", () => {
+  const base = apply(apply(apply(emptyGilRushEvent(), add("Axo")), add("Chow")), { type: "start" });
+  for (const effect of [5, 6, 8]) {
+    const opened = nextGilRushEvent(base, { type: "start-namazu", tile: 43 }, base.revision, () => (effect - 0.5) / 8);
+    assert.equal(opened.namazu!.target, null);
+    const action = { type: "reroll-namazu-target", encounterId: opened.namazu!.id };
+    const selected = nextGilRushEvent(opened, action, opened.revision, () => 0);
+    assert.equal(selected.namazu!.target, base.players[0].id);
+    assert.equal(selected.namazu!.targetDraw, 1);
+    const rerolled = nextGilRushEvent(selected, action, selected.revision, () => 0.999);
+    assert.equal(rerolled.namazu!.target, base.players[1].id);
+    assert.equal(rerolled.namazu!.effect, effect);
+    assert.equal(rerolled.namazu!.targetDraw, 2);
+    assert.deepEqual(rerolled.players, base.players);
+    assert.throws(() => nextGilRushEvent(rerolled, action, opened.revision), /changed/);
+    assert.throws(() => apply(rerolled, { ...action, encounterId: 999 }), /no longer active/);
+    const closed = apply(rerolled, { type: "clear-namazu", encounterId: opened.namazu!.id });
+    assert.throws(() => apply(closed, action), /no longer active/);
+  }
+  const opened = apply(base, { type: "start-namazu", tile: 63 });
+  assert.throws(() => apply(opened, { type: "reroll-namazu-target", encounterId: opened.namazu!.id }), /no player selection/);
+  assert.equal(apply(opened, { type: "reset" }).namazu, null);
+  assert.equal(readGilRushEvent({ ...base, namazu: undefined }).namazu, null);
+  assert.equal(readGilRushEvent(opened, true).namazu, null);
+  assert.throws(() => apply(base, { type: "start-namazu", tile: 17 }), /Namazu tile/);
+  assert.throws(() => apply(emptyGilRushEvent(), { type: "start-namazu", tile: 16 }), /Start the event/);
+  const soloSwap = nextGilRushEvent(live(), { type: "start-namazu", tile: 63 }, live().revision, () => 5.5 / 8);
+  assert.equal(soloSwap.namazu!.effect, 6);
+  assert.equal(soloSwap.namazu!.target, null);
+  assert.deepEqual(readGilRushEvent(soloSwap), soloSwap);
+  assert.throws(() => readGilRushEvent({ ...soloSwap, namazu: { ...soloSwap.namazu, effect: 9 } }), /effect/);
+});
+
+test("Namazu roll payouts credit everyone once, validate 1-6 and preserve awards after closing", () => {
+  const base = apply(apply(apply(emptyGilRushEvent(), add("Axo")), add("Chow")), { type: "start" });
+  for (const roll of [1, 6]) {
+    const opened = nextGilRushEvent(base, { type: "start-namazu", tile: 63 }, base.revision, () => 6.5 / 8);
+    const action = { type: "award-namazu-gil", encounterId: opened.namazu!.id, roll };
+    const paid = apply(opened, action);
+    assert.deepEqual(paid.players.map(player => player.gilWon), [roll * 10_000, roll * 10_000]);
+    assert.deepEqual(paid.namazu!.payout, { perPlayer: roll * 10_000, roll });
+    assert.throws(() => apply(paid, action), /already been awarded/);
+    assert.throws(() => nextGilRushEvent(paid, action, opened.revision), /changed/);
+    assert.deepEqual(apply(paid, { type: "clear-namazu", encounterId: paid.namazu!.id }).players, paid.players);
+    for (const invalid of [0, 7, 1.5, NaN, "6"]) assert.throws(() => apply(opened, { ...action, roll: invalid }));
+    assert.throws(() => apply(opened, { ...action, encounterId: 999 }), /no longer active/);
+  }
+  const manual = nextGilRushEvent(base, { type: "start-namazu", tile: 43 }, base.revision, () => 1.5 / 8);
+  assert.equal(manual.namazu!.effect, 2);
+  assert.deepEqual(manual.players, base.players);
+  assert.throws(() => apply(manual, { type: "award-namazu-gil", encounterId: manual.namazu!.id, roll: 1 }), /Only/);
+});
+
+test("Namazu rejects payout overflow atomically and does not infer payment for legacy active effects", () => {
+  const base = apply(apply(apply(emptyGilRushEvent(), add("Axo")), add("Chow")), { type: "start" });
+  const maxed = apply(base, { type: "set-gil", id: "Axo", gilWon: Number.MAX_SAFE_INTEGER });
+  const before = JSON.stringify(maxed);
+  assert.throws(() => nextGilRushEvent(maxed, { type: "start-namazu", tile: 16 }, maxed.revision, () => 2.5 / 8), /Resulting gil/);
+  const opened = nextGilRushEvent(maxed, { type: "start-namazu", tile: 16 }, maxed.revision, () => 6.5 / 8);
+  assert.throws(() => apply(opened, { type: "award-namazu-gil", encounterId: opened.namazu!.id, roll: 1 }), /Resulting gil/);
+  assert.equal(JSON.stringify(maxed), before);
+  const legacy = readGilRushEvent({ ...base, namazu: { id: 7, tile: 16, effect: 3, targetDraw: 0 } });
+  assert.equal(legacy.namazu!.payout, null);
+  assert.deepEqual(legacy.players, base.players);
+});
 
 test("start needs players only; shuffles once and locks participants", () => {
   assert.throws(() => apply(emptyGilRushEvent(), { type: "start" }), /at least one/);
@@ -81,7 +173,7 @@ test("explicit import preserves legacy order and round, zeroes gil and strips ex
   const imported = apply(emptyGilRushEvent(), { type: "import", event: legacy });
   assert.equal(imported.round, 7);
   assert.equal("mood" in imported, false);
-  assert.equal(imported.players[0].bonusDie, null);
+  assert.ok(!("bonusDie" in imported.players[0]));
   assert.equal(imported.players[0].gilWon, 0);
   assert.doesNotMatch(JSON.stringify(imported), /secret|never-public|privateNote|adminSessionToken/);
   assert.throws(() => apply(imported, { type: "import", event: legacy }), /empty shared event/);
@@ -90,22 +182,23 @@ test("explicit import preserves legacy order and round, zeroes gil and strips ex
 
 const twoPlayers = () => apply(apply(apply(emptyGilRushEvent(), add("Axo")), add("Chow")), { type: "start" });
 
-test("golden dice last until the next group minigame starts and can be removed manually", () => {
-  let event = apply(live(), { type: "set-bonus-die", id: "Axo", sides: 10 });
-  assert.equal(event.players[0].bonusDie, 10);
-  event = apply(event, { type: "set-round", round: 7 });
-  assert.equal(event.players[0].bonusDie, 10);
-  event = apply(event, { type: "start-minigame", kind: "minority" });
-  assert.equal(event.players[0].bonusDie, null);
-  event = apply(event, { type: "set-bonus-die", id: "Axo", sides: 10 });
-  event = apply(event, { type: "end-minigame" });
-  assert.equal(event.players[0].bonusDie, 10);
-  event = apply(event, { type: "set-bonus-die", id: "Axo", sides: null });
-  assert.equal(event.players[0].bonusDie, null);
-  for (const sides of [0, 1, 2, 20, -6, 1.2, "10", NaN, Infinity, undefined]) assert.throws(() => apply(event, { type: "set-bonus-die", id: "Axo", sides }));
-  assert.throws(() => apply(event, { type: "set-bonus-die", id: "absent", sides: 10 }), /not found/);
-  assert.throws(() => apply(emptyGilRushEvent(), { type: "set-bonus-die", id: "Axo", sides: 10 }), /Start/);
-  assert.equal(readGilRushEvent({ ...event, players: [{ ...event.players[0], bonusDie: 20 }] }).players[0].bonusDie, 10);
+test("retired dice are discarded, old assignment actions fail, and unopened legacy prizes become gil", () => {
+  let event = apply(twoPlayers(), { type: "start-minigame", kind: "minority" });
+  event = readGilRushEvent({ ...event, players: event.players.map(player => ({ ...player, bonusDie: 10 })) });
+  assert.ok(event.players.every(player => !("bonusDie" in player)));
+  assert.throws(() => apply(event, { type: "set-bonus-die", id: "Axo", sides: 10 }));
+  const gameId = event.minigame!.id;
+  const legacy = { gameId, revision: 1, locked: true, choices: [{ id: "Axo", chest: 3 }, { id: "Chow", chest: 4 }], prizes: ["200k", "100k", "golden-dice", "50k"] };
+  const assignments = readMinorityAssignments(legacy, event, gameId)!;
+  assert.deepEqual(assignments.prizes, ["200k", "100k", "300k", "50k"]);
+  const action = { type: "reveal-minority-chest", gameId, chest: 3 };
+  const paid = nextGilRushEvent(event, action, event.revision, Math.random, assignments);
+  assert.equal(paid.players.find(player => player.id === "Axo")!.gilWon, 300_000);
+  assert.throws(() => nextGilRushEvent(paid, action, paid.revision, Math.random, assignments), /no longer/);
+  const alreadyOpened = readGilRushEvent({ ...event, minigame: { ...event.minigame, chestReveals: [{ chest: 3, playerIds: ["Axo"], prize: "golden-dice", revealedAt: 0 }] } });
+  assert.equal(alreadyOpened.minigame!.chestReveals[0].prize, null);
+  assert.ok(alreadyOpened.players.every(player => player.gilWon === 0));
+  assert.throws(() => nextGilRushEvent(alreadyOpened, action, alreadyOpened.revision, Math.random, assignments), /no longer/);
 });
 
 test("trivia shuffle balances even and odd rosters without moving turn order or awarding gil", () => {
@@ -179,17 +272,22 @@ test("trivia finalisation validates both amounts and teams and rejects unsafe pa
 test("legacy question payouts load as already finalised to avoid paying them twice", () => {
   const event = apply(twoPlayers(), { type: "start-minigame", kind: "trivia" });
   const legacy = { ...event, minigame: { ...event.minigame, teams: [{ id: "Axo", team: "A" }, { id: "Chow", team: "B" }], questionWins: { "2": "A" } } };
+  assert.deepEqual(event.minigame!.questionWins, [null, null, null, null, null]);
   const loaded = readGilRushEvent(legacy);
+  assert.deepEqual(loaded.minigame!.questionWins, [null, null, "A", null, null]);
   assert.deepEqual(loaded.minigame!.triviaWinnings, { A: 100_000, B: 0 });
   assert.throws(() => apply(loaded, { type: "finalise-trivia", gameId: loaded.minigame!.id, winnings: { A: 100_000, B: 0 } }), /already finalised/);
-  for (const questionWins of [{ "3": "A" }, "A", { unknown: "A" }]) assert.throws(() => readGilRushEvent({ ...legacy, minigame: { ...legacy.minigame, questionWins } }));
+  const fiveQuestions = readGilRushEvent({ ...legacy, minigame: { ...legacy.minigame, questionWins: { "2": "A", "3": "A", "4": "B" } } });
+  assert.deepEqual(fiveQuestions.minigame!.questionWins, [null, null, "A", "A", "B"]);
+  assert.deepEqual(fiveQuestions.minigame!.triviaWinnings, { A: 200_000, B: 100_000 });
+  for (const questionWins of [{ "5": "A" }, Array(6).fill(null), "A", { unknown: "A" }]) assert.throws(() => readGilRushEvent({ ...legacy, minigame: { ...legacy.minigame, questionWins } }));
   assert.deepEqual(readGilRushEvent({ ...loaded, minigame: { ...loaded.minigame, triviaWinnings: { A: 0, B: 0 } } }).minigame!.triviaWinnings, { A: 0, B: 0 });
 });
 
 test("Treasure Draw publishes all players but only the selected chest prize", () => {
   let event = apply(twoPlayers(), { type: "start-minigame", kind: "minority" });
   const gameId = event.minigame!.id;
-  const input = { gameId, choices: [{ id: "Axo", chest: 2 }, { id: "Chow", chest: 4 }], prizes: ["200k", "100k", "golden-dice", "50k"] };
+  const input = { gameId, choices: [{ id: "Axo", chest: 2 }, { id: "Chow", chest: 4 }], prizes: ["300k", "200k", "100k", "50k"] };
   const saved = nextMinorityAssignments(null, event, input, 0, () => 0.999);
   assert.equal(event.minigame!.chestReveals.length, 0);
   assert.equal(event.minigame!.chests, null);
@@ -199,18 +297,18 @@ test("Treasure Draw publishes all players but only the selected chest prize", ()
   const locked = lockMinorityAssignments(saved, event, gameId);
   assert.throws(() => nextMinorityAssignments(locked, event, input, locked.revision), /locked/);
   event = nextGilRushEvent(event, reveal, event.revision, Math.random, locked, 1000);
-  assert.deepEqual(event.minigame!.chestReveals, [{ chest: 2, playerIds: ["Axo"], prize: "100k", revealedAt: 1000 }]);
+  assert.deepEqual(event.minigame!.chestReveals, [{ chest: 2, playerIds: ["Axo"], prize: "200k", revealedAt: 1000 }]);
   assert.equal(event.minigame!.chests, null);
   assert.deepEqual(event.minigame!.treasureAssignments, { revision: saved.revision, choices: saved.choices });
-  assert.doesNotMatch(JSON.stringify(event.minigame), /200k|golden-dice|50k|prizes/);
+  assert.doesNotMatch(JSON.stringify(event.minigame), /300k|100k|50k|prizes/);
   assert.throws(() => nextGilRushEvent(event, reveal, event.revision, Math.random, locked), /no longer/);
   assert.throws(() => nextMinorityAssignments(saved, event, input, saved.revision), /locked/);
   for (const chest of [1, 3, 4]) event = nextGilRushEvent(event, { ...reveal, chest }, event.revision, Math.random, locked, 2000);
   assert.equal(event.minigame!.chestReveals.length, 4);
   assert.deepEqual(event.minigame!.chestReveals.find(row => row.chest === 1)!.playerIds, []);
-  assert.equal(event.players.find(player => player.id === "Axo")!.gilWon, 100_000);
+  assert.equal(event.players.find(player => player.id === "Axo")!.gilWon, 200_000);
   assert.equal(event.players.find(player => player.id === "Chow")!.gilWon, 50_000);
-  assert.ok(event.players.every(player => player.bonusDie === null));
+  assert.ok(event.players.every(player => !("bonusDie" in player)));
 });
 
 test("Treasure Draw assignment publication is prize-free, monotonic and recovers interrupted saves", () => {
@@ -241,9 +339,9 @@ test("Treasure Draw assignment publication is prize-free, monotonic and recovers
 test("minority private saves reject stale hosts and invalid assignments/prizes; old games cannot overwrite new ones", () => {
   const event = apply(twoPlayers(), { type: "start-minigame", kind: "minority" });
   const gameId = event.minigame!.id;
-  const input = { gameId, choices: [{ id: "Axo", chest: 2 }, { id: "Chow", chest: 4 }], prizes: ["200k", "100k", "golden-dice", "50k"] };
+  const input = { gameId, choices: [{ id: "Axo", chest: 2 }, { id: "Chow", chest: 4 }], prizes: ["300k", "200k", "100k", "50k"] };
   for (const choices of [[], [{ id: "Axo", chest: 1 }], [{ id: "Axo", chest: 1 }, { id: "Axo", chest: 2 }], [{ id: "Axo", chest: 5 }, { id: "Chow", chest: 1 }], [{ id: "unknown", chest: 1 }, { id: "Chow", chest: 2 }]]) assert.throws(() => nextMinorityAssignments(null, event, { ...input, choices }, 0));
-  for (const prizes of [[], ["200k", "200k", "golden-dice", "50k"], ["nope", "100k", "golden-dice", "50k"]]) assert.throws(() => readMinorityAssignments({ gameId, revision: 1, locked: false, choices: input.choices, prizes }, event, gameId));
+  for (const prizes of [[], ["300k", "300k", "100k", "50k"], ["nope", "200k", "100k", "50k"]]) assert.throws(() => readMinorityAssignments({ gameId, revision: 1, locked: false, choices: input.choices, prizes }, event, gameId));
   const saved = nextMinorityAssignments(null, event, input, 0, () => 0.999);
   assert.throws(() => nextMinorityAssignments(saved, event, input, 0), /another host/);
   const next = nextMinorityAssignments(saved, event, { ...input, choices: [{ id: "Axo", chest: 1 }, { id: "Chow", chest: 4 }] }, 1);
@@ -325,18 +423,18 @@ test("new minigames validate kind and phase; older snapshots discard moods and d
   assert.throws(() => apply(event, { type: "start-minigame", kind: "trivia" }), /End the current/);
   const old = readGilRushEvent({ version: 1, revision: 3, phase: "live", players: [{ id: "a", name: "A", gilWon: 5 }], round: 4, mood: "red", privateChoices: [{ id: "a", chest: 4 }] });
   assert.equal(old.minigame, null);
-  assert.equal(old.players[0].bonusDie, null);
+  assert.ok(!("bonusDie" in old.players[0]));
   assert.doesNotMatch(JSON.stringify(old), /mood|privateChoices/);
 });
 
-test("each chest pays every recipient once, golden dice do not stack, and the next minigame clears them", () => {
+test("all four cash chests pay every recipient once and reject overflow atomically", () => {
   let event = emptyGilRushEvent();
-  for (const id of ["Axo", "Chow", "Finished", "Golden", "Fifty", "AlsoGolden"]) event = apply(event, add(id));
+  for (const id of ["Axo", "Chow", "Finished", "Cash", "Fifty", "AlsoCash"]) event = apply(event, add(id));
   event = apply(apply(event, { type: "start" }), { type: "start-minigame", kind: "minority" });
   event = apply(event, { type: "set-gil", id: "Axo", gilWon: 50_000 });
-  for (const id of ["Axo", "AlsoGolden"]) event = apply(event, { type: "set-bonus-die", id, sides: 10 });
   const gameId = event.minigame!.id;
-  const saved = nextMinorityAssignments(null, event, { gameId, choices: [{ id: "Axo", chest: 1 }, { id: "Chow", chest: 1 }, { id: "Finished", chest: 2 }, { id: "Golden", chest: 3 }, { id: "Fifty", chest: 4 }, { id: "AlsoGolden", chest: 3 }] }, 0, () => 0.999);
+  const saved = nextMinorityAssignments(null, event, { gameId, choices: [{ id: "Axo", chest: 1 }, { id: "Chow", chest: 1 }, { id: "Finished", chest: 2 }, { id: "Cash", chest: 3 }, { id: "Fifty", chest: 4 }, { id: "AlsoCash", chest: 3 }] }, 0, () => 0.999);
+  assert.deepEqual(saved.prizes, ["300k", "200k", "100k", "50k"]);
   const locked = lockMinorityAssignments(saved, event, gameId);
   const maxed = apply(event, { type: "set-gil", id: "Chow", gilWon: Number.MAX_SAFE_INTEGER });
   const before = JSON.stringify(maxed);
@@ -347,22 +445,13 @@ test("each chest pays every recipient once, golden dice do not stack, and the ne
     event = nextGilRushEvent(event, action, event.revision, Math.random, locked);
     assert.throws(() => nextGilRushEvent(event, action, event.revision, Math.random, locked), /no longer/);
   }
-  const player = (id: string) => event.players.find(player => player.id === id)!;
-  assert.equal(player("Axo").gilWon, 250_000);
-  assert.equal(player("Chow").gilWon, 200_000);
-  assert.equal(player("Finished").gilWon, 100_000);
-  assert.equal(player("Fifty").gilWon, 50_000);
-  for (const id of ["Axo", "Golden", "AlsoGolden"]) assert.equal(player(id).bonusDie, 10);
+  const totals = event.players.map(player => ({ Axo: 350_000, Chow: 300_000, Finished: 200_000, Cash: 100_000, Fifty: 50_000, AlsoCash: 100_000 })[player.id]);
+  assert.deepEqual(event.players.map(player => player.gilWon), totals);
+  assert.ok(event.players.every(player => !("bonusDie" in player)));
   event = apply(event, { type: "end-minigame" });
-  event = apply(event, { type: "start-split" });
-  assert.equal(player("Golden").bonusDie, 10);
-  event = apply(event, { type: "clear-split" });
-  const totals = event.players.map(player => player.gilWon);
   event = apply(event, { type: "start-minigame", kind: "trivia" });
-  assert.ok(event.players.every(player => player.bonusDie === null));
   assert.deepEqual(event.players.map(player => player.gilWon), totals);
 });
-
 
 test("Minority Draw privately validates exactly three chests without random prizes", () => {
   const { event, saved, gameId, choices } = minorityDraw([1, 2, 3]);
@@ -370,7 +459,7 @@ test("Minority Draw privately validates exactly three chests without random priz
   assert.deepEqual(saved.prizes, []);
   assert.deepEqual(readMinorityAssignments({ ...saved, prizes: undefined }, event, gameId), saved);
   assert.throws(() => nextMinorityAssignments(null, event, { gameId, choices: choices.map((choice, index) => index === 0 ? { ...choice, chest: 4 } : choice) }, 0), /three chests/);
-  assert.throws(() => readMinorityAssignments({ ...saved, prizes: ["200k", "100k", "golden-dice", "50k"] }, event, gameId), /does not use random/);
+  assert.throws(() => readMinorityAssignments({ ...saved, prizes: ["300k", "200k", "100k", "50k"] }, event, gameId), /does not use random/);
   assert.deepEqual(event.minigame!.chestReveals, []);
   assert.equal(event.minigame!.chests, null);
 });
@@ -385,22 +474,22 @@ test("Minority Draw excludes empty chests and awards the whole smallest group on
   assert.equal(event.minigame!.minorityDrawWinner, null);
   assert.equal(event.players.find(player => player.id === "Player 4")!.gilWon, 50_000);
   event = fixture.reveal(event, 1);
-  assert.ok(event.players.every(player => player.bonusDie === null));
+  assert.ok(event.players.every(player => !("bonusDie" in player)));
   assert.throws(() => apply(event, { type: "resolve-minority-draw", gameId: fixture.gameId, chest: 2 }), /all three/);
   event = fixture.reveal(event, 3);
   assert.equal(event.minigame!.minorityDrawWinner, 2);
   assert.deepEqual(event.players.map(player => player.id), order);
   for (const player of event.players) {
     const winner = ["Player 4", "Player 5"].includes(player.id);
-    assert.equal(player.gilWon, player.id === "Player 4" ? 250_000 : winner ? 200_000 : 0);
-    assert.equal(player.bonusDie, winner ? 10 : null);
+    assert.equal(player.gilWon, player.id === "Player 4" ? 350_000 : winner ? 300_000 : 0);
+    assert.ok(!("bonusDie" in player));
   }
   assert.deepEqual(readGilRushEvent(event), event);
   assert.throws(() => fixture.reveal(event, 3), /no longer available/);
   assert.throws(() => apply(event, { type: "resolve-minority-draw", gameId: fixture.gameId, chest: 2 }), /already awarded/);
   assert.throws(() => readGilRushEvent({ ...event, minigame: { ...event.minigame, minorityDrawWinner: 3 } }), /Winning chest/);
   const next = apply(apply(event, { type: "end-minigame" }), { type: "start-minigame", kind: "trivia" });
-  assert.ok(next.players.every(player => player.bonusDie === null));
+  assert.ok(next.players.every(player => !("bonusDie" in player)));
   assert.deepEqual(next.players.map(player => player.gilWon), event.players.map(player => player.gilWon));
 });
 
@@ -410,7 +499,7 @@ test("Minority Draw ties wait for Chow's champion deathroll and only allow one e
     let event = fixture.event;
     for (const chest of [1, 2, 3]) event = fixture.reveal(event, chest);
     assert.equal(event.minigame!.minorityDrawWinner, null);
-    assert.ok(event.players.every(player => player.gilWon === 0 && player.bonusDie === null));
+    assert.ok(event.players.every(player => player.gilWon === 0 && !("bonusDie" in player)));
     const action = { type: "resolve-minority-draw", gameId: fixture.gameId, chest: 1 };
     if (placements.length !== 3) assert.throws(() => apply(event, { ...action, chest: 3 }), /tied least-selected occupied/);
     assert.throws(() => apply(event, { ...action, chest: 4 }), /tied least-selected occupied/);
@@ -420,8 +509,8 @@ test("Minority Draw ties wait for Chow's champion deathroll and only allow one e
     assert.equal(event.minigame!.minorityDrawWinner, 1);
     event.players.forEach(player => {
       const winner = fixture.choices.some(choice => choice.id === player.id && choice.chest === 1);
-      assert.equal(player.gilWon, winner ? 200_000 : 0);
-      assert.equal(player.bonusDie, winner ? 10 : null);
+      assert.equal(player.gilWon, winner ? 300_000 : 0);
+      assert.ok(!("bonusDie" in player));
     });
     assert.throws(() => nextGilRushEvent(event, action, revision), /another host/);
     assert.throws(() => apply(event, { ...action, chest: 2 }), /already awarded/);
@@ -439,10 +528,10 @@ test("Minority Draw payout overflow rejects the whole final reveal or deathroll 
     assert.throws(() => nextGilRushEvent(event, action, event.revision, Math.random, fixture.locked), /Resulting gil/);
     assert.equal(JSON.stringify(event), before);
     assert.equal(event.minigame!.minorityDrawWinner, null);
-    assert.ok(event.players.every(player => player.bonusDie === null));
+    assert.ok(event.players.every(player => !("bonusDie" in player)));
     event = apply(event, { type: "set-gil", id: "Player 1", gilWon: 0 });
     event = nextGilRushEvent(event, action, event.revision, Math.random, fixture.locked);
-    assert.equal(event.players.find(player => player.id === "Player 1")!.gilWon, 200_000);
-    assert.equal(event.players.find(player => player.id === "Player 1")!.bonusDie, 10);
+    assert.equal(event.players.find(player => player.id === "Player 1")!.gilWon, 300_000);
+    assert.ok(!("bonusDie" in event.players.find(player => player.id === "Player 1")!));
   }
 });

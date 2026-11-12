@@ -14,6 +14,7 @@ const tileFaces = {
   mushroom: "bg-[#741744] text-[#FFFFFF]",
   moogle: "bg-[#C18B43] text-[#171717]",
   chocobo: "bg-[#FF741F] text-[#171717]",
+  namazu: "bg-[#E8B58C] text-[#171717]",
   fatcat: "bg-[#F4CB54] text-[#171717]",
   ladder: "bg-[#C4E94B] text-[#171717]",
   "red-arrow": "bg-[#B60922] text-[#FFFFFF]",
@@ -26,9 +27,11 @@ interface BoardGridProps {
   onSelect: (id: string) => void;
   onChocoboClick?: () => void;
   chocoboDisabled?: boolean;
+  onNamazuClick?: (tile: number) => void;
+  namazuDisabled?: boolean;
 }
 
-export function BoardGrid({ active, selected, onSelect, onChocoboClick, chocoboDisabled = false }: BoardGridProps) {
+export function BoardGrid({ active, selected, onSelect, onChocoboClick, chocoboDisabled = false, onNamazuClick, namazuDisabled = false }: BoardGridProps) {
   const { canvasRef, geometry } = useBoardGeometry(active);
   const route = boardConnections.find(({ id }) => id === selected);
 
@@ -42,9 +45,10 @@ export function BoardGrid({ active, selected, onSelect, onChocoboClick, chocoboD
           const Landmark = cell.number === 1 ? Flag : cell.symbol === "finish" ? Crown : null;
           const face = <span aria-hidden="true" className="relative z-20 block size-full">
             <span className="absolute top-1 left-1 text-xs leading-none font-extrabold">{cell.number}</span>
-            {Landmark ? <Landmark className="absolute top-[60%] left-1/2 size-[52%] max-w-9 -translate-x-1/2 -translate-y-1/2 text-[#805512]" /> : cell.symbol && cell.symbol !== "finish" && !cell.outgoing ? <img src={tileArtwork[cell.symbol]} alt="" className="absolute top-[60%] left-1/2 size-[52%] max-w-9 -translate-x-1/2 -translate-y-1/2 object-contain" /> : null}
+            {Landmark ? <Landmark className="absolute top-[60%] left-1/2 size-[52%] max-w-9 -translate-x-1/2 -translate-y-1/2 text-[#805512]" /> : cell.symbol && cell.symbol !== "finish" && !cell.outgoing ? <img src={tileArtwork[cell.symbol]} alt="" className={cn("absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 object-contain", cell.symbol === "namazu" ? "size-[88%]" : "size-[52%] max-w-9")} /> : null}
           </span>;
           const chocoboAction = cell.symbol === "chocobo" && onChocoboClick;
+          const namazuAction = cell.symbol === "namazu" && onNamazuClick;
           const buttonClass = "block h-full w-full rounded-[inherit] p-0 text-inherit hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-amber-600";
           let content = face;
           if (cell.outgoing) {
@@ -52,12 +56,14 @@ export function BoardGrid({ active, selected, onSelect, onChocoboClick, chocoboD
             content = <Button variant="ghost" aria-label={description} aria-pressed={selected === connection.id} className={buttonClass} onClick={() => onSelect(connection.id)}>{face}</Button>;
           } else if (chocoboAction) {
             content = <Button variant="ghost" aria-label={`Open Split or Steal from Chocobo tile ${cell.number}`} disabled={chocoboDisabled} className={buttonClass} onClick={chocoboAction}>{face}</Button>;
+          } else if (namazuAction) {
+            content = <Button variant="ghost" aria-label={`Open Namazu from tile ${cell.number}`} disabled={namazuDisabled} className={buttonClass} onClick={() => namazuAction(cell.number)}>{face}</Button>;
           } else if (cell.symbol) {
             content = <span tabIndex={0} aria-label={description} className="relative z-20 block size-full cursor-help rounded-[inherit] focus-visible:outline-2 focus-visible:outline-amber-600">{face}</span>;
           }
-          return <li key={cell.number} data-board-tile={cell.number} data-board-symbol={cell.symbol ?? undefined} aria-label={cell.outgoing || chocoboAction ? undefined : description} title={cell.symbol ? undefined : description} style={{ gridRow: row + 1, gridColumn: column + 1 }} className={cn(
+          return <li key={cell.number} data-board-tile={cell.number} data-board-symbol={cell.symbol ?? undefined} aria-label={cell.outgoing || chocoboAction || namazuAction ? undefined : description} title={cell.symbol ? undefined : description} style={{ gridRow: row + 1, gridColumn: column + 1 }} className={cn(
             "relative aspect-square rounded-[2px] border border-black/25 shadow-[inset_0_1px_0_#ffffff40,inset_0_-1px_0_#00000030]",
-            cell.number === 1 ? tileFaces.finish : cell.symbol ? tileFaces[cell.symbol] : cell.incoming.some(({ kind }) => kind === "ladder") ? tileFaces.ladder : Math.floor((cell.number - 1) / BOARD_COLUMNS) % 2 === 0 ? "bg-[#696664] text-[#FFFFFF]" : "bg-[#F2EFE7] text-[#171717]",
+            cell.number === 1 ? tileFaces.finish : cell.symbol ? tileFaces[cell.symbol] : Math.floor((cell.number - 1) / BOARD_COLUMNS) % 2 === 0 ? "bg-[#696664] text-[#FFFFFF]" : "bg-[#F2EFE7] text-[#171717]",
             highlighted && "ring-2 ring-amber-500 ring-offset-1 ring-offset-background",
           )}>
             {cell.symbol ? <TileRuleTooltip kind={cell.symbol} title={description}>{content}</TileRuleTooltip> : content}

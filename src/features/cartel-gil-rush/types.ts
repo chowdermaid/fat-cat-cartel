@@ -24,7 +24,7 @@ export type EventView = "game" | "rulebook";
 export interface BingoMission {
   id: number;
   text: string;
-  icon: Tile["id"] | "coins" | "die" | "golden-die" | "minority-draw" | "eorzeaguessr" | "marbles" | "flag";
+  icon: Tile["id"] | "coins" | "die" | "minority-draw" | "eorzeaguessr" | "marbles" | "flag";
 }
 export interface BingoCardState {
   version: 1;
@@ -61,7 +61,7 @@ export type EventAction =
   | { type: "reset" };
 
 export interface Tile {
-  id: "shark" | "fatcat" | "chocobo" | "moogle" | "mushroom" | "ladder" | "red-arrow";
+  id: "shark" | "fatcat" | "chocobo" | "moogle" | "mushroom" | "ladder" | "red-arrow" | "namazu";
   name: string;
   category: string;
   activation: string;

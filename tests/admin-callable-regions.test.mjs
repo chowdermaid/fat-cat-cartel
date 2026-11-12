@@ -15,7 +15,7 @@ async function modules({ emulator = false, dev = false, stubs = false } = {}) {
   const state = {
     instances: new Map(), connections: [], requests: [], devRequests: [], stubRequests: [],
     event: { version: 1, revision: 9, phase: "setup", round: 1, players: [] },
-    assignments: { gameId: 7, revision: 1, locked: false, choices: [{ id: "a", chest: 2 }], prizes: ["200k", "100k", "golden-dice", "50k"] },
+    assignments: { gameId: 7, revision: 1, locked: false, choices: [{ id: "a", chest: 2 }], prizes: ["300k", "200k", "100k", "50k"] },
   };
   globalThis.regionalCallableHarness = state;
   const server = await createServer({

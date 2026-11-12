@@ -32,7 +32,7 @@ export function MinorityGame({ current, run, disabled, saving = false, canEdit =
     <div className={draw ? "grid grid-cols-1 gap-3 @[500px]:grid-cols-3" : "grid grid-cols-2 gap-3 @[700px]:grid-cols-4"}>
       {chests.map(chest => <MinorityChest key={chest} chest={chest} reveal={game.chestReveals.find(row => row.chest === chest)} players={current.players} assignedPlayerIds={draw ? undefined : game.treasureAssignments?.choices.filter(choice => choice.chest === chest).map(choice => choice.id) ?? game.chestReveals.find(row => row.chest === chest)?.playerIds ?? []} drawStatus={!draw ? undefined : winner !== null ? winner === chest ? "winner" : "no-prize" : !allRevealed ? "pending" : tied.includes(chest) ? "tie" : "no-prize"} canReveal={canEdit} disabled={busy || saving || !privateState.saved || !!draft} onReveal={() => void run({ type: "reveal-minority-chest", gameId: game.id, chest })} />)}
     </div>
-    {draw && winner !== null && <p role="status" className="font-semibold text-amber-800 dark:text-amber-200">Chest {winner} wins. Each player in that chest has been awarded 200,000 gil and a golden die.</p>}
+    {draw && winner !== null && <p role="status" className="font-semibold text-amber-800 dark:text-amber-200">Chest {winner} wins. Each player in that chest has been awarded 300,000 gil.</p>}
     {draw && tied.length > 1 && <section aria-label="Deathroll tie-break" className="space-y-3 border-l-4 border-amber-500 pl-4">
       <p className="font-semibold">Chests {tied.join(", ")} tie for the fewest players.</p>
       <p className="text-sm text-muted-foreground">Each tied group picks a champion. Chow hosts the deathroll.</p>

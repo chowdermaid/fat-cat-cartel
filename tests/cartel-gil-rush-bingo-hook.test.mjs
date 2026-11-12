@@ -78,3 +78,17 @@ test("storage read or write failures keep one usable card for the session and ex
     assert.deepEqual(current.render().card.completedIds, []);
   }
 });
+
+test("a retired die mission is replaced once without moving other tiles or transferring its checkmark", () => {
+  let saved = JSON.stringify({ version: 1, eventId: "cartel-gil-rush-1", missionIds: [1, 2, 3, 5, 6, 7, 8, 9, 10], completedIds: [1, 3, 5] });
+  globalThis.localStorage = { getItem: () => saved, setItem: (_key, value) => { saved = value; } };
+  const current = mount();
+  const card = current.render().card;
+  assert.equal(new Set(card.missionIds).size, 9);
+  assert.ok(!card.missionIds.includes(3));
+  assert.deepEqual(card.missionIds.filter((_id, index) => index !== 2), [1, 2, 5, 6, 7, 8, 9, 10]);
+  assert.deepEqual(card.completedIds, [1, 5]);
+  current.flush();
+  assert.deepEqual(JSON.parse(saved), card);
+  assert.deepEqual(mount().render().card, card);
+});

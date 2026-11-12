@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TabsContent } from "@/components/ui/tabs";
-import { isEmptyGilRushEvent } from "../../../../functions/src/cartel-gil-rush-model";
 import type { BingoController, EventController, EventView } from "../types";
 import { EventHeader } from "./EventHeader";
 import { MinigameSummary } from "./MinigameSummary";
@@ -14,6 +13,7 @@ import { RoundControl } from "./game/RoundControl";
 import { RoundBadge } from "./game/RoundBadge";
 import { MinigamePanel } from "./game/MinigamePanel";
 import { SplitOrSteal } from "./game/SplitOrSteal";
+import { NamazuPanel } from "./game/NamazuPanel";
 import { BoardOverview } from "./rulebook/BoardOverview";
 import { BingoCard } from "./bingo/BingoCard";
 
@@ -25,7 +25,7 @@ interface EventHostPanelProps {
   bingo: BingoController;
 }
 
-export function EventHostPanel({ event: { current, error, run, loading, pending, pendingKeys = [], importable, hostToken }, view, onViewChange, canEdit, bingo }: EventHostPanelProps) {
+export function EventHostPanel({ event: { current, error, run, loading, pending, pendingKeys = [], hostToken }, view, onViewChange, canEdit, bingo }: EventHostPanelProps) {
   const [playersOpen, setPlayersOpen] = useState(false);
   const [playersVisited, setPlayersVisited] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
@@ -54,7 +54,7 @@ export function EventHostPanel({ event: { current, error, run, loading, pending,
       </EventHeader>
       {canEdit && <Dialog open={resetOpen} onOpenChange={setResetOpen}>
         <DialogContent className="w-[calc(100%-2rem)] [&>button]:size-11" onCloseAutoFocus={(event) => { event.preventDefault(); overflowTrigger.current?.focus(); }}>
-          <DialogHeader className="pr-10 text-left"><DialogTitle>Reset this event?</DialogTitle><DialogDescription>This clears players, order, round, gil, bonus dice, minigames and partner history for every host. This cannot be undone.</DialogDescription></DialogHeader>
+          <DialogHeader className="pr-10 text-left"><DialogTitle>Reset this event?</DialogTitle><DialogDescription>This clears players, order, round, gil, minigames and partner history for every host. This cannot be undone.</DialogDescription></DialogHeader>
           {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
           <div className="flex flex-wrap justify-end gap-2"><Button variant="outline" className="min-h-11" onClick={() => setResetOpen(false)}>Cancel</Button><Button variant="destructive" className="min-h-11" disabled={actionDisabled} onClick={async () => { if (await run({ type: "reset" }, resetRevision.current)) { setResetOpen(false); setPlayersOpen(false); setPlayersVisited(false); } else resetRevision.current = current.revision; }}>Reset event</Button></div>
         </DialogContent>
@@ -62,7 +62,10 @@ export function EventHostPanel({ event: { current, error, run, loading, pending,
       {view === "game" && error && !playersOpen && !resetOpen && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
       <TabsContent value="game" forceMount data-event-view="game" className="grid min-h-[calc(100dvh-9rem)] @[900px]:grid-cols-[280px_minmax(0,1fr)] @[1400px]:grid-cols-[347px_minmax(0,1fr)]">
         {current.players.length ? <PlayerOrderStrip players={current.players} live={live} round={current.round} revision={current.revision} run={run} disabled={disabled} pendingKeys={pendingKeys} canEdit={canEdit} /> : <aside data-game-transition="empty-players" className="space-y-3 border-b px-6 py-7 @[900px]:border-r @[900px]:border-b-0"><Users aria-hidden="true" className="size-9 text-amber-700 dark:text-primary" /><h2 className="font-serif text-xl font-bold">{canEdit ? "Gather your players" : "Waiting for the host"}</h2><p className="text-sm leading-relaxed text-muted-foreground">{canEdit ? "Add members or guests, then randomise the order." : "The event is being prepared."}</p></aside>}
-        <div className="min-w-0 space-y-7 px-5 py-6 @[900px]:px-8 @[900px]:py-9">
+        {!live ? <div data-event-reveal data-game-transition="phase:setup" className="flex min-w-0 flex-col items-center justify-start gap-8 px-6 pt-10 pb-16 text-center @[900px]:pt-12">
+          <h2 className="max-w-3xl font-serif text-4xl leading-tight font-extrabold text-primary @[600px]:text-5xl @[1100px]:text-6xl">Come back on the 13th of December!</h2>
+          {canEdit && <Button className="min-h-14 max-w-full whitespace-normal bg-[#ffd331] px-4 py-3 text-base font-extrabold text-[#191b17] hover:bg-[#f1c327]" disabled={actionDisabled || !current.players.length} onClick={async () => { if (await run({ type: "start" })) setPlayersOpen(false); }}><Shuffle aria-hidden="true" className="size-5 shrink-0" />Randomise order &amp; start</Button>}
+        </div> : <div className="min-w-0 space-y-7 px-5 py-6 @[900px]:px-8 @[900px]:py-9">
           <header data-event-reveal data-game-transition={`phase:${current.phase}`} className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <h2 className="font-serif text-4xl leading-tight font-extrabold @[1100px]:text-5xl">{live ? "The rush is on." : "Ready to roll?"}</h2>
@@ -74,16 +77,14 @@ export function EventHostPanel({ event: { current, error, run, loading, pending,
             {live && current.minigame && <div data-game-transition={`minigame:${current.minigame.id}`} role="region" aria-label="Active group minigame" aria-live="polite"><MinigameSummary kind={current.minigame.kind} variant="banner" actions={canEdit ? <Button variant="outline" size="sm" className="h-7 border-black/25 bg-transparent px-2.5 text-xs text-[#191b17] shadow-none hover:bg-black/10 hover:text-[#191b17]" disabled={actionDisabled} onClick={() => void run({ type: "end-minigame" })}>End minigame</Button> : undefined} /></div>}
           </header>
           {loading && <p role="status" className="text-sm text-muted-foreground">Loading shared event…</p>}
-          {canEdit && !loading && importable && isEmptyGilRushEvent(current) && <Button variant="outline" className="min-h-11" disabled={actionDisabled} onClick={() => void run({ type: "import", event: importable })}>Import local event</Button>}
-          {live && <><MinigamePanel current={current} run={run} disabled={disabled || pendingKeys.includes("minigame")} saving={pending} canEdit={canEdit} hostToken={hostToken} /><SplitOrSteal key={`${current.splitChallenge?.id}:${current.splitChallenge?.challenger}:${current.splitChallenge?.partner}`} current={current} run={run} disabled={disabled || pendingKeys.includes("split")} saving={pending} canEdit={canEdit} /></>}
-          {canEdit && !live && <Button className="min-h-14 w-full whitespace-normal bg-[#ffd331] px-4 py-3 text-base font-extrabold text-[#191b17] hover:bg-[#f1c327] @[600px]:w-auto" disabled={actionDisabled || !current.players.length} onClick={async () => { if (await run({ type: "start" })) setPlayersOpen(false); }}><Shuffle aria-hidden="true" className="size-5 shrink-0" />Randomise order &amp; start</Button>}
+          {live && <><NamazuPanel key={current.namazu?.id ?? "none"} current={current} run={run} canEdit={canEdit} disabled={disabled || pendingKeys.includes("namazu")} saving={pending} /><SplitOrSteal key={`${current.splitChallenge?.id}:${current.splitChallenge?.challenger}:${current.splitChallenge?.partner}`} current={current} run={run} disabled={disabled || pendingKeys.includes("split")} saving={pending} canEdit={canEdit} /><MinigamePanel current={current} run={run} disabled={disabled || pendingKeys.includes("minigame")} saving={pending} canEdit={canEdit} hostToken={hostToken} /></>}
           <div className="@container/guide">
             <div className="grid min-w-0 items-start gap-6 @min-[1260px]/guide:grid-cols-[minmax(0,1fr)_390px]">
-              <BoardOverview active={view === "game"} headingId="game-board-overview-heading" gamePage onChocoboClick={canEdit ? () => void run({ type: "start-split" }) : undefined} chocoboDisabled={actionDisabled || !live || current.players.length < 2 || !!current.splitChallenge || !!current.splitResult} />
+              <BoardOverview active={view === "game"} headingId="game-board-overview-heading" gamePage onChocoboClick={canEdit ? () => void run({ type: "start-split" }) : undefined} chocoboDisabled={actionDisabled || !live || current.players.length < 2 || !!current.splitChallenge || !!current.splitResult} onNamazuClick={canEdit ? tile => void run({ type: "start-namazu", tile }) : undefined} namazuDisabled={actionDisabled || !live || !!current.namazu} />
               <BingoCard bingo={bingo} />
             </div>
           </div>
-        </div>
+        </div>}
       </TabsContent>
     </>
   );

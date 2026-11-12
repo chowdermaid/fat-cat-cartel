@@ -69,15 +69,15 @@ test("load guards mutations; one subscription survives rerenders; legacy import 
   assert.equal(fixture.stopped, true);
 });
 
-test("an invited viewer reads with a session token but cannot send host mutations", async () => {
-  const viewer = mount(null, "viewer-token", false);
+test("an anonymous viewer receives public state but cannot send host mutations", async () => {
+  const viewer = mount(null, null, false);
   viewer.receive(emptyGilRushEvent());
   assert.equal(viewer.render().loading, false);
   assert.equal(await viewer.render().run({ type: "start-split" }), false);
   assert.equal(viewer.requests.length, 0);
   assert.equal(viewer.render().hostToken, null);
-  viewer.fail(new Error("Viewing permission revoked"));
-  assert.equal(viewer.render().readError, "Viewing permission revoked");
+  viewer.fail(new Error("Event connection failed"));
+  assert.equal(viewer.render().readError, "Event connection failed");
   viewer.cleanup();
   assert.equal(viewer.stopped, true);
 });
@@ -117,7 +117,7 @@ test("independent edits queue immediately and commit sequentially across only th
   const third = controller.run({ type: "set-round", round: 2 });
   assert.deepEqual(fixture.render().pendingKeys, ["player:a", "player:b", "round"]);
   assert.equal(fixture.requests.length, 1);
-  assert.equal(await controller.run({ type: "set-bonus-die", id: "b", sides: 10 }), false);
+  assert.equal(await controller.run({ type: "set-gil", id: "b", gilWon: 200 }), false);
   assert.equal(await controller.run({ type: "reset" }), false);
   for (const [index, promise] of [first, second, third].entries()) {
     const request = fixture.requests[index];
@@ -152,12 +152,12 @@ test("a failed request stops unsent changes without retries or optimistic totals
   fixture.cleanup();
 });
 
-test("golden-die edits queue behind unrelated gil saves without changing either player's other fields", async () => {
+test("independent gil edits queue behind unrelated gil saves without changing either player's other fields", async () => {
   const fixture = mount();
   const event = livePlayers();
   fixture.receive(event);
   const first = fixture.render().run({ type: "set-gil", id: "a", gilWon: 100 });
-  const queued = fixture.render().run({ type: "set-bonus-die", id: "b", sides: 10 });
+  const queued = fixture.render().run({ type: "set-gil", id: "b", gilWon: 200 });
   const gil = nextGilRushEvent(event, fixture.requests[0].action, event.revision);
   fixture.requests[0].resolve(gil);
   assert.equal(await first, true);
@@ -166,8 +166,8 @@ test("golden-die edits queue behind unrelated gil saves without changing either 
   fixture.requests[1].resolve(die);
   assert.equal(await queued, true);
   assert.equal(die.players.find(player => player.id === "a").gilWon, 100);
-  assert.equal(die.players.find(player => player.id === "b").gilWon, 0);
-  assert.equal(die.players.find(player => player.id === "b").bonusDie, 10);
+  assert.equal(die.players.find(player => player.id === "b").gilWon, 200);
+  assert.ok(!("bonusDie" in die.players.find(player => player.id === "b")));
   fixture.cleanup();
 });
 
@@ -215,25 +215,21 @@ test("another host's revision stops a queued edit instead of silently rebasing i
   fixture.cleanup();
 });
 
-test("queued edits cannot overwrite a payout or carry a golden die across a new minigame", async () => {
-  for (const kind of ["payout", "minigame"]) {
-    const fixture = mount();
-    let event = livePlayers();
-    if (kind === "payout") {
-      event = nextGilRushEvent(event, { type: "start-minigame", kind: "trivia" }, event.revision);
-      event = nextGilRushEvent(event, { type: "shuffle-trivia", gameId: event.minigame.id }, event.revision);
-    }
-    fixture.receive(event);
-    const action = kind === "payout" ? { type: "finalise-trivia", gameId: event.minigame.id, winnings: { A: 100, B: 100 } } : { type: "start-minigame", kind: "minority" };
-    const first = fixture.render().run(action);
-    const queued = fixture.render().run(kind === "payout" ? { type: "set-gil", id: "a", gilWon: 50 } : { type: "set-bonus-die", id: "a", sides: 10 });
-    const committed = nextGilRushEvent(event, action, event.revision);
-    fixture.requests[0].resolve(committed);
-    assert.deepEqual(await Promise.all([first, queued]), [true, false]);
-    assert.equal(fixture.requests.length, 1);
-    assert.deepEqual(fixture.render().current, committed);
-    fixture.cleanup();
-  }
+test("queued edits cannot overwrite a payout", async () => {
+  const fixture = mount();
+  let event = livePlayers();
+  event = nextGilRushEvent(event, { type: "start-minigame", kind: "trivia" }, event.revision);
+  event = nextGilRushEvent(event, { type: "shuffle-trivia", gameId: event.minigame.id }, event.revision);
+  fixture.receive(event);
+  const action = { type: "finalise-trivia", gameId: event.minigame.id, winnings: { A: 100, B: 100 } };
+  const first = fixture.render().run(action);
+  const queued = fixture.render().run({ type: "set-gil", id: "a", gilWon: 50 });
+  const committed = nextGilRushEvent(event, action, event.revision);
+  fixture.requests[0].resolve(committed);
+  assert.deepEqual(await Promise.all([first, queued]), [true, false]);
+  assert.equal(fixture.requests.length, 1);
+  assert.deepEqual(fixture.render().current, committed);
+  fixture.cleanup();
 });
 
 test("roster additions queue without overwriting each other and unmount cancels unsent changes", async () => {

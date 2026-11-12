@@ -5,6 +5,7 @@ import chocobo from "@/assets/cartel-gil-rush/chocobo.svg";
 import ladder from "@/assets/cartel-gil-rush/ladder.svg";
 import redArrow from "@/assets/cartel-gil-rush/red-arrow.svg";
 import fatcat from "@/assets/cartel-gil-rush/fat-cat.svg";
+import namazu from "@/assets/cartel-gil-rush/namazu.png";
 import type { Tile } from "./types";
 
 export const tileArtwork: Record<Tile["id"], string> = {
@@ -13,6 +14,7 @@ export const tileArtwork: Record<Tile["id"], string> = {
   mushroom,
   fatcat,
   chocobo,
+  namazu,
   ladder,
   "red-arrow": redArrow,
 };

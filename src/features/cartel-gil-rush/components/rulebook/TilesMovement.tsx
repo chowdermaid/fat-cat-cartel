@@ -3,7 +3,7 @@ import { tileMovementRules, tiles } from "../../constants";
 import { tileArtwork } from "../../tileArtwork";
 import { RuleText } from "./RuleText";
 
-const tileReferences = (["shark", "moogle", "mushroom", "fatcat", "chocobo", "ladder", "red-arrow"] as const)
+const tileReferences = (["shark", "moogle", "mushroom", "fatcat", "chocobo", "namazu", "ladder", "red-arrow"] as const)
   .map((id) => ({ id, summary: tileMovementRules[id], tile: tiles.find((tile) => tile.id === id)! }));
 
 export function TilesMovement() {

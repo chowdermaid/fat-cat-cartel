@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from "react";
-import { Gift } from "lucide-react";
+import { Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MinorityChestReveal } from "../../../../../functions/src/cartel-gil-rush-model";
 import type { SharedPlayer } from "../../types";
@@ -7,7 +7,6 @@ import { minorityPrizes } from "../../constants";
 import { chestArtwork } from "../../chestArtwork";
 import { chestRevealProgress, chestRevealStepTime } from "../../utils/minorityReveal";
 import { PlayerAvatar } from "./PlayerAvatar";
-import { GoldenDieBadge } from "./GoldenDieBadge";
 
 export function MinorityChest({ chest, reveal, players, assignedPlayerIds, canReveal, disabled, onReveal, drawStatus }: { chest: number; reveal?: MinorityChestReveal; players: SharedPlayer[]; assignedPlayerIds?: string[]; canReveal: boolean; disabled: boolean; onReveal: () => void; drawStatus?: "pending" | "tie" | "winner" | "no-prize" }) {
   const [progress, setProgress] = useState(() => chestRevealProgress(reveal));
@@ -48,7 +47,7 @@ export function MinorityChest({ chest, reveal, players, assignedPlayerIds, canRe
       </>}
     </div>
     <div aria-live="polite" className="mt-auto flex min-h-15 items-end justify-center pt-4">
-      {complete && (drawStatus ? <p data-game-transition={drawStatus === "winner" ? `chest-prize:minority-draw:${chest}` : undefined} className={`flex items-center justify-center gap-2 text-sm font-bold ${drawStatus === "winner" ? "text-amber-800 dark:text-amber-200" : "text-muted-foreground"}`}>{drawStatus === "winner" ? <><GoldenDieBadge /><span>200,000 gil + golden die</span></> : drawStatus === "tie" ? "Deathroll tie-break" : drawStatus === "pending" ? "Awaiting all chests" : "No prize"}</p> : <p data-game-transition={`chest-prize:${reveal.prize}`} className="flex items-center justify-center gap-2 text-base font-bold text-amber-800 dark:text-amber-200">{reveal.prize === "golden-dice" ? <GoldenDieBadge /> : <Gift aria-hidden="true" className="size-5 shrink-0" />}{minorityPrizes.find(prize => prize.value === reveal.prize)?.label ?? "Prize not recorded"}</p>)}
+      {complete && (drawStatus ? <p data-game-transition={drawStatus === "winner" ? `chest-prize:minority-draw:${chest}` : undefined} className={`flex items-center justify-center gap-2 text-sm font-bold ${drawStatus === "winner" ? "text-amber-800 dark:text-amber-200" : "text-muted-foreground"}`}>{drawStatus === "winner" ? <><Coins aria-hidden="true" className="size-5 shrink-0" /><span>300,000 gil</span></> : drawStatus === "tie" ? "Deathroll tie-break" : drawStatus === "pending" ? "Awaiting all chests" : "No prize"}</p> : <p data-game-transition={`chest-prize:${reveal.prize}`} className="flex items-center justify-center gap-2 text-base font-bold text-amber-800 dark:text-amber-200"><Coins aria-hidden="true" className="size-5 shrink-0" />{minorityPrizes.find(prize => prize.value === reveal.prize)?.label ?? "Prize no longer available"}</p>)}
       {!reveal && canReveal && <Button className="min-h-11 w-full whitespace-normal" variant="outline" disabled={disabled} onClick={onReveal}>Reveal chest {chest}</Button>}
     </div>
   </section>;

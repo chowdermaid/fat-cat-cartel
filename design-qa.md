@@ -84,3 +84,21 @@ Source: the conversation Bingo screenshot, used as a reference only; the written
 The in-app browser access host is unavailable. Native Chrome was present, but Computer Use stopped before opening the preview because it could not reliably determine the current browser URL to enforce policy. No screenshot comparison, desktop/mobile readability pass, live keyboard interaction, console check or browser refresh test could be performed. These remain pending; build and automated persistence/render checks do not constitute visual verification.
 
 Bingo final result: blocked (browser verification only).
+
+## Gil Rush Bingo ticket frame, 12 November 2026
+
+Source visual: the user's ticket reference in this conversation (948 x 1659 pixels), with the approved written plan taking precedence: preserve existing mission tiles and the three reward columns. No new artwork or backend work.
+
+Implementation: `src/features/cartel-gil-rush/components/bingo/BingoCard.tsx`. Local preview inspected at `http://localhost:5173/cartel-gil-rush/game` through native Chrome because the browser access host is unavailable.
+
+Evidence: Computer Use screenshots displayed in this conversation at 2560 x 1392 and 1280 x 1392 window pixels. Standalone screenshot files and exact CSS viewport/device density were not available. These window captures are not a normalized side-by-side comparison. Desktop view showed the ticket beside Guide, and the narrower view showed it stacked below Guide.
+
+Observed presentation: existing Nunito typography with a larger gold Bingo heading and tracked event label; charcoal surface with theme-gold outline, rounded corners and paired side notches; unchanged mission artwork and 3-by-3 buttons; perforated reward divider. The reward labels, coin icons and footer copy are preserved in the rendered markup.
+
+Verification: production build, scoped ESLint, four existing Bingo tests and diff whitespace check passed. The tests cover mission eligibility, saved order/completion validation, toggling, reward thresholds, accessible buttons and storage failure notice. Storage keys, schema, card assignment and controller are unchanged. No added Firebase reads, writes, listeners, Function calls or asset downloads.
+
+Remaining checks: native browser actions did not reliably move focus or activate the mission toggle. Another application appeared over the browser, so further input stopped. Mobile layout, visual completion states, keyboard activation, refresh persistence and console errors were not verified in the browser. The complete reward stub was not captured. Automated checks do not replace these checks.
+
+Comparison history: initial desktop inspection only; no visual fixes or verified comparison iterations. Existing square tiles, compact dimensions and reward columns intentionally differ from the reference per the user's plan.
+
+final result: blocked

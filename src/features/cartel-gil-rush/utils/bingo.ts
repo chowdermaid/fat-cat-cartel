@@ -6,9 +6,11 @@ export function readBingoCard(raw: string | null, eventId = BINGO_EVENT_ID): Bin
     const data = JSON.parse(raw ?? "null");
     if (!data || data.version !== 1 || data.eventId !== eventId) return null;
     const { missionIds, completedIds } = data;
-    if (!Array.isArray(missionIds) || missionIds.length !== 9 || new Set(missionIds).size !== 9 || missionIds.some(id => !bingoMissions.some(mission => mission.id === id))) return null;
+    if (!Array.isArray(missionIds) || missionIds.length !== 9 || new Set(missionIds).size !== 9 || missionIds.some(id => id !== 3 && !bingoMissions.some(mission => mission.id === id))) return null;
     if (!Array.isArray(completedIds) || new Set(completedIds).size !== completedIds.length || completedIds.some(id => !missionIds.includes(id))) return null;
-    return { version: 1, eventId, missionIds: [...missionIds], completedIds: [...completedIds] };
+    // Retire only the removed mission, preserving every other tile and checkmark.
+    const replacement = missionIds.includes(3) ? generateBingoCard(eventId).missionIds.find(id => !missionIds.includes(id)) : undefined;
+    return { version: 1, eventId, missionIds: missionIds.map(id => id === 3 ? replacement! : id), completedIds: completedIds.filter(id => id !== 3) };
   } catch { return null; }
 }
 

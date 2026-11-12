@@ -83,13 +83,14 @@ test("Keybound Brawler is public-readable and browser writes always fail", async
   }
 });
 
-test("internal Gil Rush denies direct browser reads at its leaf and all ancestors", async () => {
+test("public Gil Rush permits current-event reads while denying ancestor reads and every browser write", async () => {
   const path = "events/cartelGilRush/current";
   await environment.withSecurityRulesDisabled(async context => {
     await set(ref(context.database(), path), { version: 1, revision: 1, phase: "setup", round: 1 });
   });
   for (const context of [environment.unauthenticatedContext(), environment.authenticatedContext("member"), environment.authenticatedContext("claimed-admin", { isAdmin: true, role: "Boss" })]) {
-    for (const target of ["events", "events/cartelGilRush", path, `${path}/round`]) await assertFails(get(ref(context.database(), target)));
+    for (const target of ["events", "events/cartelGilRush"]) await assertFails(get(ref(context.database(), target)));
+    for (const target of [path, `${path}/round`]) await assertSucceeds(get(ref(context.database(), target)));
     await assertFails(set(ref(context.database(), path), { revision: 99 }));
     await assertFails(set(ref(context.database(), `${path}/round`), 99));
   }

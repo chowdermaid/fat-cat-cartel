@@ -20,24 +20,26 @@ const server = await createServer({
       if (name.endsWith("/components/ui/popover.tsx")) return 'export const Popover = "popover"; export const PopoverContent = "popover-content"; export const PopoverTrigger = "trigger";';
       if (name.endsWith("/components/ui/scroll-area.tsx")) return 'export const ScrollArea = "scroll-area";';
       if (name.endsWith("/game/HostSelect.tsx")) return 'export const HostSelect = "host-select";';
-      if (name.endsWith("/game/GoldenDieBadge.tsx")) return 'export const GoldenDieBadge = "golden-die";';
       if (name.endsWith("/game/PlayerAvatar.tsx")) return 'export const PlayerAvatar = "player-avatar";';
     },
   }],
 });
 const { MinorityGame } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/MinorityGame.tsx");
 const { SplitOrSteal } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/SplitOrSteal.tsx");
-const { BonusDieControl } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/BonusDieControl.tsx");
 const { TriviaGame } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/TriviaGame.tsx");
+const { MinigamePanel } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/MinigamePanel.tsx");
+const { NamazuPanel } = await server.ssrLoadModule("/src/features/cartel-gil-rush/components/game/NamazuPanel.tsx");
+const { NAMAZU_EFFECTS } = await server.ssrLoadModule("/functions/src/cartel-gil-rush-namazu.ts");
 const { chestRevealProgress, chestRevealStepTime, CHEST_OPENING_DURATION, CHEST_REVEAL_INTERVAL, CHEST_PRIZE_PAUSE } = await server.ssrLoadModule("/src/features/cartel-gil-rush/utils/minorityReveal.ts");
 const { emptyGilRushEvent } = await server.ssrLoadModule("/functions/src/cartel-gil-rush-model.ts");
 after(async () => { await server.close(); delete globalThis.minigameHarness; });
 
-const players = ["Axo", "Chow", "Finished Racer"].map(id => ({ id, name: id, avatarUrl: null, gilWon: 0, bonusDie: null }));
+const players = ["Axo", "Chow", "Finished Racer"].map(id => ({ id, name: id, avatarUrl: null, gilWon: 0 }));
 const event = () => ({ ...emptyGilRushEvent(), phase: "live", players, revision: 8 });
 function descendants(element) {
   if (!element || typeof element !== "object") return [];
-  return [element, ...[element.props?.children].flat(Infinity).flatMap(descendants)];
+  if (element.type?.name === "SplitParticipant") return descendants(element.type(element.props));
+  return [element, ...[element.props?.children, element.props?.actions].flat(Infinity).flatMap(descendants)];
 }
 function mount(Component, props) {
   let cursor = 0;
@@ -47,7 +49,7 @@ function mount(Component, props) {
     async save(choices, revision) {
       privateRequests.push({ choices, revision });
       if (!success) { this.error = "Could not save assignments."; return false; }
-      this.saved = { gameId: props.current?.minigame?.id, revision: revision + 1, locked: false, choices, prizes: props.current?.minigame?.kind === "minority-draw" ? [] : ["200k", "100k", "golden-dice", "50k"] };
+      this.saved = { gameId: props.current?.minigame?.id, revision: revision + 1, locked: false, choices, prizes: props.current?.minigame?.kind === "minority-draw" ? [] : ["300k", "200k", "100k", "50k"] };
       this.error = null;
       return true;
     }, async reload() { return true; },
@@ -62,6 +64,102 @@ function mount(Component, props) {
   const find = predicate => descendants(render()).find(predicate);
   return { calls, privateRequests, privateState, render, find, props, setSuccess: value => { success = value; } };
 }
+
+test("reminders start at rounds 6, 12 and 18, are host-only and never start a game automatically", async () => {
+  const current = event();
+  const host = mount(MinigamePanel, { current });
+  const reminder = () => host.find(node => node.props?.["aria-label"] === "Group minigame reminder");
+  for (const round of [1, 5]) {
+    current.round = round;
+    assert.equal(reminder(), undefined);
+  }
+  for (const round of [6, 7, 11, 12, 13, 18, 19]) {
+    current.round = round;
+    assert.ok(reminder());
+    assert.equal(current.minigame, null);
+    assert.equal(host.calls.length, 0);
+  }
+  for (const [round, lastMinigameRound] of [[6, 6], [7, 6], [7, 7], [11, 7], [12, 12], [18, 18], [19, 18]]) {
+    Object.assign(current, { round, lastMinigameRound });
+    assert.equal(reminder(), undefined);
+  }
+  Object.assign(current, { round: 13, lastMinigameRound: 7 });
+  assert.ok(reminder());
+  host.find(node => node.type === "host-select").props.onChange("marbles");
+  assert.equal(host.calls.length, 0);
+  await host.find(node => node.props?.children === "Start minigame").props.onClick();
+  assert.deepEqual(host.calls, [{ action: { type: "start-minigame", kind: "marbles" }, revision: undefined }]);
+  const viewer = mount(MinigamePanel, { current, canEdit: false });
+  assert.equal(viewer.find(node => node.props?.["aria-label"] === "Group minigame reminder"), undefined);
+  assert.equal(viewer.find(node => node.type === "host-select"), undefined);
+});
+
+test("a running minigame suppresses reminders without replacing it", () => {
+  for (const kind of ["trivia", "minority", "minority-draw", "eorzeaguessr", "marbles", "deathroll"]) {
+    const current = { ...event(), round: 13, minigame: { id: 7, kind } };
+    const host = mount(MinigamePanel, { current });
+    assert.equal(host.find(node => node.props?.["aria-label"] === "Group minigame reminder"), undefined);
+    assert.equal(host.calls.length, 0);
+    assert.equal(current.minigame.kind, kind);
+  }
+});
+
+test("Namazu renders descriptions without effect titles or a landing picker and rerolls only the player", async () => {
+  const current = { ...event(), namazu: { id: 7, tile: 16, effect: 6, target: null, targetDraw: 0, payout: null } };
+  const host = mount(NamazuPanel, { current });
+  assert.equal(host.find(node => node.type === "host-select"), undefined);
+  assert.equal(host.find(node => node.type?.name === "RuleText").props.text, NAMAZU_EFFECTS[5]);
+  assert.equal(host.calls.length, 0);
+  assert.equal(host.find(node => node.type?.name === "PlayerAvatar"), undefined);
+  await host.find(node => node.props?.children?.includes?.("Randomise player")).props.onClick();
+  assert.deepEqual(host.calls.at(-1), { action: { type: "reroll-namazu-target", encounterId: 7 }, revision: 8 });
+  current.namazu = { ...current.namazu, target: "Axo", targetDraw: 1 };
+  await host.find(node => node.props?.children?.includes?.("Reroll player")).props.onClick();
+  assert.deepEqual(host.calls.at(-1), { action: { type: "reroll-namazu-target", encounterId: 7 }, revision: 8 });
+  assert.equal(current.namazu.effect, 6);
+  const viewer = mount(NamazuPanel, { current, canEdit: false });
+  assert.equal(descendants(viewer.render()).filter(node => node.type === "button").length, 0);
+  const saving = mount(NamazuPanel, { current, saving: true });
+  assert.ok(descendants(saving.render()).filter(node => node.type === "button").every(node => node.props.disabled));
+  current.players = [players[0]];
+  current.namazu = { ...current.namazu, target: null };
+  assert.equal(host.find(node => node.props?.children?.includes?.("Randomise player")).props.disabled, true);
+  assert.equal(host.find(node => node.props?.children?.includes?.("Reroll player")), undefined);
+  await host.find(node => node.props?.children === "End event").props.onClick();
+  assert.deepEqual(host.calls.at(-1).action, { type: "clear-namazu", encounterId: 7 });
+  current.namazu = null;
+  assert.equal(host.render(), null);
+});
+
+test("Namazu roll payouts wait for a valid host result, preserve failed drafts and lock after payment", async () => {
+  const current = { ...event(), namazu: { id: 7, tile: 16, effect: 7, target: null, targetDraw: 0, payout: null } };
+  const host = mount(NamazuPanel, { current });
+  const input = () => host.find(node => node.type === "input");
+  const submit = () => host.find(node => node.type === "button" && node.props.type === "submit");
+  const form = () => host.find(node => node.type === "form");
+  assert.equal(submit().props.disabled, true);
+  input().props.onChange({ target: { value: "7" } });
+  await form().props.onSubmit({ preventDefault() {} });
+  assert.equal(host.calls.length, 0);
+  input().props.onChange({ target: { value: "3" } });
+  assert.equal(submit().props.disabled, false);
+  host.setSuccess(false);
+  await form().props.onSubmit({ preventDefault() {} });
+  assert.deepEqual(host.calls.at(-1), { action: { type: "award-namazu-gil", encounterId: 7, roll: 3 }, revision: 8 });
+  assert.equal(input().props.value, "3");
+  current.namazu.payout = { perPlayer: 30_000, roll: 3 };
+  assert.equal(input().props.disabled, true);
+  assert.equal(submit().props.disabled, true);
+  const calls = host.calls.length;
+  await form().props.onSubmit({ preventDefault() {} });
+  assert.equal(host.calls.length, calls);
+  const viewer = mount(NamazuPanel, { current, canEdit: false });
+  assert.equal(descendants(viewer.render()).filter(node => node.type === "input" || node.type === "button").length, 0);
+  for (const effect of [2, 3]) {
+    const other = mount(NamazuPanel, { current: { ...current, namazu: { ...current.namazu, effect, payout: effect === 3 ? { perPlayer: 50_000, roll: null } : null } } });
+    assert.equal(other.find(node => node.type === "form"), undefined);
+  }
+});
 
 test("chest assignment drafts retain failures and keep prize reveals separate", async () => {
   const current = { ...event(), minigame: { id: 7, kind: "minority", teams: [], chests: null, chestReveals: [] } };
@@ -120,7 +218,7 @@ test("Split or Steal appears after a shared save", () => {
   const host = mount(SplitOrSteal, { current });
   assert.equal(host.render(), null);
   current.splitChallenge = { id: 9, challenger: null, partner: null };
-  assert.equal(host.find(node => node.props?.id === "split-heading").props.children, "Split or Steal");
+  assert.equal(host.find(node => node.props?.headingId === "split-heading").props.title, "Split or Steal");
   const viewer = mount(SplitOrSteal, { current: event(), canEdit: false });
   assert.equal(viewer.render(), null);
 });
@@ -129,7 +227,7 @@ test("Split or Steal shares player selection, keeps decisions private, and revea
   const current = { ...event(), splitChallenge: { id: 7, challenger: "Axo", partner: null }, splitPartners: [{ challenger: "Axo", partner: "Chow" }] };
   const host = mount(SplitOrSteal, { current });
   const select = label => host.find(node => node.type === "host-select" && node.props.label === label);
-  const reveal = () => host.find(node => node.props?.children === "Submit & reveal");
+  const reveal = () => host.find(node => node.props?.["aria-label"] === "Reveal both decisions");
   const decision = label => host.find(node => node.props?.["aria-label"] === label);
   assert.equal(reveal().props.disabled, true);
   assert.deepEqual(select("Partner").props.options.map(option => option.value), ["Finished Racer"]);
@@ -153,13 +251,13 @@ test("Split or Steal shares player selection, keeps decisions private, and revea
   await reveal().props.onClick();
   assert.deepEqual(host.calls.at(-1), { action: { type: "reveal-split", challengeId: 7, challengerDecision: "steal", partnerDecision: "split" }, revision: 10 });
   const viewer = mount(SplitOrSteal, { current, canEdit: false });
-  assert.equal(descendants(viewer.render()).filter(node => node.props?.children === "Decision hidden").length, 2);
+  assert.equal(descendants(viewer.render()).filter(node => node.props?.children?.includes?.("Decision hidden")).length, 2);
   assert.equal(viewer.find(node => node.props?.["data-game-transition"]?.startsWith("split-decision:")), undefined);
   assert.equal(viewer.find(node => node.props?.["data-game-transition"]?.startsWith("split-payout:")), undefined);
   assert.equal(descendants(viewer.render()).filter(node => node.type === "host-select" || node.type === "button").length, 0);
   current.splitResult = { challenger: "Axo", partner: "Finished Racer", challengerDecision: "steal", partnerDecision: "split" };
   assert.ok(viewer.find(node => node.props?.children === "200,000 gil"));
-  assert.ok(viewer.find(node => node.props?.children === "0 gil"));
+  assert.ok(viewer.find(node => [node.props?.children].flat(Infinity).join("") === "0 gil"));
   assert.equal(descendants(viewer.render()).filter(node => node.props?.["data-game-transition"]?.startsWith("split-decision:")).length, 2);
   assert.equal(descendants(viewer.render()).filter(node => node.props?.["data-game-transition"]?.startsWith("split-payout:")).length, 2);
   assert.equal(viewer.render().props["data-game-transition"], undefined, "result stages are not masked by a parent entrance animation");
@@ -173,29 +271,15 @@ test("a different shared player pair invalidates the host's pending decisions", 
   decision("Landing player: steal").props.onClick();
   decision("Partner: steal").props.onClick();
   current.splitChallenge.partner = "Finished Racer";
-  assert.equal(host.find(node => node.props?.children === "Submit & reveal").props.disabled, true);
+  assert.equal(host.find(node => node.props?.["aria-label"] === "Reveal both decisions").props.disabled, true);
   assert.notEqual(decision("Landing player: steal").props["aria-pressed"], true);
   assert.equal(host.calls.length, 0);
 });
 
-test("hosts can assign a golden D10 or remove it, with no one-use clear or custom dice input", async () => {
-  const props = { player: { ...players[0], bonusDie: null }, revision: 4 };
-  const host = mount(BonusDieControl, props);
-  const toggle = () => host.find(node => node.props?.["aria-label"] === "Golden die for Axo");
-  assert.equal(toggle().props["aria-pressed"], false);
-  await toggle().props.onClick();
-  assert.deepEqual(host.calls.at(-1), { action: { type: "set-bonus-die", id: "Axo", sides: 10 }, revision: 4 });
-  props.player.bonusDie = 10;
-  assert.equal(toggle().props["aria-pressed"], true);
-  props.revision = 5;
-  await toggle().props.onClick();
-  assert.deepEqual(host.calls.at(-1), { action: { type: "set-bonus-die", id: "Axo", sides: null }, revision: 5 });
-  assert.equal(host.find(node => node.type === "input"), undefined);
-  assert.equal(host.find(node => node.props?.children === "Mark used & clear"), undefined);
-});
+
 
 test("trivia shuffles once per command, edits two local amounts and only pays on finalise", async () => {
-  const current = { ...event(), minigame: { id: 7, kind: "trivia", teams: [], questionWins: [null, null, null], triviaWinnings: null, chests: null } };
+  const current = { ...event(), minigame: { id: 7, kind: "trivia", teams: [], questionWins: [null, null, null, null, null], triviaWinnings: null, chests: null } };
   const host = mount(TriviaGame, { current });
   const input = team => host.find(node => node.props?.["aria-label"] === `Team ${team} winnings per player (gil)`);
   const submit = () => host.find(node => node.props?.type === "submit");
@@ -270,7 +354,7 @@ test("Split or Steal decisions can be entered during unrelated saves; submit wai
     assert.equal(button.props.disabled, false);
     button.props.onClick();
   }
-  const submit = () => host.find(node => node.props?.children === "Submit & reveal");
+  const submit = () => host.find(node => node.props?.["aria-label"] === "Reveal both decisions");
   assert.equal(submit().props.disabled, true);
   await submit().props.onClick();
   assert.equal(host.calls.length, 0);

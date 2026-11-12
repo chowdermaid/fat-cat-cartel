@@ -8,7 +8,7 @@ import { tileArtwork } from "../../tileArtwork";
 import { BoardGrid } from "./board/BoardGrid";
 import { TileRuleTooltip } from "./TileRuleTooltip";
 
-export function BoardOverview({ active, headingId = "board-overview-heading", gamePage = false, onChocoboClick, chocoboDisabled = false }: { active: boolean; headingId?: string; gamePage?: boolean; onChocoboClick?: () => void; chocoboDisabled?: boolean }) {
+export function BoardOverview({ active, headingId = "board-overview-heading", gamePage = false, onChocoboClick, chocoboDisabled = false, onNamazuClick, namazuDisabled = false }: { active: boolean; headingId?: string; gamePage?: boolean; onChocoboClick?: () => void; chocoboDisabled?: boolean; onNamazuClick?: (tile: number) => void; namazuDisabled?: boolean }) {
   const [selected, setSelected] = useState<string | null>(null);
   const selectedRoute = boardConnections.find(({ id }) => id === selected);
   const select = (id: string) => setSelected((current) => current === id ? null : id);
@@ -23,11 +23,11 @@ export function BoardOverview({ active, headingId = "board-overview-heading", ga
         </p>}
       </header>
       <ScrollArea className="w-full min-w-0" viewportClassName="overscroll-x-contain overscroll-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
-        <BoardGrid active={active} selected={selected} onSelect={select} onChocoboClick={onChocoboClick} chocoboDisabled={chocoboDisabled} />
+        <BoardGrid active={active} selected={selected} onSelect={select} onChocoboClick={onChocoboClick} chocoboDisabled={chocoboDisabled} onNamazuClick={onNamazuClick} namazuDisabled={namazuDisabled} />
       </ScrollArea>
       <TooltipProvider delayDuration={200}>
         <ul aria-label="Board symbols" className="mx-auto flex max-w-[1200px] flex-wrap justify-center gap-x-4 gap-y-2 px-1 text-xs font-semibold @[640px]:px-7">
-          {tiles.map(({ id, name }) => <li key={id}><TileRuleTooltip kind={id} title={name}><span tabIndex={0} className="flex cursor-help items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-ring"><img src={tileArtwork[id]} alt="" className="size-6 object-contain" />{name}</span></TileRuleTooltip></li>)}
+          {tiles.map(({ id, name }) => <li key={id}><TileRuleTooltip kind={id} title={name}><span tabIndex={0} className="flex cursor-help items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-ring"><img src={tileArtwork[id]} alt="" className={`size-6 object-contain ${id === "namazu" ? "scale-150" : ""}`} />{name}</span></TileRuleTooltip></li>)}
           <li><TileRuleTooltip kind="finish" title="Crown / finish"><span tabIndex={0} className="flex cursor-help items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-ring"><Crown aria-hidden="true" className="size-6 text-amber-700 dark:text-[#ffd331]" />Finish</span></TileRuleTooltip></li>
         </ul>
       </TooltipProvider>

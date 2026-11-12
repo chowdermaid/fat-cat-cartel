@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowLeft, BookOpen, Users } from "lucide-react";
+import { ArrowLeft, BookOpen, MapPin, Users } from "lucide-react";
 import fatcathi from "@/assets/fatcathi.png";
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +19,7 @@ export function EventHeader({ view, onBackToGame, children }: EventHeaderProps) 
         <div className="min-w-0">
           <p className="text-xs tracking-widest text-muted-foreground uppercase">The Meowfia</p>
           <h1 className="font-serif text-[26px] leading-tight font-extrabold @[1100px]:text-[32px]">Cartel Gil Rush</h1>
-          <p className="text-xs tracking-wider text-muted-foreground uppercase">Draft</p>
+          <p className="mt-1 flex items-start gap-1.5 text-sm text-muted-foreground"><MapPin aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" /><span>Empyreum · Ward 21, Plot 22</span></p>
         </div>
       </div>
       <TabsList aria-label="Event views" className="order-3 flex w-full justify-start gap-1 @[600px]:gap-3">
